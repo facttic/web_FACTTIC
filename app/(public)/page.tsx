@@ -163,9 +163,22 @@ export default async function HomePage() {
           }
         />
         <div className="grid gap-6 md:grid-cols-3">
-          <CardMetrica rotulo="Profesionales" valor={metricas.profesionales} />
-          <CardMetrica rotulo="Cooperativas" valor={metricas.cooperativas} />
-          <CardMetrica rotulo="Provincias" valor={metricas.provincias} />
+          {/* Un color por métrica, como en el board: lila, lima y naranja. */}
+          <CardMetrica
+            rotulo="Profesionales"
+            valor={metricas.profesionales}
+            acentoHover="lila"
+          />
+          <CardMetrica
+            rotulo="Cooperativas"
+            valor={metricas.cooperativas}
+            acentoHover="amarillo"
+          />
+          <CardMetrica
+            rotulo="Provincias"
+            valor={metricas.provincias}
+            acentoHover="naranja"
+          />
         </div>
         <BandaCta
           className="mt-10"

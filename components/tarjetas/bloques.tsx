@@ -134,6 +134,7 @@ export function CardMetrica({
   rotulo,
   valor,
   acento,
+  acentoHover,
   className,
 }: {
   rotulo: string;
@@ -142,22 +143,29 @@ export function CardMetrica({
    * "Animación de conteo" del diseño. Con texto se muestra tal cual.
    */
   valor: number | ReactNode;
+  /** Color fijo, para mostrar la tarjeta ya pintada. */
   acento?: Acento;
+  /** Color que toma al pasar el mouse, que es como va en la Home. */
+  acentoHover?: Acento;
   className?: string;
 }) {
   return (
     <div
       className={cn(
-        "flex min-h-52 flex-col justify-between rounded-xl p-6",
+        // 78 = 312px, el alto medido sobre el prototipo: el número queda bien
+        // separado del rótulo y el bloque pesa como en el diseño.
+        "flex min-h-78 flex-col justify-between rounded-xl p-6 transition-colors duration-300",
         acento ? FONDO_ACENTO[acento] : "bg-superficie-alta text-blanco",
+        acentoHover ? HOVER_ACENTO[acentoHover] : null,
         className,
       )}
     >
-      <p
-        className={cn("text-eyebrow", acento ? "opacity-70" : "text-blanco/70")}
-      >
-        {rotulo}
-      </p>
+      {/*
+        El rótulo va con opacidad y no con un color fijo: hereda el del
+        contenedor, que pasa de claro a oscuro cuando la tarjeta se pinta. Con
+        `text-blanco/70` quedaba ilegible sobre el lima.
+      */}
+      <p className="text-eyebrow opacity-70">{rotulo}</p>
       <p className="text-display">
         {typeof valor === "number" ? (
           <Contador valor={valor} prefijo="+" />
