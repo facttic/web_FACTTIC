@@ -90,8 +90,9 @@ export function CardServicioSiguiente({
       onClick={onClick}
       aria-label={`Ver ${titulo}`}
       className={cn(
-        "group relative min-h-44 cursor-pointer overflow-hidden rounded-xl text-left",
-        "border border-blanco/40 transition-colors duration-300 hover:border-transparent",
+        // 392x360 con radio 8 en el board de Componentes.
+        "group relative min-h-90 cursor-pointer overflow-hidden rounded-lg text-left",
+        "border border-borde-pleno transition-colors duration-300 hover:border-transparent",
         HOVER_ACENTO[acento],
         FOCO,
         className,

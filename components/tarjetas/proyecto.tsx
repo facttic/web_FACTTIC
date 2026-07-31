@@ -24,10 +24,20 @@ import { FOCO } from "@/components/ui/boton";
  * la API.
  */
 
-/** Alto de la tarjeta y de su imagen en reposo, medidos sobre el prototipo. */
-const ALTO_TARJETA = "h-[385px]";
+/**
+ * Medidas del board de Componentes, que trae las dos caras de la tarjeta: en
+ * reposo 808x406 con la imagen a 310, y al pasar el mouse la misma caja con la
+ * imagen recortada a 129 para dejar lugar al detalle.
+ *
+ * La cara pintada además cambia de piel: pierde el relleno al 3% y su borde
+ * pasa de 10% a blanco pleno.
+ */
+const ALTO_TARJETA = "h-[406px]";
 const ALTO_IMAGEN =
-  "h-[310px] group-hover:h-[150px] group-focus-visible:h-[150px]";
+  "h-[310px] group-hover:h-[129px] group-focus-visible:h-[129px]";
+const PIEL_TARJETA =
+  "transition-colors duration-300 group-hover:border-borde-pleno group-hover:bg-transparent " +
+  "group-focus-visible:border-borde-pleno group-focus-visible:bg-transparent";
 
 function Portada({
   proyecto,
@@ -98,7 +108,8 @@ export function CardProyecto({
     >
       <Tarjeta
         className={cn(
-          "flex flex-col overflow-hidden transition-colors hover:border-blanco/30",
+          "flex flex-col overflow-hidden",
+          PIEL_TARJETA,
           ALTO_TARJETA,
         )}
       >

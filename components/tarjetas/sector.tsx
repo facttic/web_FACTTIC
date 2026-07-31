@@ -23,14 +23,15 @@ import type { Sector } from "@/lib/dominio/tipos";
 function Ilustracion({ sector }: { sector: Sector }) {
   const animacion = animacionDeSector(sector.nombre);
 
+  // En el board la ilustración mide 235px y va centrada, no a todo el ancho.
+  const medida = "size-[235px]";
+
   if (animacion) {
-    return <Animacion nombre={animacion} className="aspect-square w-full" />;
+    return <Animacion nombre={animacion} className={medida} />;
   }
 
   if (!sector.imagen) {
-    return (
-      <div className="aspect-square w-full rounded-lg bg-superficie-alta/30" />
-    );
+    return <div className={cn(medida, "rounded-lg bg-superficie-alta/30")} />;
   }
 
   return (
@@ -38,14 +39,21 @@ function Ilustracion({ sector }: { sector: Sector }) {
     <img
       src={sector.imagen}
       alt=""
-      className="aspect-square w-full rounded-lg object-cover"
+      className={cn(medida, "rounded-lg object-cover")}
       loading="lazy"
     />
   );
 }
 
-/** Alto de la tarjeta, para que las dos caras del hover coincidan. */
-const ALTO_SECTOR = "h-[360px]";
+/** Alto de la tarjeta en el SVG (391x359), para que las dos caras del hover coincidan. */
+const ALTO_SECTOR = "h-[359px]";
+
+/**
+ * A diferencia de las de beneficio y proyecto, estas tarjetas no llevan relleno
+ * —quedan sobre el fondo de la página— y su borde va a blanco pleno, no al 10%.
+ * Así están en el SVG y es lo que las hace resaltar en la grilla.
+ */
+const CAJA_SECTOR = "rounded-lg border border-borde-pleno bg-transparent";
 
 /**
  * Tarjeta de sector de la Home.
@@ -71,9 +79,11 @@ export function CardSector({
   const numero = String(indice + 1).padStart(2, "0");
 
   const reposo = (
-    <div className="absolute inset-0 flex flex-col p-4 transition-opacity duration-300 group-hover:opacity-0">
-      <Ilustracion sector={sector} />
-      <div className="mt-auto flex items-baseline justify-between gap-4 pt-6">
+    <div className="absolute inset-0 flex flex-col p-6 transition-opacity duration-300 group-hover:opacity-0">
+      <div className="grid flex-1 place-items-center">
+        <Ilustracion sector={sector} />
+      </div>
+      <div className="flex items-baseline justify-between gap-4 pt-6">
         <span className="text-h4">{numero}.</span>
         <span className="text-h4">{sector.nombre}</span>
       </div>
@@ -82,7 +92,7 @@ export function CardSector({
 
   if (!href) {
     return (
-      <Tarjeta className={cn("relative", ALTO_SECTOR, className)}>
+      <Tarjeta className={cn("relative", CAJA_SECTOR, ALTO_SECTOR, className)}>
         {reposo}
       </Tarjeta>
     );
@@ -92,20 +102,29 @@ export function CardSector({
     <Link href={href} className={cn("group block", FOCO, className)}>
       <Tarjeta
         className={cn(
-          "relative overflow-hidden transition-colors hover:border-blanco/30",
+          "relative overflow-hidden transition-colors",
+          CAJA_SECTOR,
           ALTO_SECTOR,
         )}
       >
         {reposo}
 
         {sector.descripcion ? (
+          /*
+            La propuesta de valor va centrada en el alto de la tarjeta entera,
+            no en el espacio que queda sobre el pie: por eso el "Ver más" se
+            ancla en absoluto abajo en vez de repartirse con `justify-between`.
+            Así está en el board de Componentes.
+          */
           <div
-            className="absolute inset-0 flex flex-col justify-between p-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+            className="absolute inset-0 p-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
             aria-hidden
           >
-            <p className="text-h3 text-balance">{sector.descripcion}</p>
-            <div>
-              <div className="border-t border-blanco/30" />
+            <p className="text-h3 flex h-full items-center text-balance">
+              {sector.descripcion}
+            </p>
+            <div className="absolute inset-x-6 bottom-6">
+              <div className="border-t border-borde-pleno" />
               <div className="text-p3 mt-4 flex items-center justify-between">
                 Ver más
                 <IconoFlecha className="transition-transform group-hover:translate-x-1" />

@@ -16,18 +16,23 @@ type Tamano = "sm" | "md";
 
 const VARIANTES: Record<Variante, string> = {
   punteada:
-    "border border-dashed border-blanco/50 text-blanco hover:border-solid hover:bg-blanco hover:text-negro-oscuro",
+    "border border-dashed border-borde-pleno text-blanco hover:border-solid hover:bg-blanco hover:text-negro-oscuro",
   solida: "bg-blanco text-negro-oscuro hover:bg-blanco/85",
   contorno:
-    "border border-blanco/60 text-blanco hover:bg-blanco hover:text-negro-oscuro",
+    "border border-borde-pleno text-blanco hover:bg-blanco hover:text-negro-oscuro",
   sutil: "bg-superficie-alta/60 text-blanco hover:bg-superficie-alta",
   acento:
     "border border-naranja text-naranja hover:bg-naranja hover:text-negro-oscuro",
 };
 
+/**
+ * Los botones del diseño miden 53px de alto con texto de 16px: en el SVG del
+ * Home los rects van de 134x53 a 247x53, todos con radio 8. `md` es esa
+ * medida; `sm` queda para el backoffice, donde un botón de 53px es demasiado.
+ */
 const TAMANOS: Record<Tamano, string> = {
   sm: "h-9 px-4 text-p3",
-  md: "h-11 px-5 text-p3",
+  md: "h-13 px-6 text-p1-bold",
 };
 
 /** Anillo de foco compartido por todo lo interactivo. */
@@ -143,8 +148,8 @@ export function BotonFlecha({
     <button
       aria-label={direccion === "anterior" ? "Anterior" : "Siguiente"}
       className={cn(
-        "grid size-11 cursor-pointer place-items-center rounded-lg transition-colors duration-200",
-        "border border-dashed border-blanco/50 text-blanco",
+        "grid size-13 cursor-pointer place-items-center rounded-lg transition-colors duration-200",
+        "border border-dashed border-borde-pleno text-blanco",
         "enabled:hover:border-solid enabled:hover:bg-blanco enabled:hover:text-negro-oscuro",
         "disabled:pointer-events-none disabled:opacity-30",
         FOCO,

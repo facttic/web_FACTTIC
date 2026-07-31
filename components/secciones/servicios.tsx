@@ -83,8 +83,12 @@ export function Servicios({
         </div>
       </div>
 
-      {/* Línea punteada que corre por debajo de las solapas. */}
-      <div className="border-t border-dashed border-borde" />
+      {/*
+        Línea punteada que corre por debajo de las solapas. Va en Gris oscuro
+        sólido, no en blanco translúcido: así están las tres líneas punteadas
+        del SVG (stroke #3C3C3C, dash 3 3).
+      */}
+      <div className="border-t border-dashed border-gris-oscuro" />
 
       <div
         id={`${baseId}-panel`}

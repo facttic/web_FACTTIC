@@ -27,16 +27,26 @@
   /*
    * Roles semánticos, para no escribir el nombre del color en cada componente.
    *
-   * El fondo del sitio es Negro (#222222), verificado en el SVG del diseño: el
-   * frame de la Home arranca con un rect de ese color. Las tarjetas no llevan
-   * fondo propio —quedan sobre el mismo tono— y se separan solo por el borde;
-   * las que sí tienen relleno, como las métricas, usan Gris oscuro (#3C3C3C).
+   * Los valores salen de los rects de `Material/desktop/00. Home.svg`, que es
+   * la fuente exacta: el frame arranca con un rect Negro (#222222) y cada
+   * tarjeta declara su propio relleno y borde.
+   *
+   * Hay tres superficies distintas y conviene no mezclarlas:
+   *  - `superficie`: Blanco al 3,14% —así está en el SVG—, que sobre el fondo
+   *    da #292929. Es el relleno de las tarjetas de beneficio y de proyecto.
+   *  - `superficie-alta`: Gris oscuro sólido, el de las métricas.
+   *  - sin relleno: las tarjetas de sector quedan sobre el fondo y se definen
+   *    solo por el borde.
+   *
+   * Y dos bordes: el suave al 10% de las tarjetas con relleno, y el pleno de
+   * las tarjetas de sector y los botones.
    */
   --color-fondo: var(--color-negro);
-  --color-superficie: var(--color-negro);
+  --color-superficie: rgb(242 242 242 / 0.0314);
   --color-superficie-alta: var(--color-gris-oscuro);
   --color-texto: var(--color-blanco);
-  --color-borde: rgb(242 242 242 / 0.25);
+  --color-borde: rgb(242 242 242 / 0.1);
+  --color-borde-pleno: var(--color-blanco);
 
   /* Tipografías: Inter para títulos, DM Mono para cuerpo e interfaz */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -123,6 +133,14 @@
 @utility text-p1 {
   font-family: var(--font-mono);
   font-size: 18px;
+  line-height: 23.8px;
+}
+
+/** P1/Bold: DM Mono Medium 16. Es el estilo de los botones. */
+@utility text-p1-bold {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 16px;
   line-height: 23.8px;
 }
 

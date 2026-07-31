@@ -15,8 +15,8 @@ import { Contador } from "@/components/ui/contador";
  * oscura y otra pintada con un acento de la paleta.
  */
 
-/** Alto de la tarjeta de beneficio, para que las dos capas coincidan. */
-const ALTO_BENEFICIO = "h-[290px]";
+/** Alto de la tarjeta de beneficio en el SVG (287x312), para que las dos capas coincidan. */
+const ALTO_BENEFICIO = "h-78";
 
 /**
  * Beneficio de la red ("Continuidad de trabajo", "Colaboración real, no
@@ -45,7 +45,7 @@ export function CardBeneficioHover({
   return (
     <div
       className={cn(
-        "group relative overflow-hidden rounded-xl border border-borde bg-superficie",
+        "group relative overflow-hidden rounded-lg border border-borde bg-superficie",
         "transition-colors duration-300 hover:border-transparent",
         HOVER_ACENTO[acento],
         ALTO_BENEFICIO,
@@ -152,9 +152,8 @@ export function CardMetrica({
   return (
     <div
       className={cn(
-        // 78 = 312px, el alto medido sobre el prototipo: el número queda bien
-        // separado del rótulo y el bloque pesa como en el diseño.
-        "flex min-h-78 flex-col justify-between rounded-xl p-6 transition-colors duration-300",
+        // 394x312 con radio 8 en el SVG; 78 = 312px.
+        "flex min-h-78 flex-col justify-between rounded-lg p-6 transition-colors duration-300",
         acento ? FONDO_ACENTO[acento] : "bg-superficie-alta text-blanco",
         acentoHover ? HOVER_ACENTO[acentoHover] : null,
         className,

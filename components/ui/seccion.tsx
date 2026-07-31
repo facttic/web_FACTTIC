@@ -108,8 +108,9 @@ export function BandaCta({
   return (
     <div
       className={cn(
-        "flex flex-col gap-6 rounded-xl border border-dashed border-blanco/25 p-6",
-        "md:flex-row md:items-center md:justify-between md:px-10 md:py-8",
+        "flex flex-col gap-6 rounded-xl border border-dashed border-borde-pleno p-6",
+        // 113px de alto en el SVG: el botón mide 53 y quedan 30 arriba y abajo.
+        "md:flex-row md:items-center md:justify-between md:px-10 md:py-7.5",
         className,
       )}
     >
