@@ -97,7 +97,22 @@
   line-height: 1.2;
 }
 
-/* Cuerpo. P1 es el párrafo de lectura; P2 y P3, texto de apoyo e interfaz. */
+/**
+ * Cuerpo. P1 es el párrafo de lectura; P2 y P3, texto de apoyo e interfaz.
+ *
+ * Ojo con las variantes: en Figma cada estilo elige su familia por separado, no
+ * hay una regla pareja. `P3/Bold` —el del menú y los rótulos— es Inter Bold,
+ * mientras que `P1/Bold` —el de los botones— es DM Mono Medium.
+ */
+
+/** P3/Bold: Inter Bold 12. Es el estilo del menú principal. */
+@utility text-p3-bold {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
 @utility text-p1 {
   font-family: var(--font-mono);
   font-size: 18px;

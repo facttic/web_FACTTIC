@@ -3,9 +3,12 @@ import { extendTailwindMerge } from "tailwind-merge";
 
 /**
  * Los estilos tipográficos del design system se llaman `text-h1`, `text-p1`,
- * etc. Sin declararlos, tailwind-merge los confunde con clases de color y hace
- * que, por ejemplo, `text-p3` pise a `text-negro-oscuro` y el botón sólido
- * quede con texto blanco sobre fondo blanco.
+ * etc. Sin declararlos, tailwind-merge los confunde con clases de color: cree
+ * que compiten con `text-blanco` y descarta el que va primero. Así el botón
+ * sólido quedaba con texto blanco sobre fondo blanco, y el menú perdía su
+ * tipografía.
+ *
+ * Cada estilo nuevo del sistema tiene que sumarse a esta lista.
  */
 const twMerge = extendTailwindMerge({
   extend: {
@@ -21,6 +24,7 @@ const twMerge = extendTailwindMerge({
             "p1",
             "p2",
             "p3",
+            "p3-bold",
             "eyebrow",
           ],
         },

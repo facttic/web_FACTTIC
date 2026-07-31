@@ -70,7 +70,7 @@ export function Header() {
                     href={enlace.href}
                     aria-current={esActiva(enlace.href) ? "page" : undefined}
                     className={cn(
-                      "text-p3 relative block py-6 transition-colors",
+                      "text-p3-bold group/item relative block py-6 transition-colors",
                       FOCO,
                       esActiva(enlace.href)
                         ? "text-blanco"
@@ -78,10 +78,20 @@ export function Header() {
                     )}
                   >
                     {enlace.etiqueta}
-                    {/* Subrayado grueso de la sección actual, como en el diseño. */}
-                    {esActiva(enlace.href) ? (
-                      <span className="absolute inset-x-0 bottom-0 h-0.5 bg-blanco" />
-                    ) : null}
+                    {/*
+                      Subrayado de la sección actual. El mismo trazo aparece al
+                      pasar el mouse, más tenue: el componente del diseño tiene
+                      una segunda variante sin usar en la maqueta, que por
+                      contexto es el hover.
+                    */}
+                    <span
+                      className={cn(
+                        "absolute inset-x-0 bottom-0 h-0.5 transition-colors",
+                        esActiva(enlace.href)
+                          ? "bg-blanco"
+                          : "bg-transparent group-hover/item:bg-blanco/40",
+                      )}
+                    />
                   </Link>
                 </li>
               ))}
