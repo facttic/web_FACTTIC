@@ -6,21 +6,25 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/cn";
 import { MENU } from "@/lib/navegacion";
 import { IconoMenu } from "@/components/ui/iconos";
-import { FOCO } from "@/components/ui/boton";
+import { BotonIdioma, FOCO } from "@/components/ui/boton";
 import { Logo } from "./logo";
 
 /**
  * Barra de navegación.
  *
- * En desktop muestra el menú completo con la sección actual subrayada; en mobile
- * se reduce al logo y un botón que despliega el menú a pantalla completa.
+ * En el diseño no es una barra aparte: va superpuesta sobre el hero, sin fondo
+ * propio, separada del contenido por una línea punteada. Al desplazarse toma un
+ * fondo con desenfoque —eso no está maquetado, pero sin ello el menú se vuelve
+ * ilegible sobre el contenido de abajo.
  *
- * El selector EN/ES del diseño no se incluye todavía: la v1 sale solo en
- * español y el contenido de la API no tiene campos por idioma.
+ * El selector EN/ES sí está en el diseño, así que se muestra, pero el botón de
+ * inglés va deshabilitado: la v1 sale solo en español porque el contenido de la
+ * API no tiene campos por idioma.
  */
 export function Header() {
   const pathname = usePathname();
   const [abierto, setAbierto] = useState(false);
+  const [desplazado, setDesplazado] = useState(false);
 
   // Cierra el menú al navegar, para que no quede tapando la página nueva.
   useEffect(() => {
@@ -35,34 +39,65 @@ export function Header() {
     };
   }, [abierto]);
 
+  useEffect(() => {
+    const alDesplazar = () => setDesplazado(window.scrollY > 8);
+    alDesplazar();
+    window.addEventListener("scroll", alDesplazar, { passive: true });
+    return () => window.removeEventListener("scroll", alDesplazar);
+  }, []);
+
   const esActiva = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-borde bg-fondo/80 backdrop-blur-md">
-      <div className="contenedor flex h-16 items-center justify-between gap-8">
+    <header
+      className={cn(
+        "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
+        desplazado || abierto
+          ? "border-b border-borde bg-fondo/85 backdrop-blur-md"
+          : "border-b border-transparent",
+      )}
+    >
+      <div className="contenedor flex h-[72px] items-center justify-between gap-8">
         <Logo />
 
-        <nav aria-label="Principal" className="hidden md:block">
-          <ul className="flex items-center gap-7">
-            {MENU.map((enlace) => (
-              <li key={enlace.href}>
-                <Link
-                  href={enlace.href}
-                  aria-current={esActiva(enlace.href) ? "page" : undefined}
-                  className={cn(
-                    "text-p3 border-b-2 pb-1 transition-colors",
-                    esActiva(enlace.href)
-                      ? "border-blanco text-blanco"
-                      : "border-transparent text-blanco/60 hover:text-blanco",
-                  )}
-                >
-                  {enlace.etiqueta}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <div className="hidden items-center gap-8 md:flex">
+          <nav aria-label="Principal">
+            <ul className="flex items-center gap-6">
+              {MENU.map((enlace) => (
+                <li key={enlace.href}>
+                  <Link
+                    href={enlace.href}
+                    aria-current={esActiva(enlace.href) ? "page" : undefined}
+                    className={cn(
+                      "text-p3 relative block py-6 transition-colors",
+                      FOCO,
+                      esActiva(enlace.href)
+                        ? "text-blanco"
+                        : "text-blanco/70 hover:text-blanco",
+                    )}
+                  >
+                    {enlace.etiqueta}
+                    {/* Subrayado grueso de la sección actual, como en el diseño. */}
+                    {esActiva(enlace.href) ? (
+                      <span className="absolute inset-x-0 bottom-0 h-0.5 bg-blanco" />
+                    ) : null}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <div className="flex items-center gap-1">
+            <BotonIdioma
+              idioma="en"
+              activo={false}
+              disabled
+              title="Próximamente"
+            />
+            <BotonIdioma idioma="es" activo />
+          </div>
+        </div>
 
         <button
           type="button"
@@ -79,10 +114,15 @@ export function Header() {
         </button>
       </div>
 
+      {/* Separador punteado entre el menú y el contenido, como en el diseño. */}
+      <div className="contenedor">
+        <div className="border-t border-dashed border-blanco/20" />
+      </div>
+
       {abierto ? (
         <div
           id="menu-mobile"
-          className="fixed inset-x-0 top-16 bottom-0 z-40 overflow-y-auto bg-fondo md:hidden"
+          className="fixed inset-x-0 top-[72px] bottom-0 z-40 overflow-y-auto bg-fondo md:hidden"
         >
           <nav aria-label="Principal" className="contenedor py-8">
             <ul className="flex flex-col">

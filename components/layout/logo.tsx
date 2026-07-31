@@ -1,13 +1,23 @@
+import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
+import { FOCO } from "@/components/ui/boton";
 
 /**
- * Wordmark FACT[TIC].
+ * Logo FACT[TIC].
  *
- * Provisorio: está compuesto tipográficamente hasta que se exporte el logo real
- * en SVG desde Figma. Se centraliza acá para que ese reemplazo sea un solo
- * cambio y no toque header, pie ni metadatos.
+ * Es el archivo del diseño, no texto: el wordmark usa una tipografía propia que
+ * no es ninguna de las dos del sitio, así que componerlo con Inter no daba igual.
+ *
+ * Se exportó del archivo de Figma a 4x. Convendría reemplazarlo por el SVG
+ * original cuando diseño lo entregue —en el archivo también está insertado como
+ * imagen, así que hay que pedirlo aparte.
  */
+
+/** Proporción del archivo: 352 × 89. */
+const ANCHO = 88;
+const ALTO = 22;
+
 export function Logo({
   className,
   href = "/",
@@ -20,12 +30,19 @@ export function Logo({
       href={href}
       aria-label="FACTTIC — inicio"
       className={cn(
-        "text-h4 font-sans tracking-tight text-blanco transition-opacity hover:opacity-70",
+        "inline-block transition-opacity hover:opacity-70",
+        FOCO,
         className,
       )}
     >
-      FACT<span className="font-normal">[</span>TIC
-      <span className="font-normal">]</span>
+      <Image
+        src="/marca/logo-facttic.png"
+        alt="FACTTIC"
+        width={ANCHO}
+        height={ALTO}
+        priority
+        className="h-[22px] w-auto"
+      />
     </Link>
   );
 }

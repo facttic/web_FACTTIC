@@ -78,8 +78,9 @@ llegue.
 - [ ] **Fondos de las páginas que no vinieron**: Sumá tu coop, Proyectos y
       Nuestra Red. La entrega trajo cinco (Home, Servicios, Sobre Facttic,
       Contacto, Error 404).
-- [ ] **Logo FACT[TIC] en SVG**, en sus variantes. Hoy está compuesto
-      tipográficamente en `components/layout/logo.tsx`.
+- [ ] **Logo FACT[TIC] en SVG**, en sus variantes. Se exportó del archivo a PNG
+      4x y ya está en uso, pero en Figma también está insertado como imagen, así
+      que el vector original hay que pedirlo aparte.
 - [ ] **Imágenes en alta** de proyectos y logos de aliados y cooperativas.
 
 ### Maquetas
