@@ -104,9 +104,11 @@ llegue.
 
 - [ ] **Menú mobile abierto** (overlay del hamburguesa). No aparece en las
       páginas Desktop ni Mobile del archivo; se resolvió con criterio propio.
-- [ ] **Estados interactivos**: hover/focus/active de botones y tarjetas,
+- [ ] **Estados interactivos** que el board no cubre: focus y active de botones,
       formulario de contacto con validación, error y éxito, y empty state de los
-      filtros de Proyectos.
+      filtros de Proyectos. Los hover de las tarjetas sí están: el board de
+      Componentes trae las dos caras de cada una, y de ahí salieron las medidas
+      y los colores.
 - [ ] **Breakpoint tablet.** Solo hay 1440 y 393.
 - [ ] **Vertical Financiero.** Hay maquetas de Organizaciones y Agro. ¿Reusa el
       template de Agro o tiene diseño propio?
