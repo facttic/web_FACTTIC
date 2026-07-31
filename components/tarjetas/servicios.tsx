@@ -90,20 +90,21 @@ export function CardServicioSiguiente({
       onClick={onClick}
       aria-label={`Ver ${titulo}`}
       className={cn(
-        // 392x360 con radio 8 en el board de Componentes.
-        "group relative min-h-90 cursor-pointer overflow-hidden rounded-lg text-left",
+        // 599x235 con radio 20 en el SVG de la Home, y borde blanco pleno.
+        // Es una caja ancha y baja, no el cuadrado de las otras tarjetas.
+        "group relative h-[235px] cursor-pointer overflow-hidden rounded-[20px] text-left",
         "border border-borde-pleno transition-colors duration-300 hover:border-transparent",
         HOVER_ACENTO[acento],
         FOCO,
         className,
       )}
     >
-      <span className="absolute inset-0 flex flex-col p-6 transition-opacity duration-300 group-hover:opacity-0">
-        <span className="text-h4 text-balance">{titulo}</span>
+      <span className="absolute inset-0 flex flex-col p-11 transition-opacity duration-300 group-hover:opacity-0">
+        <span className="text-h3 whitespace-pre-line">{titulo}</span>
       </span>
 
       <span
-        className="absolute inset-0 flex flex-col justify-between gap-8 p-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        className="absolute inset-0 flex flex-col justify-between gap-8 p-11 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         aria-hidden
       >
         {descripcion ? <span className="text-p2">{descripcion}</span> : null}

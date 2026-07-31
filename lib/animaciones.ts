@@ -30,6 +30,31 @@ export function acentoDeServicio(nombre: string): Acento | null {
   return ACENTO_POR_SERVICIO[nombre.trim().toLowerCase()] ?? null;
 }
 
+/**
+ * Nombre corto para las solapas.
+ *
+ * El diseño usa uno abreviado en las solapas ("Diseño", "Ingeniería e infra") y
+ * el completo en la tarjeta. La API solo guarda el completo, así que la
+ * abreviatura vive acá hasta que el backend sume el campo —está pedido como
+ * ítem 23 de PENDIENTES—. Sin coincidencia se usa el nombre tal cual.
+ */
+const NOMBRE_CORTO_SERVICIO: Record<string, string> = {
+  desarrollo: "Desarrollo",
+  "desarrollo de software": "Desarrollo",
+  "diseño y comunicación": "Diseño",
+  "diseño y comunicación digital": "Diseño",
+  "datos e inteligencia artificial": "IA y Datos",
+  "ia y datos": "IA y Datos",
+  "capacitación y consultoría": "Capacitación",
+  infraestructura: "Ingeniería e infra",
+  "ingeniería e infraestructura": "Ingeniería e infra",
+};
+
+export function nombreCortoDeServicio(nombre: string): string {
+  const limpio = nombre.trim();
+  return NOMBRE_CORTO_SERVICIO[limpio.toLowerCase()] ?? limpio;
+}
+
 /** Animación de cada sector, por nombre. */
 const POR_SECTOR: Record<string, string> = {
   finanzas: "sector-financiero",

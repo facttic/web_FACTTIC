@@ -69,11 +69,15 @@ export default async function HomePage() {
 
       {servicios.length ? (
         <Seccion>
-          <EncabezadoSeccion
+          {/*
+            Acá el encabezado lo arma el propio bloque: las flechas que recorren
+            los servicios van junto al título y necesitan su estado.
+          */}
+          <Servicios
             rotulo={HOME.servicios.rotulo}
             titulo={HOME.servicios.titulo}
+            servicios={servicios}
           />
-          <Servicios servicios={servicios} />
         </Seccion>
       ) : null}
 
