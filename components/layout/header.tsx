@@ -114,10 +114,11 @@ export function Header() {
         </button>
       </div>
 
-      {/* Separador punteado entre el menú y el contenido, como en el diseño. */}
-      <div className="contenedor">
-        <div className="border-t border-dashed border-blanco/20" />
-      </div>
+      {/*
+        Separador punteado entre el menú y el contenido. Va de borde a borde,
+        no acotado al contenedor: en el diseño cruza todo el ancho del frame.
+      */}
+      <div className="border-t border-dashed border-blanco/20" />
 
       {abierto ? (
         <div
