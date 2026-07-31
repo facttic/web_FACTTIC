@@ -53,10 +53,25 @@ export function getProyectos(
   })(filtros);
 }
 
-export function getProyectosDestacados(
+/**
+ * Proyectos para el bloque de destacados de la Home.
+ *
+ * Si nadie marcó ninguno como destacado en el backoffice, cae a los últimos
+ * cargados en vez de dejar el bloque vacío: es preferible mostrar trabajo real
+ * a esconder la sección porque falta una casilla tildada.
+ */
+export async function getProyectosDestacados(
   cantidad = 3,
 ): Promise<Dominio.Pagina<Dominio.Proyecto>> {
-  return getProyectos({ destacado: true, porPagina: cantidad });
+  const destacados = await getProyectos({
+    destacado: true,
+    porPagina: cantidad,
+  });
+
+  if (destacados.items.length > 0) return destacados;
+
+  // La API ya devuelve por fecha de creación descendente.
+  return getProyectos({ porPagina: cantidad });
 }
 
 /**

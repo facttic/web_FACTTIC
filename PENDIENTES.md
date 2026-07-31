@@ -59,8 +59,17 @@ llegue.
 - [ ] **20. Cargar `lottieFileName` en los sectores.** El modelo ya tiene el
       campo y diseño entregó las animaciones. Mientras tanto se sirven desde el
       repo y se resuelven por nombre de sector.
-- [ ] **21. Marcar algún proyecto como destacado.** El bloque de destacados de
-      la Home no aparece porque ningún proyecto tiene `esDestacado`.
+- [ ] **21. Limpiar los proyectos de prueba.** Se cargaron tres vía API para
+      poder ver el bloque de destacados de la Home. Son datos de prueba, hay que
+      borrarlos cuando entren los proyectos reales:
+
+      | Proyecto | id |
+      |---|---|
+      | Desarrollo de sitio web de Provincia Fondos S.A | `6a6d09bbdbeffa345bccfbe0` |
+      | Skyloop Dron en Base Autónoma | `6a6d09d2dbeffa345bccfbe1` |
+      | Optimización de Control de Calidad en Manufactura | `6a6d09d2dbeffa345bccfbe2` |
+
+      No tienen imagen cargada, así que se ven con el marcador gris.
 - [ ] **22. Corregir el `orden` de los sectores.** El prototipo los muestra como
       Organizaciones, Agro, Finanzas; la API los tiene cargados como Financiero
       (1), Agro (2), Organizaciones (3). El sitio respeta el `orden` de la API,
