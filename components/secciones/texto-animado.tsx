@@ -71,7 +71,10 @@ export function Typewriter({
    * empuja al resto del hero.
    */
   return (
-    <span aria-label={texto} className={cn("grid", className)}>
+    <span
+      aria-label={texto}
+      className={cn("grid whitespace-pre-line", className)}
+    >
       <span className="invisible col-start-1 row-start-1" aria-hidden>
         {texto}
       </span>

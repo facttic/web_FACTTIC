@@ -56,7 +56,7 @@ export function EncabezadoSeccion({
         )}
       >
         <div className="max-w-2xl">
-          <h2 className="text-h1 text-balance">{titulo}</h2>
+          <h2 className="text-h1 whitespace-pre-line text-balance">{titulo}</h2>
           {descripcion ? (
             <p className="text-p1 mt-4 text-blanco/60">{descripcion}</p>
           ) : null}

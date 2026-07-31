@@ -3,12 +3,10 @@ import { Marquesina } from "@/components/secciones/marquesina";
 import { Pasos } from "@/components/secciones/pasos";
 import { BandaCta, EncabezadoSeccion, Seccion } from "@/components/ui/seccion";
 import { BotonLink } from "@/components/ui/boton";
-import { Tabs } from "@/components/ui/tabs";
+import { Servicios } from "@/components/secciones/servicios";
 import { CardSector } from "@/components/tarjetas/sector";
-import { CardServicio } from "@/components/tarjetas/servicios";
 import { CardProyecto } from "@/components/tarjetas/proyecto";
 import { CardBeneficio, CardMetrica } from "@/components/tarjetas/bloques";
-import { acentoPorIndice } from "@/components/ui/acento";
 import { Animacion } from "@/components/ui/animacion";
 import { FONDOS, VIDEO_HERO } from "@/lib/animaciones";
 import { HOME } from "@/lib/contenido";
@@ -75,28 +73,7 @@ export default async function HomePage() {
             rotulo={HOME.servicios.rotulo}
             titulo={HOME.servicios.titulo}
           />
-          <Tabs
-            solapas={servicios.map((servicio, i) => ({
-              id: servicio.id,
-              etiqueta: servicio.nombre,
-              contenido: (
-                <div className="grid gap-6 md:grid-cols-2">
-                  <CardServicio
-                    titulo={servicio.nombre}
-                    acento={acentoPorIndice(i)}
-                    descripcion={servicio.descripcion}
-                  />
-                  {servicio.subservicios.length ? (
-                    <CardServicio
-                      titulo={servicio.subservicios
-                        .map((sub) => sub.nombre)
-                        .join(" · ")}
-                    />
-                  ) : null}
-                </div>
-              ),
-            }))}
-          />
+          <Servicios servicios={servicios} />
         </Seccion>
       ) : null}
 
@@ -124,7 +101,7 @@ export default async function HomePage() {
               </BotonLink>
             }
           />
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-[1.7fr_1fr]">
             {destacados.items.map((proyecto) => (
               <CardProyecto key={proyecto.id} proyecto={proyecto} />
             ))}
@@ -165,7 +142,10 @@ export default async function HomePage() {
               key={beneficio.titulo}
               titulo={beneficio.titulo}
               ilustracion={
-                <Animacion nombre={beneficio.animacion} className="size-24" />
+                <Animacion
+                  nombre={beneficio.animacion}
+                  className="size-[70px]"
+                />
               }
             />
           ))}

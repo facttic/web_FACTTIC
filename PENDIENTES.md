@@ -61,6 +61,14 @@ llegue.
       repo y se resuelven por nombre de sector.
 - [ ] **21. Marcar algún proyecto como destacado.** El bloque de destacados de
       la Home no aparece porque ningún proyecto tiene `esDestacado`.
+- [ ] **22. Corregir el `orden` de los sectores.** El prototipo los muestra como
+      Organizaciones, Agro, Finanzas; la API los tiene cargados como Financiero
+      (1), Agro (2), Organizaciones (3). El sitio respeta el `orden` de la API,
+      así que se arregla desde el backoffice.
+- [ ] **23. Nombre corto para los servicios.** Las solapas del diseño dicen
+      "Diseño", "IA y Datos", "Ingeniería e infra", mientras que las tarjetas
+      usan el nombre completo. La API solo tiene el completo, así que hoy se usa
+      ese en los dos lugares y las solapas quedan largas.
 
 ---
 

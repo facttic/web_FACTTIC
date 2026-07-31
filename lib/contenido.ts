@@ -12,7 +12,8 @@ import type { Acento } from "@/components/ui/acento";
 
 export const HOME = {
   hero: {
-    titulo: "Desarrollá tu proyecto con cooperativas",
+    // El diseño quiebra el título en tres líneas exactas.
+    titulo: "Desarrollá\ntu proyecto\ncon cooperativas",
     bajada:
       "Una red federal de cooperativas de tecnología, innovación y conocimiento que diseña, desarrolla e implementa soluciones digitales",
     cta: { texto: "Trabajá con FACTTIC", href: "/contacto" },
@@ -20,7 +21,7 @@ export const HOME = {
 
   sectores: {
     rotulo: "Industrias",
-    titulo: "Sectores con los que trabajamos",
+    titulo: "Sectores\ncon los que trabajamos",
   },
 
   servicios: {
