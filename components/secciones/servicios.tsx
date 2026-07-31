@@ -3,11 +3,9 @@
 import { useId, useState } from "react";
 import { cn } from "@/lib/cn";
 import { BotonFlecha, FOCO } from "@/components/ui/boton";
-import {
-  CardServicio,
-  CardServicioSiguiente,
-} from "@/components/tarjetas/servicios";
+import { CardServicioSiguiente } from "@/components/tarjetas/servicios";
 import { acentoPorIndice } from "@/components/ui/acento";
+import { acentoDeServicio } from "@/lib/animaciones";
 import type { Servicio } from "@/lib/dominio/tipos";
 
 /**
@@ -94,25 +92,23 @@ export function Servicios({
         aria-labelledby={`${baseId}-tab-${servicioActivo.id}`}
         className="mt-8 grid gap-6 md:grid-cols-2"
       >
-        <CardServicio
-          titulo={servicioActivo.nombre}
-          acento={acentoPorIndice(activo)}
-          descripcion={
-            servicioActivo.descripcion ??
-            servicioActivo.subservicios.map((s) => s.nombre).join(" · ")
-          }
-        />
-        {servicios.length > 1 ? (
+        {[servicioActivo, siguiente].map((servicio, i) => (
           <CardServicioSiguiente
-            titulo={siguiente.nombre}
-            acento={acentoPorIndice((activo + 1) % servicios.length)}
-            descripcion={
-              siguiente.descripcion ??
-              siguiente.subservicios.map((s) => s.nombre).join(" · ")
+            key={`${servicio.id}-${i}`}
+            titulo={servicio.nombre}
+            acento={
+              acentoDeServicio(servicio.nombre) ??
+              acentoPorIndice(servicios.indexOf(servicio))
             }
-            onClick={() => setActivo((i) => (i + 1) % servicios.length)}
+            descripcion={
+              servicio.descripcion ??
+              servicio.subservicios.map((sub) => sub.nombre).join(" · ")
+            }
+            onClick={() =>
+              setActivo(i === 0 ? activo : (activo + 1) % servicios.length)
+            }
           />
-        ) : null}
+        ))}
       </div>
     </div>
   );

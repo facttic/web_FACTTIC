@@ -1,3 +1,5 @@
+import type { Acento } from "@/components/ui/acento";
+
 /**
  * Animaciones entregadas por diseño (carpeta de Drive "Entrega 5").
  *
@@ -6,6 +8,27 @@
  * `lottieFileName` —que el modelo de Sector ya tiene— esto pasa a salir de ahí y
  * este mapa se puede borrar.
  */
+
+/**
+ * Color de cada servicio, tomado del board de Componentes: cada uno tiene el
+ * suyo y no depende de la posición en la lista. Los que no estén acá caen al
+ * ciclo general de acentos.
+ */
+const ACENTO_POR_SERVICIO: Record<string, Acento> = {
+  desarrollo: "azul",
+  "desarrollo de software": "azul",
+  "diseño y comunicación": "celeste",
+  "diseño y comunicación digital": "celeste",
+  "datos e inteligencia artificial": "naranja",
+  "ia y datos": "naranja",
+  "capacitación y consultoría": "lila",
+  infraestructura: "verde",
+  "ingeniería e infraestructura": "verde",
+};
+
+export function acentoDeServicio(nombre: string): Acento | null {
+  return ACENTO_POR_SERVICIO[nombre.trim().toLowerCase()] ?? null;
+}
 
 /** Animación de cada sector, por nombre. */
 const POR_SECTOR: Record<string, string> = {
