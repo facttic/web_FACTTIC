@@ -46,7 +46,7 @@ export function CardBeneficioHover({
     <div
       className={cn(
         "group relative overflow-hidden rounded-xl border border-borde bg-superficie",
-        "transition-colors duration-300 group-hover:border-transparent",
+        "transition-colors duration-300 hover:border-transparent",
         HOVER_ACENTO[acento],
         ALTO_BENEFICIO,
         className,

@@ -13,17 +13,23 @@ export type Acento = 'lila' | 'celeste' | 'naranja' | 'amarillo' | 'verde' | 'ro
 
 /**
  * Variante al pasar el mouse, para las tarjetas que se pintan recién en hover.
- * Va aparte porque Tailwind necesita ver la clase completa en el código y no
- * puede armarla concatenando el prefijo.
+ *
+ * Va con `hover:` y no con `group-hover:` porque se aplica sobre el mismo
+ * elemento que lleva la clase `group`: `group-hover` solo alcanza a los
+ * descendientes, así que ahí no pintaba nada. Las capas de adentro sí usan
+ * `group-hover` para cruzarse en opacidad.
+ *
+ * Está escrito como clases completas porque Tailwind necesita verlas literales
+ * en el código y no puede armarlas concatenando el prefijo.
  */
 export const HOVER_ACENTO: Record<Acento, string> = {
-  lila: "group-hover:bg-lila group-hover:text-negro-oscuro",
-  celeste: "group-hover:bg-celeste group-hover:text-negro-oscuro",
-  naranja: "group-hover:bg-naranja group-hover:text-negro-oscuro",
-  amarillo: "group-hover:bg-amarillo group-hover:text-negro-oscuro",
-  verde: "group-hover:bg-verde group-hover:text-negro-oscuro",
-  rojo: "group-hover:bg-rojo group-hover:text-negro-oscuro",
-  azul: "group-hover:bg-azul group-hover:text-blanco",
+  lila: "hover:bg-lila hover:text-negro-oscuro",
+  celeste: "hover:bg-celeste hover:text-negro-oscuro",
+  naranja: "hover:bg-naranja hover:text-negro-oscuro",
+  amarillo: "hover:bg-amarillo hover:text-negro-oscuro",
+  verde: "hover:bg-verde hover:text-negro-oscuro",
+  rojo: "hover:bg-rojo hover:text-negro-oscuro",
+  azul: "hover:bg-azul hover:text-blanco",
 };
 
 export const FONDO_ACENTO: Record<Acento, string> = {
