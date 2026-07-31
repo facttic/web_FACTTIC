@@ -1,0 +1,66 @@
+import type { ReactNode } from 'react'
+import { cn } from '@/lib/cn'
+
+/**
+ * Etiqueta de sector o categoría.
+ *
+ * En el diseño cada sector tiene su color: Finanzas en rojo, Organizaciones en
+ * amarillo y Agro en celeste, siempre sobre un fondo tenue del mismo tono. El
+ * color se resuelve por nombre para que los datos de la API —que solo traen el
+ * nombre del sector— pinten solos.
+ */
+
+type Tono = 'rojo' | 'amarillo' | 'celeste' | 'lila' | 'naranja' | 'neutro'
+
+const TONOS: Record<Tono, string> = {
+  rojo: 'bg-rojo/15 text-rojo',
+  amarillo: 'bg-amarillo/15 text-amarillo',
+  celeste: 'bg-celeste/15 text-celeste',
+  lila: 'bg-lila/15 text-lila',
+  naranja: 'bg-naranja/15 text-naranja',
+  neutro: 'bg-superficie-alta/70 text-blanco',
+}
+
+/** Mapa de sector a tono, según los colores que usa el diseño. */
+const TONO_POR_SECTOR: Record<string, Tono> = {
+  finanzas: 'rojo',
+  financiero: 'rojo',
+  organizaciones: 'amarillo',
+  agro: 'celeste',
+}
+
+export function tonoDeSector(nombre: string | undefined): Tono {
+  if (!nombre) return 'neutro'
+  return TONO_POR_SECTOR[nombre.trim().toLowerCase()] ?? 'neutro'
+}
+
+export function Chip({
+  children,
+  tono = 'neutro',
+  className,
+}: {
+  children: ReactNode
+  tono?: Tono
+  className?: string
+}) {
+  return (
+    <span
+      className={cn(
+        'text-p3 inline-flex items-center rounded px-2 py-1 font-medium',
+        TONOS[tono],
+        className
+      )}
+    >
+      {children}
+    </span>
+  )
+}
+
+/** Chip de sector que elige su color a partir del nombre. */
+export function ChipSector({ nombre, className }: { nombre: string; className?: string }) {
+  return (
+    <Chip tono={tonoDeSector(nombre)} className={className}>
+      {nombre}
+    </Chip>
+  )
+}

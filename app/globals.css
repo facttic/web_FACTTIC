@@ -1,26 +1,159 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/**
+ * Design system de FACTTIC.
+ *
+ * Los valores están relevados del archivo de Figma "Facttic_ Web", que define
+ * los tokens como estilos nombrados (no usa variables de Figma). Los nombres de
+ * color son los del archivo, para que el código y el diseño se puedan hablar.
+ *
+ * El sitio es oscuro por diseño: no hay tema claro en las maquetas.
+ */
+
+@theme {
+  /* Paleta — nombres tal como figuran en Figma */
+  --color-azul: #0067b2;
+  --color-celeste: #57c3c8;
+  --color-lila: #d6bbf2;
+  --color-naranja: #ff522a;
+  --color-rojo: #ff6b7a;
+  --color-amarillo: #e5f280;
+  --color-verde: #8e8001;
+  --color-gris-oscuro: #3c3c3c;
+  --color-negro: #222222;
+  --color-negro-oscuro: #101010;
+  --color-blanco: #f2f2f2;
+
+  /* Roles semánticos, para no escribir el nombre del color en cada componente */
+  --color-fondo: var(--color-negro-oscuro);
+  --color-superficie: var(--color-negro);
+  --color-superficie-alta: var(--color-gris-oscuro);
+  --color-texto: var(--color-blanco);
+  --color-borde: #2e2e2e;
+
+  /* Tipografías: Inter para títulos, DM Mono para cuerpo e interfaz */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-dm-mono), ui-monospace, monospace;
+
+  /* Ancho del contenedor: 1226px sobre un frame de 1440 (márgenes de ~107px) */
+  --spacing-contenedor: 1226px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/**
+ * Escala tipográfica.
+ *
+ * Cada estilo tiene su variante mobile y desktop tal como están definidas en
+ * Figma; el corte va en 768px. Los tamaños se expresan en px porque así están
+ * en el diseño y el sitio no ofrece escalado tipográfico propio.
+ */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@utility text-display {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+
+  @media (width >= 768px) {
+    font-size: 56px;
+    line-height: 56.6px;
   }
 }
 
+@utility text-h1 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 36.3px;
+
+  @media (width >= 768px) {
+    font-size: 40px;
+    line-height: 1.1;
+  }
+}
+
+@utility text-h2 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 1.15;
+
+  @media (width >= 768px) {
+    font-size: 30px;
+  }
+}
+
+@utility text-h3 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+@utility text-h4 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+/* Cuerpo. P1 es el párrafo de lectura; P2 y P3, texto de apoyo e interfaz. */
+@utility text-p1 {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  line-height: 23.8px;
+}
+
+@utility text-p2 {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@utility text-p3 {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/**
+ * Rótulo de sección ("INDUSTRIAS", "SERVICIOS", "PROYECTOS"): va en Inter, no en
+ * mono, y aparece arriba de cada título en todas las pantallas.
+ */
+@utility text-eyebrow {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/** Listas que se desplazan de costado en mobile sin mostrar la barra. */
+@utility scroll-limpio {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/** Ancho de contenido, centrado, con los márgenes del diseño. */
+@utility contenedor {
+  width: 100%;
+  max-width: calc(var(--spacing-contenedor) + 2 * --spacing(6));
+  margin-inline: auto;
+  padding-inline: --spacing(6);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  font-family: var(--font-mono);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-lila);
+  color: var(--color-negro-oscuro);
 }
