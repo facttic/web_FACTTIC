@@ -9,6 +9,8 @@ import { CardServicio } from "@/components/tarjetas/servicios";
 import { CardProyecto } from "@/components/tarjetas/proyecto";
 import { CardBeneficio, CardMetrica } from "@/components/tarjetas/bloques";
 import { acentoPorIndice } from "@/components/ui/acento";
+import { Animacion } from "@/components/ui/animacion";
+import { FONDOS, VIDEO_HERO } from "@/lib/animaciones";
 import { HOME } from "@/lib/contenido";
 import {
   getMetricasRed,
@@ -42,6 +44,9 @@ export default async function HomePage() {
         titulo={HOME.hero.titulo}
         bajada={HOME.hero.bajada}
         accion={HOME.hero.cta}
+        video={VIDEO_HERO.desktop}
+        videoMobile={VIDEO_HERO.mobile}
+        imagen={VIDEO_HERO.poster}
       />
 
       {sectores.length ? (
@@ -136,7 +141,13 @@ export default async function HomePage() {
         </Seccion>
       ) : null}
 
-      <Marquesina texto={HOME.lema} />
+      <div className="relative isolate">
+        <Animacion
+          nombre={FONDOS.homeLema}
+          className="pointer-events-none absolute top-1/2 left-1/2 -z-10 size-[36rem] -translate-x-1/2 -translate-y-1/2 opacity-40"
+        />
+        <Marquesina texto={HOME.lema} />
+      </div>
 
       <Seccion>
         <EncabezadoSeccion
@@ -150,7 +161,13 @@ export default async function HomePage() {
         />
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {HOME.beneficios.items.map((beneficio) => (
-            <CardBeneficio key={beneficio.titulo} titulo={beneficio.titulo} />
+            <CardBeneficio
+              key={beneficio.titulo}
+              titulo={beneficio.titulo}
+              ilustracion={
+                <Animacion nombre={beneficio.animacion} className="size-24" />
+              }
+            />
           ))}
         </div>
       </Seccion>

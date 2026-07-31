@@ -68,24 +68,28 @@ export const HOME = {
     items: [
       {
         titulo: "Continuidad de trabajo",
+        animacion: "beneficio-continuidad",
         descripcion:
           "Accedés a una red que redistribuye oportunidades y sostiene la actividad en el tiempo",
         acento: "rojo" as Acento,
       },
       {
         titulo: "Colaboración real, no competencia",
+        animacion: "beneficio-colaboracion",
         descripcion:
           "Colaborás con otras cooperativas, compartís conocimiento y armás equipos",
         acento: "azul" as Acento,
       },
       {
         titulo: "Autonomía con respaldo colectivo",
+        animacion: "beneficio-autonomia",
         descripcion:
           "Mantenés tu independencia como cooperativa, pero con capacidad de red",
         acento: "verde" as Acento,
       },
       {
         titulo: "Trabajo con impacto y propósito",
+        animacion: "beneficio-trabajo",
         descripcion:
           "Formás parte de proyectos que mejoran la calidad de vida de las personas",
         acento: "naranja" as Acento,

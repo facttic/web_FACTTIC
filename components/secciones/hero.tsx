@@ -24,6 +24,7 @@ export function Hero({
   bajada,
   accion,
   video,
+  videoMobile,
   imagen,
   className,
 }: {
@@ -32,6 +33,8 @@ export function Hero({
   accion?: { texto: string; href: string };
   /** Video de fondo; se reproduce en silencio y en bucle. */
   video?: string;
+  /** Corte vertical para pantallas chicas. */
+  videoMobile?: string;
   /** Imagen de fondo, o póster del video mientras carga. */
   imagen?: string;
   className?: string;
@@ -42,15 +45,29 @@ export function Hero({
         {video ? (
           <video
             className="absolute inset-0 -z-10 size-full object-cover"
-            src={video}
             poster={imagen}
             autoPlay
             muted
             loop
             playsInline
+            preload="metadata"
             // Decorativo: el contenido está en el título y la bajada.
             aria-hidden
-          />
+          >
+            {/*
+             * Dos cortes distintos, no el mismo video escalado: el de mobile es
+             * vertical y el de desktop apaisado. El navegador elige por media
+             * query y descarga solo uno.
+             */}
+            {videoMobile ? (
+              <source
+                src={videoMobile}
+                media="(max-width: 767px)"
+                type="video/mp4"
+              />
+            ) : null}
+            <source src={video} type="video/mp4" />
+          </video>
         ) : imagen ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img

@@ -4,6 +4,8 @@ import { cn } from "@/lib/cn";
 import { Tarjeta } from "@/components/ui/seccion";
 import { IconoFlecha } from "@/components/ui/iconos";
 import { FOCO } from "@/components/ui/boton";
+import { Animacion } from "@/components/ui/animacion";
+import { animacionDeSector } from "@/lib/animaciones";
 import type { Sector } from "@/lib/dominio/tipos";
 
 /**
@@ -14,8 +16,17 @@ import type { Sector } from "@/lib/dominio/tipos";
  * verticales, con el título grande, un separador y "Ver más".
  */
 
-/** Ilustración del sector, o un marcador si todavía no está cargada. */
+/**
+ * Ilustración del sector. Prefiere la animación de diseño; si no hay, cae a la
+ * imagen que tenga cargada la API, y por último a un marcador.
+ */
 function Ilustracion({ sector }: { sector: Sector }) {
+  const animacion = animacionDeSector(sector.nombre);
+
+  if (animacion) {
+    return <Animacion nombre={animacion} className="aspect-square w-full" />;
+  }
+
   if (!sector.imagen) {
     return (
       <div className="aspect-square w-full rounded-lg bg-superficie-alta/30" />
