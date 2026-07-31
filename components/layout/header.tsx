@@ -1,11 +1,13 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { cn } from '@/lib/cn'
-import { MENU } from '@/lib/navegacion'
-import { Logo } from './logo'
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/cn";
+import { MENU } from "@/lib/navegacion";
+import { IconoMenu } from "@/components/ui/iconos";
+import { FOCO } from "@/components/ui/boton";
+import { Logo } from "./logo";
 
 /**
  * Barra de navegación.
@@ -17,23 +19,24 @@ import { Logo } from './logo'
  * español y el contenido de la API no tiene campos por idioma.
  */
 export function Header() {
-  const pathname = usePathname()
-  const [abierto, setAbierto] = useState(false)
+  const pathname = usePathname();
+  const [abierto, setAbierto] = useState(false);
 
   // Cierra el menú al navegar, para que no quede tapando la página nueva.
   useEffect(() => {
-    setAbierto(false)
-  }, [pathname])
+    setAbierto(false);
+  }, [pathname]);
 
   // Con el menú desplegado, la página de atrás no debe desplazarse.
   useEffect(() => {
-    document.body.style.overflow = abierto ? 'hidden' : ''
+    document.body.style.overflow = abierto ? "hidden" : "";
     return () => {
-      document.body.style.overflow = ''
-    }
-  }, [abierto])
+      document.body.style.overflow = "";
+    };
+  }, [abierto]);
 
-  const esActiva = (href: string) => pathname === href || pathname.startsWith(`${href}/`)
+  const esActiva = (href: string) =>
+    pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <header className="sticky top-0 z-50 border-b border-borde bg-fondo/80 backdrop-blur-md">
@@ -46,12 +49,12 @@ export function Header() {
               <li key={enlace.href}>
                 <Link
                   href={enlace.href}
-                  aria-current={esActiva(enlace.href) ? 'page' : undefined}
+                  aria-current={esActiva(enlace.href) ? "page" : undefined}
                   className={cn(
-                    'text-p3 border-b-2 pb-1 transition-colors',
+                    "text-p3 border-b-2 pb-1 transition-colors",
                     esActiva(enlace.href)
-                      ? 'border-blanco text-blanco'
-                      : 'border-transparent text-blanco/60 hover:text-blanco'
+                      ? "border-blanco text-blanco"
+                      : "border-transparent text-blanco/60 hover:text-blanco",
                   )}
                 >
                   {enlace.etiqueta}
@@ -66,26 +69,13 @@ export function Header() {
           onClick={() => setAbierto((v) => !v)}
           aria-expanded={abierto}
           aria-controls="menu-mobile"
-          aria-label={abierto ? 'Cerrar menú' : 'Abrir menú'}
-          className="-mr-2 grid size-10 cursor-pointer place-items-center md:hidden"
+          aria-label={abierto ? "Cerrar menú" : "Abrir menú"}
+          className={cn(
+            "-mr-2 grid size-10 cursor-pointer place-items-center md:hidden",
+            FOCO,
+          )}
         >
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden className="size-6">
-            {abierto ? (
-              <path
-                d="M6 6l12 12M18 6L6 18"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-            ) : (
-              <path
-                d="M3 7h18M3 12h18M3 17h18"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-            )}
-          </svg>
+          <IconoMenu abierto={abierto} />
         </button>
       </div>
 
@@ -100,10 +90,10 @@ export function Header() {
                 <li key={enlace.href} className="border-b border-borde">
                   <Link
                     href={enlace.href}
-                    aria-current={esActiva(enlace.href) ? 'page' : undefined}
+                    aria-current={esActiva(enlace.href) ? "page" : undefined}
                     className={cn(
-                      'text-h3 block py-5 transition-colors',
-                      esActiva(enlace.href) ? 'text-blanco' : 'text-blanco/60'
+                      "text-h3 block py-5 transition-colors",
+                      esActiva(enlace.href) ? "text-blanco" : "text-blanco/60",
                     )}
                   >
                     {enlace.etiqueta}
@@ -115,5 +105,5 @@ export function Header() {
         </div>
       ) : null}
     </header>
-  )
+  );
 }

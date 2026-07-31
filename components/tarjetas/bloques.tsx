@@ -1,7 +1,8 @@
-import Link from 'next/link'
-import type { ReactNode } from 'react'
-import { cn } from '@/lib/cn'
-import { FONDO_ACENTO, type Acento } from '@/components/ui/acento'
+import type { ReactNode } from "react";
+import { cn } from "@/lib/cn";
+import { FONDO_ACENTO, type Acento } from "@/components/ui/acento";
+import { Tarjeta } from "@/components/ui/seccion";
+import { BotonTexto } from "@/components/ui/boton";
 
 /**
  * Bloques de contenido que se repiten a lo largo del sitio: beneficios,
@@ -21,26 +22,34 @@ export function CardBeneficio({
   acento,
   className,
 }: {
-  titulo: ReactNode
-  descripcion?: ReactNode
-  ilustracion?: ReactNode
-  acento?: Acento
-  className?: string
+  titulo: ReactNode;
+  descripcion?: ReactNode;
+  ilustracion?: ReactNode;
+  acento?: Acento;
+  className?: string;
 }) {
   if (acento) {
     return (
-      <div className={cn('flex flex-col gap-8 rounded-xl p-6', FONDO_ACENTO[acento], className)}>
+      <div
+        className={cn(
+          "flex flex-col gap-8 rounded-xl p-6",
+          FONDO_ACENTO[acento],
+          className,
+        )}
+      >
         <h3 className="text-h4 text-balance">{titulo}</h3>
-        {descripcion ? <p className="text-p2 opacity-80">{descripcion}</p> : null}
+        {descripcion ? (
+          <p className="text-p2 opacity-80">{descripcion}</p>
+        ) : null}
       </div>
-    )
+    );
   }
 
   return (
-    <div
+    <Tarjeta
       className={cn(
-        'flex flex-col items-center gap-6 rounded-xl border border-borde bg-superficie p-6 text-center',
-        className
+        "flex flex-col items-center gap-6 p-6 text-center",
+        className,
       )}
     >
       {ilustracion ? (
@@ -49,9 +58,11 @@ export function CardBeneficio({
         <div className="h-24" />
       )}
       <h3 className="text-h4 text-balance">{titulo}</h3>
-      {descripcion ? <p className="text-p2 text-blanco/60">{descripcion}</p> : null}
-    </div>
-  )
+      {descripcion ? (
+        <p className="text-p2 text-blanco/60">{descripcion}</p>
+      ) : null}
+    </Tarjeta>
+  );
 }
 
 /**
@@ -64,23 +75,27 @@ export function CardMetrica({
   acento,
   className,
 }: {
-  rotulo: string
-  valor: ReactNode
-  acento?: Acento
-  className?: string
+  rotulo: string;
+  valor: ReactNode;
+  acento?: Acento;
+  className?: string;
 }) {
   return (
     <div
       className={cn(
-        'flex min-h-52 flex-col justify-between rounded-xl p-6',
-        acento ? FONDO_ACENTO[acento] : 'bg-superficie-alta text-blanco',
-        className
+        "flex min-h-52 flex-col justify-between rounded-xl p-6",
+        acento ? FONDO_ACENTO[acento] : "bg-superficie-alta text-blanco",
+        className,
       )}
     >
-      <p className={cn('text-eyebrow', acento ? 'opacity-70' : 'text-blanco/70')}>{rotulo}</p>
+      <p
+        className={cn("text-eyebrow", acento ? "opacity-70" : "text-blanco/70")}
+      >
+        {rotulo}
+      </p>
       <p className="text-display">{valor}</p>
     </div>
-  )
+  );
 }
 
 /**
@@ -95,21 +110,21 @@ export function CardOportunidad({
   acento,
   className,
 }: {
-  indice: number
-  pregunta: ReactNode
-  descripcion: ReactNode
-  enlace?: { texto: string; href: string }
-  acento: Acento
-  className?: string
+  indice: number;
+  pregunta: ReactNode;
+  descripcion: ReactNode;
+  enlace?: { texto: string; href: string };
+  acento: Acento;
+  className?: string;
 }) {
-  const numero = String(indice + 1).padStart(2, '0')
+  const numero = String(indice + 1).padStart(2, "0");
 
   return (
-    <div className={cn('flex flex-col gap-4', className)}>
+    <div className={cn("flex flex-col gap-4", className)}>
       <div
         className={cn(
-          'flex aspect-square flex-col justify-between rounded-xl p-6',
-          FONDO_ACENTO[acento]
+          "flex aspect-square flex-col justify-between rounded-xl p-6",
+          FONDO_ACENTO[acento],
         )}
       >
         <p className="text-h4">{numero}.</p>
@@ -122,15 +137,12 @@ export function CardOportunidad({
         {enlace ? (
           <>
             <div className="mt-8 border-t border-blanco/20" />
-            <Link
-              href={enlace.href}
-              className="text-p3 mt-4 text-blanco/70 transition-colors hover:text-blanco"
-            >
+            <BotonTexto href={enlace.href} className="mt-4">
               {enlace.texto}
-            </Link>
+            </BotonTexto>
           </>
         ) : null}
       </div>
     </div>
-  )
+  );
 }

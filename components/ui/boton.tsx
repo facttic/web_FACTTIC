@@ -1,6 +1,7 @@
-import Link from 'next/link'
-import type { ComponentProps, ReactNode } from 'react'
-import { cn } from '@/lib/cn'
+import Link from "next/link";
+import type { ComponentProps, ReactNode } from "react";
+import { cn } from "@/lib/cn";
+import { IconoFlecha } from "./iconos";
 
 /**
  * Botón del sistema.
@@ -10,98 +11,151 @@ import { cn } from '@/lib/cn'
  * punteado sobre fondo transparente, y al pasar el mouse se rellenan.
  */
 
-type Variante = 'punteada' | 'solida' | 'contorno' | 'sutil' | 'acento'
-type Tamano = 'sm' | 'md'
+type Variante = "punteada" | "solida" | "contorno" | "sutil" | "acento";
+type Tamano = "sm" | "md";
 
 const VARIANTES: Record<Variante, string> = {
   punteada:
-    'border border-dashed border-blanco/50 text-blanco hover:border-solid hover:bg-blanco hover:text-negro-oscuro',
-  solida: 'bg-blanco text-negro-oscuro hover:bg-blanco/85',
-  contorno: 'border border-blanco/60 text-blanco hover:bg-blanco hover:text-negro-oscuro',
-  sutil: 'bg-superficie-alta/60 text-blanco hover:bg-superficie-alta',
-  acento: 'border border-naranja text-naranja hover:bg-naranja hover:text-negro-oscuro',
-}
+    "border border-dashed border-blanco/50 text-blanco hover:border-solid hover:bg-blanco hover:text-negro-oscuro",
+  solida: "bg-blanco text-negro-oscuro hover:bg-blanco/85",
+  contorno:
+    "border border-blanco/60 text-blanco hover:bg-blanco hover:text-negro-oscuro",
+  sutil: "bg-superficie-alta/60 text-blanco hover:bg-superficie-alta",
+  acento:
+    "border border-naranja text-naranja hover:bg-naranja hover:text-negro-oscuro",
+};
 
 const TAMANOS: Record<Tamano, string> = {
-  sm: 'h-9 px-4 text-p3',
-  md: 'h-11 px-5 text-p3',
-}
+  sm: "h-9 px-4 text-p3",
+  md: "h-11 px-5 text-p3",
+};
+
+/** Anillo de foco compartido por todo lo interactivo. */
+export const FOCO =
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lila";
 
 const BASE =
-  'inline-flex items-center justify-center gap-2 rounded-lg font-mono whitespace-nowrap ' +
-  'transition-colors duration-200 cursor-pointer ' +
-  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lila ' +
-  'disabled:pointer-events-none disabled:opacity-40'
+  "inline-flex items-center justify-center gap-2 rounded-lg font-mono whitespace-nowrap " +
+  `transition-colors duration-200 cursor-pointer ${FOCO} ` +
+  "disabled:pointer-events-none disabled:opacity-40";
 
 interface BotonBaseProps {
-  variante?: Variante
-  tamano?: Tamano
-  children: ReactNode
-  className?: string
+  variante?: Variante;
+  tamano?: Tamano;
+  children: ReactNode;
+  className?: string;
 }
 
 export function Boton({
-  variante = 'punteada',
-  tamano = 'md',
+  variante = "punteada",
+  tamano = "md",
   className,
   ...props
-}: BotonBaseProps & ComponentProps<'button'>) {
+}: BotonBaseProps & ComponentProps<"button">) {
   return (
     <button
       className={cn(BASE, VARIANTES[variante], TAMANOS[tamano], className)}
       {...props}
     />
-  )
+  );
 }
 
 export function BotonLink({
-  variante = 'punteada',
-  tamano = 'md',
+  variante = "punteada",
+  tamano = "md",
   className,
   ...props
 }: BotonBaseProps & ComponentProps<typeof Link>) {
   return (
-    <Link className={cn(BASE, VARIANTES[variante], TAMANOS[tamano], className)} {...props} />
-  )
+    <Link
+      className={cn(BASE, VARIANTES[variante], TAMANOS[tamano], className)}
+      {...props}
+    />
+  );
 }
 
 /**
- * Botón circular de navegación de carrusel. En el diseño, el que no se puede
+ * Enlace sin caja, solo texto con una flecha. Se usa dentro de tarjetas, donde
+ * un botón con borde competiría con el borde de la propia tarjeta.
+ */
+export function BotonTexto({
+  children,
+  conFlecha = true,
+  className,
+  ...props
+}: { children: ReactNode; conFlecha?: boolean } & ComponentProps<typeof Link>) {
+  return (
+    <Link
+      className={cn(
+        "text-p3 group/enlace inline-flex items-center gap-2 font-mono text-blanco/70",
+        `transition-colors hover:text-blanco ${FOCO}`,
+        className,
+      )}
+      {...props}
+    >
+      {children}
+      {conFlecha ? (
+        <IconoFlecha className="size-4 transition-transform group-hover/enlace:translate-x-1" />
+      ) : null}
+    </Link>
+  );
+}
+
+/**
+ * Selector de idioma. Está construido pero no se usa todavía: la v1 sale solo
+ * en español porque el contenido de la API no tiene campos por idioma.
+ */
+export function BotonIdioma({
+  idioma,
+  activo,
+  className,
+  ...props
+}: { idioma: string; activo: boolean } & ComponentProps<"button">) {
+  return (
+    <button
+      type="button"
+      aria-pressed={activo}
+      className={cn(
+        "text-p3 size-10 cursor-pointer rounded-lg font-mono uppercase transition-colors",
+        FOCO,
+        activo
+          ? "bg-blanco text-negro-oscuro"
+          : "border border-dashed border-blanco/40 text-blanco/60 hover:text-blanco",
+        className,
+      )}
+      {...props}
+    >
+      {idioma}
+    </button>
+  );
+}
+
+/**
+ * Botón cuadrado de navegación de carrusel. En el diseño, el que no se puede
  * usar queda punteado y el activo va sólido.
  */
 export function BotonFlecha({
   direccion,
   className,
   ...props
-}: { direccion: 'anterior' | 'siguiente' } & ComponentProps<'button'>) {
+}: { direccion: "anterior" | "siguiente" } & ComponentProps<"button">) {
   return (
     <button
-      aria-label={direccion === 'anterior' ? 'Anterior' : 'Siguiente'}
+      aria-label={direccion === "anterior" ? "Anterior" : "Siguiente"}
       className={cn(
-        'grid size-11 place-items-center rounded-lg transition-colors duration-200',
-        'border border-dashed border-blanco/50 text-blanco cursor-pointer',
-        'enabled:hover:border-solid enabled:hover:bg-blanco enabled:hover:text-negro-oscuro',
-        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lila',
-        'disabled:opacity-30 disabled:pointer-events-none',
-        className
+        "grid size-11 cursor-pointer place-items-center rounded-lg transition-colors duration-200",
+        "border border-dashed border-blanco/50 text-blanco",
+        "enabled:hover:border-solid enabled:hover:bg-blanco enabled:hover:text-negro-oscuro",
+        "disabled:pointer-events-none disabled:opacity-30",
+        FOCO,
+        className,
       )}
       {...props}
     >
-      <svg viewBox="0 0 20 20" fill="none" className="size-4" aria-hidden>
-        <path
-          d={direccion === 'anterior' ? 'M12 4L6 10l6 6' : 'M8 4l6 6-6 6'}
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d={direccion === 'anterior' ? 'M6 10h9' : 'M14 10H5'}
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
+      <IconoFlecha
+        direccion={direccion === "anterior" ? "izquierda" : "derecha"}
+        className="size-4"
+      />
     </button>
-  )
+  );
 }

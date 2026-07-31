@@ -1,6 +1,6 @@
-import 'server-only'
+import "server-only";
 
-import { unstable_cache } from 'next/cache'
+import { unstable_cache } from "next/cache";
 
 /**
  * Envoltorio de cacheo para las lecturas de la API.
@@ -17,15 +17,15 @@ export const TTL = {
   catalogo: 3600,
   /** Proyectos, novedades y cooperativas: contenido editorial. */
   contenido: 300,
-} as const
+} as const;
 
 export function cached<Args extends unknown[], T>(
   fn: (...args: Args) => Promise<T>,
   keyParts: string[],
-  options: { revalidate: number; tags: string[] }
+  options: { revalidate: number; tags: string[] },
 ) {
   return unstable_cache(fn, keyParts, {
     revalidate: options.revalidate,
     tags: options.tags,
-  })
+  });
 }

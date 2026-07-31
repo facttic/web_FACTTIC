@@ -1,7 +1,10 @@
-import Link from 'next/link'
-import type { ReactNode } from 'react'
-import { cn } from '@/lib/cn'
-import type { Sector } from '@/lib/dominio/tipos'
+import Link from "next/link";
+import type { ReactNode } from "react";
+import { cn } from "@/lib/cn";
+import { Tarjeta } from "@/components/ui/seccion";
+import { IconoFlecha } from "@/components/ui/iconos";
+import { FOCO } from "@/components/ui/boton";
+import type { Sector } from "@/lib/dominio/tipos";
 
 /**
  * Tarjetas de sector (Organizaciones, Agro, Financiero).
@@ -11,22 +14,12 @@ import type { Sector } from '@/lib/dominio/tipos'
  * verticales, con el título grande, un separador y "Ver más".
  */
 
-const FLECHA = (
-  <svg viewBox="0 0 20 20" fill="none" aria-hidden className="size-5 shrink-0">
-    <path
-      d="M4 10h12M11 5l5 5-5 5"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-)
-
 /** Ilustración del sector, o un marcador si todavía no está cargada. */
 function Ilustracion({ sector }: { sector: Sector }) {
   if (!sector.imagen) {
-    return <div className="aspect-square w-full rounded-lg bg-superficie-alta/30" />
+    return (
+      <div className="aspect-square w-full rounded-lg bg-superficie-alta/30" />
+    );
   }
 
   return (
@@ -37,7 +30,7 @@ function Ilustracion({ sector }: { sector: Sector }) {
       className="aspect-square w-full rounded-lg object-cover"
       loading="lazy"
     />
-  )
+  );
 }
 
 export function CardSector({
@@ -46,68 +39,64 @@ export function CardSector({
   href,
   className,
 }: {
-  sector: Sector
-  indice: number
-  href?: string
-  className?: string
+  sector: Sector;
+  indice: number;
+  href?: string;
+  className?: string;
 }) {
   const contenido = (
     <>
       <Ilustracion sector={sector} />
       <div className="mt-6 flex items-baseline justify-between gap-4">
-        <span className="text-h4">{String(indice + 1).padStart(2, '0')}.</span>
+        <span className="text-h4">{String(indice + 1).padStart(2, "0")}.</span>
         <span className="text-h4">{sector.nombre}</span>
       </div>
     </>
-  )
+  );
 
-  const clases = cn(
-    'block rounded-xl border border-borde bg-superficie p-4 transition-colors',
-    href && 'hover:border-blanco/30',
-    className
-  )
+  if (!href) {
+    return <Tarjeta className={cn("p-4", className)}>{contenido}</Tarjeta>;
+  }
 
-  return href ? (
-    <Link href={href} className={clases}>
-      {contenido}
+  return (
+    <Link href={href} className={cn("block", FOCO, className)}>
+      <Tarjeta className="p-4 transition-colors hover:border-blanco/30">
+        {contenido}
+      </Tarjeta>
     </Link>
-  ) : (
-    <div className={clases}>{contenido}</div>
-  )
+  );
 }
 
 /**
  * Variante con la propuesta de valor del sector y enlace al detalle, como en la
  * grilla de verticales de "Nuestros servicios".
+ *
+ * El enlace envuelve toda la tarjeta, así que el "Ver más" se dibuja acá en vez
+ * de usar `BotonTexto`: anidar dos <a> no es válido.
  */
 export function CardSectorDetalle({
   titulo,
   href,
-  etiqueta = 'Ver más',
+  etiqueta = "Ver más",
   className,
 }: {
-  titulo: ReactNode
-  href: string
-  etiqueta?: string
-  className?: string
+  titulo: ReactNode;
+  href: string;
+  etiqueta?: string;
+  className?: string;
 }) {
   return (
-    <Link
-      href={href}
-      className={cn(
-        'group flex flex-col justify-between rounded-xl border border-borde bg-superficie p-6',
-        'transition-colors hover:border-blanco/30',
-        className
-      )}
-    >
-      <p className="text-h3 text-balance">{titulo}</p>
-      <div className="mt-10">
-        <div className="border-t border-borde" />
-        <div className="text-p3 mt-4 flex items-center justify-between text-blanco/70 transition-colors group-hover:text-blanco">
-          {etiqueta}
-          {FLECHA}
+    <Link href={href} className={cn("group block", FOCO, className)}>
+      <Tarjeta className="flex h-full flex-col justify-between p-6 transition-colors hover:border-blanco/30">
+        <p className="text-h3 text-balance">{titulo}</p>
+        <div className="mt-10">
+          <div className="border-t border-borde" />
+          <div className="text-p3 mt-4 flex items-center justify-between text-blanco/70 transition-colors group-hover:text-blanco">
+            {etiqueta}
+            <IconoFlecha className="transition-transform group-hover:translate-x-1" />
+          </div>
         </div>
-      </div>
+      </Tarjeta>
     </Link>
-  )
+  );
 }

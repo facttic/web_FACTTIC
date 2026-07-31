@@ -1,5 +1,6 @@
-import type { ReactNode } from 'react'
-import { cn } from '@/lib/cn'
+import type { ReactNode } from "react";
+import { cn } from "@/lib/cn";
+import { IconoUbicacion } from "./iconos";
 
 /**
  * Etiqueta de sector o categoría.
@@ -10,57 +11,79 @@ import { cn } from '@/lib/cn'
  * nombre del sector— pinten solos.
  */
 
-type Tono = 'rojo' | 'amarillo' | 'celeste' | 'lila' | 'naranja' | 'neutro'
+type Tono = "rojo" | "amarillo" | "celeste" | "lila" | "naranja" | "neutro";
 
 const TONOS: Record<Tono, string> = {
-  rojo: 'bg-rojo/15 text-rojo',
-  amarillo: 'bg-amarillo/15 text-amarillo',
-  celeste: 'bg-celeste/15 text-celeste',
-  lila: 'bg-lila/15 text-lila',
-  naranja: 'bg-naranja/15 text-naranja',
-  neutro: 'bg-superficie-alta/70 text-blanco',
-}
+  rojo: "bg-rojo/15 text-rojo",
+  amarillo: "bg-amarillo/15 text-amarillo",
+  celeste: "bg-celeste/15 text-celeste",
+  lila: "bg-lila/15 text-lila",
+  naranja: "bg-naranja/15 text-naranja",
+  neutro: "bg-superficie-alta/70 text-blanco",
+};
 
 /** Mapa de sector a tono, según los colores que usa el diseño. */
 const TONO_POR_SECTOR: Record<string, Tono> = {
-  finanzas: 'rojo',
-  financiero: 'rojo',
-  organizaciones: 'amarillo',
-  agro: 'celeste',
-}
+  finanzas: "rojo",
+  financiero: "rojo",
+  organizaciones: "amarillo",
+  agro: "celeste",
+};
 
 export function tonoDeSector(nombre: string | undefined): Tono {
-  if (!nombre) return 'neutro'
-  return TONO_POR_SECTOR[nombre.trim().toLowerCase()] ?? 'neutro'
+  if (!nombre) return "neutro";
+  return TONO_POR_SECTOR[nombre.trim().toLowerCase()] ?? "neutro";
 }
 
 export function Chip({
   children,
-  tono = 'neutro',
+  tono = "neutro",
   className,
 }: {
-  children: ReactNode
-  tono?: Tono
-  className?: string
+  children: ReactNode;
+  tono?: Tono;
+  className?: string;
 }) {
   return (
     <span
       className={cn(
-        'text-p3 inline-flex items-center rounded px-2 py-1 font-medium',
+        "text-p3 inline-flex items-center rounded px-2 py-1 font-medium",
         TONOS[tono],
-        className
+        className,
       )}
     >
       {children}
     </span>
-  )
+  );
 }
 
 /** Chip de sector que elige su color a partir del nombre. */
-export function ChipSector({ nombre, className }: { nombre: string; className?: string }) {
+export function ChipSector({
+  nombre,
+  className,
+}: {
+  nombre: string;
+  className?: string;
+}) {
   return (
     <Chip tono={tonoDeSector(nombre)} className={className}>
       {nombre}
     </Chip>
-  )
+  );
+}
+
+/** Chip de ubicación, con el pin adelante. Se usa en el mapa federal. */
+export function ChipUbicacion({
+  lugar,
+  className,
+}: {
+  lugar: string;
+  className?: string;
+}) {
+  return (
+    <Chip tono="neutro" className={cn("gap-1.5", className)}>
+      <IconoUbicacion />
+      {lugar}
+    </Chip>
+  );
 }

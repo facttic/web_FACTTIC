@@ -1,7 +1,7 @@
-import 'server-only'
+import "server-only";
 
-import { apiFetch, normalizePage } from '@/lib/api/client'
-import type * as Api from '@/lib/api/esquema'
+import { apiFetch, normalizePage } from "@/lib/api/client";
+import type * as Api from "@/lib/api/esquema";
 import {
   aAutoridad,
   aCooperativa,
@@ -9,9 +9,9 @@ import {
   aSector,
   aServicio,
   aTecnologia,
-} from '@/lib/dominio/adaptadores'
-import type * as Dominio from '@/lib/dominio/tipos'
-import { TTL, cached } from './cache'
+} from "@/lib/dominio/adaptadores";
+import type * as Dominio from "@/lib/dominio/tipos";
+import { TTL, cached } from "./cache";
 
 /**
  * Datos de catálogo para las vistas.
@@ -23,75 +23,83 @@ import { TTL, cached } from './cache'
  * Son listas cortas —tres sectores, cinco servicios— así que se piden enteras.
  */
 
-const TODOS = 200
+const TODOS = 200;
 
 async function traerTodos<T>(path: string): Promise<T[]> {
-  const raw = await apiFetch<Api.Paginated<T>>(path, { params: { perPage: TODOS } })
-  return normalizePage<T>(raw, TODOS).items
+  const raw = await apiFetch<Api.Paginated<T>>(path, {
+    params: { perPage: TODOS },
+  });
+  return normalizePage<T>(raw, TODOS).items;
 }
 
 function porOrden<T extends { orden: number }>(a: T, b: T): number {
-  return a.orden - b.orden
+  return a.orden - b.orden;
 }
 
 export const getSectores = cached(
   async (): Promise<Dominio.Sector[]> => {
-    const sectores = await traerTodos<Api.Sector>('/api/sectores')
-    return sectores.map(aSector).sort(porOrden)
+    const sectores = await traerTodos<Api.Sector>("/api/sectores");
+    return sectores.map(aSector).sort(porOrden);
   },
-  ['sectores'],
-  { revalidate: TTL.catalogo, tags: ['sectores'] }
-)
+  ["sectores"],
+  { revalidate: TTL.catalogo, tags: ["sectores"] },
+);
 
-export async function getSectorPorSlug(slug: string): Promise<Dominio.Sector | null> {
-  const sectores = await getSectores()
-  return sectores.find((sector) => sector.slug === slug) ?? null
+export async function getSectorPorSlug(
+  slug: string,
+): Promise<Dominio.Sector | null> {
+  const sectores = await getSectores();
+  return sectores.find((sector) => sector.slug === slug) ?? null;
 }
 
 export const getServicios = cached(
   async (): Promise<Dominio.Servicio[]> => {
-    const servicios = await traerTodos<Api.Servicio>('/api/servicios')
-    return servicios.map(aServicio).sort(porOrden)
+    const servicios = await traerTodos<Api.Servicio>("/api/servicios");
+    return servicios.map(aServicio).sort(porOrden);
   },
-  ['servicios'],
-  { revalidate: TTL.catalogo, tags: ['servicios'] }
-)
+  ["servicios"],
+  { revalidate: TTL.catalogo, tags: ["servicios"] },
+);
 
 export const getTecnologias = cached(
   async (): Promise<Dominio.Tecnologia[]> => {
-    const tecnologias = await traerTodos<Api.Tecnologia>('/api/tecnologias')
-    return tecnologias.map(aTecnologia)
+    const tecnologias = await traerTodos<Api.Tecnologia>("/api/tecnologias");
+    return tecnologias.map(aTecnologia);
   },
-  ['tecnologias'],
-  { revalidate: TTL.catalogo, tags: ['tecnologias'] }
-)
+  ["tecnologias"],
+  { revalidate: TTL.catalogo, tags: ["tecnologias"] },
+);
 
 export const getCooperativas = cached(
   async (): Promise<Dominio.Cooperativa[]> => {
-    const cooperativas = await traerTodos<Api.Cooperativa>('/api/cooperativas')
-    return cooperativas.map(aCooperativa).sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'))
+    const cooperativas = await traerTodos<Api.Cooperativa>("/api/cooperativas");
+    return cooperativas
+      .map(aCooperativa)
+      .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
   },
-  ['cooperativas'],
-  { revalidate: TTL.contenido, tags: ['cooperativas'] }
-)
+  ["cooperativas"],
+  { revalidate: TTL.contenido, tags: ["cooperativas"] },
+);
 
 export const getAutoridades = cached(
   async (): Promise<Dominio.Autoridad[]> => {
-    const consejo = await traerTodos<Api.Consejo>('/api/consejo')
-    return consejo.map(aAutoridad)
+    const consejo = await traerTodos<Api.Consejo>("/api/consejo");
+    return consejo.map(aAutoridad);
   },
-  ['consejo'],
-  { revalidate: TTL.contenido, tags: ['consejo'] }
-)
+  ["consejo"],
+  { revalidate: TTL.contenido, tags: ["consejo"] },
+);
 
 export const getOrganizaciones = cached(
   async (): Promise<Dominio.Organizacion[]> => {
-    const organizaciones = await traerTodos<Api.Organizacion>('/api/organizaciones')
-    return organizaciones.map(aOrganizacion)
+    const organizaciones = await traerTodos<Api.Organizacion>(
+      "/api/organizaciones",
+    );
+    return organizaciones.map(aOrganizacion);
   },
-  ['organizaciones'],
-  { revalidate: TTL.catalogo, tags: ['organizaciones'] }
-)
+  ["organizaciones"],
+  { revalidate: TTL.catalogo, tags: ["organizaciones"] },
+);
 
 /**
  * Métricas de la red que muestra la Home (+500 profesionales, +30 cooperativas,
@@ -99,18 +107,21 @@ export const getOrganizaciones = cached(
  * listado de cooperativas; si el backend agrega uno, se cambia solo esta función.
  */
 export async function getMetricasRed(): Promise<{
-  profesionales: number
-  cooperativas: number
-  provincias: number
+  profesionales: number;
+  cooperativas: number;
+  provincias: number;
 }> {
-  const cooperativas = await getCooperativas()
+  const cooperativas = await getCooperativas();
   const provincias = new Set(
-    cooperativas.map((coop) => coop.provincia).filter((p): p is string => !!p)
-  )
+    cooperativas.map((coop) => coop.provincia).filter((p): p is string => !!p),
+  );
 
   return {
-    profesionales: cooperativas.reduce((total, coop) => total + coop.asociados, 0),
+    profesionales: cooperativas.reduce(
+      (total, coop) => total + coop.asociados,
+      0,
+    ),
     cooperativas: cooperativas.length,
     provincias: provincias.size,
-  }
+  };
 }

@@ -1,10 +1,10 @@
-import 'server-only'
+import "server-only";
 
-import { apiFetch, normalizePage } from '@/lib/api/client'
-import type * as Api from '@/lib/api/esquema'
-import { aPagina, aProyecto } from '@/lib/dominio/adaptadores'
-import type * as Dominio from '@/lib/dominio/tipos'
-import { TTL, cached } from './cache'
+import { apiFetch, normalizePage } from "@/lib/api/client";
+import type * as Api from "@/lib/api/esquema";
+import { aPagina, aProyecto } from "@/lib/dominio/adaptadores";
+import type * as Dominio from "@/lib/dominio/tipos";
+import { TTL, cached } from "./cache";
 
 /**
  * Proyectos para las vistas.
@@ -15,7 +15,7 @@ import { TTL, cached } from './cache'
  * grilla de Proyectos no se entera.
  */
 
-const POR_PAGINA = 12
+const POR_PAGINA = 12;
 
 /** Traduce los filtros del sitio a los query params de la API. */
 function aQueryParams(filtros: Dominio.FiltrosProyectos) {
@@ -28,30 +28,35 @@ function aQueryParams(filtros: Dominio.FiltrosProyectos) {
     tecnologia: filtros.tecnologia,
     cooperativa: filtros.cooperativa,
     destacado: filtros.destacado,
-  }
+  };
 }
 
 async function traerProyectos(
-  filtros: Dominio.FiltrosProyectos
+  filtros: Dominio.FiltrosProyectos,
 ): Promise<Dominio.Pagina<Dominio.Proyecto>> {
-  const raw = await apiFetch<Api.Paginated<Api.Proyecto>>('/api/proyectos', {
+  const raw = await apiFetch<Api.Paginated<Api.Proyecto>>("/api/proyectos", {
     params: aQueryParams(filtros),
-  })
-  return aPagina(normalizePage<Api.Proyecto>(raw, filtros.porPagina ?? POR_PAGINA), aProyecto)
+  });
+  return aPagina(
+    normalizePage<Api.Proyecto>(raw, filtros.porPagina ?? POR_PAGINA),
+    aProyecto,
+  );
 }
 
 export function getProyectos(
-  filtros: Dominio.FiltrosProyectos = {}
+  filtros: Dominio.FiltrosProyectos = {},
 ): Promise<Dominio.Pagina<Dominio.Proyecto>> {
   // Los filtros forman parte de la clave para que cada combinación se cachee aparte.
-  return cached(traerProyectos, ['proyectos', JSON.stringify(filtros)], {
+  return cached(traerProyectos, ["proyectos", JSON.stringify(filtros)], {
     revalidate: TTL.contenido,
-    tags: ['proyectos'],
-  })(filtros)
+    tags: ["proyectos"],
+  })(filtros);
 }
 
-export function getProyectosDestacados(cantidad = 3): Promise<Dominio.Pagina<Dominio.Proyecto>> {
-  return getProyectos({ destacado: true, porPagina: cantidad })
+export function getProyectosDestacados(
+  cantidad = 3,
+): Promise<Dominio.Pagina<Dominio.Proyecto>> {
+  return getProyectos({ destacado: true, porPagina: cantidad });
 }
 
 /**
@@ -63,15 +68,17 @@ export function getProyecto(slug: string): Promise<Dominio.Proyecto | null> {
   return cached(
     async (identificador: string) => {
       try {
-        const raw = await apiFetch<Api.Proyecto>(`/api/proyectos/${identificador}`)
-        return aProyecto(raw)
+        const raw = await apiFetch<Api.Proyecto>(
+          `/api/proyectos/${identificador}`,
+        );
+        return aProyecto(raw);
       } catch {
-        return null
+        return null;
       }
     },
-    ['proyecto', slug],
-    { revalidate: TTL.contenido, tags: ['proyectos', `proyecto:${slug}`] }
-  )(slug)
+    ["proyecto", slug],
+    { revalidate: TTL.contenido, tags: ["proyectos", `proyecto:${slug}`] },
+  )(slug);
 }
 
 /**
@@ -80,14 +87,14 @@ export function getProyecto(slug: string): Promise<Dominio.Proyecto | null> {
  */
 export async function getProyectosRelacionados(
   proyecto: Dominio.Proyecto,
-  cantidad = 3
+  cantidad = 3,
 ): Promise<Dominio.Proyecto[]> {
-  if (!proyecto.sector) return []
+  if (!proyecto.sector) return [];
 
   const { items } = await getProyectos({
     sector: proyecto.sector.id,
     porPagina: cantidad + 1,
-  })
+  });
 
-  return items.filter((otro) => otro.id !== proyecto.id).slice(0, cantidad)
+  return items.filter((otro) => otro.id !== proyecto.id).slice(0, cantidad);
 }

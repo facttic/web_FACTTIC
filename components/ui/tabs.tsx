@@ -1,7 +1,8 @@
-'use client'
+"use client";
 
-import { useId, useState, type ReactNode } from 'react'
-import { cn } from '@/lib/cn'
+import { useId, useState, type ReactNode } from "react";
+import { cn } from "@/lib/cn";
+import { FOCO } from "./boton";
 
 /**
  * Solapas con subrayado, como en "Solucionamos con tecnología e innovación" y en
@@ -12,20 +13,20 @@ import { cn } from '@/lib/cn'
  */
 
 export interface Solapa {
-  id: string
-  etiqueta: string
-  contenido: ReactNode
+  id: string;
+  etiqueta: string;
+  contenido: ReactNode;
 }
 
 export function Tabs({
   solapas,
   className,
 }: {
-  solapas: Solapa[]
-  className?: string
+  solapas: Solapa[];
+  className?: string;
 }) {
-  const [activa, setActiva] = useState(solapas[0]?.id)
-  const baseId = useId()
+  const [activa, setActiva] = useState(solapas[0]?.id);
+  const baseId = useId();
 
   return (
     <div className={className}>
@@ -34,7 +35,7 @@ export function Tabs({
         className="scroll-limpio -mx-6 flex gap-6 overflow-x-auto border-b border-borde px-6 md:mx-0 md:px-0"
       >
         {solapas.map((solapa) => {
-          const esActiva = solapa.id === activa
+          const esActiva = solapa.id === activa;
           return (
             <button
               key={solapa.id}
@@ -45,16 +46,16 @@ export function Tabs({
               aria-controls={`${baseId}-panel-${solapa.id}`}
               onClick={() => setActiva(solapa.id)}
               className={cn(
-                'text-h4 -mb-px cursor-pointer whitespace-nowrap border-b-2 pb-3 transition-colors',
-                'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lila',
+                "text-h4 -mb-px cursor-pointer whitespace-nowrap border-b-2 pb-3 transition-colors",
+                FOCO,
                 esActiva
-                  ? 'border-blanco text-blanco'
-                  : 'border-transparent text-blanco/40 hover:text-blanco/70'
+                  ? "border-blanco text-blanco"
+                  : "border-transparent text-blanco/40 hover:text-blanco/70",
               )}
             >
               {solapa.etiqueta}
             </button>
-          )
+          );
         })}
       </div>
 
@@ -71,5 +72,5 @@ export function Tabs({
         </div>
       ))}
     </div>
-  )
+  );
 }

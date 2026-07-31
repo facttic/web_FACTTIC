@@ -1,7 +1,7 @@
-import 'server-only'
+import "server-only";
 
-import { API_URL, getServiceToken, invalidateServiceToken } from './tokens'
-import type { Paginated } from './esquema'
+import { API_URL, getServiceToken, invalidateServiceToken } from "./tokens";
+import type { Paginated } from "./esquema";
 
 /**
  * Cliente HTTP contra la API de FACTTIC.
@@ -17,30 +17,30 @@ export class ApiError extends Error {
   constructor(
     readonly status: number,
     readonly path: string,
-    message: string
+    message: string,
   ) {
-    super(message)
-    this.name = 'ApiError'
+    super(message);
+    this.name = "ApiError";
   }
 }
 
-type QueryValue = string | number | boolean | undefined | null
+type QueryValue = string | number | boolean | undefined | null;
 
-export interface ApiFetchOptions extends Omit<RequestInit, 'body'> {
-  params?: Record<string, QueryValue>
-  body?: BodyInit | null
+export interface ApiFetchOptions extends Omit<RequestInit, "body"> {
+  params?: Record<string, QueryValue>;
+  body?: BodyInit | null;
   /** Token a usar en lugar del de servicio (el del usuario, en el backoffice). */
-  token?: string
+  token?: string;
 }
 
 function buildUrl(path: string, params?: Record<string, QueryValue>): string {
-  const url = new URL(path.startsWith('/') ? path : `/${path}`, API_URL)
+  const url = new URL(path.startsWith("/") ? path : `/${path}`, API_URL);
   for (const [key, value] of Object.entries(params ?? {})) {
-    if (value !== undefined && value !== null && value !== '') {
-      url.searchParams.set(key, String(value))
+    if (value !== undefined && value !== null && value !== "") {
+      url.searchParams.set(key, String(value));
     }
   }
-  return url.toString()
+  return url.toString();
 }
 
 /**
@@ -48,36 +48,43 @@ function buildUrl(path: string, params?: Record<string, QueryValue>): string {
  * vez: cubre el caso de que el token venza entre que se lee de cache y llega al
  * servidor.
  */
-export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): Promise<T> {
-  const { params, token: explicitToken, headers, ...init } = options
-  const url = buildUrl(path, params)
+export async function apiFetch<T>(
+  path: string,
+  options: ApiFetchOptions = {},
+): Promise<T> {
+  const { params, token: explicitToken, headers, ...init } = options;
+  const url = buildUrl(path, params);
 
   const run = async (token: string): Promise<Response> =>
     fetch(url, {
       ...init,
-      cache: 'no-store',
+      cache: "no-store",
       headers: { ...headers, Authorization: `Bearer ${token}` },
-    })
+    });
 
-  let token = explicitToken ?? (await getServiceToken())
-  let res = await run(token)
+  let token = explicitToken ?? (await getServiceToken());
+  let res = await run(token);
 
   if (res.status === 401 && !explicitToken) {
-    invalidateServiceToken()
-    token = await getServiceToken()
-    res = await run(token)
+    invalidateServiceToken();
+    token = await getServiceToken();
+    res = await run(token);
   }
 
   if (!res.ok) {
-    throw new ApiError(res.status, path, `${res.status} ${res.statusText} en ${path}`)
+    throw new ApiError(
+      res.status,
+      path,
+      `${res.status} ${res.statusText} en ${path}`,
+    );
   }
 
-  if (res.status === 204) return undefined as T
-  return (await res.json()) as T
+  if (res.status === 204) return undefined as T;
+  return (await res.json()) as T;
 }
 
 /** Campos internos del backoffice que no deben llegar al browser. */
-const INTERNAL_FIELDS = new Set(['createdBy', 'updatedBy', '__v'])
+const INTERNAL_FIELDS = new Set(["createdBy", "updatedBy", "__v"]);
 
 /**
  * Limpia la respuesta de la API: descarta los campos de auditoría y recorta los
@@ -86,32 +93,35 @@ const INTERNAL_FIELDS = new Set(['createdBy', 'updatedBy', '__v'])
  */
 export function sanitize<T>(value: T): T {
   if (Array.isArray(value)) {
-    return value.map(sanitize) as unknown as T
+    return value.map(sanitize) as unknown as T;
   }
-  if (value && typeof value === 'object') {
-    const out: Record<string, unknown> = {}
+  if (value && typeof value === "object") {
+    const out: Record<string, unknown> = {};
     for (const [key, val] of Object.entries(value)) {
-      if (INTERNAL_FIELDS.has(key)) continue
-      out[key] = key === 'nombre' && typeof val === 'string' ? val.trim() : sanitize(val)
+      if (INTERNAL_FIELDS.has(key)) continue;
+      out[key] =
+        key === "nombre" && typeof val === "string"
+          ? val.trim()
+          : sanitize(val);
     }
-    return out as T
+    return out as T;
   }
-  return value
+  return value;
 }
 
 /** Forma que devuelve `GET /api/proyectos`. */
 interface ProyectosResponse<T> {
-  items?: T[]
-  total?: number
-  page?: number
-  limit?: number
-  pages?: number
+  items?: T[];
+  total?: number;
+  page?: number;
+  limit?: number;
+  pages?: number;
 }
 
 /** Forma que devuelve el resto de los recursos. */
 interface ListResponse<T> {
-  items?: T[]
-  totalCount?: number
+  items?: T[];
+  totalCount?: number;
 }
 
 /**
@@ -121,12 +131,13 @@ interface ListResponse<T> {
  */
 export function normalizePage<T>(
   raw: ProyectosResponse<T> & ListResponse<T>,
-  fallbackPerPage: number
+  fallbackPerPage: number,
 ): Paginated<T> {
-  const items = sanitize(raw.items ?? [])
-  const total = raw.total ?? raw.totalCount ?? items.length
-  const perPage = raw.limit ?? fallbackPerPage
-  const pages = raw.pages ?? (perPage > 0 ? Math.max(1, Math.ceil(total / perPage)) : 1)
+  const items = sanitize(raw.items ?? []);
+  const total = raw.total ?? raw.totalCount ?? items.length;
+  const perPage = raw.limit ?? fallbackPerPage;
+  const pages =
+    raw.pages ?? (perPage > 0 ? Math.max(1, Math.ceil(total / perPage)) : 1);
 
-  return { items, total, page: raw.page ?? 1, perPage, pages }
+  return { items, total, page: raw.page ?? 1, perPage, pages };
 }
