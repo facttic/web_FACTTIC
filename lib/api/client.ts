@@ -1,7 +1,7 @@
 import 'server-only'
 
 import { API_URL, getServiceToken, invalidateServiceToken } from './tokens'
-import type { Paginated } from './types'
+import type { Paginated } from './esquema'
 
 /**
  * Cliente HTTP contra la API de FACTTIC.
@@ -9,7 +9,7 @@ import type { Paginated } from './types'
  * El fetch se hace siempre con `cache: 'no-store'` a propósito: el header
  * `Authorization` forma parte de la cache key de Next, y como el token se
  * renueva cada 15 minutos, cachear acá invalidaría todo el contenido en cada
- * renovación. El cacheo se hace una capa más arriba (ver `lib/api/resources`),
+ * renovación. El cacheo se hace una capa más arriba (ver `lib/datos`),
  * con claves explícitas que no incluyen el token.
  */
 
