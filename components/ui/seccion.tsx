@@ -29,18 +29,32 @@ export function EncabezadoSeccion({
   titulo,
   descripcion,
   accion,
+  alineacion = "izquierda",
   className,
 }: {
   rotulo?: string;
   titulo: ReactNode;
   descripcion?: ReactNode;
   accion?: ReactNode;
+  /** El diseño centra algunos bloques, como "Sectores" en la Home. */
+  alineacion?: "izquierda" | "centro";
   className?: string;
 }) {
+  const centrado = alineacion === "centro";
+
   return (
-    <header className={cn("mb-10 md:mb-14", className)}>
+    <header
+      className={cn("mb-10 md:mb-14", centrado && "text-center", className)}
+    >
       {rotulo ? <p className="text-eyebrow text-blanco/40">{rotulo}</p> : null}
-      <div className="mt-3 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+      <div
+        className={cn(
+          "mt-3 flex flex-col gap-6",
+          centrado
+            ? "items-center"
+            : "md:flex-row md:items-end md:justify-between",
+        )}
+      >
         <div className="max-w-2xl">
           <h2 className="text-h1 text-balance">{titulo}</h2>
           {descripcion ? (

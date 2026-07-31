@@ -129,6 +129,23 @@
   text-transform: uppercase;
 }
 
+/**
+ * Desplazamiento continuo del lema en la Home. Recorre la mitad del contenido,
+ * que está duplicado, así el salto al reiniciar no se nota.
+ */
+@keyframes marquesina {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@utility animate-marquesina {
+  animation: marquesina 40s linear infinite;
+}
+
 /** Listas que se desplazan de costado en mobile sin mostrar la barra. */
 @utility scroll-limpio {
   scrollbar-width: none;

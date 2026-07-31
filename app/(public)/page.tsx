@@ -1,65 +1,189 @@
-import Image from "next/image";
+import { Hero } from "@/components/secciones/hero";
+import { Marquesina } from "@/components/secciones/marquesina";
+import { Pasos } from "@/components/secciones/pasos";
+import { BandaCta, EncabezadoSeccion, Seccion } from "@/components/ui/seccion";
+import { BotonLink } from "@/components/ui/boton";
+import { Tabs } from "@/components/ui/tabs";
+import { CardSector } from "@/components/tarjetas/sector";
+import { CardServicio } from "@/components/tarjetas/servicios";
+import { CardProyecto } from "@/components/tarjetas/proyecto";
+import { CardBeneficio, CardMetrica } from "@/components/tarjetas/bloques";
+import { acentoPorIndice } from "@/components/ui/acento";
+import { HOME } from "@/lib/contenido";
+import {
+  getMetricasRed,
+  getSectores,
+  getServicios,
+} from "@/lib/datos/catalogos";
+import { getProyectosDestacados } from "@/lib/datos/proyectos";
 
-export default function Home() {
+/**
+ * Home.
+ *
+ * Es composición: cada bloque del diseño se arma con componentes del catálogo y
+ * el contenido fijo sale de `lib/contenido.ts`. Lo propio de esta página es el
+ * orden de los bloques y qué datos pide.
+ *
+ * Los bloques que dependen de la API se omiten si no hay datos, para que la
+ * página no muestre secciones vacías mientras el contenido se termina de cargar
+ * desde el backoffice.
+ */
+export default async function HomePage() {
+  const [sectores, servicios, destacados, metricas] = await Promise.all([
+    getSectores(),
+    getServicios(),
+    getProyectosDestacados(2),
+    getMetricasRed(),
+  ]);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <>
+      <Hero
+        titulo={HOME.hero.titulo}
+        bajada={HOME.hero.bajada}
+        accion={HOME.hero.cta}
+      />
+
+      {sectores.length ? (
+        <Seccion>
+          <EncabezadoSeccion
+            rotulo={HOME.sectores.rotulo}
+            titulo={HOME.sectores.titulo}
+            alineacion="centro"
+          />
+          <div className="grid gap-6 md:grid-cols-3">
+            {sectores.map((sector, i) => (
+              <CardSector
+                key={sector.id}
+                sector={sector}
+                indice={i}
+                href={`/nuestros-servicios/${sector.slug}`}
+              />
+            ))}
+          </div>
+        </Seccion>
+      ) : null}
+
+      {servicios.length ? (
+        <Seccion>
+          <EncabezadoSeccion
+            rotulo={HOME.servicios.rotulo}
+            titulo={HOME.servicios.titulo}
+          />
+          <Tabs
+            solapas={servicios.map((servicio, i) => ({
+              id: servicio.id,
+              etiqueta: servicio.nombre,
+              contenido: (
+                <div className="grid gap-6 md:grid-cols-2">
+                  <CardServicio
+                    titulo={servicio.nombre}
+                    acento={acentoPorIndice(i)}
+                    descripcion={servicio.descripcion}
+                  />
+                  {servicio.subservicios.length ? (
+                    <CardServicio
+                      titulo={servicio.subservicios
+                        .map((sub) => sub.nombre)
+                        .join(" · ")}
+                    />
+                  ) : null}
+                </div>
+              ),
+            }))}
+          />
+        </Seccion>
+      ) : null}
+
+      <Seccion>
+        <EncabezadoSeccion
+          rotulo={HOME.metodologia.rotulo}
+          titulo={HOME.metodologia.titulo}
+          accion={
+            <BotonLink href={HOME.metodologia.cta.href}>
+              {HOME.metodologia.cta.texto}
+            </BotonLink>
+          }
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+        <Pasos pasos={HOME.metodologia.pasos} />
+      </Seccion>
+
+      {destacados.items.length ? (
+        <Seccion>
+          <EncabezadoSeccion
+            rotulo={HOME.proyectos.rotulo}
+            titulo={HOME.proyectos.titulo}
+            accion={
+              <BotonLink href={HOME.proyectos.cta.href}>
+                {HOME.proyectos.cta.texto}
+              </BotonLink>
+            }
+          />
+          <div className="grid gap-6 md:grid-cols-2">
+            {destacados.items.map((proyecto) => (
+              <CardProyecto key={proyecto.id} proyecto={proyecto} />
+            ))}
+          </div>
+          <BandaCta
+            className="mt-10"
+            titulo={HOME.proyectos.cierre.titulo}
+            accion={
+              <BotonLink href={HOME.proyectos.cierre.cta.href}>
+                {HOME.proyectos.cierre.cta.texto}
+              </BotonLink>
+            }
+          />
+        </Seccion>
+      ) : null}
+
+      <Marquesina texto={HOME.lema} />
+
+      <Seccion>
+        <EncabezadoSeccion
+          rotulo={HOME.beneficios.rotulo}
+          titulo={HOME.beneficios.titulo}
+          accion={
+            <BotonLink href={HOME.beneficios.cta.href}>
+              {HOME.beneficios.cta.texto}
+            </BotonLink>
+          }
+        />
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {HOME.beneficios.items.map((beneficio) => (
+            <CardBeneficio key={beneficio.titulo} titulo={beneficio.titulo} />
+          ))}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </Seccion>
+
+      <Seccion>
+        <EncabezadoSeccion
+          rotulo={HOME.red.rotulo}
+          titulo={HOME.red.titulo}
+          accion={
+            <BotonLink href={HOME.red.cta.href}>{HOME.red.cta.texto}</BotonLink>
+          }
+        />
+        <div className="grid gap-6 md:grid-cols-3">
+          <CardMetrica
+            rotulo="Profesionales"
+            valor={`+${metricas.profesionales}`}
+          />
+          <CardMetrica
+            rotulo="Cooperativas"
+            valor={`+${metricas.cooperativas}`}
+          />
+          <CardMetrica rotulo="Provincias" valor={`+${metricas.provincias}`} />
         </div>
-      </main>
-    </div>
+        <BandaCta
+          className="mt-10"
+          titulo={HOME.red.cierre.titulo}
+          accion={
+            <BotonLink href={HOME.red.cierre.cta.href}>
+              {HOME.red.cierre.cta.texto}
+            </BotonLink>
+          }
+        />
+      </Seccion>
+    </>
   );
 }
