@@ -104,7 +104,7 @@ export function BandaCta({
         className,
       )}
     >
-      <p className="text-h3">{titulo}</p>
+      <p className="text-h2">{titulo}</p>
       <div className="shrink-0">{accion}</div>
     </div>
   );

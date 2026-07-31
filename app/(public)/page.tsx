@@ -101,7 +101,7 @@ export default async function HomePage() {
               </BotonLink>
             }
           />
-          <div className="grid gap-6 md:grid-cols-[1.7fr_1fr]">
+          <div className="grid gap-5 md:grid-cols-[2.06fr_1fr]">
             {destacados.items.map((proyecto) => (
               <CardProyecto key={proyecto.id} proyecto={proyecto} />
             ))}
