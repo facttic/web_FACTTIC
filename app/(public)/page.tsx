@@ -181,15 +181,9 @@ export default async function HomePage() {
           }
         />
         <div className="grid gap-6 md:grid-cols-3">
-          <CardMetrica
-            rotulo="Profesionales"
-            valor={`+${metricas.profesionales}`}
-          />
-          <CardMetrica
-            rotulo="Cooperativas"
-            valor={`+${metricas.cooperativas}`}
-          />
-          <CardMetrica rotulo="Provincias" valor={`+${metricas.provincias}`} />
+          <CardMetrica rotulo="Profesionales" valor={metricas.profesionales} />
+          <CardMetrica rotulo="Cooperativas" valor={metricas.cooperativas} />
+          <CardMetrica rotulo="Provincias" valor={metricas.provincias} />
         </div>
         <BandaCta
           className="mt-10"

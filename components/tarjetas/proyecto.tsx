@@ -9,6 +9,11 @@ import { FOCO } from "@/components/ui/boton";
 /**
  * Tarjetas y filas de proyecto.
  *
+ * Los títulos se acotan a dos líneas: vienen de la API sin límite de largo y,
+ * sin eso, uno extenso desalinea toda la grilla. La anotación del diseño pide
+ * además un máximo de caracteres, que hay que definir con diseño y validar en
+ * el backoffice.
+ *
  * Reciben el proyecto ya adaptado: la portada viene como URL lista para usar y
  * las relaciones ya resueltas, así que acá no hay nada que sepa cómo responde
  * la API.
@@ -52,7 +57,9 @@ export function CardProyecto({
       <Tarjeta className="h-full overflow-hidden transition-colors hover:border-blanco/30">
         <Portada proyecto={proyecto} className="aspect-[16/10] w-full" />
         <div className="p-5">
-          <h3 className="text-h4 text-balance">{proyecto.nombre}</h3>
+          <h3 className="text-h4 line-clamp-2 text-balance">
+            {proyecto.nombre}
+          </h3>
         </div>
       </Tarjeta>
     </Link>
@@ -78,7 +85,9 @@ export function CardProyectoDetalle({
       <Tarjeta className="overflow-hidden transition-colors hover:border-blanco/30">
         <Portada proyecto={proyecto} className="aspect-[21/9] w-full" />
         <div className="space-y-5 p-6">
-          <h3 className="text-h4 text-balance">{proyecto.nombre}</h3>
+          <h3 className="text-h4 line-clamp-2 text-balance">
+            {proyecto.nombre}
+          </h3>
 
           {proyecto.desafio ? (
             <p className="text-p2 line-clamp-3 text-blanco/60">
@@ -117,7 +126,9 @@ export function FilaProyecto({ proyecto }: { proyecto: Proyecto }) {
         "md:flex-row md:items-center md:gap-6",
       )}
     >
-      <span className="text-p2 flex-1 md:pr-6">{proyecto.nombre}</span>
+      <span className="text-p2 line-clamp-2 flex-1 md:pr-6">
+        {proyecto.nombre}
+      </span>
 
       <span className="flex flex-wrap items-center gap-3 md:w-72 md:shrink-0">
         {proyecto.cliente ? <Chip>{proyecto.cliente.nombre}</Chip> : null}

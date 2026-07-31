@@ -93,6 +93,24 @@ llegue.
 - [ ] **Vertical Financiero.** Hay maquetas de Organizaciones y Agro. ¿Reusa el
       template de Agro o tiene diseño propio?
 
+### Anotaciones del archivo pendientes de definir
+
+Las anotaciones verdes de "Desarrollo" en Figma —distintas de los comentarios—
+llevan indicaciones de implementación. Estado de las encontradas:
+
+- [ ] **"Habrá que poner máximo de caracteres a los títulos"** (board
+      Componentes). **Falta definir el número.** Por ahora los títulos de
+      proyecto se acotan a dos líneas para que no desalineen la grilla, pero
+      convendría validarlo también en el backoffice al cargar.
+- [ ] **Revisar las anotaciones del resto de las pantallas.** Se leyeron las de
+      la Home y las del board de Componentes; faltan Proyectos, Sumá tu coop,
+      Nuestra Red, Sobre Facttic, Comunicados, Contacto y 404.
+- [x] ~~"Animación de conteo"~~ (Red contador) → implementado.
+- [x] ~~"Acá va un video"~~ (hero) → implementado con el video de Drive.
+- [x] ~~"Efecto typewriter"~~ (hero) → implementado.
+- [x] ~~"Scroll reveal"~~ (hero) → implementado.
+- [x] ~~"`<h1>` con clase `.display`"~~ (hero) → ya se cumplía.
+
 ### Decisiones de contenido
 
 - [ ] **"Finanzas" vs "Financiero".** El Home dice una cosa, Nuestros servicios

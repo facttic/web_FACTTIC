@@ -3,6 +3,7 @@ import { cn } from "@/lib/cn";
 import { FONDO_ACENTO, type Acento } from "@/components/ui/acento";
 import { Tarjeta } from "@/components/ui/seccion";
 import { BotonTexto } from "@/components/ui/boton";
+import { Contador } from "@/components/ui/contador";
 
 /**
  * Bloques de contenido que se repiten a lo largo del sitio: beneficios,
@@ -76,7 +77,11 @@ export function CardMetrica({
   className,
 }: {
   rotulo: string;
-  valor: ReactNode;
+  /**
+   * Con un número el valor cuenta hasta llegar, como pide la anotación
+   * "Animación de conteo" del diseño. Con texto se muestra tal cual.
+   */
+  valor: number | ReactNode;
   acento?: Acento;
   className?: string;
 }) {
@@ -93,7 +98,13 @@ export function CardMetrica({
       >
         {rotulo}
       </p>
-      <p className="text-display">{valor}</p>
+      <p className="text-display">
+        {typeof valor === "number" ? (
+          <Contador valor={valor} prefijo="+" />
+        ) : (
+          valor
+        )}
+      </p>
     </div>
   );
 }
