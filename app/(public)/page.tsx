@@ -6,7 +6,7 @@ import { BotonLink } from "@/components/ui/boton";
 import { Servicios } from "@/components/secciones/servicios";
 import { CardSector } from "@/components/tarjetas/sector";
 import { CardProyecto } from "@/components/tarjetas/proyecto";
-import { CardBeneficio, CardMetrica } from "@/components/tarjetas/bloques";
+import { CardBeneficioHover, CardMetrica } from "@/components/tarjetas/bloques";
 import { Animacion } from "@/components/ui/animacion";
 import { FONDOS, VIDEO_HERO } from "@/lib/animaciones";
 import { HOME } from "@/lib/contenido";
@@ -138,9 +138,11 @@ export default async function HomePage() {
         />
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {HOME.beneficios.items.map((beneficio) => (
-            <CardBeneficio
+            <CardBeneficioHover
               key={beneficio.titulo}
               titulo={beneficio.titulo}
+              descripcion={beneficio.descripcion}
+              acento={beneficio.acento}
               ilustracion={
                 <Animacion
                   nombre={beneficio.animacion}

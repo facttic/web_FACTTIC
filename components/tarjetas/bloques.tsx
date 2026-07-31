@@ -1,6 +1,10 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
-import { FONDO_ACENTO, type Acento } from "@/components/ui/acento";
+import {
+  FONDO_ACENTO,
+  HOVER_ACENTO,
+  type Acento,
+} from "@/components/ui/acento";
 import { Tarjeta } from "@/components/ui/seccion";
 import { BotonTexto } from "@/components/ui/boton";
 import { Contador } from "@/components/ui/contador";
@@ -11,10 +15,66 @@ import { Contador } from "@/components/ui/contador";
  * oscura y otra pintada con un acento de la paleta.
  */
 
+/** Alto de la tarjeta de beneficio, para que las dos capas coincidan. */
+const ALTO_BENEFICIO = "h-[290px]";
+
 /**
  * Beneficio de la red ("Continuidad de trabajo", "Colaboración real, no
- * competencia"). Sin acento va la ilustración arriba y el título centrado; con
- * acento, el título y la descripción sobre el color.
+ * competencia").
+ *
+ * En reposo muestra la ilustración con el título centrado abajo; al pasar el
+ * mouse se pinta con su color y aparece la descripción, como en el prototipo.
+ * Por eso el board del diseño trae las dos variantes de la misma tarjeta.
+ *
+ * Las dos capas van superpuestas y se cruzan en opacidad, así el texto no se
+ * reacomoda a mitad de la transición.
+ */
+export function CardBeneficioHover({
+  titulo,
+  descripcion,
+  ilustracion,
+  acento,
+  className,
+}: {
+  titulo: ReactNode;
+  descripcion?: ReactNode;
+  ilustracion?: ReactNode;
+  acento: Acento;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "group relative overflow-hidden rounded-xl border border-borde bg-superficie",
+        "transition-colors duration-300 group-hover:border-transparent",
+        HOVER_ACENTO[acento],
+        ALTO_BENEFICIO,
+        className,
+      )}
+    >
+      <div className="absolute inset-0 flex flex-col items-center justify-between p-6 text-center transition-opacity duration-300 group-hover:opacity-0">
+        {ilustracion ? (
+          <div className="grid flex-1 place-items-center">{ilustracion}</div>
+        ) : (
+          <div className="flex-1" />
+        )}
+        <h3 className="text-h4 text-balance">{titulo}</h3>
+      </div>
+
+      <div
+        className="absolute inset-0 flex flex-col justify-between p-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        aria-hidden
+      >
+        <h3 className="text-h4 text-balance">{titulo}</h3>
+        {descripcion ? <p className="text-p2">{descripcion}</p> : null}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Variante fija, sin cruce de estados: útil para el catálogo y para donde se
+ * quiera mostrar directamente una de las dos caras.
  */
 export function CardBeneficio({
   titulo,

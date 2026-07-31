@@ -3,7 +3,10 @@
 import { useId, useState } from "react";
 import { cn } from "@/lib/cn";
 import { BotonFlecha, FOCO } from "@/components/ui/boton";
-import { CardServicio } from "@/components/tarjetas/servicios";
+import {
+  CardServicio,
+  CardServicioSiguiente,
+} from "@/components/tarjetas/servicios";
 import { acentoPorIndice } from "@/components/ui/acento";
 import type { Servicio } from "@/lib/dominio/tipos";
 
@@ -100,7 +103,15 @@ export function Servicios({
           }
         />
         {servicios.length > 1 ? (
-          <CardServicio titulo={siguiente.nombre} />
+          <CardServicioSiguiente
+            titulo={siguiente.nombre}
+            acento={acentoPorIndice((activo + 1) % servicios.length)}
+            descripcion={
+              siguiente.descripcion ??
+              siguiente.subservicios.map((s) => s.nombre).join(" · ")
+            }
+            onClick={() => setActivo((i) => (i + 1) % servicios.length)}
+          />
         ) : null}
       </div>
     </div>

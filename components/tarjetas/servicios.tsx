@@ -1,6 +1,11 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
-import { FONDO_ACENTO, type Acento } from "@/components/ui/acento";
+import {
+  FONDO_ACENTO,
+  HOVER_ACENTO,
+  type Acento,
+} from "@/components/ui/acento";
+import { FOCO } from "@/components/ui/boton";
 import { Tarjeta } from "@/components/ui/seccion";
 
 /**
@@ -55,6 +60,55 @@ export function CardServicio({
         {rotulo ?? (typeof titulo === "string" ? titulo : "")}
       </p>
     </div>
+  );
+}
+
+/**
+ * Tarjeta del servicio siguiente: en reposo muestra solo el título y al pasar
+ * el mouse se pinta con su color y revela la descripción, igual que la del
+ * servicio activo. Al hacer clic avanza a ese servicio.
+ *
+ * Las dos caras van superpuestas y se cruzan en opacidad, así el texto no se
+ * reacomoda a mitad de la transición.
+ */
+export function CardServicioSiguiente({
+  titulo,
+  descripcion,
+  acento,
+  onClick,
+  className,
+}: {
+  titulo: string;
+  descripcion?: ReactNode;
+  acento: Acento;
+  onClick?: () => void;
+  className?: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={`Ver ${titulo}`}
+      className={cn(
+        "group relative min-h-44 cursor-pointer overflow-hidden rounded-xl text-left",
+        "border border-blanco/40 transition-colors duration-300 hover:border-transparent",
+        HOVER_ACENTO[acento],
+        FOCO,
+        className,
+      )}
+    >
+      <span className="absolute inset-0 flex flex-col p-6 transition-opacity duration-300 group-hover:opacity-0">
+        <span className="text-h4 text-balance">{titulo}</span>
+      </span>
+
+      <span
+        className="absolute inset-0 flex flex-col justify-between gap-8 p-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        aria-hidden
+      >
+        {descripcion ? <span className="text-p2">{descripcion}</span> : null}
+        <span className="text-eyebrow opacity-60">{titulo}</span>
+      </span>
+    </button>
   );
 }
 

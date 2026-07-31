@@ -44,6 +44,19 @@ function Ilustracion({ sector }: { sector: Sector }) {
   );
 }
 
+/** Alto de la tarjeta, para que las dos caras del hover coincidan. */
+const ALTO_SECTOR = "h-[360px]";
+
+/**
+ * Tarjeta de sector de la Home.
+ *
+ * En reposo muestra la ilustración con el número y el nombre abajo; al pasar el
+ * mouse la reemplaza por la propuesta de valor del sector y un "Ver más", como
+ * en el prototipo. Es la misma mecánica que las tarjetas de proyecto y de
+ * beneficio.
+ *
+ * Sin descripción cargada no hay nada que revelar, así que se queda en reposo.
+ */
 export function CardSector({
   sector,
   indice,
@@ -55,24 +68,51 @@ export function CardSector({
   href?: string;
   className?: string;
 }) {
-  const contenido = (
-    <>
+  const numero = String(indice + 1).padStart(2, "0");
+
+  const reposo = (
+    <div className="absolute inset-0 flex flex-col p-4 transition-opacity duration-300 group-hover:opacity-0">
       <Ilustracion sector={sector} />
-      <div className="mt-6 flex items-baseline justify-between gap-4">
-        <span className="text-h4">{String(indice + 1).padStart(2, "0")}.</span>
+      <div className="mt-auto flex items-baseline justify-between gap-4 pt-6">
+        <span className="text-h4">{numero}.</span>
         <span className="text-h4">{sector.nombre}</span>
       </div>
-    </>
+    </div>
   );
 
   if (!href) {
-    return <Tarjeta className={cn("p-4", className)}>{contenido}</Tarjeta>;
+    return (
+      <Tarjeta className={cn("relative", ALTO_SECTOR, className)}>
+        {reposo}
+      </Tarjeta>
+    );
   }
 
   return (
-    <Link href={href} className={cn("block", FOCO, className)}>
-      <Tarjeta className="p-4 transition-colors hover:border-blanco/30">
-        {contenido}
+    <Link href={href} className={cn("group block", FOCO, className)}>
+      <Tarjeta
+        className={cn(
+          "relative overflow-hidden transition-colors hover:border-blanco/30",
+          ALTO_SECTOR,
+        )}
+      >
+        {reposo}
+
+        {sector.descripcion ? (
+          <div
+            className="absolute inset-0 flex flex-col justify-between p-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+            aria-hidden
+          >
+            <p className="text-h3 text-balance">{sector.descripcion}</p>
+            <div>
+              <div className="border-t border-blanco/30" />
+              <div className="text-p3 mt-4 flex items-center justify-between">
+                Ver más
+                <IconoFlecha className="transition-transform group-hover:translate-x-1" />
+              </div>
+            </div>
+          </div>
+        ) : null}
       </Tarjeta>
     </Link>
   );

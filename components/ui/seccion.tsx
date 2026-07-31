@@ -55,10 +55,19 @@ export function EncabezadoSeccion({
             : "md:flex-row md:items-end md:justify-between",
         )}
       >
-        <div className="max-w-2xl">
-          <h2 className="text-h1 whitespace-pre-line text-balance">{titulo}</h2>
+        {/*
+          El título no se acota: en el diseño los cortes de línea son
+          deliberados —vienen como saltos en el texto— y no producto de un ancho
+          máximo. Con un límite acá, "Solucionamos con tecnología e innovación"
+          se partía en dos cuando el diseño lo deja en una. La bajada sí se
+          acota, que es donde importa el largo de línea para leer.
+        */}
+        <div className="min-w-0">
+          <h2 className="text-h1 whitespace-pre-line">{titulo}</h2>
           {descripcion ? (
-            <p className="text-p1 mt-4 text-blanco/60">{descripcion}</p>
+            <p className="text-p1 mt-4 max-w-2xl text-blanco/60">
+              {descripcion}
+            </p>
           ) : null}
         </div>
         {accion ? <div className="shrink-0">{accion}</div> : null}
