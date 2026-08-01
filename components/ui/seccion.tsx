@@ -6,6 +6,11 @@ import { cn } from "@/lib/cn";
  * título de sección, la tarjeta y la banda de llamada a la acción.
  */
 
+/**
+ * La sección es un flex en columna —no un bloque— para que el encabezado pueda
+ * mandar su acción al pie en mobile sin repetirla en el HTML. Ver
+ * `EncabezadoSeccion` y su prop `accionAlPie`.
+ */
 export function Seccion({
   children,
   className,
@@ -14,7 +19,9 @@ export function Seccion({
   className?: string;
 }) {
   return (
-    <section className={cn("contenedor py-16 md:py-24", className)}>
+    <section
+      className={cn("contenedor flex flex-col py-16 md:py-24", className)}
+    >
       {children}
     </section>
   );
@@ -29,6 +36,7 @@ export function EncabezadoSeccion({
   titulo,
   descripcion,
   accion,
+  accionAlPie = false,
   alineacion = "izquierda",
   className,
 }: {
@@ -36,22 +44,40 @@ export function EncabezadoSeccion({
   titulo: ReactNode;
   descripcion?: ReactNode;
   accion?: ReactNode;
+  /**
+   * En mobile la maqueta baja el botón al final de la sección, después del
+   * contenido, en vez de dejarlo pegado al título. Con esto el encabezado se
+   * vuelve `display: contents` en mobile: sus partes pasan a ser hijas directas
+   * del flex de `Seccion` y la acción se manda al final con `order`, sin
+   * repetir el enlace en el HTML.
+   */
+  accionAlPie?: boolean;
   /** El diseño centra algunos bloques, como "Sectores" en la Home. */
   alineacion?: "izquierda" | "centro";
   className?: string;
 }) {
   const centrado = alineacion === "centro";
 
+  /*
+    En mobile la maqueta centra todos los encabezados y estira la acción a lo
+    ancho; la alineación que llega por prop solo decide qué pasa en desktop.
+  */
   return (
     <header
-      className={cn("mb-10 md:mb-14", centrado && "text-center", className)}
+      className={cn(
+        "text-center",
+        accionAlPie ? "contents md:mb-14 md:block" : "mb-10 md:mb-14",
+        centrado ? "md:text-center" : "md:text-left",
+        className,
+      )}
     >
       {rotulo ? <p className="text-eyebrow text-blanco/40">{rotulo}</p> : null}
       <div
         className={cn(
-          "mt-3 flex flex-col gap-6",
+          "mt-3 flex flex-col items-center gap-6",
+          accionAlPie && "contents md:mt-3 md:flex",
           centrado
-            ? "items-center"
+            ? "md:items-center"
             : "md:flex-row md:items-end md:justify-between",
         )}
       >
@@ -62,7 +88,7 @@ export function EncabezadoSeccion({
           se partía en dos cuando el diseño lo deja en una. La bajada sí se
           acota, que es donde importa el largo de línea para leer.
         */}
-        <div className="min-w-0">
+        <div className={cn("min-w-0", accionAlPie && "mt-3 mb-10 md:my-0")}>
           <h2 className="text-h1 whitespace-pre-line">{titulo}</h2>
           {descripcion ? (
             <p className="text-p1 mt-4 max-w-2xl text-blanco/60">
@@ -70,7 +96,18 @@ export function EncabezadoSeccion({
             </p>
           ) : null}
         </div>
-        {accion ? <div className="shrink-0">{accion}</div> : null}
+        {accion ? (
+          <div
+            className={cn(
+              "w-full shrink-0 [&>a]:w-full [&>button]:w-full md:w-auto md:[&>a]:w-auto md:[&>button]:w-auto",
+              // order-1 la manda al final del flex de la sección; el resto de
+              // los bloques queda en order 0 y conserva el orden del HTML.
+              accionAlPie && "order-1 mt-10 md:order-none md:mt-0",
+            )}
+          >
+            {accion}
+          </div>
+        ) : null}
       </div>
     </header>
   );
@@ -108,13 +145,14 @@ export function BandaCta({
   return (
     <div
       className={cn(
-        "flex flex-col gap-6 rounded-xl border border-dashed border-borde-pleno p-6",
+        // En mobile la banda va centrada y con el botón debajo del título.
+        "flex flex-col items-center gap-6 rounded-xl border border-dashed border-borde-pleno px-6 py-10 text-center",
         // 113px de alto en el SVG: el botón mide 53 y quedan 30 arriba y abajo.
-        "md:flex-row md:items-center md:justify-between md:px-10 md:py-7.5",
+        "md:flex-row md:items-center md:justify-between md:px-10 md:py-7.5 md:text-left",
         className,
       )}
     >
-      <p className="text-h2">{titulo}</p>
+      <p className="text-h2 text-balance">{titulo}</p>
       <div className="shrink-0">{accion}</div>
     </div>
   );

@@ -52,8 +52,14 @@ const ALTO_SECTOR = "h-[359px]";
  * A diferencia de las de beneficio y proyecto, estas tarjetas no llevan relleno
  * —quedan sobre el fondo de la página— y su borde va a blanco pleno, no al 10%.
  * Así están en el SVG y es lo que las hace resaltar en la grilla.
+ *
+ * En mobile la maqueta las abre: dejan de ser tarjetas y pasan a ser una lista,
+ * con la ilustración suelta y una única línea abajo separando cada sector. Por
+ * eso el borde y el radio arrancan apagados y recién aparecen en desktop.
  */
-const CAJA_SECTOR = "rounded-lg border border-borde-pleno bg-transparent";
+const CAJA_SECTOR =
+  "bg-transparent rounded-none border-x-0 border-t-0 border-b border-borde-pleno pb-4 " +
+  "md:rounded-lg md:border md:pb-0";
 
 /**
  * Tarjeta de sector de la Home.
@@ -79,7 +85,9 @@ export function CardSector({
   const numero = String(indice + 1).padStart(2, "0");
 
   const reposo = (
-    <div className="absolute inset-0 flex flex-col p-6 transition-opacity duration-300 group-hover:opacity-0">
+    /* Sin padding en mobile: ahí el número y el nombre van contra los bordes
+       del contenedor, no de una tarjeta. */
+    <div className="absolute inset-0 flex flex-col transition-opacity duration-300 group-hover:opacity-0 md:p-6">
       <div className="grid flex-1 place-items-center">
         <Ilustracion sector={sector} />
       </div>

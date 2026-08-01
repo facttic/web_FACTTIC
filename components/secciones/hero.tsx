@@ -88,13 +88,18 @@ export function Hero({
         <div className="absolute inset-0 -z-10 bg-negro-oscuro/55" />
       ) : null}
 
-      <div className="contenedor flex min-h-[34rem] flex-col justify-end gap-8 pt-32 pb-10 md:min-h-[39rem] md:pb-14">
-        <h1 className="text-display max-w-3xl text-balance">
+      {/*
+        En mobile el hero es solo el video con el título centrado: la maqueta no
+        lleva ni bajada ni botón ahí —ese texto pasa a ser el bloque grande que
+        abre la página— y el video ocupa casi toda la pantalla.
+      */}
+      <div className="contenedor flex min-h-[34rem] flex-col justify-center pt-32 pb-10 text-center md:min-h-[39rem] md:justify-end md:gap-8 md:pb-14 md:text-left">
+        <h1 className="text-display text-balance md:max-w-3xl">
           <Typewriter texto={titulo} retrasoMs={RETRASO_TITULO_MS} />
         </h1>
 
         <RevelarAlScroll retrasoMs={RETRASO_TITULO_MS}>
-          <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+          <div className="hidden flex-col gap-8 md:flex md:flex-row md:items-end md:justify-between">
             {bajada ? (
               <p className="text-p1 max-w-xl text-blanco/80">{bajada}</p>
             ) : null}

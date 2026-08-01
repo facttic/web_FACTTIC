@@ -60,7 +60,18 @@ export const HOME = {
     },
   },
 
-  lema: "Nuestro código es cooperar",
+  /*
+    El lema aparece de dos formas según el ancho: en desktop cruza la pantalla
+    como marquesina y en mobile es una sección propia, con la animación arriba y
+    una bajada. Por eso lleva más que el texto suelto.
+  */
+  lema: {
+    rotulo: "Sobre FACTTIC",
+    texto: "Nuestro código es cooperar",
+    bajada:
+      "En FACTTIC el cooperativismo se multiplica: somos cooperativas que cooperan entre sí.",
+    cta: { texto: "Ver más", href: "/sobre-facttic" },
+  },
 
   beneficios: {
     rotulo: "Beneficios",

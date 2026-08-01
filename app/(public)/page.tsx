@@ -4,6 +4,7 @@ import { Pasos } from "@/components/secciones/pasos";
 import { BandaCta, EncabezadoSeccion, Seccion } from "@/components/ui/seccion";
 import { BotonLink } from "@/components/ui/boton";
 import { Servicios } from "@/components/secciones/servicios";
+import { ServiciosMobile } from "@/components/secciones/servicios-mobile";
 import { CardSector } from "@/components/tarjetas/sector";
 import { CardProyecto } from "@/components/tarjetas/proyecto";
 import { CardBeneficioHover, CardMetrica } from "@/components/tarjetas/bloques";
@@ -24,6 +25,16 @@ import { getProyectosDestacados } from "@/lib/datos/proyectos";
  * el contenido fijo sale de `lib/contenido.ts`. Lo propio de esta página es el
  * orden de los bloques y qué datos pide.
  *
+ * Las maquetas de desktop y mobile no son la misma página reacomodada: cambian
+ * el orden de las secciones y la forma de varias de ellas. El orden se resuelve
+ * acá con `order`, sobre un contenedor flex, así el HTML sale una sola vez y no
+ * hay que duplicar bloques enteros para reubicarlos.
+ *
+ *   mobile   hero · texto · sectores · servicios · método · cta · lema ·
+ *            beneficios · red · proyectos · cta
+ *   desktop  hero · sectores · servicios · método · proyectos · cta · lema ·
+ *            beneficios · red · cta
+ *
  * Los bloques que dependen de la API se omiten si no hay datos, para que la
  * página no muestre secciones vacías mientras el contenido se termina de cargar
  * desde el backoffice.
@@ -37,8 +48,9 @@ export default async function HomePage() {
   ]);
 
   return (
-    <>
+    <div className="flex flex-col">
       <Hero
+        className="order-1"
         titulo={HOME.hero.titulo}
         bajada={HOME.hero.bajada}
         accion={HOME.hero.cta}
@@ -47,14 +59,22 @@ export default async function HomePage() {
         imagen={VIDEO_HERO.poster}
       />
 
+      {/*
+        En mobile la bajada del hero no va sobre el video: abre la página como
+        un bloque de texto grande. En desktop ese lugar no existe.
+      */}
+      <Seccion className="order-2 md:hidden">
+        <p className="text-h1 text-balance">{HOME.hero.bajada}</p>
+      </Seccion>
+
       {sectores.length ? (
-        <Seccion>
+        <Seccion className="order-3 md:order-2">
           <EncabezadoSeccion
             rotulo={HOME.sectores.rotulo}
             titulo={HOME.sectores.titulo}
             alineacion="centro"
           />
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-10 md:grid-cols-3 md:gap-6">
             {sectores.map((sector, i) => (
               <CardSector
                 key={sector.id}
@@ -68,20 +88,30 @@ export default async function HomePage() {
       ) : null}
 
       {servicios.length ? (
-        <Seccion>
+        <Seccion className="order-4 md:order-3">
           {/*
-            Acá el encabezado lo arma el propio bloque: las flechas que recorren
-            los servicios van junto al título y necesitan su estado.
+            Dos formas distintas del mismo bloque: en desktop, solapas con
+            flechas; en mobile, un mazo de tarjetas apiladas. El encabezado lo
+            arma el de desktop porque las flechas necesitan su estado.
           */}
           <Servicios
+            className="hidden md:block"
             rotulo={HOME.servicios.rotulo}
             titulo={HOME.servicios.titulo}
             servicios={servicios}
           />
+          <div className="md:hidden">
+            <EncabezadoSeccion
+              rotulo={HOME.servicios.rotulo}
+              titulo={HOME.servicios.titulo}
+              alineacion="centro"
+            />
+            <ServiciosMobile servicios={servicios} />
+          </div>
         </Seccion>
       ) : null}
 
-      <Seccion>
+      <Seccion className="order-5 md:order-4">
         <EncabezadoSeccion
           rotulo={HOME.metodologia.rotulo}
           titulo={HOME.metodologia.titulo}
@@ -95,58 +125,99 @@ export default async function HomePage() {
       </Seccion>
 
       {destacados.items.length ? (
-        <Seccion>
+        <Seccion className="order-10 md:order-5">
           <EncabezadoSeccion
             rotulo={HOME.proyectos.rotulo}
             titulo={HOME.proyectos.titulo}
+            accionAlPie
             accion={
               <BotonLink href={HOME.proyectos.cta.href}>
                 {HOME.proyectos.cta.texto}
               </BotonLink>
             }
           />
-          <div className="grid gap-5 md:grid-cols-[2.06fr_1fr]">
+          {/*
+            Carrusel horizontal en mobile y grilla de dos en desktop. Los
+            márgenes negativos dejan que las tarjetas se desplacen hasta el
+            borde de la pantalla, como en la maqueta.
+          */}
+          <div className="scroll-limpio -mx-6 flex snap-x snap-mandatory scroll-pl-6 gap-5 overflow-x-auto px-6 md:mx-0 md:grid md:grid-cols-[2.06fr_1fr] md:px-0">
             {destacados.items.map((proyecto) => (
-              <CardProyecto key={proyecto.id} proyecto={proyecto} />
+              <CardProyecto
+                key={proyecto.id}
+                proyecto={proyecto}
+                className="w-[85vw] shrink-0 snap-start md:w-auto"
+              />
             ))}
           </div>
-          <BandaCta
-            className="mt-10"
-            titulo={HOME.proyectos.cierre.titulo}
-            accion={
-              <BotonLink href={HOME.proyectos.cierre.cta.href}>
-                {HOME.proyectos.cierre.cta.texto}
-              </BotonLink>
-            }
-          />
         </Seccion>
       ) : null}
 
-      <div className="relative isolate">
+      {/* Va suelta: en mobile cierra la metodología y en desktop, los proyectos. */}
+      <div className="contenedor order-6 pb-16 md:order-6 md:pb-24">
+        <BandaCta
+          titulo={HOME.proyectos.cierre.titulo}
+          accion={
+            <BotonLink href={HOME.proyectos.cierre.cta.href}>
+              {HOME.proyectos.cierre.cta.texto}
+            </BotonLink>
+          }
+        />
+      </div>
+
+      {/*
+        El lema también cambia de forma: marquesina que cruza la pantalla en
+        desktop, sección centrada con bajada y botón en mobile.
+      */}
+      {/*
+        `overflow-hidden` no es decorativo: la animación mide 576px y va
+        centrada, así que en pantallas angostas se salía del viewport y le daba
+        scroll horizontal a toda la página.
+      */}
+      <div className="relative isolate order-7 overflow-hidden">
         <Animacion
           nombre={FONDOS.homeLema}
           className="pointer-events-none absolute top-1/2 left-1/2 -z-10 size-[36rem] -translate-x-1/2 -translate-y-1/2 opacity-40"
         />
-        <Marquesina texto={HOME.lema} />
+        <div className="hidden md:block">
+          <Marquesina texto={HOME.lema.texto} />
+        </div>
+        <Seccion className="text-center md:hidden">
+          <p className="text-eyebrow text-blanco/40">{HOME.lema.rotulo}</p>
+          <h2 className="text-h1 mt-3 text-balance">{HOME.lema.texto}</h2>
+          <p className="text-p1 mt-4 text-balance text-blanco/80">
+            {HOME.lema.bajada}
+          </p>
+          <BotonLink
+            href={HOME.lema.cta.href}
+            variante="solida"
+            className="mt-8 w-full"
+          >
+            {HOME.lema.cta.texto}
+          </BotonLink>
+        </Seccion>
       </div>
 
-      <Seccion>
+      <Seccion className="order-8">
         <EncabezadoSeccion
           rotulo={HOME.beneficios.rotulo}
           titulo={HOME.beneficios.titulo}
+          accionAlPie
           accion={
             <BotonLink href={HOME.beneficios.cta.href}>
               {HOME.beneficios.cta.texto}
             </BotonLink>
           }
         />
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {/* Carrusel en mobile, grilla de cuatro en desktop. */}
+        <div className="scroll-limpio -mx-6 flex snap-x snap-mandatory scroll-pl-6 gap-6 overflow-x-auto px-6 sm:mx-0 sm:grid sm:grid-cols-2 sm:px-0 lg:grid-cols-4">
           {HOME.beneficios.items.map((beneficio) => (
             <CardBeneficioHover
               key={beneficio.titulo}
               titulo={beneficio.titulo}
               descripcion={beneficio.descripcion}
               acento={beneficio.acento}
+              className="w-[287px] shrink-0 snap-start sm:w-auto"
               ilustracion={
                 <Animacion
                   nombre={beneficio.animacion}
@@ -158,34 +229,41 @@ export default async function HomePage() {
         </div>
       </Seccion>
 
-      <Seccion>
+      <Seccion className="order-9">
         <EncabezadoSeccion
           rotulo={HOME.red.rotulo}
           titulo={HOME.red.titulo}
+          accionAlPie
           accion={
             <BotonLink href={HOME.red.cta.href}>{HOME.red.cta.texto}</BotonLink>
           }
         />
-        <div className="grid gap-6 md:grid-cols-3">
+        {/* En fila y desplazable en mobile; en tres columnas en desktop. */}
+        <div className="scroll-limpio -mx-6 flex gap-10 overflow-x-auto px-6 md:mx-0 md:grid md:grid-cols-3 md:gap-6 md:px-0">
           {/* Un color por métrica, como en el board: lila, lima y naranja. */}
           <CardMetrica
             rotulo="Profesionales"
             valor={metricas.profesionales}
             acentoHover="lila"
+            className="shrink-0"
           />
           <CardMetrica
             rotulo="Cooperativas"
             valor={metricas.cooperativas}
             acentoHover="amarillo"
+            className="shrink-0"
           />
           <CardMetrica
             rotulo="Provincias"
             valor={metricas.provincias}
             acentoHover="naranja"
+            className="shrink-0"
           />
         </div>
+      </Seccion>
+
+      <div className="contenedor order-11 pb-16 md:order-10 md:pb-24">
         <BandaCta
-          className="mt-10"
           titulo={HOME.red.cierre.titulo}
           accion={
             <BotonLink href={HOME.red.cierre.cta.href}>
@@ -193,7 +271,7 @@ export default async function HomePage() {
             </BotonLink>
           }
         />
-      </Seccion>
-    </>
+      </div>
+    </div>
   );
 }

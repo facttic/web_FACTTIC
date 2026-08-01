@@ -52,11 +52,19 @@ export function CardBeneficioHover({
         className,
       )}
     >
-      <div className="absolute inset-0 flex flex-col items-center justify-between p-6 text-center transition-opacity duration-300 group-hover:opacity-0">
+      {/*
+        En mobile no hay estado de reposo que valga: sin mouse no se llega a la
+        otra cara, así que la maqueta muestra directo el título arriba y a la
+        izquierda, sin ilustración. La ilustración centrada con el título al pie
+        es la cara de reposo de desktop.
+      */}
+      <div className="absolute inset-0 flex flex-col justify-start p-6 transition-opacity duration-300 group-hover:opacity-0 md:items-center md:justify-between md:text-center">
         {ilustracion ? (
-          <div className="grid flex-1 place-items-center">{ilustracion}</div>
+          <div className="hidden flex-1 place-items-center md:grid">
+            {ilustracion}
+          </div>
         ) : (
-          <div className="flex-1" />
+          <div className="hidden flex-1 md:block" />
         )}
         <h3 className="text-h4 text-balance">{titulo}</h3>
       </div>
@@ -150,11 +158,17 @@ export function CardMetrica({
   className?: string;
 }) {
   return (
+    /*
+      Dos formas según el ancho. En desktop es la tarjeta del SVG: 394x312 con
+      radio 8, rótulo arriba y número abajo. En mobile la maqueta la desarma en
+      una línea suelta —"+30 Cooperativas", sin caja ni fondo— que se lee de
+      corrido; por eso el orden de los dos textos se invierte con `order`.
+    */
     <div
       className={cn(
-        // 394x312 con radio 8 en el SVG; 78 = 312px.
-        "flex min-h-78 flex-col justify-between rounded-lg p-6 transition-colors duration-300",
-        acento ? FONDO_ACENTO[acento] : "bg-superficie-alta text-blanco",
+        "flex items-center gap-4 transition-colors duration-300",
+        "md:min-h-78 md:flex-col md:items-stretch md:justify-between md:rounded-lg md:p-6",
+        acento ? FONDO_ACENTO[acento] : "text-blanco md:bg-superficie-alta",
         acentoHover ? HOVER_ACENTO[acentoHover] : null,
         className,
       )}
@@ -164,8 +178,10 @@ export function CardMetrica({
         contenedor, que pasa de claro a oscuro cuando la tarjeta se pinta. Con
         `text-blanco/70` quedaba ilegible sobre el lima.
       */}
-      <p className="text-eyebrow opacity-70">{rotulo}</p>
-      <p className="text-display">
+      <p className="text-p2 order-2 w-24 opacity-70 md:order-none md:w-auto md:text-eyebrow">
+        {rotulo}
+      </p>
+      <p className="text-display order-1 md:order-none">
         {typeof valor === "number" ? (
           <Contador valor={valor} prefijo="+" />
         ) : (
