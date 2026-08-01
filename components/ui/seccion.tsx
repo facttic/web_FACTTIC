@@ -18,9 +18,16 @@ export function Seccion({
   children: ReactNode;
   className?: string;
 }) {
+  /*
+    64px de aire arriba y abajo, o sea 128 entre dos secciones seguidas.
+    Medido sobre el SVG: del pie de un bloque al rótulo del siguiente hay entre
+    88 y 195px según la sección —el diseño no es parejo— y 128 es el punto que
+    deja el ritmo general alineado. Con los 96px que había antes, la página
+    terminaba 542px más larga que la maqueta.
+  */
   return (
     <section
-      className={cn("contenedor flex flex-col py-16 md:py-24", className)}
+      className={cn("contenedor flex flex-col py-12 md:py-16", className)}
     >
       {children}
     </section>
@@ -66,7 +73,7 @@ export function EncabezadoSeccion({
     <header
       className={cn(
         "text-center",
-        accionAlPie ? "contents md:mb-14 md:block" : "mb-10 md:mb-14",
+        accionAlPie ? "contents md:mb-8 md:block" : "mb-8",
         centrado ? "md:text-center" : "md:text-left",
         className,
       )}
@@ -88,7 +95,7 @@ export function EncabezadoSeccion({
           se partía en dos cuando el diseño lo deja en una. La bajada sí se
           acota, que es donde importa el largo de línea para leer.
         */}
-        <div className={cn("min-w-0", accionAlPie && "mt-3 mb-10 md:my-0")}>
+        <div className={cn("min-w-0", accionAlPie && "mt-3 mb-8 md:my-0")}>
           <h2 className="text-h1 whitespace-pre-line">{titulo}</h2>
           {descripcion ? (
             <p className="text-p1 mt-4 max-w-2xl text-blanco/60">

@@ -32,7 +32,7 @@ import { FOCO } from "@/components/ui/boton";
  * La cara pintada además cambia de piel: pierde el relleno al 3% y su borde
  * pasa de 10% a blanco pleno.
  */
-const ALTO_TARJETA = "h-[406px]";
+const ALTO_TARJETA = "h-[366px] md:h-[406px]";
 const ALTO_IMAGEN =
   "h-[310px] group-hover:h-[129px] group-focus-visible:h-[129px]";
 const PIEL_TARJETA =

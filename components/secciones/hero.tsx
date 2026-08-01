@@ -43,7 +43,7 @@ export function Hero({
     <section
       className={cn(
         // Radio 21 abajo, como el frame del diseño.
-        "relative isolate -mt-[72px] overflow-hidden rounded-b-[21px]",
+        "relative isolate -mt-[90px] overflow-hidden rounded-b-[21px]",
         className,
       )}
     >
@@ -93,7 +93,7 @@ export function Hero({
         lleva ni bajada ni botón ahí —ese texto pasa a ser el bloque grande que
         abre la página— y el video ocupa casi toda la pantalla.
       */}
-      <div className="contenedor flex min-h-[34rem] flex-col justify-center pt-32 pb-10 text-center md:min-h-[39rem] md:justify-end md:gap-8 md:pb-14 md:text-left">
+      <div className="contenedor flex min-h-svh flex-col justify-center pt-32 pb-10 text-center md:min-h-[39rem] md:justify-end md:gap-8 md:pb-14 md:text-left">
         <h1 className="text-display text-balance md:max-w-3xl">
           <Typewriter texto={titulo} retrasoMs={RETRASO_TITULO_MS} />
         </h1>
@@ -107,6 +107,7 @@ export function Hero({
               <BotonLink
                 href={accion.href}
                 variante="solida"
+                tamano="lg"
                 className="self-start md:self-auto"
               >
                 {accion.texto}

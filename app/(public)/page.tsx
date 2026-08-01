@@ -68,7 +68,9 @@ export default async function HomePage() {
       </Seccion>
 
       {sectores.length ? (
-        <Seccion className="order-3 md:order-2">
+        // La primera sección respira más: en el SVG hay 112px entre el pie del
+        // hero y el rótulo "INDUSTRIAS", contra los 64 del resto.
+        <Seccion className="order-3 md:order-2 md:pt-28">
           <EncabezadoSeccion
             rotulo={HOME.sectores.rotulo}
             titulo={HOME.sectores.titulo}
@@ -177,12 +179,15 @@ export default async function HomePage() {
       <div className="relative isolate order-7 overflow-hidden">
         <Animacion
           nombre={FONDOS.homeLema}
-          className="pointer-events-none absolute top-1/2 left-1/2 -z-10 size-[36rem] -translate-x-1/2 -translate-y-1/2 opacity-40"
+          className="pointer-events-none absolute top-1/2 left-1/2 -z-10 hidden size-[36rem] -translate-x-1/2 -translate-y-1/2 opacity-40 md:block"
         />
         <div className="hidden md:block">
           <Marquesina texto={HOME.lema.texto} />
         </div>
-        <Seccion className="text-center md:hidden">
+        <Seccion className="items-center text-center md:hidden">
+          {/* En mobile la animación va en el flujo, arriba del rótulo, y no
+              como fondo: en la maqueta ocupa su propio bloque de 137px. */}
+          <Animacion nombre={FONDOS.homeLema} className="mb-8 size-[137px]" />
           <p className="text-eyebrow text-blanco/40">{HOME.lema.rotulo}</p>
           <h2 className="text-h1 mt-3 text-balance">{HOME.lema.texto}</h2>
           <p className="text-p1 mt-4 text-balance text-blanco/80">

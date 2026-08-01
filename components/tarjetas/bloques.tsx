@@ -16,7 +16,7 @@ import { Contador } from "@/components/ui/contador";
  */
 
 /** Alto de la tarjeta de beneficio en el SVG (287x312), para que las dos capas coincidan. */
-const ALTO_BENEFICIO = "h-78";
+const ALTO_BENEFICIO = "h-[264px] md:h-78";
 
 /**
  * Beneficio de la red ("Continuidad de trabajo", "Colaboración real, no

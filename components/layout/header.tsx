@@ -58,7 +58,7 @@ export function Header() {
           : "border-b border-transparent",
       )}
     >
-      <div className="contenedor flex h-[72px] items-center justify-between gap-8">
+      <div className="contenedor flex h-[90px] items-center justify-between gap-8">
         <Logo />
 
         <div className="hidden items-center gap-8 md:flex">
@@ -133,7 +133,7 @@ export function Header() {
       {abierto ? (
         <div
           id="menu-mobile"
-          className="fixed inset-x-0 top-[72px] bottom-0 z-40 overflow-y-auto bg-fondo md:hidden"
+          className="fixed inset-x-0 top-[90px] bottom-0 z-40 overflow-y-auto bg-fondo md:hidden"
         >
           <nav aria-label="Principal" className="contenedor py-8">
             <ul className="flex flex-col">

@@ -52,8 +52,9 @@
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-dm-mono), ui-monospace, monospace;
 
-  /* Ancho del contenedor: 1226px sobre un frame de 1440 (márgenes de ~107px) */
-  --spacing-contenedor: 1226px;
+  /* Ancho del contenedor: 1223px sobre un frame de 1440, medido en los rects
+     del SVG (las bandas CTA declaran exactamente ese ancho). */
+  --spacing-contenedor: 1223px;
 }
 
 /**

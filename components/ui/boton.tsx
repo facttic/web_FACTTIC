@@ -12,7 +12,7 @@ import { IconoFlecha } from "./iconos";
  */
 
 type Variante = "punteada" | "solida" | "contorno" | "sutil" | "acento";
-type Tamano = "sm" | "md";
+type Tamano = "sm" | "md" | "lg";
 
 const VARIANTES: Record<Variante, string> = {
   punteada:
@@ -32,7 +32,10 @@ const VARIANTES: Record<Variante, string> = {
  */
 const TAMANOS: Record<Tamano, string> = {
   sm: "h-9 px-4 text-p3",
-  md: "h-13 px-6 text-p1-bold",
+  md: "h-[53px] px-6 text-p1-bold",
+  // El CTA del hero es el único con texto de 18px: en el SVG mide 247x53 y
+  // "Trabajá con FACTTIC" solo llega a ese ancho en P1 regular, no en P1/Bold.
+  lg: "h-[53px] px-5 text-p1",
 };
 
 /** Anillo de foco compartido por todo lo interactivo. */
