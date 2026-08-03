@@ -24,13 +24,22 @@ llegue.
       hay forma de cargar el logo de una cooperativa ni la foto de una autoridad.
 - [ ] **5. Multipart de proyectos incompleto.** No acepta `servicios`,
       `tecnologias` ni `cooperativas`, que sí están en el schema JSON.
-- [ ] **6. `slug` en proyectos**, para no tener URLs con ObjectId.
+- [ ] **6. `slug` en proyectos**, para no tener URLs con ObjectId. Campo propio
+      —string, único, indexado—, derivado del nombre al crear y estable después,
+      para que los links compartidos no se rompan si editan el título. Que
+      `GET /api/proyectos/{...}` acepte id o slug. La función que genera el slug
+      en el front es `slugify()` de `lib/dominio/adaptadores.ts`; se le pasó al
+      dev para que el resultado sea idéntico de los dos lados.
 - [ ] **7. Corregir el spec.** La ruta real de archivos es
       `/api/files/{filename}`, no `/files/{filename}`. Y falta declarar
       `security` en clientes, consejo, organizaciones, tecnologías y users —ni
       siquiera en sus POST/PUT/DELETE.
-- [ ] **8. Cargar el servicio "Datos e inteligencia artificial".** La maqueta
-      muestra 5 solapas y la API tiene 4.
+- [ ] **8. Cargar el servicio "Datos e inteligencia artificial".** Es un
+      registro más en la colección, no un campo nuevo del modelo —se preguntó en
+      la devolución del 3/8—: un POST a `/api/servicios` como cualquier otro. La
+      maqueta muestra 5 solapas y la API tiene 4. De paso, el `orden` cargado no
+      es el de la maqueta, que va: Desarrollo, Diseño y comunicación, Datos e
+      inteligencia artificial, Capacitación y consultoría, Infraestructura.
 
 ### Tanda 2 (enviada)
 
