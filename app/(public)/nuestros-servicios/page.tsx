@@ -191,15 +191,18 @@ export default async function NuestrosServiciosPage() {
       </Seccion>
 
       {aliados.length ? (
-        <Seccion>
+        <Seccion className="pb-0">
           <EncabezadoSeccion
             rotulo={T.aliados.rotulo}
             titulo={T.aliados.titulo}
             alineacion="centro"
           />
-          {/* De punta a punta: los logos entran y salen por el borde. */}
-          <Aliados logos={aliados} className="-mx-6" />
         </Seccion>
+      ) : null}
+      {aliados.length ? (
+        /* La cinta va fuera del contenedor: los logos entran y salen por los
+           bordes de la pantalla. */
+        <Aliados logos={aliados} className="pb-12 md:pb-16" />
       ) : null}
 
       <div className="contenedor pb-12 md:pb-16">

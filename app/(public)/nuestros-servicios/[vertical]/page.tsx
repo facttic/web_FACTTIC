@@ -4,7 +4,7 @@ import { EncabezadoSeccion, Seccion, BandaCta } from "@/components/ui/seccion";
 import { BotonLink } from "@/components/ui/boton";
 import { Carrusel } from "@/components/ui/carrusel";
 import { Animacion } from "@/components/ui/animacion";
-import { CardProyecto } from "@/components/tarjetas/proyecto";
+import { CardProyecto, FilaProyecto } from "@/components/tarjetas/proyecto";
 import { CardPropuesta } from "@/components/tarjetas/servicios";
 import { Metodologias } from "@/components/secciones/metodologias";
 import { CardMetodologia } from "@/components/tarjetas/servicios";
@@ -153,31 +153,52 @@ export default async function VerticalPage({
             accionAlPie
             accion={<BotonLink href="/proyectos">Ver todos</BotonLink>}
           />
-          <Carrusel grilla="md:grid-cols-[2.06fr_1fr]" gap="gap-5">
+          {/* En mobile la maqueta no usa tarjetas con imagen: los proyectos van
+              en lista, con los servicios y los chips debajo del título. */}
+          <div className="md:hidden">
             {proyectos.items.map((proyecto) => (
-              <CardProyecto
-                key={proyecto.id}
-                proyecto={proyecto}
-                className="w-[350px] shrink-0 snap-start md:w-auto"
-              />
+              <FilaProyecto key={proyecto.id} proyecto={proyecto} />
             ))}
-          </Carrusel>
+          </div>
+          <div className="hidden gap-5 md:grid md:grid-cols-[2.06fr_1fr]">
+            {proyectos.items.map((proyecto) => (
+              <CardProyecto key={proyecto.id} proyecto={proyecto} />
+            ))}
+          </div>
         </Seccion>
       ) : null}
 
       {aliados.length ? (
-        <Seccion>
-          <Aliados logos={aliados} className="-mx-6" />
+        <Seccion className="pb-0">
+          <EncabezadoSeccion
+            rotulo={SERVICIOS_PAGINA.aliados.rotulo}
+            titulo={SERVICIOS_PAGINA.aliados.titulo}
+          />
         </Seccion>
       ) : null}
+      {aliados.length ? (
+        <Aliados logos={aliados} className="pb-12 md:pb-16" />
+      ) : null}
 
-      <div className="contenedor pb-12 md:pb-16">
-        <BandaCta
-          titulo={T.cierre.titulo}
-          accion={
-            <BotonLink href={T.cierre.cta.href}>{T.cierre.cta.texto}</BotonLink>
-          }
+      {/* El cierre va sobre el sol naranja, con la tarjeta de vidrio dejándolo
+          ver a través. El fondo propio de este bloque no vino en la entrega, así
+          que se usa el de "Trabajo con impacto", del mismo color. */}
+      <div className="relative isolate overflow-hidden pt-20 pb-12 md:pt-0 md:pb-16">
+        <Animacion
+          nombre="beneficio-trabajo"
+          className="pointer-events-none absolute -top-8 -left-52 -z-10 size-[30rem] opacity-80 blur-[2px] md:hidden"
         />
+        <div className="contenedor">
+          <BandaCta
+            variante="vidrio"
+            titulo={T.cierre.titulo}
+            accion={
+              <BotonLink href={T.cierre.cta.href}>
+                {T.cierre.cta.texto}
+              </BotonLink>
+            }
+          />
+        </div>
       </div>
     </>
   );

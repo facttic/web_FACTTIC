@@ -5,8 +5,9 @@ import type { Organizacion } from "@/lib/dominio/tipos";
 /**
  * Banda de logos de aliados ("Eligen soluciones cooperativas").
  *
- * Se desplaza sola y de punta a punta, sin acotarse al contenedor: en la
- * maqueta los logos entran y salen por los bordes de la pantalla.
+ * Se desplaza sola y de punta a punta: en la maqueta los logos entran y salen
+ * por los bordes de la pantalla, no del contenedor. Por eso va fuera de él y no
+ * con márgenes negativos, que la dejaban asomando de un solo lado.
  *
  * La animación recorre media cinta y vuelve a empezar, así que **cada mitad
  * tiene que ser más ancha que la pantalla**: si no, al llegar al salto queda un
