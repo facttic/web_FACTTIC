@@ -10,6 +10,7 @@ import { CardSector } from "@/components/tarjetas/sector";
 import { CardProyecto } from "@/components/tarjetas/proyecto";
 import { CardBeneficioHover, CardMetrica } from "@/components/tarjetas/bloques";
 import { Animacion } from "@/components/ui/animacion";
+import { Carrusel } from "@/components/ui/carrusel";
 import { FONDOS, VIDEO_HERO } from "@/lib/animaciones";
 import { HOME } from "@/lib/contenido";
 import {
@@ -145,12 +146,7 @@ export default async function HomePage() {
               </BotonLink>
             }
           />
-          {/*
-            Carrusel horizontal en mobile y grilla de dos en desktop. Los
-            márgenes negativos dejan que las tarjetas se desplacen hasta el
-            borde de la pantalla, como en la maqueta.
-          */}
-          <div className="scroll-limpio -mx-6 flex snap-x snap-mandatory scroll-pl-6 gap-5 overflow-x-auto px-6 md:mx-0 md:grid md:grid-cols-[2.06fr_1fr] md:px-0">
+          <Carrusel grilla="md:grid-cols-[2.06fr_1fr]" gap="gap-5">
             {destacados.items.map((proyecto) => (
               <CardProyecto
                 key={proyecto.id}
@@ -158,7 +154,7 @@ export default async function HomePage() {
                 className="w-[350px] shrink-0 snap-start md:w-auto"
               />
             ))}
-          </div>
+          </Carrusel>
         </Seccion>
       ) : null}
 
@@ -221,8 +217,7 @@ export default async function HomePage() {
             </BotonLink>
           }
         />
-        {/* Carrusel en mobile, grilla de cuatro en desktop. */}
-        <div className="scroll-limpio -mx-6 flex snap-x snap-mandatory scroll-pl-6 gap-6 overflow-x-auto px-6 sm:mx-0 sm:grid sm:grid-cols-2 sm:px-0 lg:grid-cols-4">
+        <Carrusel grilla="sm:grid-cols-2 lg:grid-cols-4" desdeAncho="sm">
           {HOME.beneficios.items.map((beneficio) => (
             <CardBeneficioHover
               key={beneficio.titulo}
@@ -238,7 +233,7 @@ export default async function HomePage() {
               }
             />
           ))}
-        </div>
+        </Carrusel>
       </Seccion>
 
       <Seccion className="order-9">
@@ -250,8 +245,7 @@ export default async function HomePage() {
             <BotonLink href={HOME.red.cta.href}>{HOME.red.cta.texto}</BotonLink>
           }
         />
-        {/* En fila y desplazable en mobile; en tres columnas en desktop. */}
-        <div className="scroll-limpio -mx-6 flex gap-10 overflow-x-auto px-6 md:mx-0 md:grid md:grid-cols-3 md:gap-6 md:px-0">
+        <Carrusel grilla="md:grid-cols-3" gap="gap-10 md:gap-6">
           {/* Un color por métrica, como en el board: lila, lima y naranja. */}
           <CardMetrica
             rotulo="Profesionales"
@@ -271,7 +265,7 @@ export default async function HomePage() {
             acentoHover="naranja"
             className="shrink-0"
           />
-        </div>
+        </Carrusel>
       </Seccion>
 
       <div className="contenedor order-11 pb-16 md:order-10 md:pb-24">
