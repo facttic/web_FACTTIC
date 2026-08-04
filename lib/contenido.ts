@@ -261,9 +261,9 @@ export const VERTICALES = {
 
   propuesta: {
     rotulo: "Propuesta de valor",
+    // Sin bajada: la lleva la sección homónima de Nuestros servicios, pero en
+    // la vertical el prototipo va directo del título a las tarjetas.
     titulo: "¿Por qué elegirnos?",
-    descripcion:
-      "La tecnología es nuestra herramienta.\nLa cooperación, nuestro diferencial.",
     /*
      * Las cuatro se pintan con el color de la vertical al pasar el mouse. El
      * prototipo solo escribe la primera; las otras tres están redactadas por

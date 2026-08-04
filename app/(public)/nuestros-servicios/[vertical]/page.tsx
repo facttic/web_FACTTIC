@@ -91,7 +91,6 @@ export default async function VerticalPage({
         <EncabezadoSeccion
           rotulo={T.propuesta.rotulo}
           titulo={T.propuesta.titulo}
-          descripcion={T.propuesta.descripcion}
         />
 
         {/* En desktop son cuatro tarjetas que toman el color de la vertical al

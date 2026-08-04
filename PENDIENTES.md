@@ -49,10 +49,16 @@ llegue.
 - [ ] **11. Usuario de solo lectura** para el front.
 - [ ] **12. Higiene de datos**: espacio inicial en `" Capacitación y
       consultoría"`; tres formas distintas de guardar la imagen en
-      `tecnologias`; URLs guardadas en `http://`; sectores sin `descripcion`;
-      datos de prueba a limpiar (`javaja`, `Cooperativa A/B/C`, `Proyecto1`).
+      `tecnologias`; URLs guardadas en `http://`; datos de prueba a limpiar
+      (`Cooperativa A/B/C`, `Proyecto1`). ~~`javaja` y las tecnologías con
+      logo de marcador~~ → borradas al cargar el stack real.
 - [ ] **13. `createdBy`/`updatedBy`** expuestos en todas las respuestas.
-- [ ] **14. Unificar la paginación** entre proyectos y el resto.
+- [ ] **14. Unificar la paginación** entre proyectos y el resto. **Además, el
+      tamaño de página no se puede elegir**: los catálogos ignoran `limit`,
+      `perPage` y `porPagina`, y devuelven de a diez atendiendo solo a `page`.
+      Por eso el front recorre las páginas una por una en `traerTodos()`; se
+      notó cuando las tecnologías pasaron de ocho a dieciséis y el sitio
+      mostraba diez.
 - [ ] **15. Token de 15 minutos**: extenderlo o permitir `refresh-token` sin cookie.
 - [ ] **16. `cache-control`** en las respuestas, para cachear en CDN.
 - [ ] **17. CORS**: hoy refleja cualquier `Origin` con `allow-credentials: true`.

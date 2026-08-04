@@ -24,12 +24,33 @@ import { TTL, cached } from "./cache";
  */
 
 const TODOS = 200;
+/** Tope de páginas a recorrer, por si el total que informa la API no baja. */
+const MAX_PAGINAS = 20;
 
+/**
+ * Trae una colección completa recorriendo sus páginas.
+ *
+ * La API pagina de a diez y **no respeta el tamaño de página**: ignora `limit`,
+ * `perPage` y `porPagina`, y solo atiende `page`. Pedir la lista entera de una
+ * no funciona —devolvía diez tecnologías de diecisiete—, así que hay que ir
+ * página por página hasta juntar el total que ella misma informa.
+ *
+ * Está pedido que unifique la paginación (ítem 14); cuando lo haga, esto vuelve
+ * a ser una sola llamada.
+ */
 async function traerTodos<T>(path: string): Promise<T[]> {
-  const raw = await apiFetch<Api.Paginated<T>>(path, {
-    params: { perPage: TODOS },
-  });
-  return normalizePage<T>(raw, TODOS).items;
+  const items: T[] = [];
+
+  for (let pagina = 1; pagina <= MAX_PAGINAS; pagina++) {
+    const raw = await apiFetch<Api.Paginated<T>>(path, {
+      params: { perPage: TODOS, page: pagina },
+    });
+    const { items: tanda, total } = normalizePage<T>(raw, TODOS);
+    items.push(...tanda);
+    if (!tanda.length || items.length >= total) break;
+  }
+
+  return items;
 }
 
 function porOrden<T extends { orden: number }>(a: T, b: T): number {
