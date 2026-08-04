@@ -82,7 +82,7 @@ export default async function HomePage() {
           <EncabezadoSeccion
             rotulo={HOME.sectores.rotulo}
             titulo={HOME.sectores.titulo}
-            alineacion="centro"
+            alineacion="centro-en-mobile"
           />
           <div className="grid gap-10 md:grid-cols-3 md:gap-6">
             {sectores.map((sector, i) => (
@@ -114,7 +114,7 @@ export default async function HomePage() {
             <EncabezadoSeccion
               rotulo={HOME.servicios.rotulo}
               titulo={HOME.servicios.tituloMobile}
-              alineacion="centro"
+              alineacion="centro-en-mobile"
             />
             <ServiciosMobile servicios={servicios} />
           </div>
@@ -125,6 +125,7 @@ export default async function HomePage() {
         <EncabezadoSeccion
           rotulo={HOME.metodologia.rotulo}
           titulo={HOME.metodologia.titulo}
+          alineacion="centro-en-mobile"
           accion={
             <BotonLink href={HOME.metodologia.cta.href}>
               {HOME.metodologia.cta.texto}
@@ -139,6 +140,7 @@ export default async function HomePage() {
           <EncabezadoSeccion
             rotulo={HOME.proyectos.rotulo}
             titulo={HOME.proyectos.titulo}
+            alineacion="centro-en-mobile"
             accionAlPie
             accion={
               <BotonLink href={HOME.proyectos.cta.href}>
@@ -210,6 +212,7 @@ export default async function HomePage() {
         <EncabezadoSeccion
           rotulo={HOME.beneficios.rotulo}
           titulo={HOME.beneficios.titulo}
+          alineacion="centro-en-mobile"
           accionAlPie
           accion={
             <BotonLink href={HOME.beneficios.cta.href}>
@@ -240,6 +243,7 @@ export default async function HomePage() {
         <EncabezadoSeccion
           rotulo={HOME.red.rotulo}
           titulo={HOME.red.titulo}
+          alineacion="centro-en-mobile"
           accionAlPie
           accion={
             <BotonLink href={HOME.red.cta.href}>{HOME.red.cta.texto}</BotonLink>

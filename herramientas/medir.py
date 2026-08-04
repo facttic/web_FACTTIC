@@ -6,10 +6,11 @@ redimensiona pero no cambia el viewport, así que para revisar mobile hace falta
 un Chrome propio con el ancho fijado de verdad.
 
   ANCHO=393  python3 herramientas/medir.py shot home-mobile.png
-  ANCHO=1440 python3 herramientas/medir.py js "document.title"
+  ANCHO=1440 URL=http://localhost:3000/proyectos python3 herramientas/medir.py js "document.title"
 """
 import base64
 import json
+import os
 import subprocess
 import sys
 import time
@@ -17,8 +18,7 @@ import urllib.request
 
 import websocket
 
-URL = "http://localhost:3000/"
-import os
+URL = os.environ.get("URL", "http://localhost:3000/")
 ANCHO, ALTO = int(os.environ.get("ANCHO", 393)), 900
 PUERTO = 9333
 PERFIL = "/tmp/claude-1000/chrome-perfil-facttic"

@@ -13,9 +13,12 @@ import { cn } from "@/lib/cn";
  */
 export function Seccion({
   children,
+  id,
   className,
 }: {
   children: ReactNode;
+  /** Ancla para los enlaces del menú secundario (`/nuestros-servicios#soluciones`). */
+  id?: string;
   className?: string;
 }) {
   /*
@@ -27,6 +30,7 @@ export function Seccion({
   */
   return (
     <section
+      id={id}
       className={cn("contenedor flex flex-col py-12 md:py-16", className)}
     >
       {children}
@@ -40,14 +44,19 @@ export function Seccion({
  */
 export function EncabezadoSeccion({
   rotulo,
+  rotuloMobile,
   titulo,
   descripcion,
   accion,
   accionAlPie = false,
+  descripcionAlLado = false,
   alineacion = "izquierda",
   className,
 }: {
   rotulo?: string;
+  /** El rótulo cambia entre maquetas en algunas pantallas ("Verticales" en
+   *  desktop, "Industrias" en mobile). */
+  rotuloMobile?: string;
   titulo: ReactNode;
   descripcion?: ReactNode;
   accion?: ReactNode;
@@ -59,31 +68,50 @@ export function EncabezadoSeccion({
    * repetir el enlace en el HTML.
    */
   accionAlPie?: boolean;
-  /** El diseño centra algunos bloques, como "Sectores" en la Home. */
-  alineacion?: "izquierda" | "centro";
+  /**
+   * En Servicios la bajada va en una segunda columna, a la derecha del título,
+   * en vez de debajo. En mobile siempre queda debajo.
+   */
+  descripcionAlLado?: boolean;
+  /**
+   * Cómo se alinea el encabezado. No hay una regla única entre pantallas: la
+   * Home centra todo en mobile y alinea a la izquierda en desktop, mientras que
+   * Servicios va a la izquierda en las dos. Por eso son tres valores y no un
+   * comportamiento automático.
+   */
+  alineacion?: "izquierda" | "centro" | "centro-en-mobile";
   className?: string;
 }) {
-  const centrado = alineacion === "centro";
+  const centradoSiempre = alineacion === "centro";
+  const centradoEnMobile = centradoSiempre || alineacion === "centro-en-mobile";
 
-  /*
-    En mobile la maqueta centra todos los encabezados y estira la acción a lo
-    ancho; la alineación que llega por prop solo decide qué pasa en desktop.
-  */
   return (
     <header
       className={cn(
-        "text-center",
+        centradoEnMobile ? "text-center" : "text-left",
         accionAlPie ? "contents md:mb-8 md:block" : "mb-8",
-        centrado ? "md:text-center" : "md:text-left",
+        centradoSiempre ? "md:text-center" : "md:text-left",
         className,
       )}
     >
-      {rotulo ? <p className="text-eyebrow text-blanco/40">{rotulo}</p> : null}
+      {rotulo ? (
+        <p className="text-eyebrow text-blanco/40">
+          {rotuloMobile ? (
+            <>
+              <span className="md:hidden">{rotuloMobile}</span>
+              <span className="hidden md:inline">{rotulo}</span>
+            </>
+          ) : (
+            rotulo
+          )}
+        </p>
+      ) : null}
       <div
         className={cn(
-          "mt-3 flex flex-col items-center gap-6",
+          "mt-3 flex flex-col gap-6",
+          centradoEnMobile ? "items-center" : "items-start",
           accionAlPie && "contents md:mt-3 md:flex",
-          centrado
+          centradoSiempre
             ? "md:items-center"
             : "md:flex-row md:items-end md:justify-between",
         )}
@@ -105,12 +133,17 @@ export function EncabezadoSeccion({
           <h2 className="text-h1 text-balance whitespace-normal md:whitespace-pre-line">
             {titulo}
           </h2>
-          {descripcion ? (
-            <p className="text-p1 mt-4 max-w-2xl text-blanco/60">
+          {descripcion && !descripcionAlLado ? (
+            <p className="text-p1 mt-4 max-w-2xl whitespace-pre-line text-blanco/60">
               {descripcion}
             </p>
           ) : null}
         </div>
+        {descripcion && descripcionAlLado ? (
+          <p className="text-p1 mt-4 max-w-xl whitespace-pre-line text-blanco/60 md:mt-0 md:flex-1">
+            {descripcion}
+          </p>
+        ) : null}
         {accion ? (
           <div
             className={cn(

@@ -9,7 +9,8 @@
  * se usa negro, que es el que pasa contraste AA.
  */
 
-export type Acento = 'lila' | 'celeste' | 'naranja' | 'amarillo' | 'verde' | 'rojo' | 'azul'
+export type Acento =
+  "lila" | "celeste" | "naranja" | "amarillo" | "verde" | "rojo" | "azul";
 
 /**
  * Variante al pasar el mouse, para las tarjetas que se pintan recién en hover.
@@ -33,18 +34,36 @@ export const HOVER_ACENTO: Record<Acento, string> = {
 };
 
 export const FONDO_ACENTO: Record<Acento, string> = {
-  lila: 'bg-lila text-negro-oscuro',
-  celeste: 'bg-celeste text-negro-oscuro',
-  naranja: 'bg-naranja text-negro-oscuro',
-  amarillo: 'bg-amarillo text-negro-oscuro',
-  verde: 'bg-verde text-negro-oscuro',
-  rojo: 'bg-rojo text-negro-oscuro',
-  azul: 'bg-azul text-blanco',
-}
+  lila: "bg-lila text-negro-oscuro",
+  celeste: "bg-celeste text-negro-oscuro",
+  naranja: "bg-naranja text-negro-oscuro",
+  amarillo: "bg-amarillo text-negro-oscuro",
+  verde: "bg-verde text-negro-oscuro",
+  rojo: "bg-rojo text-negro-oscuro",
+  azul: "bg-azul text-blanco",
+};
 
 /** Secuencia con la que el diseño alterna colores en las grillas. */
-export const CICLO_ACENTOS: Acento[] = ['lila', 'celeste', 'naranja', 'amarillo', 'verde', 'azul']
+export const CICLO_ACENTOS: Acento[] = [
+  "lila",
+  "celeste",
+  "naranja",
+  "amarillo",
+  "verde",
+  "azul",
+];
 
 export function acentoPorIndice(indice: number): Acento {
-  return CICLO_ACENTOS[indice % CICLO_ACENTOS.length]
+  return CICLO_ACENTOS[indice % CICLO_ACENTOS.length];
 }
+
+/** El acento aplicado al texto, para lo que se pinta sin fondo. */
+export const COLOR_ACENTO: Record<Acento, string> = {
+  lila: "text-lila",
+  celeste: "text-celeste",
+  naranja: "text-naranja",
+  amarillo: "text-amarillo",
+  verde: "text-verde",
+  rojo: "text-rojo",
+  azul: "text-azul",
+};

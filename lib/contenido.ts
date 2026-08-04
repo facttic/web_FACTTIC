@@ -124,3 +124,88 @@ export const HOME = {
     },
   },
 } as const;
+
+/**
+ * Nuestros servicios.
+ *
+ * Los servicios y los sectores salen de la API; acá va lo fijo de la pantalla.
+ * Igual que en la Home, hay copy que cambia entre las dos maquetas: el rótulo
+ * de la sección de sectores dice "Verticales" en desktop e "Industrias" en
+ * mobile.
+ */
+export const SERVICIOS_PAGINA = {
+  hero: {
+    titulo: "Solucionamos\ncon tecnología",
+    bajada:
+      "Aportamos soluciones tecnológicas y de conocimiento que acompañan el desarrollo del cooperativismo, la producción y la industria.",
+  },
+
+  sectores: {
+    rotulo: "Verticales",
+    rotuloMobile: "Industrias",
+    titulo: "Sectores con\nlos que trabajamos",
+    descripcion:
+      "Cada rubro tiene sus propias reglas.\nDesarrollamos soluciones que se adaptan a ellas.",
+  },
+
+  soluciones: {
+    rotulo: "Servicios",
+    titulo: "Nuestras soluciones",
+  },
+
+  metodologia: {
+    rotulo: "Metodologías",
+    titulo: "¿Cómo trabajamos?",
+    /*
+     * En desktop son tres bloques de color con el nombre y nada más; en mobile
+     * se vuelven un carrusel y ahí sí aparece la descripción. Del diseño solo
+     * está escrita la de "Proyectos a medida" —las otras dos quedan pedidas—.
+     */
+    items: [
+      {
+        titulo: "Proyectos\na medida",
+        acento: "lila" as Acento,
+        descripcion:
+          "Nos encargamos de todo el proceso, desde la idea hasta la entrega final. Trabajamos junto a tu organización para entender sus necesidades, definir objetivos y construir una solución con identidad propia.",
+      },
+      {
+        titulo: "Managed\nServices",
+        acento: "verde" as Acento,
+        descripcion: null,
+      },
+      {
+        titulo: "Staff\nAugmentation",
+        acento: "naranja" as Acento,
+        descripcion: null,
+      },
+    ],
+    cierre: {
+      titulo:
+        "¿Cuál es el modelo ideal para tu organización o empresa? Hablemos y te asesoramos.",
+      cta: { texto: "Escribinos", href: "/contacto" },
+    },
+  },
+
+  porQue: {
+    rotulo: "Propuesta de valor",
+    titulo: "¿Por qué elegirnos?",
+    descripcion:
+      "La tecnología es nuestra herramienta.\nLa cooperación, nuestro diferencial.",
+    items: [
+      "Todas las especialidades TIC en un solo lugar",
+      "Equipos sin rotación",
+      "Agilidad y capacidad de adaptación",
+      "Cada proyecto es nuestro",
+    ],
+  },
+
+  aliados: {
+    rotulo: "Aliados",
+    titulo: "Eligen soluciones cooperativas",
+  },
+
+  cierre: {
+    titulo: "¿Tenés un proyecto?",
+    cta: { texto: "Trabajá con FACTTIC", href: "/contacto" },
+  },
+} as const;

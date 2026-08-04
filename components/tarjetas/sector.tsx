@@ -61,6 +61,9 @@ const CAJA_SECTOR =
   "bg-transparent rounded-none border-x-0 border-t-0 border-b border-borde-pleno pb-4 " +
   "md:rounded-lg md:border md:pb-0";
 
+/** Con caja en los dos anchos, como en la pantalla de Servicios. */
+const CAJA_SIEMPRE = "bg-transparent rounded-lg border border-borde-pleno";
+
 /**
  * Tarjeta de sector de la Home.
  *
@@ -75,19 +78,31 @@ export function CardSector({
   sector,
   indice,
   href,
+  conCaja = false,
   className,
 }: {
   sector: Sector;
   indice: number;
   href?: string;
+  /**
+   * Mantiene el borde también en mobile. En la Home las tarjetas se abren y se
+   * vuelven una lista; en Servicios conservan la caja en los dos anchos.
+   */
+  conCaja?: boolean;
   className?: string;
 }) {
   const numero = String(indice + 1).padStart(2, "0");
+  const caja = conCaja ? CAJA_SIEMPRE : CAJA_SECTOR;
 
   const reposo = (
     /* Sin padding en mobile: ahí el número y el nombre van contra los bordes
        del contenedor, no de una tarjeta. */
-    <div className="absolute inset-0 flex flex-col transition-opacity duration-300 group-hover:opacity-0 md:p-6">
+    <div
+      className={cn(
+        "absolute inset-0 flex flex-col transition-opacity duration-300 group-hover:opacity-0 md:p-6",
+        conCaja && "p-6",
+      )}
+    >
       <div className="grid flex-1 place-items-center">
         <Ilustracion sector={sector} />
       </div>
@@ -100,7 +115,7 @@ export function CardSector({
 
   if (!href) {
     return (
-      <Tarjeta className={cn("relative", CAJA_SECTOR, ALTO_SECTOR, className)}>
+      <Tarjeta className={cn("relative", caja, ALTO_SECTOR, className)}>
         {reposo}
       </Tarjeta>
     );
@@ -111,7 +126,7 @@ export function CardSector({
       <Tarjeta
         className={cn(
           "relative overflow-hidden transition-colors",
-          CAJA_SECTOR,
+          caja,
           ALTO_SECTOR,
         )}
       >
