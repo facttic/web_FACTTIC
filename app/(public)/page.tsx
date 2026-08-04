@@ -112,7 +112,7 @@ export default async function HomePage() {
           <div className="md:hidden">
             <EncabezadoSeccion
               rotulo={HOME.servicios.rotulo}
-              titulo={HOME.servicios.titulo}
+              titulo={HOME.servicios.tituloMobile}
               alineacion="centro"
             />
             <ServiciosMobile servicios={servicios} />

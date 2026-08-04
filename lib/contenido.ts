@@ -29,6 +29,9 @@ export const HOME = {
   servicios: {
     rotulo: "Servicios",
     titulo: "Solucionamos con tecnología e innovación",
+    // En mobile el bloque cambia de título, no solo de forma. Sin saltos: en
+    // pantallas chicas los títulos los reparte el balance del navegador.
+    tituloMobile: "Soluciones tecnológicas para tu organización",
   },
 
   metodologia: {
