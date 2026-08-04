@@ -22,6 +22,9 @@ export function LogoRemoto({
   const [falló, setFalló] = useState(false);
 
   if (!src || falló) {
+    // Sin `nombre` no hay respaldo que mostrar: quien llama ya lo escribe al
+    // lado, como en el stack tecnológico.
+    if (!nombre) return null;
     return <span className="text-p2 text-center text-blanco/70">{nombre}</span>;
   }
 

@@ -31,15 +31,22 @@ export function Stack({
 
       <ul className="scroll-limpio -mx-6 flex gap-4 overflow-x-auto px-6 md:mx-0 md:flex-1 md:px-0">
         {tecnologias.map((tecnologia) => (
+          /*
+            En la maqueta cada tarjeta es un isologo: el ícono arriba y el
+            nombre debajo. Con nombre siempre, porque muchas marcas no se
+            reconocen solo por su símbolo —y algunas, como nextAuth, ni
+            siquiera tienen uno—.
+          */
           <li
             key={tecnologia.id}
-            className="grid h-[90px] w-[155px] shrink-0 place-items-center rounded-lg bg-superficie-alta px-5"
+            className="flex h-[90px] w-[180px] shrink-0 flex-col items-center justify-center gap-1.5 rounded-lg bg-superficie-alta px-4"
           >
-            <LogoRemoto
-              src={tecnologia.logo}
-              nombre={tecnologia.nombre}
-              className="max-h-10"
-            />
+            {tecnologia.logo ? (
+              <LogoRemoto src={tecnologia.logo} nombre="" className="max-h-6" />
+            ) : null}
+            <span className="text-h4 text-center leading-tight">
+              {tecnologia.nombre}
+            </span>
           </li>
         ))}
       </ul>
