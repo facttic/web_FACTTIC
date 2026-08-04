@@ -112,7 +112,8 @@ llegue.
 ### Maquetas
 
 - [ ] **Menú mobile abierto** (overlay del hamburguesa). No aparece en las
-      páginas Desktop ni Mobile del archivo; se resolvió con criterio propio.
+      páginas Desktop ni Mobile del archivo, y en el prototipo mobile el botón
+      tampoco tiene interacción: se resolvió con criterio propio.
 - [ ] **Estados interactivos** que el board no cubre: focus y active de botones,
       formulario de contacto con validación, error y éxito, y empty state de los
       filtros de Proyectos. Los hover de las tarjetas sí están: el board de

@@ -113,6 +113,97 @@ export function Typewriter({
 }
 
 /**
+ * Revelado palabra por palabra atado al scroll, como pide la anotación
+ * "Animación: Scroll reveal" sobre el bloque que abre la Home en mobile.
+ *
+ * A diferencia de `RevelarAlScroll`, que anima el bloque entero una sola vez,
+ * acá cada palabra se enciende según cuánto avanzó el texto en la pantalla: al
+ * scrollear, el párrafo se va "leyendo" solo.
+ *
+ * El texto va entero en el DOM y solo cambia su opacidad, así que se selecciona,
+ * se busca y lo lee un lector de pantalla como cualquier párrafo. Con
+ * `prefers-reduced-motion` aparece completo y no se engancha al scroll.
+ */
+export function RevelarPalabras({
+  texto,
+  className,
+}: {
+  texto: string;
+  className?: string;
+}) {
+  const ref = useRef<HTMLParagraphElement>(null);
+  const [avance, setAvance] = useState(1);
+
+  useEffect(() => {
+    if (prefiereMenosMovimiento()) return;
+    const nodo = ref.current;
+    if (!nodo) return;
+
+    setAvance(0);
+    let pendiente = false;
+    const medir = () => {
+      pendiente = false;
+      const caja = nodo.getBoundingClientRect();
+      /*
+       * 0 cuando el bloque todavía no llegó al 85% de la pantalla y 1 cuando su
+       * tope pasó el 25%: el texto termina de encenderse antes de quedar
+       * centrado, no cuando ya se está yendo.
+       */
+      const inicio = window.innerHeight * 0.85;
+      const fin = window.innerHeight * 0.25;
+      const p = (inicio - caja.top) / (inicio - fin);
+      setAvance(Math.min(1, Math.max(0, p)));
+    };
+    const alScroll = () => {
+      if (pendiente) return;
+      pendiente = true;
+      requestAnimationFrame(medir);
+    };
+
+    medir();
+    window.addEventListener("scroll", alScroll, { passive: true });
+    window.addEventListener("resize", alScroll);
+    return () => {
+      window.removeEventListener("scroll", alScroll);
+      window.removeEventListener("resize", alScroll);
+    };
+  }, []);
+
+  const palabras = texto.split(" ");
+
+  return (
+    <p ref={ref} className={className}>
+      {palabras.map((palabra, i) => {
+        /*
+         * Cada palabra se enciende a lo largo de una ventana que se solapa con
+         * la de sus vecinas, para que el degradado corra en vez de prenderlas
+         * de a una. Las ventanas se reparten de modo que la primera arranque en
+         * 0 y la última termine justo en 1: si no, la del final se queda a
+         * media luz porque nunca le alcanza el recorrido.
+         */
+        const ventana = 2 / (palabras.length + 1);
+        const desde =
+          palabras.length > 1 ? (i * (1 - ventana)) / (palabras.length - 1) : 0;
+        const opacidad = Math.min(
+          1,
+          Math.max(0.15, (avance - desde) / ventana),
+        );
+        return (
+          <span
+            key={`${palabra}-${i}`}
+            style={{ opacity: opacidad }}
+            className="transition-opacity duration-300 motion-reduce:opacity-100"
+          >
+            {palabra}
+            {i < palabras.length - 1 ? " " : ""}
+          </span>
+        );
+      })}
+    </p>
+  );
+}
+
+/**
  * Revelado al entrar en pantalla: el contenido sube y toma nitidez.
  *
  * Se dispara una sola vez, cuando el bloque asoma en el viewport.

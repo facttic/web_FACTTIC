@@ -19,7 +19,7 @@ import type { Servicio } from "@/lib/dominio/tipos";
  */
 
 /** Alto de la tarjeta abierta y cuánto asoma cada cerrada, medidos en la maqueta. */
-const ALTO_ABIERTA = "h-[268px]";
+const ALTO_ABIERTA = "h-[278px]";
 const ALTO_CERRADA = "h-[30px]";
 
 export function ServiciosMobile({
@@ -51,7 +51,7 @@ export function ServiciosMobile({
             aria-controls={panelId}
             onClick={() => setAbierto(i)}
             className={cn(
-              "relative cursor-pointer overflow-hidden rounded-[20px] text-left",
+              "relative cursor-pointer overflow-hidden rounded-[21px] text-left",
               "transition-[height,background-color] duration-300",
               FOCO,
               estaAbierto

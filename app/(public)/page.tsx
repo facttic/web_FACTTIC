@@ -1,4 +1,5 @@
 import { Hero } from "@/components/secciones/hero";
+import { RevelarPalabras } from "@/components/secciones/texto-animado";
 import { Marquesina } from "@/components/secciones/marquesina";
 import { Pasos } from "@/components/secciones/pasos";
 import { BandaCta, EncabezadoSeccion, Seccion } from "@/components/ui/seccion";
@@ -65,7 +66,12 @@ export default async function HomePage() {
         un bloque de texto grande. En desktop ese lugar no existe.
       */}
       <Seccion className="order-2 md:hidden">
-        <p className="text-h1 text-balance">{HOME.hero.bajada}</p>
+        {/* La anotación del diseño pide acá el "Scroll reveal": el texto se
+            enciende palabra por palabra a medida que sube por la pantalla. */}
+        <RevelarPalabras
+          texto={HOME.hero.bajada}
+          className="text-h1 text-balance"
+        />
       </Seccion>
 
       {sectores.length ? (
