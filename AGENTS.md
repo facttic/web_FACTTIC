@@ -9,6 +9,14 @@ This version has breaking changes — APIs, conventions, and file structure may 
 Web pública + backoffice. El diseño está en Figma (`Facttic_ Web`) y exportado en
 `Material/`. La API ya existe; lo que falta de terceros está en `PENDIENTES.md`.
 
+## Cómo se avanza
+
+**Una pantalla por vez y completa: primero desktop, después mobile, y recién
+entonces la siguiente.** No se dejan pantallas a medio hacer para volver más
+tarde. Con la Home se hizo el desktop y la mobile quedó para después: al
+retomarla hubo que rehacer componentes ya dados por cerrados y volver sobre
+medidas ya revisadas.
+
 ## Antes de construir una pantalla
 
 1. **Leer las anotaciones del archivo de Figma** —las etiquetas verdes de
@@ -16,10 +24,10 @@ Web pública + backoffice. El diseño está en Figma (`Facttic_ Web`) y exportad
    Desktop y Mobile. Llevan animaciones y decisiones que no se ven en el PNG.
    Saltearse esto ya obligó a rehacer trabajo. En `PENDIENTES.md` está la lista
    de las que quedan por leer.
-2. **Mirar la maqueta mobile además de la desktop.** No son la misma página
-   reacomodada: cambian el orden de las secciones, la forma de varios bloques y
-   parte del copy. En la Home, mobile suma una línea al título del hero y
-   renombra dos secciones enteras.
+2. **Mirar las dos maquetas juntas.** No son la misma página reacomodada:
+   cambian el orden de las secciones, la forma de varios bloques y parte del
+   copy. En la Home, mobile suma una línea al título del hero y renombra dos
+   secciones enteras.
 3. **Componer con lo que ya existe** (`components/ui`, `tarjetas`, `secciones`).
    El catálogo se ve en `/componentes`.
 
