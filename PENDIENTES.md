@@ -24,6 +24,10 @@ llegue.
       hay forma de cargar el logo de una cooperativa ni la foto de una autoridad.
 - [ ] **5. Multipart de proyectos incompleto.** No acepta `servicios`,
       `tecnologias` ni `cooperativas`, que sí están en el schema JSON.
+      **Además el spec miente en el nombre del campo de imágenes**: documenta
+      `imageFiles[]` y con eso responde 500 (`MulterError: Unexpected field`);
+      el que funciona es `imageFiles`, sin corchetes. Lo mismo habría que
+      revisar en `videoFiles`.
 - [ ] **6. `slug` en proyectos**, para no tener URLs con ObjectId. Campo propio
       —string, único, indexado—, derivado del nombre al crear y estable después,
       para que los links compartidos no se rompan si editan el título. Que
