@@ -164,6 +164,19 @@ llevan indicaciones de implementación. Estado de las encontradas:
 - [x] ~~"Scroll reveal"~~ (hero) → implementado.
 - [x] ~~"`<h1>` con clase `.display`"~~ (hero) → ya se cumplía.
 
+- [ ] **26. Descripción larga de cada sector.** El modelo tiene un solo campo de
+      texto y lo ocupa la frase corta del hover de la Home; la pantalla de cada
+      vertical necesita otra más extensa. Hoy vive en `lib/contenido.ts`.
+- [ ] **27. Inconsistencia entre las maquetas de la vertical.** En desktop la
+      propuesta de valor dice "Trabajamos con compromiso · Somos parte ·
+      Intercooperamos · Nos conocemos" y en mobile "Soluciones adaptadas ·
+      Alcance Federal · Trabajo colaborativo · Capacitación y consultoría". Se
+      tomó la de desktop, que es la que también está en el prototipo.
+- [ ] **28. Textos de las verticales escritos por nosotros.** El prototipo solo
+      define la descripción de "Trabajamos con compromiso"; las otras tres
+      tarjetas y las descripciones largas de Agro y Financiero están redactadas
+      acá y hay que validarlas.
+
 ### Contenido a recibir
 
 - [ ] **Doc con la información de las cooperativas.** Diseño lo mencionó el 4/8

@@ -55,6 +55,24 @@ export function nombreCortoDeServicio(nombre: string): string {
   return NOMBRE_CORTO_SERVICIO[limpio.toLowerCase()] ?? limpio;
 }
 
+/**
+ * Color de cada vertical. Lo fija una anotación del archivo: "el color para
+ * organizaciones el amarillo (E5F280), el naranja para Finanzas (FF522A) y
+ * Celeste (57C3C8)" —este último, el que queda, es el de Agro—.
+ *
+ * Tiñe las tarjetas de propuesta de valor de su pantalla.
+ */
+const ACENTO_POR_SECTOR: Record<string, Acento> = {
+  organizaciones: "amarillo",
+  finanzas: "naranja",
+  financiero: "naranja",
+  agro: "celeste",
+};
+
+export function acentoDeSector(nombre: string): Acento {
+  return ACENTO_POR_SECTOR[nombre.trim().toLowerCase()] ?? "lila";
+}
+
 /** Animación de cada sector, por nombre. */
 const POR_SECTOR: Record<string, string> = {
   finanzas: "sector-financiero",

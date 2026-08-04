@@ -239,3 +239,65 @@ export const SERVICIOS_PAGINA = {
     cta: { texto: "Trabajá con FACTTIC", href: "/contacto" },
   },
 } as const;
+
+/**
+ * Verticales (Organizaciones, Agro, Financiero).
+ *
+ * Las tres comparten plantilla: diseño confirmó que se reúsa. El nombre, la
+ * ilustración y los proyectos salen de la API; acá va lo que la API no tiene.
+ *
+ * La descripción larga vive por ahora en el código porque el modelo de Sector
+ * tiene un solo campo de texto y ese lo ocupa la frase corta que usa el hover
+ * de las tarjetas en la Home. Está pedido como ítem 26.
+ */
+export const VERTICALES = {
+  descripciones: {
+    organizaciones:
+      "Trabajamos con organizaciones sociales, cooperativas y organismos de derechos humanos que usan la tecnología como herramienta de transformación. Desarrollamos soluciones digitales que amplían su alcance, mejoran sus procesos y fortalecen su presencia.",
+    agro: "Acompañamos al sector agropecuario con sensores, análisis de datos y visión artificial. Llevamos la tecnología al campo para que las decisiones se tomen con información propia y en el momento en que hace falta.",
+    financiero:
+      "Desarrollamos soluciones para bancos, mutuales y fintech, donde la seguridad y la trazabilidad no son negociables. Construimos sistemas que sostienen operaciones críticas sin resignar la experiencia de quien los usa.",
+  } as Record<string, string>,
+
+  propuesta: {
+    rotulo: "Propuesta de valor",
+    titulo: "¿Por qué elegirnos?",
+    descripcion:
+      "La tecnología es nuestra herramienta.\nLa cooperación, nuestro diferencial.",
+    /*
+     * Las cuatro se pintan con el color de la vertical al pasar el mouse. El
+     * prototipo solo escribe la primera; las otras tres están redactadas por
+     * nosotros y hay que validarlas.
+     */
+    items: [
+      {
+        titulo: "Trabajamos\ncon compromiso",
+        descripcion:
+          "Compartimos una perspectiva política sobre el rol de la tecnología y el conocimiento en la sociedad. No es solo un servicio: es una convicción.",
+      },
+      {
+        titulo: "Somos parte",
+        descripcion:
+          "Venimos del mismo mundo que nuestras contrapartes: cooperativas, organizaciones y economía social. Entendemos cómo se decide y cómo se sostiene un proyecto colectivo.",
+      },
+      {
+        titulo: "Intercooperamos",
+        descripcion:
+          "Cuando un proyecto excede a una cooperativa, se arma equipo entre varias. La red permite tomar trabajos que ninguna podría sostener sola.",
+      },
+      {
+        titulo: "Nos\nconocemos",
+        descripcion:
+          "Trabajamos juntas hace años y nos elegimos por experiencia previa, no por catálogo. Eso acorta los tiempos y evita las fricciones de armar un equipo desde cero.",
+      },
+    ],
+  },
+
+  stack: { titulo: "Stack tecnológico" },
+  proyectos: { rotulo: "Proyectos", titulo: "Proyectos destacados" },
+
+  cierre: {
+    titulo: "¿Tenés un proyecto?",
+    cta: { texto: "Trabajá con FACTTIC", href: "/contacto" },
+  },
+} as const;

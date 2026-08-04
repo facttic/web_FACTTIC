@@ -1,4 +1,5 @@
 import { cn } from "@/lib/cn";
+import { LogoRemoto } from "@/components/ui/logo-remoto";
 import type { Organizacion } from "@/lib/dominio/tipos";
 
 /**
@@ -52,19 +53,11 @@ export function Aliados({
                 ALTO,
               )}
             >
-              {logo.logo ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={logo.logo}
-                  alt={logo.nombre}
-                  loading="lazy"
-                  className="max-h-12 w-auto max-w-full object-contain"
-                />
-              ) : (
-                <span className="text-p2 text-center text-blanco/70">
-                  {logo.nombre}
-                </span>
-              )}
+              <LogoRemoto
+                src={logo.logo}
+                nombre={logo.nombre}
+                className="max-h-12"
+              />
             </li>
           )),
         )}
