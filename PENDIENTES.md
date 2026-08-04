@@ -83,6 +83,16 @@ llegue.
       Organizaciones, Agro, Finanzas; la API los tiene cargados como Financiero
       (1), Agro (2), Organizaciones (3). El sitio respeta el `orden` de la API,
       así que se arregla desde el backoffice.
+- [ ] **24. Contenido de servicios que falta.** Al construir Nuestros servicios
+      quedó a la vista qué no está cargado:
+      - **Subservicios de cuatro de los cinco servicios.** El diseño solo
+        escribe los de "Desarrollo de software", que ya se cargaron; el resto
+        tiene datos de prueba ("project managment", "UX/UI").
+      - **Descripciones de "Managed Services" y "Staff Augmentation".** En
+        mobile el carrusel de metodologías las muestra y solo está escrita la de
+        "Proyectos a medida".
+      - **Logos de aliados.** `organizaciones` está vacío, así que la banda
+        "Eligen soluciones cooperativas" no se muestra.
 - [ ] **23. Nombre corto para los servicios.** Las solapas del diseño dicen
       "Diseño", "IA y Datos", "Ingeniería e infra", mientras que las tarjetas
       usan el nombre completo. La API solo tiene el completo, así que hoy se usa

@@ -6,6 +6,7 @@ import { Animacion } from "@/components/ui/animacion";
 import { CardSector } from "@/components/tarjetas/sector";
 import { CardMetodologia, CardServicio } from "@/components/tarjetas/servicios";
 import { Soluciones } from "@/components/secciones/soluciones";
+import { SectoresMobile } from "@/components/secciones/sectores-mobile";
 import { Metodologias } from "@/components/secciones/metodologias";
 import { Aliados } from "@/components/secciones/aliados";
 import { FONDOS } from "@/lib/animaciones";
@@ -67,7 +68,14 @@ export default async function NuestrosServiciosPage() {
             descripcion={T.sectores.descripcion}
             descripcionAlLado
           />
-          <div className="grid gap-10 md:grid-cols-3 md:gap-6">
+          {/* En mobile los sectores son un mazo de cartas con "Ver más"; en
+              desktop, tres tarjetas en fila. */}
+          <SectoresMobile
+            sectores={sectores}
+            hrefBase="/nuestros-servicios"
+            className="md:hidden"
+          />
+          <div className="hidden gap-6 md:grid md:grid-cols-3">
             {sectores.map((sector, i) => (
               <CardSector
                 key={sector.id}
