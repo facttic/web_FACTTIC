@@ -207,13 +207,19 @@ export function BandaCta({
     <div
       className={cn(
         // En mobile la banda va centrada y con el botón debajo del título.
-        "flex flex-col gap-10 rounded-xl border px-6 py-14",
+        "flex flex-col gap-10 rounded-xl px-6 py-14",
+        variante === "punteada" && "border",
         alineacion === "centro-en-mobile"
           ? "items-center text-center"
           : "items-start text-left",
         variante === "vidrio"
-          ? // 85% de negro: es lo que deja pasar la maqueta del color de atrás.
-            "border-borde bg-negro/85 backdrop-blur-xl"
+          ? /*
+              Vidrio esmerilado: apenas tiñe. Medido sobre la maqueta, deja
+              pasar entre el 85 y el 98% del color de atrás, así que lo que hace
+              el efecto es el desenfoque y el grano, no una capa oscura. Con más
+              opacidad el naranja desaparece.
+            */
+            "textura-ruido borde-degradado bg-negro/15 backdrop-blur-2xl"
           : "border-dashed border-borde-pleno",
         // 113px de alto en el SVG: el botón mide 53 y quedan 30 arriba y abajo.
         "md:flex-row md:items-center md:justify-between md:gap-6 md:px-10 md:py-7.5 md:text-left",

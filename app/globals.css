@@ -207,6 +207,61 @@
   animation: marquesina 40s linear infinite;
 }
 
+/**
+ * Grano sobre la superficie, como el efecto "Ruido" que el archivo de Figma
+ * aplica a las formas de la identidad. Se genera con una turbulencia SVG en
+ * línea, así no hace falta ninguna imagen.
+ *
+ * Va en un pseudoelemento para no pisar el fondo de quien lo use, y en
+ * `overlay` para que oscurezca y aclare según lo que tenga debajo en vez de
+ * agregar una capa gris pareja.
+ */
+@utility textura-ruido {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    /* Apenas perceptible: sobre una superficie oscura el ruido en `overlay`
+       aclara muy rápido y, pasado este punto, la tapa en vez de texturarla. */
+    opacity: 0.12;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23r)'/%3E%3C/svg%3E");
+  }
+}
+
+/**
+ * Borde con degradado diagonal, el de las tarjetas de vidrio: arranca en Gris
+ * oscuro arriba a la izquierda y termina en Lila claro abajo a la derecha.
+ * Medido sobre la maqueta, donde el trazo pasa de (83,61,93) a (209,197,214).
+ *
+ * Va en un pseudoelemento recortado con máscara y no con el truco de dos fondos
+ * —`padding-box` más `border-box`—, porque ese necesita un relleno opaco que
+ * tape el degradado por dentro y acá la tarjeta es translúcida a propósito: el
+ * degradado se vería en toda la superficie.
+ */
+@utility borde-degradado {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    background: linear-gradient(135deg, #3c3c3c 0%, #7a6a88 55%, #d6bbf2 100%);
+    /* Deja ver solo el anillo: pinta todo y le resta el interior. */
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
+}
+
 /** Listas que se desplazan de costado en mobile sin mostrar la barra. */
 @utility scroll-limpio {
   scrollbar-width: none;
