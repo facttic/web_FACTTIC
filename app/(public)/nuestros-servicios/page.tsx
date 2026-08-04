@@ -4,7 +4,10 @@ import { BotonLink } from "@/components/ui/boton";
 import { Carrusel } from "@/components/ui/carrusel";
 import { Animacion } from "@/components/ui/animacion";
 import { CardSector } from "@/components/tarjetas/sector";
-import { CardMetodologia, CardServicio } from "@/components/tarjetas/servicios";
+import {
+  CardMetodologia,
+  CardPropuesta,
+} from "@/components/tarjetas/servicios";
 import { Soluciones } from "@/components/secciones/soluciones";
 import { SectoresMobile } from "@/components/secciones/sectores-mobile";
 import { Metodologias } from "@/components/secciones/metodologias";
@@ -119,6 +122,7 @@ export default async function NuestrosServiciosPage() {
             <CardMetodologia
               key={item.titulo}
               nombre={item.titulo}
+              descripcion={item.descripcion ?? undefined}
               acento={item.acento}
               className="h-[263px] whitespace-pre-line"
             />
@@ -148,10 +152,12 @@ export default async function NuestrosServiciosPage() {
           descripcionAlLado
         />
         <Carrusel grilla="md:grid-cols-4" gap="gap-5">
-          {T.porQue.items.map((titulo) => (
-            <CardServicio
-              key={titulo}
-              titulo={titulo}
+          {T.porQue.items.map((item) => (
+            <CardPropuesta
+              key={item.titulo}
+              titulo={item.titulo}
+              descripcion={item.descripcion}
+              acento={item.acento}
               className="h-[265px] w-[287px] shrink-0 snap-start md:w-auto"
             />
           ))}

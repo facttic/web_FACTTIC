@@ -120,22 +120,41 @@ export function CardServicioSiguiente({
  */
 export function CardMetodologia({
   nombre,
+  descripcion,
   acento,
   className,
 }: {
   nombre: ReactNode;
+  /** Se revela al pasar el mouse, con el nombre arriba como rótulo. */
+  descripcion?: string;
   acento: Acento;
   className?: string;
 }) {
   return (
     <div
       className={cn(
-        "flex min-h-44 flex-col justify-end rounded-xl p-6",
+        "group relative min-h-44 overflow-hidden rounded-lg",
+        // Al revés que el resto: acá el reposo es el color y el mouse la apaga
+        // a gris para dejar leer la explicación. Así está en el board.
         FONDO_ACENTO[acento],
+        descripcion &&
+          "transition-colors duration-300 hover:bg-superficie-alta",
         className,
       )}
     >
-      <h3 className="text-h4 text-balance">{nombre}</h3>
+      <div className="absolute inset-0 flex flex-col justify-end p-6 transition-opacity duration-300 group-hover:opacity-0">
+        <h3 className="text-h4 text-balance">{nombre}</h3>
+      </div>
+
+      {descripcion ? (
+        <div
+          className="absolute inset-0 flex flex-col gap-6 p-6 text-blanco opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          aria-hidden
+        >
+          <p className="text-eyebrow text-blanco/50">{nombre}</p>
+          <p className="text-p2">{descripcion}</p>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -175,6 +194,52 @@ export function CardRequisito({
       )}
     >
       <h3 className="text-h4 text-balance">{titulo}</h3>
+    </div>
+  );
+}
+
+/**
+ * Propuesta de valor ("¿Por qué elegirnos?").
+ *
+ * Dos caras, como casi todas las tarjetas del sitio: en reposo el título sobre
+ * la superficie gris y, al pasar el mouse, se pinta con su color y aparece la
+ * explicación. El board de Componentes trae las dos.
+ *
+ * Las capas van superpuestas y se cruzan en opacidad para que el texto no se
+ * reacomode a mitad de la transición.
+ */
+export function CardPropuesta({
+  titulo,
+  descripcion,
+  acento,
+  className,
+}: {
+  titulo: string;
+  descripcion?: string;
+  acento: Acento;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "group relative overflow-hidden rounded-lg bg-superficie-alta",
+        "transition-colors duration-300",
+        HOVER_ACENTO[acento],
+        className,
+      )}
+    >
+      <div className="absolute inset-0 p-6 transition-opacity duration-300 group-hover:opacity-0">
+        <h3 className="text-h4 text-balance">{titulo}</h3>
+      </div>
+
+      {descripcion ? (
+        <div
+          className="absolute inset-0 flex items-start p-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          aria-hidden
+        >
+          <p className="text-p2">{descripcion}</p>
+        </div>
+      ) : null}
     </div>
   );
 }

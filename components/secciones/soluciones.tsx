@@ -63,7 +63,10 @@ export function Soluciones({
                 aria-controls={panelId}
                 onClick={() => setAbierto(estaAbierto ? -1 : i)}
                 className={cn(
-                  "text-h4 flex w-full cursor-pointer items-start justify-between gap-6 py-6 text-left",
+                  "text-h4 flex w-full cursor-pointer items-start justify-between gap-6 py-8 text-left",
+                  // El primero arranca a la altura del título de la sección:
+                  // sin esto queda 32px más abajo que en la maqueta.
+                  "first:pt-0",
                   `transition-colors hover:text-blanco/70 ${FOCO}`,
                 )}
               >
@@ -78,12 +81,12 @@ export function Soluciones({
               </button>
             </h3>
 
-            <div id={panelId} hidden={!estaAbierto} className="pb-8">
+            <div id={panelId} hidden={!estaAbierto} className="pb-6">
               {servicio.descripcion ? (
                 <p className="text-p1 text-blanco/80">{servicio.descripcion}</p>
               ) : null}
               {subservicios.length ? (
-                <p className="text-p2 mt-4 text-blanco/50">
+                <p className="text-p2 mt-3 text-blanco/50">
                   {subservicios.join(" · ")}
                 </p>
               ) : null}

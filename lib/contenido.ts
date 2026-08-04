@@ -158,8 +158,9 @@ export const SERVICIOS_PAGINA = {
     titulo: "¿Cómo trabajamos?",
     /*
      * En desktop son tres bloques de color con el nombre y nada más; en mobile
-     * se vuelven un carrusel y ahí sí aparece la descripción. Del diseño solo
-     * está escrita la de "Proyectos a medida" —las otras dos quedan pedidas—.
+     * se vuelven un carrusel y ahí sí aparece la descripción. El diseño solo
+     * escribió la de "Proyectos a medida"; las otras dos están redactadas acá
+     * siguiendo ese tono y hay que validarlas con FACTTIC.
      */
     items: [
       {
@@ -171,12 +172,14 @@ export const SERVICIOS_PAGINA = {
       {
         titulo: "Managed\nServices",
         acento: "verde" as Acento,
-        descripcion: null,
+        descripcion:
+          "Nos hacemos cargo de la operación en el tiempo. Tu equipo se enfoca en lo suyo y nosotros sostenemos la infraestructura, las actualizaciones y el soporte del día a día.",
       },
       {
         titulo: "Staff\nAugmentation",
         acento: "naranja" as Acento,
-        descripcion: null,
+        descripcion:
+          "Sumamos perfiles de nuestras cooperativas a tu equipo. Trabajan con tus procesos y tus tiempos, con la experiencia y el respaldo de toda la red detrás.",
       },
     ],
     cierre: {
@@ -191,11 +194,36 @@ export const SERVICIOS_PAGINA = {
     titulo: "¿Por qué elegirnos?",
     descripcion:
       "La tecnología es nuestra herramienta.\nLa cooperación, nuestro diferencial.",
+    /*
+     * Cada tarjeta se pinta con su color al pasar el mouse y muestra la
+     * explicación. Las dos primeras descripciones están tomadas del prototipo;
+     * las otras dos las redactamos siguiendo ese tono y hay que validarlas.
+     */
     items: [
-      "Todas las especialidades TIC en un solo lugar",
-      "Equipos sin rotación",
-      "Agilidad y capacidad de adaptación",
-      "Cada proyecto es nuestro",
+      {
+        titulo: "Todas las especialidades TIC en un solo lugar",
+        acento: "naranja" as Acento,
+        descripcion:
+          "Armamos equipos con personas especializadas en diferentes áreas, ideales para abordar proyectos complejos y de gran alcance.",
+      },
+      {
+        titulo: "Equipos sin rotación",
+        acento: "azul" as Acento,
+        descripcion:
+          "Trabajamos con equipos estables, lo que nos permite asegurar continuidad, preservar el conocimiento y profundizar la comprensión de las necesidades de cada cliente.",
+      },
+      {
+        titulo: "Agilidad y capacidad de adaptación",
+        acento: "celeste" as Acento,
+        descripcion:
+          "Somos organizaciones chicas conectadas entre sí: armamos el equipo que cada proyecto necesita y lo ajustamos cuando el proyecto cambia.",
+      },
+      {
+        titulo: "Cada proyecto es nuestro",
+        acento: "amarillo" as Acento,
+        descripcion:
+          "Trabajamos sobre lo propio, no sobre el encargo de un tercero. Quien desarrolla es parte de la cooperativa que se hace cargo del resultado.",
+      },
     ],
   },
 
