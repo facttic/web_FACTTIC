@@ -4,22 +4,29 @@ import { useEffect, useId, useState } from "react";
 import { cn } from "@/lib/cn";
 import { FOCO } from "@/components/ui/boton";
 import { IconoFlecha } from "@/components/ui/iconos";
-import type { Servicio } from "@/lib/dominio/tipos";
 
 /**
- * "Nuestras soluciones": el acordeón de servicios de la pantalla de Servicios.
+ * Lista desplegable con el título de la sección al costado: la usan "Nuestras
+ * soluciones" en Servicios y "Metodologías de trabajo" en las verticales.
  *
- * No usa `ui/acordeon` porque el ítem abierto muestra tres cosas —descripción,
- * lista de subservicios y una flecha que apunta hacia arriba y en lila— y el
- * separador cambia: sólido debajo del abierto y punteado entre los cerrados.
- *
- * Todo el contenido sale de la API: nombre, descripción y subservicios.
+ * No es `ui/acordeon`: el ítem abierto muestra una línea de apoyo además de la
+ * descripción, la flecha apunta hacia arriba y en lila, y el separador cambia
+ * —sólido debajo del abierto, punteado entre los cerrados—.
  */
-export function Soluciones({
-  servicios,
+
+export interface ItemDesplegable {
+  id: string;
+  titulo: string;
+  descripcion?: string | null;
+  /** Renglón secundario bajo la descripción, como la lista de subservicios. */
+  detalle?: string | null;
+}
+
+export function Desplegables({
+  items,
   className,
 }: {
-  servicios: Servicio[];
+  items: ItemDesplegable[];
   className?: string;
 }) {
   /*
@@ -35,22 +42,19 @@ export function Soluciones({
     if (window.matchMedia("(min-width: 768px)").matches) setAbierto(0);
   }, []);
 
-  if (!servicios.length) return null;
+  if (!items.length) return null;
 
   return (
     <div className={cn("flex flex-col", className)}>
-      {servicios.map((servicio, i) => {
+      {items.map((item, i) => {
         const estaAbierto = i === abierto;
-        const panelId = `${baseId}-${servicio.id}`;
-        const subservicios = servicio.subservicios.map((s) => s.nombre);
+        const panelId = `${baseId}-${item.id}`;
 
         return (
           <div
-            key={servicio.id}
+            key={item.id}
             className={cn(
               "border-b",
-              // Debajo del abierto la línea va entera; entre los cerrados,
-              // punteada y más tenue. Así está en la maqueta.
               estaAbierto
                 ? "border-solid border-borde"
                 : "border-dashed border-gris-oscuro",
@@ -74,7 +78,7 @@ export function Soluciones({
                   `transition-colors hover:text-blanco/70 ${FOCO}`,
                 )}
               >
-                {servicio.nombre}
+                {item.titulo}
                 <IconoFlecha
                   direccion={estaAbierto ? "arriba" : "abajo"}
                   className={cn(
@@ -86,18 +90,50 @@ export function Soluciones({
             </h3>
 
             <div id={panelId} hidden={!estaAbierto} className="pb-6">
-              {servicio.descripcion ? (
-                <p className="text-p1 text-blanco/80">{servicio.descripcion}</p>
+              {item.descripcion ? (
+                <p className="text-p1 text-blanco/80">{item.descripcion}</p>
               ) : null}
-              {subservicios.length ? (
-                <p className="text-p2 mt-3 text-blanco/50">
-                  {subservicios.join(" · ")}
-                </p>
+              {item.detalle ? (
+                <p className="text-p2 mt-3 text-blanco/50">{item.detalle}</p>
               ) : null}
             </div>
           </div>
         );
       })}
+    </div>
+  );
+}
+
+/**
+ * El bloque completo: el título de la sección a la izquierda y la lista a la
+ * derecha. En mobile el título va arriba y la lista ocupa todo el ancho.
+ */
+export function BloqueDesplegable({
+  rotulo,
+  titulo,
+  items,
+  className,
+}: {
+  rotulo?: string;
+  titulo: string;
+  items: ItemDesplegable[];
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn("grid gap-8 md:grid-cols-[1fr_2fr] md:gap-16", className)}
+    >
+      {/* En desktop el título entra en una línea por columna: sin esto se parte
+          y deja de coincidir con la maqueta. */}
+      <h2 className="text-h1 whitespace-pre-line">
+        {rotulo ? (
+          <span className="text-eyebrow mb-3 block text-blanco/40">
+            {rotulo}
+          </span>
+        ) : null}
+        {titulo}
+      </h2>
+      <Desplegables items={items} />
     </div>
   );
 }

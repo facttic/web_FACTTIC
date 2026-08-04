@@ -6,8 +6,7 @@ import { Carrusel } from "@/components/ui/carrusel";
 import { Animacion } from "@/components/ui/animacion";
 import { CardProyecto, FilaProyecto } from "@/components/tarjetas/proyecto";
 import { CardPropuesta } from "@/components/tarjetas/servicios";
-import { Metodologias } from "@/components/secciones/metodologias";
-import { CardMetodologia } from "@/components/tarjetas/servicios";
+import { BloqueDesplegable } from "@/components/secciones/desplegables";
 import { Stack } from "@/components/secciones/stack";
 import { Aliados } from "@/components/secciones/aliados";
 import { Acordeon } from "@/components/ui/acordeon";
@@ -124,31 +123,19 @@ export default async function VerticalPage({
       ) : null}
 
       <Seccion>
-        <EncabezadoSeccion
-          rotulo={SERVICIOS_PAGINA.metodologia.rotulo}
-          titulo={SERVICIOS_PAGINA.metodologia.titulo}
-        />
-        <div className="hidden gap-5 md:grid md:grid-cols-3">
-          {SERVICIOS_PAGINA.metodologia.items.map((item) => (
-            <CardMetodologia
-              key={item.titulo}
-              nombre={item.titulo}
-              descripcion={item.descripcion ?? undefined}
-              acento={item.acento}
-              className="h-[263px] whitespace-pre-line"
-            />
-          ))}
-        </div>
-        <Metodologias
-          items={SERVICIOS_PAGINA.metodologia.items}
-          className="md:hidden"
+        <BloqueDesplegable
+          titulo={T.metodologia.titulo}
+          items={SERVICIOS_PAGINA.metodologia.items.map((item) => ({
+            id: item.titulo,
+            titulo: item.titulo.replace("\n", " "),
+            descripcion: item.descripcion,
+          }))}
         />
       </Seccion>
 
       {proyectos.items.length ? (
         <Seccion>
           <EncabezadoSeccion
-            rotulo={T.proyectos.rotulo}
             titulo={T.proyectos.titulo}
             accionAlPie
             accion={<BotonLink href="/proyectos">Ver todos</BotonLink>}

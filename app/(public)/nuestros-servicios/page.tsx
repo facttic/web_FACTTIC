@@ -8,7 +8,7 @@ import {
   CardMetodologia,
   CardPropuesta,
 } from "@/components/tarjetas/servicios";
-import { Soluciones } from "@/components/secciones/soluciones";
+import { BloqueDesplegable } from "@/components/secciones/desplegables";
 import { SectoresMobile } from "@/components/secciones/sectores-mobile";
 import { Metodologias } from "@/components/secciones/metodologias";
 import { Aliados } from "@/components/secciones/aliados";
@@ -94,19 +94,16 @@ export default async function NuestrosServiciosPage() {
 
       {servicios.length ? (
         <Seccion id="soluciones">
-          {/* Título a la izquierda y acordeón a la derecha, como en la maqueta;
-              en mobile el acordeón pasa a ocupar todo el ancho. */}
-          <div className="grid gap-8 md:grid-cols-[1fr_2fr] md:gap-16">
-            {/* En desktop el título entra en una línea: sin esto la columna lo
-                parte en dos y deja de coincidir con la maqueta. */}
-            <h2 className="text-h1 md:whitespace-nowrap">
-              <span className="text-eyebrow mb-3 block text-blanco/40">
-                {T.soluciones.rotulo}
-              </span>
-              {T.soluciones.titulo}
-            </h2>
-            <Soluciones servicios={servicios} />
-          </div>
+          <BloqueDesplegable
+            rotulo={T.soluciones.rotulo}
+            titulo={T.soluciones.titulo}
+            items={servicios.map((s) => ({
+              id: s.id,
+              titulo: s.nombre,
+              descripcion: s.descripcion,
+              detalle: s.subservicios.map((sub) => sub.nombre).join(" · "),
+            }))}
+          />
         </Seccion>
       ) : null}
 

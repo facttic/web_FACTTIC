@@ -294,7 +294,10 @@ export const VERTICALES = {
   },
 
   stack: { titulo: "Stack tecnológico" },
-  proyectos: { rotulo: "Proyectos", titulo: "Proyectos destacados" },
+  /* En la vertical la metodología es un desplegable con el título al costado,
+     no los tres bloques de color de Nuestros servicios. */
+  metodologia: { titulo: "Metodologías\nde trabajo" },
+  proyectos: { titulo: "Proyectos destacados" },
 
   cierre: {
     titulo: "¿Tenés un proyecto?",
