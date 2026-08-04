@@ -94,8 +94,14 @@ llegue.
       - **Descripciones de "Agilidad y capacidad de adaptación" y "Cada proyecto
         es nuestro"**: el prototipo solo implementa el hover de las dos
         primeras tarjetas de "¿Por qué elegirnos?".
-- [ ] **25. Logos de aliados.** `organizaciones` está vacío en la API, así que
-      la banda "Eligen soluciones cooperativas" no se muestra.
+- [ ] **25. Logos de aliados: los cargados son provisorios.** Se dieron de alta
+      las tres organizaciones de la maqueta —Cooperativa Obrera, Banco Credicoop
+      y Abuelas de Plaza de Mayo— con logos bajados de fuentes públicas
+      (Wikimedia Commons y el sitio de Abuelas) y pasados a blanco a mano para
+      que se lean sobre la tarjeta gris. **Hay que reemplazarlos por los
+      oficiales**: son marcas de terceros, las versiones públicas suelen estar
+      desactualizadas y el recorte del fondo se hizo por color. Confirmar además
+      con FACTTIC que la lista de aliados sea esa.
 - [ ] **23. Nombre corto para los servicios.** Las solapas del diseño dicen
       "Diseño", "IA y Datos", "Ingeniería e infra", mientras que las tarjetas
       usan el nombre completo. La API solo tiene el completo, así que hoy se usa
