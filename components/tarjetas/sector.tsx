@@ -24,7 +24,7 @@ function Ilustracion({ sector }: { sector: Sector }) {
   const animacion = animacionDeSector(sector.nombre);
 
   // En el board la ilustración mide 235px y va centrada, no a todo el ancho.
-  const medida = "size-[150px] md:size-[235px]";
+  const medida = "size-[177px] md:size-[235px]";
 
   if (animacion) {
     return <Animacion nombre={animacion} className={medida} />;
@@ -46,7 +46,7 @@ function Ilustracion({ sector }: { sector: Sector }) {
 }
 
 /** Alto de la tarjeta en el SVG (391x359), para que las dos caras del hover coincidan. */
-const ALTO_SECTOR = "h-[295px] md:h-[359px]";
+const ALTO_SECTOR = "h-[275px] md:h-[359px]";
 
 /**
  * A diferencia de las de beneficio y proyecto, estas tarjetas no llevan relleno

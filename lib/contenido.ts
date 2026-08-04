@@ -12,8 +12,10 @@ import type { Acento } from "@/components/ui/acento";
 
 export const HOME = {
   hero: {
-    // El diseño quiebra el título en tres líneas exactas.
+    // El diseño quiebra el título en líneas exactas, y en mobile suma una:
+    // ahí el hero ocupa toda la pantalla y el título entra en cuatro renglones.
     titulo: "Desarrollá\ntu proyecto\ncon cooperativas",
+    tituloMobile: "Desarrollá\ntu proyecto\ntecnológico\ncon cooperativas",
     bajada:
       "Una red federal de cooperativas de tecnología, innovación y conocimiento que diseña, desarrolla e implementa soluciones digitales",
     cta: { texto: "Trabajá con FACTTIC", href: "/contacto" },

@@ -21,6 +21,7 @@ const RETRASO_TITULO_MS = 2000;
 
 export function Hero({
   titulo,
+  tituloMobile,
   bajada,
   accion,
   video,
@@ -29,6 +30,8 @@ export function Hero({
   className,
 }: {
   titulo: string;
+  /** Variante para pantallas chicas: el diseño mobile suma una línea. */
+  tituloMobile?: string;
   bajada?: string;
   accion?: { texto: string; href: string };
   /** Video de fondo; se reproduce en silencio y en bucle. */
@@ -93,9 +96,13 @@ export function Hero({
         lleva ni bajada ni botón ahí —ese texto pasa a ser el bloque grande que
         abre la página— y el video ocupa casi toda la pantalla.
       */}
-      <div className="contenedor flex min-h-svh flex-col justify-center pt-32 pb-10 text-center md:min-h-[39rem] md:justify-end md:gap-8 md:pb-14 md:text-left">
+      <div className="contenedor flex min-h-svh flex-col justify-start pt-[22vh] pb-10 text-center md:min-h-[39rem] md:pt-32 md:justify-end md:gap-8 md:pb-14 md:text-left">
         <h1 className="text-display text-balance md:max-w-3xl">
-          <Typewriter texto={titulo} retrasoMs={RETRASO_TITULO_MS} />
+          <Typewriter
+            texto={titulo}
+            textoAngosto={tituloMobile}
+            retrasoMs={RETRASO_TITULO_MS}
+          />
         </h1>
 
         <RevelarAlScroll retrasoMs={RETRASO_TITULO_MS}>

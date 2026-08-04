@@ -96,7 +96,15 @@ export function EncabezadoSeccion({
           acota, que es donde importa el largo de línea para leer.
         */}
         <div className={cn("min-w-0", accionAlPie && "mt-3 mb-8 md:my-0")}>
-          <h2 className="text-h1 whitespace-pre-line">{titulo}</h2>
+          {/*
+            Los saltos del contenido son los cortes de línea que el diseño eligió
+            para desktop. En mobile no entran —el ancho es la mitad— y la maqueta
+            reparte distinto, así que ahí se ignoran y el balance del navegador
+            arma las líneas parejas.
+          */}
+          <h2 className="text-h1 text-balance whitespace-normal md:whitespace-pre-line">
+            {titulo}
+          </h2>
           {descripcion ? (
             <p className="text-p1 mt-4 max-w-2xl text-blanco/60">
               {descripcion}
@@ -153,9 +161,9 @@ export function BandaCta({
     <div
       className={cn(
         // En mobile la banda va centrada y con el botón debajo del título.
-        "flex flex-col items-center gap-6 rounded-xl border border-dashed border-borde-pleno px-6 py-10 text-center",
+        "flex flex-col items-center gap-10 rounded-xl border border-dashed border-borde-pleno px-6 py-14 text-center",
         // 113px de alto en el SVG: el botón mide 53 y quedan 30 arriba y abajo.
-        "md:flex-row md:items-center md:justify-between md:px-10 md:py-7.5 md:text-left",
+        "md:flex-row md:items-center md:justify-between md:gap-6 md:px-10 md:py-7.5 md:text-left",
         className,
       )}
     >

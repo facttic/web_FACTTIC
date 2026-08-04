@@ -69,7 +69,8 @@
   font-family: var(--font-sans);
   font-weight: 700;
   font-size: 40px;
-  line-height: 1.05;
+  /* 48px de interlineado, medido entre las líneas del título del hero mobile. */
+  line-height: 1.2;
   letter-spacing: -0.01em;
 
   @media (width >= 768px) {

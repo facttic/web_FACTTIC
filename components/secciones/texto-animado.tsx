@@ -25,18 +25,41 @@ function prefiereMenosMovimiento(): boolean {
  * sirve para que el título entre unos segundos más tarde que el video.
  */
 export function Typewriter({
-  texto,
+  texto: textoAncho,
+  textoAngosto,
   retrasoMs = 0,
   velocidadMs = 45,
   className,
 }: {
   texto: string;
+  /**
+   * Variante para pantallas chicas. El hero de la Home la usa porque en mobile
+   * el diseño suma una línea ("tu proyecto tecnológico"). No se puede resolver
+   * con CSS: el efecto escribe un string, así que la elección va en JS.
+   */
+  textoAngosto?: string;
   retrasoMs?: number;
   velocidadMs?: number;
   className?: string;
 }) {
   const [visibles, setVisibles] = useState(0);
   const [animar, setAnimar] = useState(false);
+  const [angosto, setAngosto] = useState(false);
+
+  /*
+   * El ancho se resuelve recién en el cliente. No hay salto visible porque el
+   * título arranca vacío y espera `retrasoMs` antes de escribir.
+   */
+  useEffect(() => {
+    if (!textoAngosto) return;
+    const mq = window.matchMedia("(max-width: 767px)");
+    const aplicar = () => setAngosto(mq.matches);
+    aplicar();
+    mq.addEventListener("change", aplicar);
+    return () => mq.removeEventListener("change", aplicar);
+  }, [textoAngosto]);
+
+  const texto = angosto && textoAngosto ? textoAngosto : textoAncho;
 
   useEffect(() => {
     if (prefiereMenosMovimiento()) {
@@ -45,6 +68,7 @@ export function Typewriter({
     }
 
     setAnimar(true);
+    setVisibles(0);
     const inicio = window.setTimeout(() => {
       const paso = window.setInterval(() => {
         setVisibles((n) => {

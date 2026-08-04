@@ -52,6 +52,7 @@ export default async function HomePage() {
       <Hero
         className="order-1"
         titulo={HOME.hero.titulo}
+        tituloMobile={HOME.hero.tituloMobile}
         bajada={HOME.hero.bajada}
         accion={HOME.hero.cta}
         video={VIDEO_HERO.desktop}
@@ -148,7 +149,7 @@ export default async function HomePage() {
               <CardProyecto
                 key={proyecto.id}
                 proyecto={proyecto}
-                className="w-[85vw] shrink-0 snap-start md:w-auto"
+                className="w-[350px] shrink-0 snap-start md:w-auto"
               />
             ))}
           </div>
