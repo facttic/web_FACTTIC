@@ -96,8 +96,8 @@ llegue.
 
 - [ ] **Icono `08-Icono_Oportunidades-Continuidad` en JSON.** Vino solo el GIF
       (2,2 MB) y por eso la card "Continuidad de trabajo" es la única sin
-      animación.
-- [ ] **Icono `04`.** La numeración de la entrega salta de 03 a 05. ¿Existe?
+      animación. **Lo manda Cami** (4/8): faltaba animarlo.
+- [x] ~~**Icono `04`**~~ → no existe, es un error de numeración de la entrega.
 - [ ] **`images/img_0.png` de `07-Icono_Oportunidades-Trabajo`.** El Lottie lo
       referencia y no vino. Se quitó esa capa (59×59) para que no se viera roto;
       puede faltarle un detalle al sol naranja.
@@ -111,17 +111,23 @@ llegue.
 
 ### Maquetas
 
-- [ ] **Menú mobile abierto** (overlay del hamburguesa). No aparece en las
-      páginas Desktop ni Mobile del archivo, y en el prototipo mobile el botón
-      tampoco tiene interacción: se resolvió con criterio propio.
-- [ ] **Estados interactivos** que el board no cubre: focus y active de botones,
-      formulario de contacto con validación, error y éxito, y empty state de los
-      filtros de Proyectos. Los hover de las tarjetas sí están: el board de
-      Componentes trae las dos caras de cada una, y de ahí salieron las medidas
-      y los colores.
-- [ ] **Breakpoint tablet.** Solo hay 1440 y 393.
-- [ ] **Vertical Financiero.** Hay maquetas de Organizaciones y Agro. ¿Reusa el
-      template de Agro o tiene diseño propio?
+- [ ] **Menú mobile abierto** (overlay del hamburguesa). **Lo hacen** (4/8).
+      Mientras tanto está resuelto con criterio propio.
+- [ ] **Estados interactivos.** Consultaron qué faltaba; son tres cosas
+      concretas, ninguna cubierta por el board:
+      1. **Foco de teclado** en botones, enlaces y campos: el recuadro que se ve
+         al navegar con Tab. Hoy va un contorno lila elegido por nosotros.
+      2. **Formulario de contacto**: campo con error y su mensaje, y qué se ve
+         después de enviar (éxito).
+      3. **Empty state de Proyectos**: qué se muestra cuando un filtro no
+         devuelve resultados.
+      Los hover de tarjetas sí estaban: el board trae las dos caras de cada una.
+- [ ] **Breakpoint tablet.** Solo hay 1440 y 393, y no hay criterio de diseño.
+      **Propuesta:** no hace falta maqueta nueva —lo adaptamos con criterio y lo
+      validan— salvo que quieran algo distinto entre 768 y 1024.
+- [x] ~~**Vertical Financiero**~~ → todas las verticales reúsan el mismo
+      template, así que no hace falta maqueta nueva. Existen Organizaciones y
+      Agro; Financiero sale del mismo molde.
 
 ### Anotaciones del archivo pendientes de definir
 
@@ -141,13 +147,24 @@ llevan indicaciones de implementación. Estado de las encontradas:
 - [x] ~~"Scroll reveal"~~ (hero) → implementado.
 - [x] ~~"`<h1>` con clase `.display`"~~ (hero) → ya se cumplía.
 
+### Contenido a recibir
+
+- [ ] **Doc con la información de las cooperativas.** Diseño lo mencionó el 4/8
+      ("ese contenido está en el doc"). Si trae la provincia de cada una,
+      **desbloquea Nuestra Red sin esperar al backend**: se cargan por el
+      backoffice y el mapa sale de ahí. Es el mismo dato del ítem 9.
+- [ ] **Aclaración pendiente sobre el mapa.** La consulta por los "ids" salió de
+      la lista del backend, no de la de diseño: los ids eran los de los proyectos
+      de prueba a borrar (ítem 21). Del mapa lo único que hace falta es la
+      provincia de cada cooperativa.
+
 ### Decisiones de contenido
 
 - [ ] **"Finanzas" vs "Financiero".** El Home dice una cosa, Nuestros servicios
       otra, y la API tiene cargado "Financiero". Hay que elegir uno.
 - [ ] **Lorem ipsum en Proyectos - Detalle**, en el bloque "¿De qué se trató?".
-- [ ] **¿Dónde entra Comunicados?** Tiene dos pantallas maquetadas pero no está
-      en el menú, solo en el pie bajo "Sobre Facttic → Novedades".
+- [x] ~~**¿Dónde entra Comunicados?**~~ → se entra solo desde el footer, como
+      está hoy.
 - [ ] **El mapa del sitio (`Propuesta B.2.pdf`) contradice a las maquetas.** Su
       menú usa nombres viejos ("Para empresas", "Para cooperativas", "Red"). O se
       actualiza o se descarta como referencia.
