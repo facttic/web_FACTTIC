@@ -64,9 +64,13 @@ export function Soluciones({
                 onClick={() => setAbierto(estaAbierto ? -1 : i)}
                 className={cn(
                   "text-h4 flex w-full cursor-pointer items-start justify-between gap-6 py-8 text-left",
-                  // El primero arranca a la altura del título de la sección:
-                  // sin esto queda 32px más abajo que en la maqueta.
-                  "first:pt-0",
+                  /*
+                    Solo el primero arranca sin aire arriba, para quedar a la
+                    altura del título de la sección. Va por índice y no con
+                    `first:`, que acá se cumple siempre —el botón es el único
+                    hijo de su <h3>— y les sacaba el padding a todos.
+                  */
+                  i === 0 && "pt-0",
                   `transition-colors hover:text-blanco/70 ${FOCO}`,
                 )}
               >
