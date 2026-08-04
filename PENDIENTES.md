@@ -94,9 +94,8 @@ llegue.
 
 ### Assets
 
-- [ ] **Icono `08-Icono_Oportunidades-Continuidad` en JSON.** Vino solo el GIF
-      (2,2 MB) y por eso la card "Continuidad de trabajo" es la única sin
-      animación. **Lo manda Cami** (4/8): faltaba animarlo.
+- [x] ~~**Icono `08-Icono_Oportunidades-Continuidad` en JSON**~~ → llegó el 4/8
+      y ya está en uso; las cuatro tarjetas de beneficio tienen su animación.
 - [x] ~~**Icono `04`**~~ → no existe, es un error de numeración de la entrega.
 - [ ] **`images/img_0.png` de `07-Icono_Oportunidades-Trabajo`.** El Lottie lo
       referencia y no vino. Se quitó esa capa (59×59) para que no se viera roto;
@@ -113,15 +112,12 @@ llegue.
 
 - [ ] **Menú mobile abierto** (overlay del hamburguesa). **Lo hacen** (4/8).
       Mientras tanto está resuelto con criterio propio.
-- [ ] **Estados interactivos.** Consultaron qué faltaba; son tres cosas
-      concretas, ninguna cubierta por el board:
-      1. **Foco de teclado** en botones, enlaces y campos: el recuadro que se ve
-         al navegar con Tab. Hoy va un contorno lila elegido por nosotros.
-      2. **Formulario de contacto**: campo con error y su mensaje, y qué se ve
-         después de enviar (éxito).
-      3. **Empty state de Proyectos**: qué se muestra cuando un filtro no
-         devuelve resultados.
-      Los hover de tarjetas sí estaban: el board trae las dos caras de cada una.
+- [x] ~~**Estados interactivos**~~ → resueltos con el lenguaje del sistema y
+      puestos en `/componentes` (grupo "Estados") para que diseño los valide:
+      foco de teclado con contorno lila, campo con error en rojo, avisos de
+      envío en bloque de color pleno —lima el correcto, rojo el fallido, como
+      las tarjetas pintadas— y sin resultados con el borde punteado de la banda
+      de cierre. **Si algo no convence, se cambia ahí y se propaga solo.**
 - [ ] **Breakpoint tablet.** Solo hay 1440 y 393, y no hay criterio de diseño.
       **Propuesta:** no hace falta maqueta nueva —lo adaptamos con criterio y lo
       validan— salvo que quieran algo distinto entre 768 y 1024.

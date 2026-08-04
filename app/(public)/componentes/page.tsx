@@ -5,6 +5,8 @@ import { Chip, ChipSector } from "@/components/ui/chip";
 import { Acordeon } from "@/components/ui/acordeon";
 import { Tabs } from "@/components/ui/tabs";
 import { Campo, CampoTexto, Selector } from "@/components/ui/campo";
+import { Aviso } from "@/components/ui/aviso";
+import { SinResultados } from "@/components/ui/sin-resultados";
 import { BandaCta, EncabezadoSeccion, Tarjeta } from "@/components/ui/seccion";
 import { CardSector, CardSectorDetalle } from "@/components/tarjetas/sector";
 import {
@@ -57,6 +59,7 @@ const SECCIONES = [
   { id: "proyectos", titulo: "Proyectos" },
   { id: "bloques", titulo: "Bloques" },
   { id: "secciones", titulo: "Secciones" },
+  { id: "estados", titulo: "Estados" },
 ];
 
 const COLORES = [
@@ -577,6 +580,38 @@ export default async function CatalogoPage() {
               titulo="¿Tenés algún proyecto en mente?"
               accion={<Boton>Trabajá con FACTTIC</Boton>}
             />
+          </Muestra>
+        </Grupo>
+
+        <Grupo id="estados" titulo="Estados">
+          <Muestra
+            nombre="Envío correcto"
+            usoEn="contacto, después de mandar el formulario"
+          >
+            <Aviso titulo="Recibimos tu mensaje">
+              Te vamos a responder a la brevedad al correo que dejaste.
+            </Aviso>
+          </Muestra>
+          <Muestra nombre="Envío con error" usoEn="contacto">
+            <Aviso tono="error" titulo="No pudimos enviar tu mensaje">
+              Probá de nuevo en unos minutos o escribinos a hola@facttic.org.ar
+            </Aviso>
+          </Muestra>
+          <Muestra nombre="Campo con error" usoEn="contacto">
+            <Campo
+              id="demo-error"
+              etiqueta="Correo electrónico"
+              defaultValue="no-es-un-correo"
+              error="Revisá el correo: parece que le falta el @"
+            />
+          </Muestra>
+          <Muestra
+            nombre="Sin resultados"
+            usoEn="proyectos, cuando los filtros no devuelven nada"
+          >
+            <SinResultados accion={<Boton>Limpiar filtros</Boton>}>
+              Probá con menos filtros o mirá todos los proyectos.
+            </SinResultados>
           </Muestra>
         </Grupo>
       </div>
