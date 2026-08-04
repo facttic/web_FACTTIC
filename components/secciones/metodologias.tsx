@@ -2,16 +2,19 @@
 
 import { useId, useState } from "react";
 import { cn } from "@/lib/cn";
-import { BotonFlecha, FOCO } from "@/components/ui/boton";
+import { BotonFlecha } from "@/components/ui/boton";
 import { COLOR_ACENTO, type Acento } from "@/components/ui/acento";
 
 /**
  * "¿Cómo trabajamos?" en mobile.
  *
- * En desktop son tres bloques de color con el nombre y nada más. En pantallas
- * chicas la maqueta los convierte en un carrusel: una solapa por modalidad, con
- * el nombre en su color y subrayado del mismo tono, flechas para recorrerlas y
- * la descripción debajo —que en desktop no se muestra—.
+ * En desktop son tres bloques de color; en pantallas chicas la maqueta los
+ * convierte en un carrusel de a uno: se ve solo el nombre de la modalidad
+ * actual —en su color, subrayado del mismo tono— y las flechas para recorrerlas.
+ * La descripción va debajo, y en desktop no se muestra.
+ *
+ * El subrayado ocupa lo que mide el nombre y la línea punteada sigue hasta el
+ * borde, así que van en la misma fila y no como una barra de progreso.
  */
 export function Metodologias({
   items,
@@ -30,74 +33,59 @@ export function Metodologias({
   if (!items.length) return null;
 
   const actual = items[activo];
-  const mover = (paso: number) =>
-    setActivo((i) => (i + paso + items.length) % items.length);
 
   return (
     <div className={className}>
       <div className="flex items-start justify-between gap-4">
-        <div
-          role="tablist"
-          aria-label="Modalidades de trabajo"
-          className="scroll-limpio -mx-6 flex flex-1 gap-6 overflow-x-auto px-6"
-        >
-          {items.map((item, i) => (
-            <button
-              key={item.titulo}
-              role="tab"
-              type="button"
-              id={`${baseId}-tab-${i}`}
-              aria-selected={i === activo}
-              aria-controls={`${baseId}-panel`}
-              onClick={() => setActivo(i)}
-              className={cn(
-                "text-h4 relative cursor-pointer whitespace-nowrap pb-4 transition-colors",
-                FOCO,
-                // El nombre toma el color de su modalidad al estar activo.
-                i === activo ? COLOR_ACENTO[item.acento] : "text-blanco/40",
-              )}
-            >
-              {item.titulo.replace("\n", " ")}
-              {i === activo ? (
-                <span
-                  className={cn(
-                    "absolute inset-x-0 bottom-0 h-[3px]",
-                    FONDO_SUBRAYADO[item.acento],
-                  )}
-                />
-              ) : null}
-            </button>
-          ))}
+        {/* El trazo del color mide lo que el nombre y la línea punteada sigue
+            hasta el borde: por eso el subrayado sale del propio texto y no de
+            una barra aparte. */}
+        <div className="flex min-w-0 flex-1 items-end">
+          <p
+            id={`${baseId}-titulo`}
+            className={cn(
+              "text-h4 shrink-0 border-b-[3px] pb-4",
+              COLOR_ACENTO[actual.acento],
+              BORDE_ACENTO[actual.acento],
+            )}
+          >
+            {actual.titulo.replace("\n", " ")}
+          </p>
+          <span className="flex-1 border-b border-dashed border-gris-oscuro" />
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
-          <BotonFlecha direccion="anterior" onClick={() => mover(-1)} />
-          <BotonFlecha direccion="siguiente" onClick={() => mover(1)} />
+          <BotonFlecha
+            direccion="anterior"
+            disabled={activo === 0}
+            onClick={() => setActivo((i) => Math.max(0, i - 1))}
+          />
+          <BotonFlecha
+            direccion="siguiente"
+            variante={activo < items.length - 1 ? "solida" : "punteada"}
+            disabled={activo === items.length - 1}
+            onClick={() => setActivo((i) => Math.min(items.length - 1, i + 1))}
+          />
         </div>
       </div>
 
-      <div
-        id={`${baseId}-panel`}
-        role="tabpanel"
-        aria-labelledby={`${baseId}-tab-${activo}`}
+      <p
+        aria-labelledby={`${baseId}-titulo`}
         className="text-p1 mt-8 text-blanco/80"
       >
         {actual.descripcion}
-      </div>
+      </p>
     </div>
   );
 }
 
-/**
- * Subrayado de la solapa activa. Va aparte de `COLOR_ACENTO` porque ahí el
- * color pinta el texto y acá, el fondo de la línea.
- */
-const FONDO_SUBRAYADO: Record<Acento, string> = {
-  lila: "bg-lila",
-  celeste: "bg-celeste",
-  naranja: "bg-naranja",
-  amarillo: "bg-amarillo",
-  verde: "bg-verde",
-  rojo: "bg-rojo",
-  azul: "bg-azul",
+/** El acento aplicado al borde, que es de donde sale el subrayado. */
+const BORDE_ACENTO: Record<Acento, string> = {
+  lila: "border-lila",
+  celeste: "border-celeste",
+  naranja: "border-naranja",
+  amarillo: "border-amarillo",
+  verde: "border-verde",
+  rojo: "border-rojo",
+  azul: "border-azul",
 };

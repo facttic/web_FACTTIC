@@ -115,7 +115,9 @@ llegue.
       puede faltarle un detalle al sol naranja.
 - [ ] **Fondos de las páginas que no vinieron**: Sumá tu coop, Proyectos y
       Nuestra Red. La entrega trajo cinco (Home, Servicios, Sobre Facttic,
-      Contacto, Error 404).
+      Contacto, Error 404). **Falta también el sol naranja** que va detrás de la
+      banda "¿Cuál es el modelo ideal…?" en Servicios mobile: por ahora se usa
+      el de la tarjeta "Trabajo con impacto", que es la misma forma y color.
 - [ ] **Logo FACT[TIC] en SVG**, en sus variantes. Se exportó del archivo a PNG
       4x y ya está en uso, pero en Figma también está insertado como imagen, así
       que el vector original hay que pedirlo aparte.

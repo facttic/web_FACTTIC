@@ -133,15 +133,41 @@ export default async function NuestrosServiciosPage() {
         <Metodologias items={T.metodologia.items} className="md:hidden" />
       </Seccion>
 
-      <div className="contenedor pb-12 md:pb-16">
-        <BandaCta
-          titulo={T.metodologia.cierre.titulo}
-          accion={
-            <BotonLink href={T.metodologia.cierre.cta.href}>
-              {T.metodologia.cierre.cta.texto}
-            </BotonLink>
-          }
+      {/*
+        La banda va sobre el sol naranja y lo deja ver a través del vidrio. El
+        fondo propio de este bloque no vino en la entrega —solo llegaron cinco—,
+        así que se usa el sol de "Trabajo con impacto", que es la misma forma y
+        el mismo naranja que muestra la maqueta. Queda anotado para cambiarlo
+        cuando diseño mande el que corresponde.
+      */}
+      <div className="relative isolate overflow-hidden pt-20 pb-12 md:pt-0 md:pb-16">
+        <Animacion
+          nombre="beneficio-trabajo"
+          className="pointer-events-none absolute -top-8 -left-52 -z-10 size-[30rem] opacity-80 blur-[2px] md:hidden"
         />
+        <div className="contenedor">
+          <BandaCta
+            variante="vidrio"
+            alineacion="izquierda"
+            titulo={T.metodologia.cierre.titulo}
+            accion={
+              <>
+                <BotonLink
+                  href={T.metodologia.cierre.ctaMobile.href}
+                  className="md:hidden"
+                >
+                  {T.metodologia.cierre.ctaMobile.texto}
+                </BotonLink>
+                <BotonLink
+                  href={T.metodologia.cierre.cta.href}
+                  className="hidden md:inline-flex"
+                >
+                  {T.metodologia.cierre.cta.texto}
+                </BotonLink>
+              </>
+            }
+          />
+        </div>
       </div>
 
       <Seccion id="por-que">

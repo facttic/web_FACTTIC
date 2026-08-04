@@ -184,17 +184,37 @@ export function Tarjeta({
 export function BandaCta({
   titulo,
   accion,
+  variante = "punteada",
+  alineacion = "centro-en-mobile",
   className,
 }: {
   titulo: ReactNode;
   accion: ReactNode;
+  /**
+   * `vidrio` es la que va sobre una animación de fondo: en vez del borde
+   * punteado lleva un vidrio esmerilado que deja pasar el color de atrás
+   * atenuado y difuminado. Se usa en Servicios, sobre el sol naranja.
+   */
+  variante?: "punteada" | "vidrio";
+  /**
+   * En mobile la Home centra sus bandas y Servicios las alinea a la izquierda,
+   * igual que pasa con los encabezados.
+   */
+  alineacion?: "centro-en-mobile" | "izquierda";
   className?: string;
 }) {
   return (
     <div
       className={cn(
         // En mobile la banda va centrada y con el botón debajo del título.
-        "flex flex-col items-center gap-10 rounded-xl border border-dashed border-borde-pleno px-6 py-14 text-center",
+        "flex flex-col gap-10 rounded-xl border px-6 py-14",
+        alineacion === "centro-en-mobile"
+          ? "items-center text-center"
+          : "items-start text-left",
+        variante === "vidrio"
+          ? // 85% de negro: es lo que deja pasar la maqueta del color de atrás.
+            "border-borde bg-negro/85 backdrop-blur-xl"
+          : "border-dashed border-borde-pleno",
         // 113px de alto en el SVG: el botón mide 53 y quedan 30 arriba y abajo.
         "md:flex-row md:items-center md:justify-between md:gap-6 md:px-10 md:py-7.5 md:text-left",
         className,

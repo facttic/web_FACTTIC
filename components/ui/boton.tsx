@@ -144,16 +144,25 @@ export function BotonIdioma({
  */
 export function BotonFlecha({
   direccion,
+  variante = "punteada",
   className,
   ...props
-}: { direccion: "anterior" | "siguiente" } & ComponentProps<"button">) {
+}: {
+  direccion: "anterior" | "siguiente";
+  /**
+   * En los carruseles de mobile la flecha hacia donde sí se puede avanzar va
+   * rellena y la otra, punteada.
+   */
+  variante?: "punteada" | "solida";
+} & ComponentProps<"button">) {
   return (
     <button
       aria-label={direccion === "anterior" ? "Anterior" : "Siguiente"}
       className={cn(
         "grid size-13 cursor-pointer place-items-center rounded-lg transition-colors duration-200",
-        "border border-dashed border-borde-pleno text-blanco",
-        "enabled:hover:border-solid enabled:hover:bg-blanco enabled:hover:text-negro-oscuro",
+        variante === "solida"
+          ? "bg-blanco text-negro-oscuro enabled:hover:bg-blanco/85"
+          : "border border-dashed border-borde-pleno text-blanco enabled:hover:border-solid enabled:hover:bg-blanco enabled:hover:text-negro-oscuro",
         "disabled:pointer-events-none disabled:opacity-30",
         FOCO,
         className,

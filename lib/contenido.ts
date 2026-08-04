@@ -186,6 +186,8 @@ export const SERVICIOS_PAGINA = {
       titulo:
         "¿Cuál es el modelo ideal para tu organización o empresa? Hablemos y te asesoramos.",
       cta: { texto: "Escribinos", href: "/contacto" },
+      // En mobile la maqueta usa el mismo texto que el resto de los CTA.
+      ctaMobile: { texto: "Trabajá con Facttic", href: "/contacto" },
     },
   },
 
