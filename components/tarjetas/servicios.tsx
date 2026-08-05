@@ -179,6 +179,11 @@ export function CardRequisito({
   className,
 }: {
   titulo: ReactNode;
+  /**
+   * `solida` es la gris de reposo; `contorno`, la de borde blanco sobre el
+   * fondo de la página. Son las dos variantes del board —el hover de los
+   * compromisos de Sumá tu coop pasa de una a la otra—.
+   */
   variante?: "solida" | "contorno";
   className?: string;
 }) {
@@ -198,7 +203,10 @@ export function CardRequisito({
   return (
     <div
       className={cn(
-        "flex min-h-32 items-start rounded-xl bg-superficie-alta p-6",
+        // El borde transparente ya está en reposo para que al aparecer no
+        // corra el texto un pixel.
+        "flex min-h-32 items-start rounded-xl border border-transparent bg-superficie-alta p-6",
+        "transition-colors duration-300 hover:border-borde-pleno hover:bg-transparent",
         className,
       )}
     >

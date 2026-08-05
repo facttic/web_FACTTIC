@@ -387,24 +387,13 @@ export const SUMA_TU_COOP = {
     titulo: "Ser parte implica compromisos y derechos",
     /*
      * La maqueta muestra cuatro tarjetas pero solo escribe dos textos y los
-     * repite; los colores del hover salen de los pares del board de
-     * Componentes. Las descripciones que se revelan al pintarse no están
-     * escritas: quedan pedidas.
+     * repite: faltan los otros dos.
      */
     items: [
-      {
-        titulo: "Ser una cooperativa o precooperativa",
-        acento: "amarillo" as Acento,
-      },
-      {
-        titulo: "Participar en espacios colectivos",
-        acento: "celeste" as Acento,
-      },
-      {
-        titulo: "Ser una cooperativa o precooperativa",
-        acento: "naranja" as Acento,
-      },
-      { titulo: "Participar en espacios colectivos", acento: "azul" as Acento },
+      "Ser una cooperativa\no precooperativa",
+      "Participar en\nespacios colectivos",
+      "Ser una cooperativa\no precooperativa",
+      "Participar en\nespacios colectivos",
     ],
   },
 

@@ -3,7 +3,7 @@ import { EncabezadoSeccion, Seccion, BandaCta } from "@/components/ui/seccion";
 import { BotonLink } from "@/components/ui/boton";
 import { Carrusel } from "@/components/ui/carrusel";
 import { BloqueDesplegable } from "@/components/secciones/desplegables";
-import { CardPropuesta } from "@/components/tarjetas/servicios";
+import { CardRequisito } from "@/components/tarjetas/servicios";
 import { CardOportunidad } from "@/components/tarjetas/bloques";
 import { SolConOrbita } from "@/components/ui/formas";
 import { HOME, SUMA_TU_COOP as T } from "@/lib/contenido";
@@ -84,15 +84,14 @@ export default function SumaTuCoopPage() {
           titulo={T.compromisos.titulo}
           tamanoTitulo="h2"
         />
-        {/* Las mismas tarjetas de propuesta de valor que en Servicios: grises
-            en reposo y pintadas con su color al pasar el mouse. Cuatro en fila
-            en desktop; en mobile se desplazan de costado. */}
+        {/* Al pasar el mouse pierden el relleno gris y quedan con el borde
+            blanco: son las dos variantes del componente en el board. Cuatro en
+            fila en desktop; en mobile se desplazan de costado. */}
         <Carrusel grilla="md:grid-cols-4" gap="gap-5">
-          {T.compromisos.items.map((item, i) => (
-            <CardPropuesta
-              key={`${item.titulo}-${i}`}
-              titulo={item.titulo}
-              acento={item.acento}
+          {T.compromisos.items.map((titulo, i) => (
+            <CardRequisito
+              key={`${titulo}-${i}`}
+              titulo={<span className="whitespace-pre-line">{titulo}</span>}
               className="h-[135px] w-[287px] shrink-0 snap-start md:w-auto"
             />
           ))}
