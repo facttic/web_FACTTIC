@@ -5,7 +5,7 @@ import { Carrusel } from "@/components/ui/carrusel";
 import { BloqueDesplegable } from "@/components/secciones/desplegables";
 import { CardRequisito } from "@/components/tarjetas/servicios";
 import { CardOportunidad } from "@/components/tarjetas/bloques";
-import { SolConOrbita } from "@/components/ui/formas";
+import { Estrella, SolConOrbita } from "@/components/ui/formas";
 import { HOME, SUMA_TU_COOP as T } from "@/lib/contenido";
 
 export const metadata: Metadata = {
@@ -121,7 +121,16 @@ export default function SumaTuCoopPage() {
         </div>
       </Seccion>
 
-      <Seccion>
+      <Seccion className="relative isolate overflow-hidden">
+        {/* La estrella naranja que la maqueta mobile pone detrás de las
+            tarjetas y que se ve a través de la segunda, que es de vidrio. En
+            desktop esta zona va limpia.
+
+            Mide 210 y su centro cae en el hueco entre la primera y la segunda
+            tarjeta, asomando por el borde derecho: son las medidas del PNG
+            —núcleo de 211 a 392 a lo ancho y de 2667 a 2877 a lo alto—. */}
+        <Estrella className="pointer-events-none absolute top-[421px] -right-4 -z-10 w-[210px] text-naranja md:hidden" />
+
         <EncabezadoSeccion titulo={T.camino.titulo} tamanoTitulo="h2" />
         {/* Al pasar el mouse la tarjeta crece y se vuelve gris con la
             explicación, como en el prototipo. Alineadas arriba para que al
@@ -135,7 +144,7 @@ export default function SumaTuCoopPage() {
               descripcion={item.descripcion}
               enlace={item.enlace}
               acento={item.acento}
-              contornoEnMobile={"contornoEnMobile" in item}
+              vidrioEnMobile={"vidrioEnMobile" in item}
             />
           ))}
         </div>

@@ -213,7 +213,7 @@ export function CardOportunidad({
   descripcion,
   enlace,
   acento,
-  contornoEnMobile = false,
+  vidrioEnMobile = false,
   className,
 }: {
   indice: number;
@@ -222,11 +222,12 @@ export function CardOportunidad({
   enlace?: { texto: string; href: string };
   acento: Acento;
   /**
-   * En mobile la tarjeta va sin relleno, con borde blanco. Lo pide la maqueta
-   * mobile de Sumá tu coop para la segunda de las tres, que en desktop sí es
-   * celeste.
+   * En mobile la tarjeta es de vidrio en vez de ir pintada: deja pasar
+   * atenuada y difuminada la estrella naranja que tiene detrás. Lo pide la
+   * maqueta mobile de Sumá tu coop para la segunda de las tres, que en desktop
+   * sí es celeste y sin nada atrás.
    */
-  contornoEnMobile?: boolean;
+  vidrioEnMobile?: boolean;
   className?: string;
 }) {
   const numero = String(indice + 1).padStart(2, "0");
@@ -244,9 +245,10 @@ export function CardOportunidad({
         className={cn(
           "flex h-full flex-col justify-between p-6 transition-opacity duration-300",
           "group-hover:opacity-0 group-focus-within:opacity-0",
-          contornoEnMobile
+          vidrioEnMobile
             ? cn(
-                "rounded-xl border border-borde-pleno text-blanco md:border-0",
+                "textura-ruido borde-degradado rounded-xl bg-negro/45 text-blanco backdrop-blur-[1px]",
+                "md:bg-none md:backdrop-blur-none",
                 FONDO_ACENTO_DESKTOP[acento],
               )
             : FONDO_ACENTO[acento],

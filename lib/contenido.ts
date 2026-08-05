@@ -427,9 +427,9 @@ export const SUMA_TU_COOP = {
           "Acompañamos a proyectos cooperativos en sus primeros pasos de la creación.",
         enlace: { texto: "Contactanos", href: "/contacto" },
         acento: "celeste" as Acento,
-        // La maqueta mobile la deja sin relleno, con borde; la de desktop la
-        // pinta de celeste.
-        contornoEnMobile: true,
+        // La maqueta mobile la hace de vidrio sobre la estrella naranja; la
+        // de desktop la pinta de celeste.
+        vidrioEnMobile: true,
       },
       {
         pregunta: "¿Querés formarte\nen cooperativismo?",
