@@ -514,3 +514,82 @@ export const CONTACTO = {
     },
   },
 } as const;
+
+/**
+ * Sobre Facttic.
+ *
+ * Es la pantalla más larga del sitio y la que más mezcla texto fijo con datos
+ * de la API: las autoridades, las cooperativas de la red y las organizaciones
+ * salen del backend; los textos institucionales van acá.
+ */
+export const SOBRE_FACTTIC = {
+  hero: {
+    titulo: "Nuestro código\nes cooperar",
+    bajada:
+      "Nuestro objetivo es que las cooperativas de trabajo tecnológico y de conocimiento tengan un espacio para intercambiar información, conocimiento y construir soluciones de forma colectiva.",
+  },
+
+  quienes: {
+    rotulo: "Quiénes somos",
+    titulo: "El cooperativismo se multiplica",
+    parrafos: [
+      "Somos cooperativas de profesionales comprometidos en desarrollar soluciones tecnológicas y de conocimiento que mejoran la calidad de vida de las personas. Estamos agrupadas en la Federación Argentina de Cooperativas de Trabajo, Tecnología, Innovación y Conocimiento (FACTTIC).",
+      "En nuestro modelo cooperativo no hay jefes ni empleados. Cada persona que trabaja es asociada: es parte, toma decisiones y se beneficia del trabajo colectivo.",
+      "Eso no significa que hacemos todo entre todos, hay roles, responsabilidades y estructuras. La diferencia está en que ponemos a las personas en el centro. Somos quienes definimos cómo trabajamos, cómo nos organizamos y qué hacemos con lo que generamos.",
+      "En FACTTIC, este modelo se multiplica: somos cooperativas que cooperan entre sí, compartiendo conocimiento y perspectiva sobre el rol de la tecnología en la sociedad.",
+    ],
+    /*
+     * Las dos tarjetas se apilan al desplazar, como las de servicios: lo pide
+     * la anotación del archivo, que remite al mismo efecto.
+     */
+    tarjetas: [
+      { pregunta: "¿Querés sumarte\na una coope?", acento: "lila" as Acento },
+      {
+        pregunta: "¿Querés formate\nen cooperativismo?",
+        acento: "celeste" as Acento,
+        vidrioEnMobile: true,
+      },
+    ],
+  },
+
+  foto: {
+    // Plenario de FACTTIC. La imagen sale de la maqueta hasta que haya una
+    // propia cargada por API.
+    src: "/marca/plenario.jpg",
+    alt: "Plenario de FACTTIC: las cooperativas de la Federación reunidas",
+  },
+
+  modelo: {
+    rotulo: "Modelo cooperativo",
+    titulo: "Una forma distinta\nde trabajar",
+    parrafos: [
+      "Creemos que el trabajo tecnológico puede organizarse de otra manera. Desde nuestras cooperativas, construimos todos los días relaciones de trabajo basadas en la igualdad y la cooperación. Y soñamos con que esa lógica se expanda: a más sectores y a más proyectos.",
+      "Creemos que las cooperativas son una alternativa real y efectiva para construir una economía más humana y solidaria.",
+    ],
+  },
+
+  espacios: { titulo: "Somos parte\nde otros espacios\ncooperativos" },
+
+  organizacion: {
+    rotulo: "Organización",
+    titulo: "¿Cómo nos organizamos?",
+    parrafos: [
+      "FACTTIC se organiza de forma democrática: las decisiones más importantes las toma la Asamblea, donde participan todas las cooperativas que integramos la Federación.",
+      "Para llevar adelante esas decisiones, contamos con dos órganos: el Consejo de administración que representa institucionalmente a nuestra Federación y se encarga de lo legal y administrativo. La sindicatura se encarga de que el Consejo cumpla con lo que decidimos colectivamente, sus integrantes son elegidos por la Asamblea.",
+    ],
+    organos: {
+      consejo: "Consejo de administración",
+      sindicatura: "Sindicatura",
+    },
+  },
+
+  red: {
+    rotulo: "Nuestra red",
+    titulo: "Cooperativas que integran la Federación",
+  },
+
+  cierre: {
+    titulo: "¿Sos parte de\nuna cooperativa?",
+    cta: { texto: "Sumate a FACTTIC", href: "/suma-tu-coop" },
+  },
+} as const;

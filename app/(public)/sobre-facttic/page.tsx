@@ -1,0 +1,189 @@
+import type { Metadata } from "next";
+import Image from "next/image";
+import { EncabezadoSeccion, Seccion, BandaCta } from "@/components/ui/seccion";
+import { BotonLink } from "@/components/ui/boton";
+import { Animacion } from "@/components/ui/animacion";
+import { Carrusel } from "@/components/ui/carrusel";
+import { CardLogo } from "@/components/tarjetas/red";
+import { CardOportunidad } from "@/components/tarjetas/bloques";
+import { Autoridades } from "@/components/secciones/autoridades";
+import { ListaCooperativas } from "@/components/secciones/lista-cooperativas";
+import { FONDOS } from "@/lib/animaciones";
+import { SOBRE_FACTTIC as T } from "@/lib/contenido";
+import {
+  getAutoridades,
+  getCooperativas,
+  getOrganizaciones,
+} from "@/lib/datos/catalogos";
+
+export const metadata: Metadata = {
+  title: "Sobre Facttic",
+  description: T.hero.bajada,
+};
+
+/**
+ * Sobre Facttic: la pantalla más larga del sitio.
+ *
+ * Mezcla texto institucional fijo con tres cosas que salen de la API —las
+ * autoridades, las organizaciones de las que la Federación forma parte y las
+ * cooperativas que la integran—. Cada bloque de datos se muestra solo si hay
+ * algo cargado, así que la página no queda con huecos mientras el backoffice
+ * se completa.
+ *
+ * Repite el patrón de dos columnas —rótulo y título a la izquierda, texto a la
+ * derecha— que usan Servicios y las verticales.
+ */
+export default async function SobreFactticPage() {
+  const [autoridades, organizaciones, cooperativas] = await Promise.all([
+    getAutoridades(),
+    getOrganizaciones(),
+    getCooperativas(),
+  ]);
+
+  return (
+    <>
+      <section className="relative isolate overflow-hidden">
+        <Animacion
+          nombre={FONDOS.sobreFacttic}
+          className="pointer-events-none absolute -top-20 right-0 -z-10 aspect-square w-[380px] md:-top-32 md:w-[620px]"
+        />
+
+        <Seccion className="pt-24 md:pt-32">
+          <h1 className="text-h1 whitespace-pre-line">{T.hero.titulo}</h1>
+          <p className="text-p1 mt-8 max-w-3xl text-blanco/80">
+            {T.hero.bajada}
+          </p>
+        </Seccion>
+      </section>
+
+      <Seccion>
+        <BloqueTexto
+          rotulo={T.quienes.rotulo}
+          titulo={T.quienes.titulo}
+          parrafos={T.quienes.parrafos}
+        />
+
+        {/*
+          Las dos tarjetas se apilan al desplazar, como las de servicios: lo
+          pide la anotación del archivo, que remite a ese mismo efecto.
+        */}
+        <div className="mt-12 grid items-start gap-5 md:mt-16 md:grid-cols-2">
+          {T.quienes.tarjetas.map((tarjeta, i) => (
+            <CardOportunidad
+              key={tarjeta.pregunta}
+              indice={i}
+              pregunta={tarjeta.pregunta}
+              descripcion={T.hero.bajada}
+              acento={tarjeta.acento}
+              vidrioEnMobile={"vidrioEnMobile" in tarjeta}
+              className="md:sticky md:top-24"
+            />
+          ))}
+        </div>
+      </Seccion>
+
+      {/* La foto cruza la pantalla de punta a punta. */}
+      <Image
+        src={T.foto.src}
+        alt={T.foto.alt}
+        width={1440}
+        height={470}
+        className="h-56 w-full object-cover md:h-[470px]"
+      />
+
+      <Seccion>
+        <BloqueTexto
+          titulo={T.modelo.titulo}
+          rotulo={T.modelo.rotulo}
+          parrafos={T.modelo.parrafos}
+        />
+      </Seccion>
+
+      {organizaciones.length ? (
+        <Seccion className="pt-0">
+          <div className="border-t border-dotted border-punteado pt-10 md:grid md:grid-cols-[352px_1fr] md:gap-16">
+            <h2 className="text-h2 whitespace-pre-line">{T.espacios.titulo}</h2>
+            <Carrusel
+              grilla="md:grid-cols-4"
+              gap="gap-5"
+              className="mt-8 md:mt-0"
+            >
+              {organizaciones.map((organizacion) => (
+                <CardLogo
+                  key={organizacion.id}
+                  nombre={organizacion.nombre}
+                  logo={organizacion.logo}
+                  className="h-[90px] w-[180px] shrink-0 snap-start md:w-auto"
+                />
+              ))}
+            </Carrusel>
+          </div>
+        </Seccion>
+      ) : null}
+
+      <Seccion>
+        <BloqueTexto
+          rotulo={T.organizacion.rotulo}
+          titulo={T.organizacion.titulo}
+          parrafos={T.organizacion.parrafos}
+        />
+        <Autoridades
+          autoridades={autoridades}
+          etiquetas={T.organizacion.organos}
+          className="mt-12"
+        />
+      </Seccion>
+
+      {cooperativas.length ? (
+        <Seccion>
+          <EncabezadoSeccion
+            rotulo={T.red.rotulo}
+            titulo={T.red.titulo}
+            tamanoTitulo="h2"
+          />
+          <ListaCooperativas cooperativas={cooperativas} />
+        </Seccion>
+      ) : null}
+
+      <div className="contenedor pb-12 md:pb-16">
+        <BandaCta
+          variante="vidrio"
+          titulo={T.cierre.titulo}
+          accion={
+            <BotonLink href={T.cierre.cta.href}>{T.cierre.cta.texto}</BotonLink>
+          }
+        />
+      </div>
+    </>
+  );
+}
+
+/**
+ * Rótulo y título a la izquierda, párrafos a la derecha: la forma que repiten
+ * casi todos los bloques de esta pantalla.
+ */
+function BloqueTexto({
+  rotulo,
+  titulo,
+  parrafos,
+}: {
+  rotulo: string;
+  titulo: string;
+  parrafos: readonly string[];
+}) {
+  return (
+    <div className="grid gap-6 md:grid-cols-[352px_1fr] md:gap-16">
+      <h2 className="text-h2 whitespace-pre-line">
+        <span className="text-eyebrow mb-3 block text-blanco/40">{rotulo}</span>
+        {titulo}
+      </h2>
+      <div className="flex flex-col gap-6">
+        {parrafos.map((parrafo) => (
+          <p key={parrafo} className="text-p1 text-blanco/80">
+            {parrafo}
+          </p>
+        ))}
+      </div>
+    </div>
+  );
+}
