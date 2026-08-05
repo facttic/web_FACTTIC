@@ -194,6 +194,17 @@ llevan indicaciones de implementación. Estado de las encontradas:
       "¿se podría incorporar video?": la API ya guarda `videoFileNames`, así que
       es decidir cómo se muestra. Queda pendiente de esa definición.
 
+- [ ] **31. Sumá tu coop: cuatro definiciones de contenido.**
+      1. Los compromisos muestran cuatro tarjetas pero la maqueta solo escribe
+         dos textos y los repite: faltan los otros dos.
+      2. La URL del código de conducta ("Ver Código" hoy apunta al sitio
+         actual de FACTTIC).
+      3. En mobile la sección de las tarjetas numeradas se titula "Tenemos
+         código de conducta" —repetido de la anterior, parece error— y en
+         desktop "Elegí tu camino al cooperativismo"; se usó esta última.
+      4. La tarjeta 02 es celeste en desktop y oscura con borde en mobile; se
+         siguió la desktop. Las tres tarjetas tampoco tienen enlace definido.
+
 ### Contenido a recibir
 
 - [ ] **Doc con la información de las cooperativas.** Diseño lo mencionó el 4/8

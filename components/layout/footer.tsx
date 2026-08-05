@@ -3,8 +3,10 @@ import { COLUMNAS_PIE, REDES } from "@/lib/navegacion";
 import { Logo } from "./logo";
 
 /**
- * Pie de página: cinco columnas de navegación, redes y el crédito de las
- * cooperativas que desarrollaron el sitio.
+ * Pie de página. En desktop, cinco columnas de navegación con el logo, redes y
+ * el crédito. En mobile las maquetas lo dejan compacto: copyright, redes y
+ * crédito, sin logo ni columnas —así aparece en Proyectos y Para
+ * cooperativas—.
  */
 
 const ICONOS: Record<string, string> = {
@@ -20,8 +22,8 @@ const ICONOS: Record<string, string> = {
 export function Footer() {
   return (
     <footer className="mt-auto border-t border-borde">
-      <div className="contenedor py-14">
-        <div className="grid gap-10 md:grid-cols-[minmax(0,1fr)_3fr]">
+      <div className="contenedor py-8 md:py-14">
+        <div className="hidden gap-10 md:grid md:grid-cols-[minmax(0,1fr)_3fr]">
           <Logo />
 
           <nav aria-label="Pie de página">
@@ -52,7 +54,7 @@ export function Footer() {
           </nav>
         </div>
 
-        <div className="mt-14 flex flex-col gap-6 border-t border-borde pt-6 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-6 md:mt-14 md:flex-row md:items-center md:justify-between md:border-t md:border-borde md:pt-6">
           <div className="flex items-center gap-6">
             <p className="text-p3 text-blanco/40">
               © {new Date().getFullYear()} FACTTIC

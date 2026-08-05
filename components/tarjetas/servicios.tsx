@@ -120,11 +120,14 @@ export function CardServicioSiguiente({
  */
 export function CardMetodologia({
   nombre,
+  numero,
   descripcion,
   acento,
   className,
 }: {
   nombre: ReactNode;
+  /** "01." arriba a la izquierda, como en "Elegí tu camino" de Sumá tu coop. */
+  numero?: string;
   /** Se revela al pasar el mouse, con el nombre arriba como rótulo. */
   descripcion?: string;
   acento: Acento;
@@ -142,8 +145,14 @@ export function CardMetodologia({
         className,
       )}
     >
-      <div className="absolute inset-0 flex flex-col justify-end p-6 transition-opacity duration-300 group-hover:opacity-0">
-        <h3 className="text-h4 text-balance">{nombre}</h3>
+      <div
+        className={cn(
+          "absolute inset-0 flex flex-col p-6 transition-opacity duration-300 group-hover:opacity-0",
+          numero ? "justify-between" : "justify-end",
+        )}
+      >
+        {numero ? <p className="text-h4">{numero}</p> : null}
+        <h3 className="text-h4 whitespace-pre-line">{nombre}</h3>
       </div>
 
       {descripcion ? (

@@ -347,3 +347,79 @@ export const PROYECTOS_PAGINA = {
     cta: { texto: "Trabajá con FACTTIC", href: "/contacto" },
   },
 } as const;
+
+/**
+ * Sumá tu coop.
+ *
+ * Es la única pantalla sin datos de la API: todo el contenido es fijo y está
+ * tomado de las maquetas. Las oportunidades reutilizan los beneficios de la
+ * Home, que son los mismos cuatro, aunque acá en otro orden.
+ */
+export const SUMA_TU_COOP = {
+  hero: {
+    titulo: "Todo es\nmejor cooperando",
+    bajada:
+      "Somos cooperativas formadas por profesionales de tecnología y comunicación que desarrollan soluciones con impacto real. Creemos que la tecnología es más poderosa cuando se construye colectivamente, con solidaridad y responsabilidad.",
+  },
+
+  sumate: {
+    rotulo: "Ventajas",
+    titulo: "Sumate a FACTTIC",
+    texto:
+      "Una Federación es un espacio colectivo formado por cooperativas que deciden unirse para compartir saberes, crecer y potenciarse. En nuestro caso, somos cooperativas de desarrollo, comunicación y otras áreas que hace más de 10 años elegimos construir juntas. Porque creemos que el trabajo cooperativo es el camino.",
+    cta: { texto: "Conocer más", href: "/sobre-facttic" },
+  },
+
+  oportunidades: {
+    rotulo: "Ventajas",
+    titulo: "¿Qué oportunidades\nofrece la Federación?",
+    // El orden de esta pantalla, que no es el de la Home.
+    orden: [
+      "Colaboración real, no competencia",
+      "Autonomía con respaldo colectivo",
+      "Continuidad de trabajo",
+      "Trabajo con impacto y propósito",
+    ],
+  },
+
+  compromisos: {
+    rotulo: "Obligaciones",
+    titulo: "Ser parte implica compromisos y derechos",
+    /*
+     * La maqueta muestra cuatro tarjetas pero solo escribe dos textos y los
+     * repite. Van los dos reales y quedan pedidos los que falten.
+     */
+    items: [
+      "Ser una cooperativa\no precooperativa",
+      "Participar en\nespacios colectivos",
+    ],
+  },
+
+  codigo: {
+    titulo: "Tenemos código\nde conducta",
+    texto:
+      "Todas las reuniones de FACTTIC se rigen por un código de conducta que garantiza la participación segura e igualitaria de quienes las integran.",
+    // La URL exacta del código quedó pedida; mientras tanto va al sitio actual.
+    cta: { texto: "Ver Código", href: "https://facttic.org.ar" },
+  },
+
+  camino: {
+    titulo: "Elegí tu camino al cooperativismo",
+    items: [
+      { pregunta: "¿Querés sumarte\na FACTTIC?", acento: "lila" as Acento },
+      {
+        pregunta: "¿Querés armar\ntu propia cooperativa?",
+        acento: "celeste" as Acento,
+      },
+      {
+        pregunta: "¿Querés formarte\nen cooperativismo?",
+        acento: "naranja" as Acento,
+      },
+    ],
+  },
+
+  cierre: {
+    titulo: "Cada cooperativa que se suma, nos hace más fuertes.",
+    cta: { texto: "Sumate a FACTTIC", href: "/contacto" },
+  },
+} as const;

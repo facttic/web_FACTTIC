@@ -1,0 +1,181 @@
+import type { Metadata } from "next";
+import { EncabezadoSeccion, Seccion, BandaCta } from "@/components/ui/seccion";
+import { BotonLink } from "@/components/ui/boton";
+import { Carrusel } from "@/components/ui/carrusel";
+import { BloqueDesplegable } from "@/components/secciones/desplegables";
+import {
+  CardMetodologia,
+  CardRequisito,
+} from "@/components/tarjetas/servicios";
+import { HOME, SUMA_TU_COOP as T } from "@/lib/contenido";
+
+export const metadata: Metadata = {
+  title: "Sumá tu coop",
+  description: T.hero.bajada,
+};
+
+/**
+ * Sumá tu coop.
+ *
+ * No consulta la API: es la pantalla institucional para cooperativas que
+ * quieren federarse, toda de contenido fijo. La estructura repite el patrón de
+ * la columna de 352px con el contenido a la derecha que usan Servicios y las
+ * verticales.
+ */
+export default function SumaTuCoopPage() {
+  // Los mismos beneficios de la Home, en el orden propio de esta pantalla.
+  const oportunidades = T.oportunidades.orden
+    .map((titulo) =>
+      HOME.beneficios.items.find((item) => item.titulo === titulo),
+    )
+    .filter((item) => item !== undefined);
+
+  // La maqueta muestra cuatro tarjetas repitiendo los dos textos que define.
+  const compromisos = [...T.compromisos.items, ...T.compromisos.items];
+
+  return (
+    <>
+      {/* El sol amarillo con su órbita punteada, arriba a la derecha del hero.
+          El fondo animado de esta página no vino en la entrega: mientras tanto
+          va esta versión fija con las formas de la identidad. */}
+      <section className="relative isolate overflow-hidden">
+        <SolConOrbita className="pointer-events-none absolute top-4 right-[4%] -z-10 hidden w-44 text-amarillo opacity-90 md:block" />
+        <Seccion className="pt-32 md:pt-40">
+          <h1 className="text-display whitespace-pre-line">{T.hero.titulo}</h1>
+          <p className="text-p1 mt-6 max-w-2xl text-blanco/80">
+            {T.hero.bajada}
+          </p>
+        </Seccion>
+      </section>
+
+      <Seccion>
+        <div className="grid gap-8 md:grid-cols-[352px_1fr] md:gap-16">
+          <h2 className="text-h2">
+            <span className="text-eyebrow mb-3 block text-blanco/40">
+              {T.sumate.rotulo}
+            </span>
+            {T.sumate.titulo}
+          </h2>
+          <div>
+            <p className="text-p1 text-blanco/80">{T.sumate.texto}</p>
+            <BotonLink
+              href={T.sumate.cta.href}
+              className="mt-8 w-full md:w-auto"
+            >
+              {T.sumate.cta.texto}
+            </BotonLink>
+          </div>
+        </div>
+      </Seccion>
+
+      <Seccion>
+        <BloqueDesplegable
+          rotulo={T.oportunidades.rotulo}
+          titulo={T.oportunidades.titulo}
+          tamano="h2"
+          items={oportunidades.map((item) => ({
+            id: item.titulo,
+            titulo: item.titulo,
+            descripcion: item.descripcion,
+          }))}
+        />
+      </Seccion>
+
+      <Seccion>
+        <EncabezadoSeccion
+          rotulo={T.compromisos.rotulo}
+          titulo={T.compromisos.titulo}
+          tamanoTitulo="h2"
+        />
+        {/* Cuatro en fila en desktop; en mobile se desplazan de costado. */}
+        <Carrusel grilla="md:grid-cols-4" gap="gap-5">
+          {compromisos.map((titulo, i) => (
+            <CardRequisito
+              key={`${titulo}-${i}`}
+              titulo={<span className="whitespace-pre-line">{titulo}</span>}
+              className="h-[135px] w-[287px] shrink-0 snap-start md:w-auto"
+            />
+          ))}
+        </Carrusel>
+      </Seccion>
+
+      <Seccion>
+        <div className="grid gap-8 md:grid-cols-[352px_1fr] md:gap-16">
+          <h2 className="text-h2 whitespace-pre-line">{T.codigo.titulo}</h2>
+          <div>
+            <p className="text-p1 max-w-2xl text-blanco/80">{T.codigo.texto}</p>
+            <BotonLink
+              href={T.codigo.cta.href}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-8 w-full md:w-auto"
+            >
+              {T.codigo.cta.texto}
+            </BotonLink>
+          </div>
+        </div>
+      </Seccion>
+
+      <Seccion>
+        <EncabezadoSeccion titulo={T.camino.titulo} tamanoTitulo="h2" />
+        <div className="grid gap-5 md:grid-cols-3">
+          {T.camino.items.map((item, i) => (
+            <CardMetodologia
+              key={item.pregunta}
+              numero={`${String(i + 1).padStart(2, "0")}.`}
+              nombre={item.pregunta}
+              acento={item.acento}
+              className="h-[315px] md:h-[260px]"
+            />
+          ))}
+        </div>
+      </Seccion>
+
+      <div className="contenedor pb-12 md:pb-16">
+        <BandaCta
+          variante="vidrio"
+          titulo={T.cierre.titulo}
+          accion={
+            <BotonLink href={T.cierre.cta.href}>{T.cierre.cta.texto}</BotonLink>
+          }
+        />
+      </div>
+    </>
+  );
+}
+
+/** Sol de rayos con la órbita punteada, como las formas de la identidad. */
+function SolConOrbita({ className }: { className?: string }) {
+  const rayos = Array.from({ length: 36 });
+
+  return (
+    <svg viewBox="0 0 260 260" fill="none" aria-hidden className={className}>
+      <circle
+        cx="150"
+        cy="110"
+        r="100"
+        stroke="currentColor"
+        strokeOpacity="0.5"
+        strokeWidth="1"
+        strokeDasharray="2 6"
+      />
+      <g>
+        {rayos.map((_, i) => {
+          const angulo = (i / rayos.length) * Math.PI * 2;
+          return (
+            <line
+              key={i}
+              x1={110 + Math.cos(angulo) * 18}
+              y1={130 + Math.sin(angulo) * 18}
+              x2={110 + Math.cos(angulo) * 52}
+              y2={130 + Math.sin(angulo) * 52}
+              stroke="currentColor"
+              strokeWidth="3"
+            />
+          );
+        })}
+        <circle cx="110" cy="130" r="24" fill="currentColor" />
+      </g>
+    </svg>
+  );
+}
