@@ -173,15 +173,54 @@ export function CardProyectoDetalle({
 }
 
 /**
- * Fila de proyecto: el título con una flecha, los servicios debajo y los chips
- * al pie, separadas por líneas punteadas.
+ * Fila de proyecto, separada por líneas punteadas. Tiene dos formas:
  *
- * Es la forma que toman los proyectos en las pantallas angostas —en la maqueta
- * mobile de las verticales no hay tarjetas con imagen, porque el título no
- * entraría— y también la tabla "Últimos proyectos" en desktop.
+ *  - `detalle`: título con flecha, servicios y chips al pie. Es la lista de
+ *    las verticales en mobile.
+ *  - `ultimos`: la tabla "Últimos proyectos". En mobile el chip del sector va
+ *    arriba del título con la flecha al lado; en desktop la fila se abre en
+ *    columnas —título, chip, servicios y flecha—.
  */
-export function FilaProyecto({ proyecto }: { proyecto: Proyecto }) {
+export function FilaProyecto({
+  proyecto,
+  variante = "detalle",
+}: {
+  proyecto: Proyecto;
+  variante?: "detalle" | "ultimos";
+}) {
   const servicios = proyecto.servicios.map((s) => s.nombre).join(" · ");
+
+  if (variante === "ultimos") {
+    return (
+      <Link
+        href={`/proyectos/${proyecto.slug}`}
+        className={cn(
+          "group flex flex-col gap-3 border-b border-dashed border-gris-oscuro py-5",
+          `transition-colors hover:bg-superficie/50 ${FOCO}`,
+          "md:flex-row md:items-center md:gap-6",
+        )}
+      >
+        <span className="flex items-center justify-between md:order-2 md:w-44 md:shrink-0 md:justify-start">
+          {proyecto.sector ? (
+            <ChipSector nombre={proyecto.sector.nombre} />
+          ) : (
+            <span />
+          )}
+          <IconoFlecha className="shrink-0 text-lila transition-transform group-hover:translate-x-1 md:hidden" />
+        </span>
+
+        <span className="text-h4 text-balance md:order-1 md:flex-1">
+          {proyecto.nombre}
+        </span>
+
+        <span className="text-p3 hidden text-blanco/40 md:order-3 md:block md:w-80 md:shrink-0">
+          {servicios}
+        </span>
+
+        <IconoFlecha className="hidden shrink-0 text-lila transition-transform group-hover:translate-x-1 md:order-4 md:block" />
+      </Link>
+    );
+  }
 
   return (
     <Link

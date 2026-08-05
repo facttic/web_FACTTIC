@@ -304,3 +304,46 @@ export const VERTICALES = {
     cta: { texto: "Trabajá con FACTTIC", href: "/contacto" },
   },
 } as const;
+
+/**
+ * Proyectos: la grilla con filtros y el detalle.
+ *
+ * Los proyectos, los filtros y sus opciones salen de la API; acá va el texto
+ * fijo de las dos pantallas.
+ */
+export const PROYECTOS_PAGINA = {
+  hero: {
+    titulo: "Nuestro\ntrabajo intercoop",
+    bajada:
+      "Ayudamos a empresas y organizaciones a potenciar sus proyectos con tecnología y conocimiento cooperativo.",
+  },
+  filtros: {
+    sector: "Sectores",
+    servicio: "Servicios",
+    tecnologia: "Tecnologías",
+    cooperativa: "Por cooperativa",
+    abrir: "Filtrar",
+    limpiar: "Limpiar filtros",
+  },
+  verMas: "Ver más",
+  vacio: {
+    titulo: "No encontramos proyectos con esos filtros",
+    sugerencia: "Probá con menos filtros o mirá todos los proyectos.",
+  },
+  ultimos: { titulo: "Últimos proyectos" },
+  detalle: {
+    resena: "¿De qué se trató este proyecto?",
+    stack: "Stack tecnológico",
+    cooperativas: "Cooperativas",
+    relacionados: "Proyectos relacionados",
+    secciones: {
+      desafio: "Desafío",
+      solucion: "Solución",
+      resultado: "Resultado",
+    },
+  },
+  cierre: {
+    titulo: "¿Tenés un proyecto?",
+    cta: { texto: "Trabajá con FACTTIC", href: "/contacto" },
+  },
+} as const;
