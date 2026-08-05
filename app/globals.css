@@ -47,6 +47,16 @@
   --color-texto: var(--color-blanco);
   --color-borde: rgb(242 242 242 / 0.1);
   --color-borde-pleno: var(--color-blanco);
+  /*
+   * El diseño usa tres trazos discontinuos y conviene no inventar más:
+   *  - `border-dotted border-punteado`: puntos finos claros (dash 2 2 en el
+   *    archivo). Filas de tablas, fichas y sus separadores verticales.
+   *  - `border-dashed border-gris-oscuro`: guiones grises (dash 3 3). Las
+   *    líneas bajo solapas y entre ítems de acordeón.
+   *  - `border-dashed border-borde-pleno`: guiones blancos (dash 4 4 / 5 5).
+   *    Botones punteados, bandas CTA y tarjetas que esperan una acción.
+   */
+  --color-punteado: rgb(242 242 242 / 0.4);
 
   /* Tipografías: Inter para títulos, DM Mono para cuerpo e interfaz */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;

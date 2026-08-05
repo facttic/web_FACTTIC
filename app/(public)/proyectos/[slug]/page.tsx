@@ -83,7 +83,7 @@ export default async function ProyectoPage({
         {/* Ficha: sector y servicios, separados por una línea punteada. */}
         <div className="mt-10 flex flex-col gap-6 md:flex-row md:items-start md:gap-10">
           {proyecto.sector ? (
-            <div className="border-l border-dotted border-blanco/40 pl-4">
+            <div className="border-l border-dotted border-punteado pl-4">
               <p className="text-eyebrow text-blanco/40">Sector</p>
               <div className="mt-2">
                 <ChipSector nombre={proyecto.sector.nombre} />
@@ -91,13 +91,13 @@ export default async function ProyectoPage({
             </div>
           ) : null}
           {servicios ? (
-            <div className="border-l border-dotted border-blanco/40 pl-4">
+            <div className="border-l border-dotted border-punteado pl-4">
               <p className="text-eyebrow text-blanco/40">Servicios</p>
               <p className="text-p2 mt-2 text-blanco/80">{servicios}</p>
             </div>
           ) : null}
           {proyecto.cliente ? (
-            <div className="border-l border-dotted border-blanco/40 pl-4">
+            <div className="border-l border-dotted border-punteado pl-4">
               <p className="text-eyebrow text-blanco/40">Cliente</p>
               <p className="text-p2 mt-2 text-blanco/80">
                 {proyecto.cliente.nombre}
@@ -181,7 +181,7 @@ export default async function ProyectoPage({
       {ultimos.items.length ? (
         <Seccion>
           <EncabezadoSeccion titulo={T.ultimos.titulo} tamanoTitulo="h2" />
-          <div className="border-t border-dotted border-blanco/40">
+          <div className="border-t border-dotted border-punteado">
             {ultimos.items
               .filter((otro) => otro.id !== proyecto.id)
               .slice(0, 4)

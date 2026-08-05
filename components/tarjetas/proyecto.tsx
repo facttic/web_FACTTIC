@@ -201,7 +201,7 @@ export function FilaProyecto({
       <Link
         href={`/proyectos/${proyecto.slug}`}
         className={cn(
-          "group flex flex-col gap-3 border-b border-dotted border-blanco/40 py-6",
+          "group flex flex-col gap-3 border-b border-dotted border-punteado py-6",
           `transition-colors hover:bg-superficie/50 ${FOCO}`,
           "md:grid md:grid-cols-[minmax(0,1fr)_150px_170px_300px_28px] md:items-center md:gap-4",
         )}
@@ -219,7 +219,7 @@ export function FilaProyecto({
           {proyecto.nombre}
         </span>
 
-        <span className="hidden md:block">
+        <span className="hidden self-stretch border-l border-dotted border-punteado md:flex md:items-center md:pl-6">
           {proyecto.cliente ? (
             <Chip className="border border-blanco/40 bg-transparent">
               {proyecto.cliente.nombre}
@@ -233,7 +233,7 @@ export function FilaProyecto({
           ) : null}
         </span>
 
-        <span className="text-p3 hidden self-stretch border-l border-dotted border-blanco/40 text-blanco/50 md:flex md:items-center md:pl-6">
+        <span className="text-p3 hidden self-stretch border-l border-dotted border-punteado text-blanco/50 md:flex md:items-center md:pl-6">
           {servicios}
         </span>
 
@@ -246,7 +246,7 @@ export function FilaProyecto({
     <Link
       href={`/proyectos/${proyecto.slug}`}
       className={cn(
-        "group flex flex-col gap-3 border-b border-dashed border-gris-oscuro py-6",
+        "group flex flex-col gap-3 border-b border-dotted border-punteado py-6",
         `transition-colors hover:bg-superficie/50 ${FOCO}`,
       )}
     >
