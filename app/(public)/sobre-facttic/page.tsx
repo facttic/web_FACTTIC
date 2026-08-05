@@ -52,7 +52,7 @@ export default async function SobreFactticPage() {
         <div className="contenedor pointer-events-none absolute inset-x-0 top-0 -z-10">
           <Animacion
             nombre={FONDOS.sobreFacttic}
-            className="absolute -top-6 -right-4 aspect-square w-[300px] md:-top-10 md:w-[520px]"
+            className="absolute -top-40 -right-20 aspect-square w-[360px] md:-top-[725px] md:-right-[730px] md:w-[1600px]"
           />
         </div>
 
