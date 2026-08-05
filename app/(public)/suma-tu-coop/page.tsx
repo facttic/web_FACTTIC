@@ -5,7 +5,7 @@ import { Carrusel } from "@/components/ui/carrusel";
 import { BloqueDesplegable } from "@/components/secciones/desplegables";
 import {
   CardMetodologia,
-  CardRequisito,
+  CardPropuesta,
 } from "@/components/tarjetas/servicios";
 import { SolConOrbita } from "@/components/ui/formas";
 import { HOME, SUMA_TU_COOP as T } from "@/lib/contenido";
@@ -30,9 +30,6 @@ export default function SumaTuCoopPage() {
       HOME.beneficios.items.find((item) => item.titulo === titulo),
     )
     .filter((item) => item !== undefined);
-
-  // La maqueta muestra cuatro tarjetas repitiendo los dos textos que define.
-  const compromisos = [...T.compromisos.items, ...T.compromisos.items];
 
   return (
     <>
@@ -89,12 +86,15 @@ export default function SumaTuCoopPage() {
           titulo={T.compromisos.titulo}
           tamanoTitulo="h2"
         />
-        {/* Cuatro en fila en desktop; en mobile se desplazan de costado. */}
+        {/* Las mismas tarjetas de propuesta de valor que en Servicios: grises
+            en reposo y pintadas con su color al pasar el mouse. Cuatro en fila
+            en desktop; en mobile se desplazan de costado. */}
         <Carrusel grilla="md:grid-cols-4" gap="gap-5">
-          {compromisos.map((titulo, i) => (
-            <CardRequisito
-              key={`${titulo}-${i}`}
-              titulo={<span className="whitespace-pre-line">{titulo}</span>}
+          {T.compromisos.items.map((item, i) => (
+            <CardPropuesta
+              key={`${item.titulo}-${i}`}
+              titulo={item.titulo}
+              acento={item.acento}
               className="h-[135px] w-[287px] shrink-0 snap-start md:w-auto"
             />
           ))}
