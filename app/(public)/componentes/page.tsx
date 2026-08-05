@@ -410,8 +410,9 @@ export default async function CatalogoPage() {
               <CardMetrica rotulo="Provincias" valor="+10" acento="naranja" />
             </div>
           </Muestra>
+          {/* Pasando el mouse se vuelven grises y muestran la explicación. */}
           <Muestra nombre="Oportunidad" usoEn="Sumá tu coop">
-            <div className="grid gap-6 md:grid-cols-3">
+            <div className="grid h-[350px] gap-6 md:grid-cols-3">
               <CardOportunidad
                 indice={0}
                 acento="lila"

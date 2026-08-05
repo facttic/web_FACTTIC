@@ -3,10 +3,8 @@ import { EncabezadoSeccion, Seccion, BandaCta } from "@/components/ui/seccion";
 import { BotonLink } from "@/components/ui/boton";
 import { Carrusel } from "@/components/ui/carrusel";
 import { BloqueDesplegable } from "@/components/secciones/desplegables";
-import {
-  CardMetodologia,
-  CardPropuesta,
-} from "@/components/tarjetas/servicios";
+import { CardPropuesta } from "@/components/tarjetas/servicios";
+import { CardOportunidad } from "@/components/tarjetas/bloques";
 import { SolConOrbita } from "@/components/ui/formas";
 import { HOME, SUMA_TU_COOP as T } from "@/lib/contenido";
 
@@ -120,14 +118,18 @@ export default function SumaTuCoopPage() {
 
       <Seccion>
         <EncabezadoSeccion titulo={T.camino.titulo} tamanoTitulo="h2" />
+        {/* Al pasar el mouse la tarjeta se vuelve gris y muestra la
+            explicación con el enlace, como en el prototipo. */}
         <div className="grid gap-5 md:grid-cols-3">
           {T.camino.items.map((item, i) => (
-            <CardMetodologia
+            <CardOportunidad
               key={item.pregunta}
-              numero={`${String(i + 1).padStart(2, "0")}.`}
-              nombre={item.pregunta}
+              indice={i}
+              pregunta={item.pregunta}
+              descripcion={item.descripcion}
+              enlace={item.enlace}
               acento={item.acento}
-              className="h-[315px] md:h-[260px]"
+              className="h-[350px]"
             />
           ))}
         </div>

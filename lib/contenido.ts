@@ -418,14 +418,32 @@ export const SUMA_TU_COOP = {
 
   camino: {
     titulo: "Elegí tu camino al cooperativismo",
+    /*
+     * Al pasar el mouse cada tarjeta se vuelve gris y muestra su explicación
+     * con el enlace. Los textos son los de la maqueta —Semillero y el Club de
+     * Formación son plataformas propias de FACTTIC—; faltan sus URLs, que hoy
+     * van a Contacto.
+     */
     items: [
-      { pregunta: "¿Querés sumarte\na FACTTIC?", acento: "lila" as Acento },
+      {
+        pregunta: "¿Querés sumarte\na una cooperativa?",
+        descripcion:
+          "Semillero es la plataforma de FACTTIC que conecta a personas interesadas en el trabajo cooperativo con cooperativas que están buscando nuevos socios y socias.",
+        enlace: { texto: "Ir a Semillero", href: "/contacto" },
+        acento: "lila" as Acento,
+      },
       {
         pregunta: "¿Querés armar\ntu propia cooperativa?",
+        descripcion:
+          "Acompañamos a proyectos cooperativos en sus primeros pasos de la creación.",
+        enlace: { texto: "Contactanos", href: "/contacto" },
         acento: "celeste" as Acento,
       },
       {
         pregunta: "¿Querés formarte\nen cooperativismo?",
+        descripcion:
+          "El Club de Formación Cooperativa es una plataforma educativa de FACTTIC donde podés realizar cursos sobre cooperativismo y tecnología.",
+        enlace: { texto: "Ir al club", href: "/contacto" },
         acento: "naranja" as Acento,
       },
     ],

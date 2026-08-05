@@ -193,8 +193,13 @@ export function CardMetrica({
 }
 
 /**
- * Oportunidad de "Sumá tu coop": una cabecera de color con el número y la
- * pregunta, y debajo un panel con la explicación y el enlace.
+ * Oportunidad de "Sumá tu coop": la tarjeta de color con el número y la
+ * pregunta que, al pasar el mouse, se vuelve gris y muestra la explicación
+ * con el enlace al pie.
+ *
+ * Las dos caras se apilan y se cruzan por opacidad —la de color queda debajo—
+ * para que la tarjeta no cambie de alto ni empuje a las vecinas. Con el foco
+ * del teclado pasa lo mismo, así que el enlace se alcanza tabulando.
  */
 export function CardOportunidad({
   indice,
@@ -214,23 +219,36 @@ export function CardOportunidad({
   const numero = String(indice + 1).padStart(2, "0");
 
   return (
-    <div className={cn("flex flex-col gap-4", className)}>
+    <div
+      className={cn(
+        "group relative isolate overflow-hidden rounded-xl",
+        className,
+      )}
+    >
+      {/* La cara de color, en reposo. */}
       <div
         className={cn(
-          "flex aspect-square flex-col justify-between rounded-xl p-6",
+          "flex h-full flex-col justify-between p-6 transition-opacity duration-300",
+          "group-hover:opacity-0 group-focus-within:opacity-0",
           FONDO_ACENTO[acento],
         )}
       >
         <p className="text-h4">{numero}.</p>
-        <p className="text-h3 text-balance">{pregunta}</p>
+        <p className="text-h3 whitespace-pre-line">{pregunta}</p>
       </div>
 
-      <div className="flex flex-1 flex-col rounded-xl bg-superficie-alta p-6">
+      {/* El panel gris con la explicación, al pasar el mouse. */}
+      <div
+        className={cn(
+          "absolute inset-0 flex flex-col bg-superficie-alta p-6 opacity-0 transition-opacity duration-300",
+          "group-hover:opacity-100 group-focus-within:opacity-100",
+        )}
+      >
         <p className="text-h4">{numero}.</p>
         <p className="text-p2 mt-4 flex-1 text-blanco/80">{descripcion}</p>
         {enlace ? (
           <>
-            <div className="mt-8 border-t border-blanco/20" />
+            <div className="border-t border-blanco/20" />
             <BotonTexto href={enlace.href} className="mt-4">
               {enlace.texto}
             </BotonTexto>
