@@ -211,6 +211,15 @@ llevan indicaciones de implementación. Estado de las encontradas:
          desktop y "¿Querés sumarte a FACTTIC?" en mobile; se usó la desktop,
          que es la que coincide con el texto de Semillero.
 
+- [ ] **32. La animación del 404 no coincide con el fotograma de la maqueta.**
+      `fondo-error404.json` trae toda la decoración —arco, planetas, sol lila y
+      estrella naranja— pero son 161 fotogramas con los cuerpos en movimiento, y
+      su composición (1000×887) los ubica en otro lugar y a otra escala que el
+      instante dibujado en las maquetas. Se respetó la estructura de cada una
+      —decoración arriba en mobile, al costado en desktop— y se dejó correr la
+      animación. Si diseño quiere que el reposo coincida con la maqueta, hay que
+      reexportarla.
+
 ### Contenido a recibir
 
 - [ ] **Doc con la información de las cooperativas.** Diseño lo mencionó el 4/8

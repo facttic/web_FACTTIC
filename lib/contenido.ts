@@ -443,3 +443,18 @@ export const SUMA_TU_COOP = {
     cta: { texto: "Sumate a FACTTIC", href: "/contacto" },
   },
 } as const;
+
+/**
+ * 404. Las dos maquetas difieren: desktop alinea a la izquierda y termina en
+ * el pie; mobile centra todo y suma una tarjeta de cierre.
+ */
+export const ERROR_404 = {
+  titulo: "Esta conexión no existe",
+  texto:
+    "Parece que la conexión que buscás quedó fuera de la red. Pero todavía hay mucho por explorar.",
+  cta: { texto: "Volver al inicio", href: "/" },
+  cierre: {
+    titulo: "¿Sos parte de\nuna cooperativa?",
+    cta: { texto: "Sumate a FACTTIC", href: "/suma-tu-coop" },
+  },
+} as const;
