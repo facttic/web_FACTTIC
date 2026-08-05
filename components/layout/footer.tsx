@@ -7,6 +7,10 @@ import { Logo } from "./logo";
  * el crédito. En mobile las maquetas lo dejan compacto: copyright, redes y
  * crédito, sin logo ni columnas —así aparece en Proyectos y Para
  * cooperativas—.
+ *
+ * No lleva ninguna línea: ni sobre el pie ni separando el crédito. Se verificó
+ * barriendo la maqueta fila por fila y no hay una sola horizontal; lo que
+ * separa es el aire.
  */
 
 const ICONOS: Record<string, string> = {
@@ -21,27 +25,27 @@ const ICONOS: Record<string, string> = {
 
 export function Footer() {
   return (
-    <footer className="mt-auto border-t border-borde">
+    <footer className="mt-auto">
       <div className="contenedor py-8 md:py-14">
-        <div className="hidden gap-10 md:grid md:grid-cols-[minmax(0,1fr)_3fr]">
+        <div className="hidden gap-10 md:grid md:grid-cols-[210px_1fr]">
           <Logo />
 
           <nav aria-label="Pie de página">
-            <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-5">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:flex lg:justify-between lg:gap-8">
               {COLUMNAS_PIE.map((columna) => (
                 <div key={columna.titulo}>
                   <Link
                     href={columna.href}
-                    className="text-p3 font-sans font-bold text-blanco transition-opacity hover:opacity-70"
+                    className="text-p2-bold text-blanco transition-opacity hover:opacity-70"
                   >
                     {columna.titulo}
                   </Link>
-                  <ul className="mt-4 space-y-2">
+                  <ul className="mt-2 space-y-1">
                     {columna.enlaces.map((enlace) => (
                       <li key={enlace.href + enlace.etiqueta}>
                         <Link
                           href={enlace.href}
-                          className="text-p3 text-blanco/50 transition-colors hover:text-blanco"
+                          className="text-p3 block font-sans text-blanco/50 transition-colors hover:text-blanco"
                         >
                           {enlace.etiqueta}
                         </Link>
@@ -54,9 +58,9 @@ export function Footer() {
           </nav>
         </div>
 
-        <div className="flex flex-col gap-6 md:mt-14 md:flex-row md:items-center md:justify-between md:border-t md:border-borde md:pt-6">
+        <div className="flex flex-col gap-6 md:mt-24 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-6">
-            <p className="text-p3 text-blanco/40">
+            <p className="text-p3 font-sans text-blanco/40">
               © {new Date().getFullYear()} FACTTIC
             </p>
             <ul className="flex items-center gap-4">
@@ -83,10 +87,10 @@ export function Footer() {
             </ul>
           </div>
 
-          <p className="text-p3 text-blanco/40">
+          <p className="text-p3 font-sans text-blanco/40">
             Trabajo intercoop entre{" "}
-            <span className="text-blanco/70">El Maizal</span> ·{" "}
-            <span className="text-blanco/70">IT10</span> ·{" "}
+            <span className="text-blanco/70">El Maizal</span> +{" "}
+            <span className="text-blanco/70">IT10</span> +{" "}
             <span className="text-blanco/70">Lawal</span>
           </p>
         </div>

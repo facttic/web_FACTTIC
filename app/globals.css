@@ -162,6 +162,14 @@
   line-height: 1.5;
 }
 
+/** P2/Bold: DM Mono Medium 14. Es el título de columna del pie. */
+@utility text-p2-bold {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
 @utility text-p3 {
   font-family: var(--font-mono);
   font-size: 12px;
