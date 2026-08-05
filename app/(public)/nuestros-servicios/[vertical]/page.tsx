@@ -71,11 +71,11 @@ export default async function VerticalPage({
     <>
       {/* En desktop el hero va centrado y con la ilustración del sector; en
           mobile la maqueta la saca y alinea el texto a la izquierda. */}
-      <Seccion className="pt-32 md:items-center md:pt-40 md:text-center">
+      <Seccion className="pt-32 md:items-center md:pt-24 md:text-center">
         {animacion ? (
           <Animacion
             nombre={animacion}
-            className="hidden size-[180px] md:block"
+            className="hidden size-[200px] md:block"
           />
         ) : null}
         <h1 className="text-h1 md:mt-8">{sector.nombre}</h1>
@@ -101,7 +101,7 @@ export default async function VerticalPage({
               titulo={item.titulo}
               descripcion={item.descripcion}
               acento={acento}
-              className="h-[200px] whitespace-pre-line"
+              className="h-[264px] whitespace-pre-line"
             />
           ))}
         </div>
@@ -122,7 +122,9 @@ export default async function VerticalPage({
         </Seccion>
       ) : null}
 
-      <Seccion>
+      {/* El aire de esta pantalla no es el del resto: entre metodologías y
+          proyectos el diseño deja menos, y antes del cierre, más. */}
+      <Seccion className="md:pb-0">
         <BloqueDesplegable
           titulo={T.metodologia.titulo}
           tamano="h2"
@@ -135,7 +137,7 @@ export default async function VerticalPage({
       </Seccion>
 
       {proyectos.items.length ? (
-        <Seccion>
+        <Seccion className="md:pt-8">
           <EncabezadoSeccion
             titulo={T.proyectos.titulo}
             accionAlPie
@@ -150,14 +152,20 @@ export default async function VerticalPage({
           </div>
           <div className="hidden gap-5 md:grid md:grid-cols-[2.06fr_1fr]">
             {proyectos.items.map((proyecto) => (
-              <CardProyecto key={proyecto.id} proyecto={proyecto} />
+              // 310px acá: en la maqueta de la vertical la tarjeta es más baja
+              // que la de la Home.
+              <CardProyecto
+                key={proyecto.id}
+                proyecto={proyecto}
+                alto="h-[310px]"
+              />
             ))}
           </div>
         </Seccion>
       ) : null}
 
       {aliados.length ? (
-        <Seccion className="pb-0">
+        <Seccion className="pb-0 md:pt-28">
           <EncabezadoSeccion
             rotulo={SERVICIOS_PAGINA.aliados.rotulo}
             titulo={SERVICIOS_PAGINA.aliados.titulo}
@@ -165,7 +173,7 @@ export default async function VerticalPage({
         </Seccion>
       ) : null}
       {aliados.length ? (
-        <Aliados logos={aliados} className="pb-12 md:pb-16" />
+        <Aliados logos={aliados} className="pb-12 md:pb-24" />
       ) : null}
 
       {/* El cierre va sobre el sol naranja, con la tarjeta de vidrio dejándolo

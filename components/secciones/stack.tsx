@@ -24,7 +24,7 @@ export function Stack({
       className={cn(
         // Las líneas que enmarcan el stack van en blanco pleno, no en el gris
         // de los otros separadores punteados: medido sobre la maqueta, #F2F2F2.
-        "border-y border-dashed border-borde-pleno py-6",
+        "border-y border-dashed border-borde-pleno py-1",
         "flex flex-col gap-6 md:flex-row md:items-center md:gap-10",
         className,
       )}

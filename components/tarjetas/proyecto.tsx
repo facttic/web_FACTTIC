@@ -96,9 +96,12 @@ function Detalle({ proyecto }: { proyecto: Proyecto }) {
  */
 export function CardProyecto({
   proyecto,
+  alto,
   className,
 }: {
   proyecto: Proyecto;
+  /** Alto propio de la pantalla: en las verticales la tarjeta es más baja. */
+  alto?: string;
   className?: string;
 }) {
   return (
@@ -110,7 +113,7 @@ export function CardProyecto({
         className={cn(
           "flex flex-col overflow-hidden",
           PIEL_TARJETA,
-          ALTO_TARJETA,
+          alto ?? ALTO_TARJETA,
         )}
       >
         <Portada
