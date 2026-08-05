@@ -228,6 +228,24 @@ llevan indicaciones de implementación. Estado de las encontradas:
       3. Falta una dirección de correo de contacto para ofrecer como
          alternativa cuando el envío falla.
 
+- [ ] **34. Sobre Facttic.**
+      1. **Las tres cooperativas de prueba** ("Cooperativa A/B/C") ahora se
+         listan en público, mezcladas con las 37 reales que se cargaron desde
+         la maqueta. Conviene borrarlas —es parte del ítem 12—.
+      2. **Autoridades**: el recurso está vacío y su POST tiene el bug del
+         ítem 3, así que la sección no se muestra. La maqueta nombra a Manuel
+         Leiva (presidente, Coop. Redjar) y Cecilia Muñoz Cancela
+         (vicepresidenta, Coop. Código Libre).
+      3. **El sitio de cada cooperativa**: la anotación pide que la lista
+         linkee a la página de cada una y el modelo no tiene el campo. Hoy
+         llevan a Nuestra Red.
+      4. **La foto del plenario en alta**: se recortó de la maqueta mobile, así
+         que va a 393 de ancho y se ve blanda a pantalla completa.
+      5. **Los logos de "Somos parte de otros espacios cooperativos"**: la
+         maqueta muestra Cooperar, patio, un centro cultural y mut_, pero el
+         recurso `organizaciones` hoy tiene los aliados de la Home. Confirmar
+         si son la misma lista o hacen falta dos.
+
 ### Contenido a recibir
 
 - [ ] **Doc con la información de las cooperativas.** Diseño lo mencionó el 4/8
