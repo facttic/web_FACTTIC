@@ -208,8 +208,11 @@ export function BandaCta({
    * `vidrio` es la que va sobre una animación de fondo: en vez del borde
    * punteado lleva un vidrio esmerilado que deja pasar el color de atrás
    * atenuado y difuminado. Se usa en Servicios, sobre el sol naranja.
+   *
+   * `vidrio-en-mobile` es la de Sumá tu coop, donde las maquetas no coinciden:
+   * mobile la dibuja de vidrio y desktop con el borde punteado.
    */
-  variante?: "punteada" | "vidrio";
+  variante?: "punteada" | "vidrio" | "vidrio-en-mobile";
   /**
    * En mobile la Home centra sus bandas y Servicios las alinea a la izquierda,
    * igual que pasa con los encabezados.
@@ -222,19 +225,21 @@ export function BandaCta({
       className={cn(
         // En mobile la banda va centrada y con el botón debajo del título.
         "flex flex-col gap-10 rounded-xl px-6 py-14",
-        variante === "punteada" && "border",
+        variante !== "vidrio" && "border",
         alineacion === "centro-en-mobile"
           ? "items-center text-center"
           : "items-start text-left",
-        variante === "vidrio"
-          ? /*
-              Vidrio esmerilado: apenas tiñe. Medido sobre la maqueta, deja
-              pasar entre el 85 y el 98% del color de atrás, así que lo que hace
-              el efecto es el desenfoque y el grano, no una capa oscura. Con más
-              opacidad el naranja desaparece.
-            */
-            "textura-ruido borde-degradado bg-negro/15 backdrop-blur-2xl"
-          : "border-dashed border-borde-pleno",
+        /*
+          Vidrio esmerilado: apenas tiñe. Medido sobre la maqueta, deja pasar
+          entre el 85 y el 98% del color de atrás, así que lo que hace el
+          efecto es el desenfoque y el grano, no una capa oscura. Con más
+          opacidad el naranja desaparece.
+        */
+        variante === "vidrio" &&
+          "textura-ruido borde-degradado bg-negro/15 backdrop-blur-2xl",
+        variante === "vidrio-en-mobile" &&
+          "textura-ruido borde-degradado bg-negro/15 backdrop-blur-2xl md:border-dashed md:border-borde-pleno md:bg-transparent md:backdrop-blur-none",
+        variante === "punteada" && "border-dashed border-borde-pleno",
         // 113px de alto en el SVG: el botón mide 53 y quedan 30 arriba y abajo.
         "md:flex-row md:items-center md:justify-between md:gap-6 md:px-10 md:py-7.5 md:text-left",
         className,

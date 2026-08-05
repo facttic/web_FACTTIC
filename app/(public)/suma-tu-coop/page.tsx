@@ -142,8 +142,10 @@ export default function SumaTuCoopPage() {
       </Seccion>
 
       <div className="contenedor pb-12 md:pb-16">
+        {/* Las maquetas difieren: mobile la dibuja de vidrio y desktop con el
+            borde punteado y el botón al costado. */}
         <BandaCta
-          variante="vidrio"
+          variante="vidrio-en-mobile"
           titulo={T.cierre.titulo}
           accion={
             <BotonLink href={T.cierre.cta.href}>{T.cierre.cta.texto}</BotonLink>
