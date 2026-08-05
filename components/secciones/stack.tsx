@@ -22,12 +22,14 @@ export function Stack({
   return (
     <div
       className={cn(
-        "border-y border-dashed border-gris-oscuro py-6",
+        // Las líneas que enmarcan el stack van en blanco pleno, no en el gris
+        // de los otros separadores punteados: medido sobre la maqueta, #F2F2F2.
+        "border-y border-dashed border-borde-pleno py-6",
         "flex flex-col gap-6 md:flex-row md:items-center md:gap-10",
         className,
       )}
     >
-      <h2 className="text-h4 shrink-0">{titulo}</h2>
+      <h2 className="text-h2 shrink-0">{titulo}</h2>
 
       <ul className="scroll-limpio -mx-6 flex gap-4 overflow-x-auto px-6 md:mx-0 md:flex-1 md:px-0">
         {tecnologias.map((tecnologia) => (
