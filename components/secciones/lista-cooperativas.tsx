@@ -23,15 +23,20 @@ export function ListaCooperativas({
     a.nombre.localeCompare(b.nombre, "es"),
   );
 
+  /*
+   * Columnas de CSS y no una grilla: la maqueta lee cada columna hacia abajo
+   * —Abrapalabra, ALT, Animus…— y una grilla las ordenaría a lo ancho. Los
+   * renglones van cada 18px, medidos sobre el archivo.
+   */
   return (
     <ul
       className={cn(
-        "grid grid-cols-2 gap-x-8 gap-y-3 md:grid-cols-4 md:gap-x-16",
+        "columns-2 gap-x-8 text-[0px] md:columns-4 md:gap-x-16",
         className,
       )}
     >
       {ordenadas.map((cooperativa) => (
-        <li key={cooperativa.id}>
+        <li key={cooperativa.id} className="h-[18px]">
           <Link
             href="/nuestra-red"
             className={cn(

@@ -1,6 +1,7 @@
 import { cn } from "@/lib/cn";
 import { Tarjeta } from "@/components/ui/seccion";
 import { Chip } from "@/components/ui/chip";
+import { HOVER_ACENTO, type Acento } from "@/components/ui/acento";
 import type { Autoridad, Cooperativa, Organizacion } from "@/lib/dominio/tipos";
 
 /**
@@ -11,9 +12,17 @@ import type { Autoridad, Cooperativa, Organizacion } from "@/lib/dominio/tipos";
 /** Miembro del consejo de administración, para Sobre FACTTIC. */
 export function CardAutoridad({
   autoridad,
+  acento,
   className,
 }: {
   autoridad: Autoridad;
+  /**
+   * Color con el que se pinta al pasar el mouse. Esta tarjeta no está en el
+   * board de Componentes, así que el hover sigue el criterio del resto del
+   * sistema —gris en reposo, pintada al pasar—, con la secuencia de acentos
+   * que el diseño usa en las grillas.
+   */
+  acento?: Acento;
   className?: string;
 }) {
   return (

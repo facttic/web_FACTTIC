@@ -160,14 +160,16 @@ export default async function SobreFactticPage() {
         <Seccion>
           {/* Título a la izquierda y la lista a la derecha, como el resto de
               los bloques de esta pantalla. */}
-          <div className="grid gap-8 md:grid-cols-[352px_1fr] md:gap-16">
-            <h2 className="text-h2 whitespace-pre-line">
-              <span className="text-eyebrow mb-3 block text-blanco/40">
-                {T.red.rotulo}
-              </span>
+          <div className="grid gap-x-16 gap-y-3 md:grid-cols-[352px_1fr]">
+            <p className="text-eyebrow text-blanco/40 md:col-start-1 md:row-start-1">
+              {T.red.rotulo}
+            </p>
+            <h2 className="text-h2 whitespace-pre-line md:col-start-1 md:row-start-2">
               {T.red.titulo}
             </h2>
-            <ListaCooperativas cooperativas={cooperativas} />
+            <div className="md:col-start-2 md:row-span-2 md:row-start-2">
+              <ListaCooperativas cooperativas={cooperativas} />
+            </div>
           </div>
         </Seccion>
       ) : null}
@@ -198,13 +200,21 @@ function BloqueTexto({
   titulo: string;
   parrafos: readonly string[];
 }) {
+  /*
+   * El rótulo va en una fila propia de la columna izquierda, para que el texto
+   * de la derecha quede alineado con el título y no con él: es lo que hace la
+   * maqueta —el párrafo arranca a la misma altura que "¿Cómo nos
+   * organizamos?", no que "ORGANIZACIÓN"—.
+   */
   return (
-    <div className="grid gap-6 md:grid-cols-[352px_1fr] md:gap-16">
-      <h2 className="text-h2 whitespace-pre-line">
-        <span className="text-eyebrow mb-3 block text-blanco/40">{rotulo}</span>
+    <div className="grid gap-x-16 gap-y-3 md:grid-cols-[352px_1fr]">
+      <p className="text-eyebrow text-blanco/40 md:col-start-1 md:row-start-1">
+        {rotulo}
+      </p>
+      <h2 className="text-h2 whitespace-pre-line md:col-start-1 md:row-start-2">
         {titulo}
       </h2>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6 md:col-start-2 md:row-span-2 md:row-start-2">
         {parrafos.map((parrafo) => (
           <p key={parrafo} className="text-p1 text-blanco/80">
             {parrafo}
