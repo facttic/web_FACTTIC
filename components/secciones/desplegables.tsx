@@ -111,11 +111,17 @@ export function Desplegables({
 export function BloqueDesplegable({
   rotulo,
   titulo,
+  tamano = "h1",
   items,
   className,
 }: {
   rotulo?: string;
   titulo: string;
+  /**
+   * "Nuestras soluciones" va en H1 y "Metodologías de trabajo" en H2, medido
+   * sobre cada maqueta. No hay una regla común entre pantallas.
+   */
+  tamano?: "h1" | "h2";
   items: ItemDesplegable[];
   className?: string;
 }) {
@@ -125,7 +131,12 @@ export function BloqueDesplegable({
     >
       {/* En desktop el título entra en una línea por columna: sin esto se parte
           y deja de coincidir con la maqueta. */}
-      <h2 className="text-h1 whitespace-pre-line">
+      <h2
+        className={cn(
+          "whitespace-pre-line",
+          tamano === "h1" ? "text-h1" : "text-h2",
+        )}
+      >
         {rotulo ? (
           <span className="text-eyebrow mb-3 block text-blanco/40">
             {rotulo}

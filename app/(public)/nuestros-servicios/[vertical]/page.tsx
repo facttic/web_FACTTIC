@@ -125,6 +125,7 @@ export default async function VerticalPage({
       <Seccion>
         <BloqueDesplegable
           titulo={T.metodologia.titulo}
+          tamano="h2"
           items={SERVICIOS_PAGINA.metodologia.items.map((item) => ({
             id: item.titulo,
             titulo: item.titulo.replace("\n", " "),
