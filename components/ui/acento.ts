@@ -43,6 +43,23 @@ export const FONDO_ACENTO: Record<Acento, string> = {
   azul: "bg-azul text-blanco",
 };
 
+/**
+ * Los mismos rellenos, pero recién desde el breakpoint de escritorio. Sirven
+ * cuando una maqueta mobile deja la pieza sin color y la de desktop la pinta,
+ * como la segunda tarjeta de "Elegí tu camino" en Sumá tu coop: las clases van
+ * escritas enteras porque Tailwind lee el código fuente y no las armaría por
+ * concatenación.
+ */
+export const FONDO_ACENTO_DESKTOP: Record<Acento, string> = {
+  lila: "md:bg-lila md:text-negro-oscuro",
+  celeste: "md:bg-celeste md:text-negro-oscuro",
+  naranja: "md:bg-naranja md:text-negro-oscuro",
+  amarillo: "md:bg-amarillo md:text-negro-oscuro",
+  verde: "md:bg-verde md:text-negro-oscuro",
+  rojo: "md:bg-rojo md:text-negro-oscuro",
+  azul: "md:bg-azul md:text-blanco",
+};
+
 /** Secuencia con la que el diseño alterna colores en las grillas. */
 export const CICLO_ACENTOS: Acento[] = [
   "lila",

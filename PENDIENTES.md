@@ -202,12 +202,10 @@ llevan indicaciones de implementación. Estado de las encontradas:
       3. En mobile la sección de las tarjetas numeradas se titula "Tenemos
          código de conducta" —repetido de la anterior, parece error— y en
          desktop "Elegí tu camino al cooperativismo"; se usó esta última.
-      4. La tarjeta 02 es celeste en desktop y oscura con borde en mobile; se
-         siguió la desktop.
-      5. Faltan las URLs de **Semillero** y del **Club de Formación
+      4. Faltan las URLs de **Semillero** y del **Club de Formación
          Cooperativa**, que las tarjetas de "Elegí tu camino" enlazan al
          pasar el mouse; hoy las tres van a Contacto.
-      6. La primera pregunta dice "¿Querés sumarte a una cooperativa?" en
+      5. La primera pregunta dice "¿Querés sumarte a una cooperativa?" en
          desktop y "¿Querés sumarte a FACTTIC?" en mobile; se usó la desktop,
          que es la que coincide con el texto de Semillero.
 

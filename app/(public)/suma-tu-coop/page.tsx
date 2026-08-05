@@ -135,6 +135,7 @@ export default function SumaTuCoopPage() {
               descripcion={item.descripcion}
               enlace={item.enlace}
               acento={item.acento}
+              contornoEnMobile={"contornoEnMobile" in item}
             />
           ))}
         </div>

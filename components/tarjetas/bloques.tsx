@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import {
   FONDO_ACENTO,
+  FONDO_ACENTO_DESKTOP,
   HOVER_ACENTO,
   type Acento,
 } from "@/components/ui/acento";
@@ -212,6 +213,7 @@ export function CardOportunidad({
   descripcion,
   enlace,
   acento,
+  contornoEnMobile = false,
   className,
 }: {
   indice: number;
@@ -219,6 +221,12 @@ export function CardOportunidad({
   descripcion: ReactNode;
   enlace?: { texto: string; href: string };
   acento: Acento;
+  /**
+   * En mobile la tarjeta va sin relleno, con borde blanco. Lo pide la maqueta
+   * mobile de Sumá tu coop para la segunda de las tres, que en desktop sí es
+   * celeste.
+   */
+  contornoEnMobile?: boolean;
   className?: string;
 }) {
   const numero = String(indice + 1).padStart(2, "0");
@@ -236,7 +244,12 @@ export function CardOportunidad({
         className={cn(
           "flex h-full flex-col justify-between p-6 transition-opacity duration-300",
           "group-hover:opacity-0 group-focus-within:opacity-0",
-          FONDO_ACENTO[acento],
+          contornoEnMobile
+            ? cn(
+                "rounded-xl border border-borde-pleno text-blanco md:border-0",
+                FONDO_ACENTO_DESKTOP[acento],
+              )
+            : FONDO_ACENTO[acento],
         )}
       >
         <p className="text-h4">{numero}.</p>
