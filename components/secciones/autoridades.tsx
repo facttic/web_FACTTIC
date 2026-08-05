@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { BotonFlecha, FOCO } from "@/components/ui/boton";
 import { CardAutoridad } from "@/components/tarjetas/red";
-import { CICLO_ACENTOS } from "@/components/ui/acento";
 import type { Autoridad } from "@/lib/dominio/tipos";
 
 /**
@@ -136,11 +135,11 @@ export function Autoridades({
         onScroll={medir}
         className="scroll-limpio mt-8 flex gap-5 overflow-x-auto"
       >
-        {visible.miembros.map((autoridad, i) => (
+        {visible.miembros.map((autoridad) => (
           <CardAutoridad
             key={autoridad.id}
             autoridad={autoridad}
-            acento={CICLO_ACENTOS[i % CICLO_ACENTOS.length]}
+            acento="lila"
             className="h-[190px] w-[190px] shrink-0 snap-start"
           />
         ))}

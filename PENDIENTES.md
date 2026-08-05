@@ -245,6 +245,14 @@ llevan indicaciones de implementación. Estado de las encontradas:
          recurso `organizaciones` hoy tiene los aliados de la Home. Confirmar
          si son la misma lista o hacen falta dos.
 
+- [ ] **35. La API es demasiado lenta para compilar el sitio.** Un `GET
+      /api/sectores` tarda 4,9s solo y 12s cuando le entran seis pedidos a la
+      vez; `next build` prerenderiza con once workers en paralelo y se pasa del
+      tiempo de espera, así que la compilación corta con `ConnectTimeoutError`
+      —en una página distinta cada vez—. El sitio anda bien en desarrollo, pero
+      esto bloquea el despliegue. Hace falta que la API responda más rápido o
+      que acepte esa concurrencia.
+
 ### Contenido a recibir
 
 - [ ] **Doc con la información de las cooperativas.** Diseño lo mencionó el 4/8

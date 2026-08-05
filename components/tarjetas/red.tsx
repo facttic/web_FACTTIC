@@ -17,10 +17,8 @@ export function CardAutoridad({
 }: {
   autoridad: Autoridad;
   /**
-   * Color con el que se pinta al pasar el mouse. Esta tarjeta no está en el
-   * board de Componentes, así que el hover sigue el criterio del resto del
-   * sistema —gris en reposo, pintada al pasar—, con la secuencia de acentos
-   * que el diseño usa en las grillas.
+   * Color con el que se pinta al pasar el mouse. En el prototipo todas las
+   * tarjetas del consejo se pintan de lila, no de un color por tarjeta.
    */
   acento?: Acento;
   className?: string;
@@ -32,13 +30,21 @@ export function CardAutoridad({
      * rótulo por el aire y no pegado a él.
      */
     <Tarjeta
-      className={cn("flex flex-col justify-between gap-8 p-5", className)}
+      className={cn(
+        "group flex flex-col justify-between gap-8 p-5 transition-colors duration-300",
+        acento && HOVER_ACENTO[acento],
+        className,
+      )}
     >
-      <p className="text-eyebrow text-blanco/40">{autoridad.cargo}</p>
+      <p className="text-eyebrow text-blanco/40 transition-colors group-hover:text-negro-oscuro/60">
+        {autoridad.cargo}
+      </p>
       <div>
         <h3 className="text-p2 text-balance">{autoridad.nombre}</h3>
         {autoridad.cooperativa ? (
-          <Chip className="mt-4">Coop. {autoridad.cooperativa.nombre}</Chip>
+          <Chip className="mt-4 transition-colors group-hover:bg-negro-oscuro/15 group-hover:text-negro-oscuro">
+            Coop. {autoridad.cooperativa.nombre}
+          </Chip>
         ) : null}
       </div>
     </Tarjeta>
