@@ -295,6 +295,26 @@
   animation: girar 60s linear infinite;
 }
 
+/**
+ * Acercamiento lento y continuo. Es el "Zoom in en la img" que piden las
+ * anotaciones de Contacto: la esfera respira en vez de quedarse quieta.
+ */
+@keyframes acercar {
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@utility animate-acercar {
+  animation: acercar 18s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-acercar {
+    animation: none;
+  }
+}
+
 /** Listas que se desplazan de costado en mobile sin mostrar la barra. */
 @utility scroll-limpio {
   scrollbar-width: none;

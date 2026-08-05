@@ -220,6 +220,16 @@ llevan indicaciones de implementación. Estado de las encontradas:
       animación. Si diseño quiere que el reposo coincida con la maqueta, hay que
       reexportarla.
 
+- [ ] **33. Contacto: color de la animación y copy de un motivo.**
+      1. `fondo-contacto.json` no tiene ninguna capa naranja —su círculo grande
+         es violeta— pero las dos maquetas dibujan un resplandor naranja. Se usa
+         la animación tal como vino.
+      2. El tercer motivo dice "Quiero formar una coope" en desktop y "…una
+         cooperativa" en mobile. Va la corta, que es la que entra en la fila de
+         desktop y hace juego con "Quiero sumar mi coope".
+      3. Falta una dirección de correo de contacto para ofrecer como
+         alternativa cuando el envío falla.
+
 ### Contenido a recibir
 
 - [ ] **Doc con la información de las cooperativas.** Diseño lo mencionó el 4/8

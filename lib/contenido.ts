@@ -458,3 +458,56 @@ export const ERROR_404 = {
     cta: { texto: "Sumate a FACTTIC", href: "/suma-tu-coop" },
   },
 } as const;
+
+/**
+ * Contacto.
+ *
+ * Las dos maquetas cambian la forma del formulario: desktop pone la etiqueta
+ * arriba de cada campo con recuadro, mobile los deja sin etiqueta y sobre una
+ * línea punteada, con los motivos en columna.
+ */
+export const CONTACTO = {
+  hero: {
+    titulo: "¿En qué\nte podemos ayudar?",
+    bajada:
+      "Ya sea que tenés un proyecto, querés sumarte a la red o simplemente querés saber más, estamos acá.",
+  },
+  formulario: {
+    titulo: "Envíanos un mensaje",
+    nombre: { etiqueta: "Nombre completo", ejemplo: "Ej: Paula Calgaro" },
+    email: { etiqueta: "Correo electrónico", ejemplo: "paula@facttic.coop" },
+    mensaje: { etiqueta: "Tu mensaje", ejemplo: "Dejanos tu mensaje..." },
+    motivo: {
+      etiqueta: "Seleccionar motivo",
+      /*
+       * Desktop dice "Quiero formar una coope" y mobile "…una cooperativa".
+       * Va la corta, que es la que entra en la fila de desktop y la que hace
+       * juego con "Quiero sumar mi coope"; queda anotado en PENDIENTES.
+       */
+      opciones: [
+        "Necesito sus servicios",
+        "Quiero sumar mi coope",
+        "Quiero formar una coope",
+        "Otro",
+      ],
+    },
+    enviar: "Enviar mensaje",
+    enviando: "Enviando…",
+    errores: {
+      nombre: "Escribí tu nombre",
+      email: "Escribí un correo válido",
+      mensaje: "Contanos brevemente en qué podemos ayudarte",
+    },
+    exito: {
+      titulo: "Recibimos tu mensaje",
+      texto: "Te vamos a responder a la brevedad. ¡Gracias por escribirnos!",
+    },
+    falla: {
+      titulo: "No pudimos enviar tu mensaje",
+      // Sin dirección de correo: no hay ninguna publicada en las maquetas ni
+      // en el sitio actual, y no se inventa una.
+      texto:
+        "Probá de nuevo en un rato. Si sigue fallando, escribinos por redes.",
+    },
+  },
+} as const;
