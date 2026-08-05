@@ -1,5 +1,6 @@
 import { cn } from "@/lib/cn";
 import { Tarjeta } from "@/components/ui/seccion";
+import { Chip } from "@/components/ui/chip";
 import type { Autoridad, Cooperativa, Organizacion } from "@/lib/dominio/tipos";
 
 /**
@@ -16,14 +17,21 @@ export function CardAutoridad({
   className?: string;
 }) {
   return (
-    <Tarjeta className={cn("p-6", className)}>
+    /*
+     * El cargo arriba como rótulo, el nombre en el medio y la cooperativa
+     * abajo como chip: es la forma de la maqueta, con el nombre separado del
+     * rótulo por el aire y no pegado a él.
+     */
+    <Tarjeta
+      className={cn("flex flex-col justify-between gap-8 p-5", className)}
+    >
       <p className="text-eyebrow text-blanco/40">{autoridad.cargo}</p>
-      <h3 className="text-h4 mt-3">{autoridad.nombre}</h3>
-      {autoridad.cooperativa ? (
-        <p className="text-p3 mt-2 text-blanco/50">
-          {autoridad.cooperativa.nombre}
-        </p>
-      ) : null}
+      <div>
+        <h3 className="text-p2 text-balance">{autoridad.nombre}</h3>
+        {autoridad.cooperativa ? (
+          <Chip className="mt-4">Coop. {autoridad.cooperativa.nombre}</Chip>
+        ) : null}
+      </div>
     </Tarjeta>
   );
 }

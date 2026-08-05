@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { EncabezadoSeccion, Seccion, BandaCta } from "@/components/ui/seccion";
+import { Seccion, BandaCta } from "@/components/ui/seccion";
 import { BotonLink } from "@/components/ui/boton";
 import { Animacion } from "@/components/ui/animacion";
 import { Carrusel } from "@/components/ui/carrusel";
@@ -146,21 +146,29 @@ export default async function SobreFactticPage() {
           titulo={T.organizacion.titulo}
           parrafos={T.organizacion.parrafos}
         />
-        <Autoridades
-          autoridades={autoridades}
-          etiquetas={T.organizacion.organos}
-          className="mt-12"
-        />
+        {/* Alineadas con el párrafo, en la columna derecha, como la maqueta. */}
+        <div className="mt-12 md:grid md:grid-cols-[352px_1fr] md:gap-16">
+          <div aria-hidden />
+          <Autoridades
+            autoridades={autoridades}
+            etiquetas={T.organizacion.organos}
+          />
+        </div>
       </Seccion>
 
       {cooperativas.length ? (
         <Seccion>
-          <EncabezadoSeccion
-            rotulo={T.red.rotulo}
-            titulo={T.red.titulo}
-            tamanoTitulo="h2"
-          />
-          <ListaCooperativas cooperativas={cooperativas} />
+          {/* Título a la izquierda y la lista a la derecha, como el resto de
+              los bloques de esta pantalla. */}
+          <div className="grid gap-8 md:grid-cols-[352px_1fr] md:gap-16">
+            <h2 className="text-h2 whitespace-pre-line">
+              <span className="text-eyebrow mb-3 block text-blanco/40">
+                {T.red.rotulo}
+              </span>
+              {T.red.titulo}
+            </h2>
+            <ListaCooperativas cooperativas={cooperativas} />
+          </div>
         </Seccion>
       ) : null}
 

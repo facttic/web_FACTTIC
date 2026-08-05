@@ -585,7 +585,7 @@ export const SOBRE_FACTTIC = {
 
   red: {
     rotulo: "Nuestra red",
-    titulo: "Cooperativas que integran la Federación",
+    titulo: "Cooperativas\nque integran\nla Federación",
   },
 
   cierre: {
