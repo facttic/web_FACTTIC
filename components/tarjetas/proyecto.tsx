@@ -191,33 +191,53 @@ export function FilaProyecto({
   const servicios = proyecto.servicios.map((s) => s.nombre).join(" · ");
 
   if (variante === "ultimos") {
+    /*
+     * En desktop la fila se abre en columnas —título en mono, chips de cliente
+     * y sector, y los servicios detrás de una línea vertical— separadas por
+     * punteado blanco al 40%, como la tabla de la maqueta. En mobile queda el
+     * chip del sector arriba con la flecha al lado y el título debajo.
+     */
     return (
       <Link
         href={`/proyectos/${proyecto.slug}`}
         className={cn(
-          "group flex flex-col gap-3 border-b border-dashed border-gris-oscuro py-5",
+          "group flex flex-col gap-3 border-b border-dotted border-blanco/40 py-6",
           `transition-colors hover:bg-superficie/50 ${FOCO}`,
-          "md:flex-row md:items-center md:gap-6",
+          "md:grid md:grid-cols-[minmax(0,1fr)_150px_170px_300px_28px] md:items-center md:gap-4",
         )}
       >
-        <span className="flex items-center justify-between md:order-2 md:w-44 md:shrink-0 md:justify-start">
+        <span className="flex items-center justify-between md:hidden">
           {proyecto.sector ? (
             <ChipSector nombre={proyecto.sector.nombre} />
           ) : (
             <span />
           )}
-          <IconoFlecha className="shrink-0 text-lila transition-transform group-hover:translate-x-1 md:hidden" />
+          <IconoFlecha className="shrink-0 text-lila transition-transform group-hover:translate-x-1" />
         </span>
 
-        <span className="text-h4 text-balance md:order-1 md:flex-1">
+        <span className="text-p1 text-balance md:truncate md:text-nowrap">
           {proyecto.nombre}
         </span>
 
-        <span className="text-p3 hidden text-blanco/40 md:order-3 md:block md:w-80 md:shrink-0">
+        <span className="hidden md:block">
+          {proyecto.cliente ? (
+            <Chip className="border border-blanco/40 bg-transparent">
+              {proyecto.cliente.nombre}
+            </Chip>
+          ) : null}
+        </span>
+
+        <span className="hidden md:block">
+          {proyecto.sector ? (
+            <ChipSector nombre={proyecto.sector.nombre} />
+          ) : null}
+        </span>
+
+        <span className="text-p3 hidden self-stretch border-l border-dotted border-blanco/40 text-blanco/50 md:flex md:items-center md:pl-6">
           {servicios}
         </span>
 
-        <IconoFlecha className="hidden shrink-0 text-lila transition-transform group-hover:translate-x-1 md:order-4 md:block" />
+        <IconoFlecha className="hidden shrink-0 text-blanco/70 transition-transform group-hover:translate-x-1 md:block" />
       </Link>
     );
   }

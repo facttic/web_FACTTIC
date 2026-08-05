@@ -181,7 +181,7 @@ export default async function ProyectoPage({
       {ultimos.items.length ? (
         <Seccion>
           <EncabezadoSeccion titulo={T.ultimos.titulo} tamanoTitulo="h2" />
-          <div className="-mt-2">
+          <div className="border-t border-dotted border-blanco/40">
             {ultimos.items
               .filter((otro) => otro.id !== proyecto.id)
               .slice(0, 4)

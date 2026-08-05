@@ -127,7 +127,7 @@ export default async function ProyectosPage({
       {ultimos.items.length ? (
         <Seccion>
           <EncabezadoSeccion titulo={T.ultimos.titulo} tamanoTitulo="h2" />
-          <div className="-mt-2">
+          <div className="border-t border-dotted border-blanco/40">
             {ultimos.items.map((proyecto) => (
               <FilaProyecto
                 key={proyecto.id}
