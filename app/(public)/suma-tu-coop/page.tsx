@@ -32,11 +32,17 @@ export default function SumaTuCoopPage() {
   return (
     <>
       {/* El sol con su órbita punteada, arriba a la derecha del hero. Es Verde
-          (#8E8001), medido sobre el archivo, no el amarillo lima. El fondo
-          animado de esta página no vino en la entrega: mientras tanto va esta
-          versión propia con las formas de la identidad. */}
-      <section className="relative isolate overflow-hidden">
-        <SolConOrbita className="pointer-events-none absolute -top-4 right-16 -z-10 hidden w-[500px] text-verde md:block" />
+          (#8E8001), medido sobre el archivo, no el amarillo lima.
+
+          Va donde lo pone la maqueta: la órbita ocupa de 0 a 500 de la página
+          —o sea que su arco superior pasa por detrás del encabezado, que es
+          transparente— y termina 107px antes de "Sumate a FACTTIC". La
+          sección no puede recortar, o el círculo se corta arriba y abajo.
+
+          El fondo animado de esta página no vino en la entrega: mientras
+          tanto va esta versión propia con las formas de la identidad. */}
+      <section className="relative isolate">
+        <SolConOrbita className="pointer-events-none absolute -top-18 right-22 -z-10 hidden w-[500px] text-verde md:block" />
         <Seccion className="pt-32 md:pt-40">
           <h1 className="text-display whitespace-pre-line">{T.hero.titulo}</h1>
           <p className="text-p1 mt-6 max-w-2xl text-blanco/80">
