@@ -187,6 +187,13 @@ llevan indicaciones de implementación. Estado de las encontradas:
       tarjetas y las descripciones largas de Agro y Financiero están redactadas
       acá y hay que validarlas.
 
+- [ ] **29. Maqueta mobile del detalle de proyecto.** No existe en el archivo
+      —hay desktop (03.A) y de mobile solo la grilla—. El orden apilado, la
+      galería a una columna y la ficha en vertical son criterio propio.
+- [ ] **30. Video en la galería del detalle.** La anotación del diseño pregunta
+      "¿se podría incorporar video?": la API ya guarda `videoFileNames`, así que
+      es decidir cómo se muestra. Queda pendiente de esa definición.
+
 ### Contenido a recibir
 
 - [ ] **Doc con la información de las cooperativas.** Diseño lo mencionó el 4/8
