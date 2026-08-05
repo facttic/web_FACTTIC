@@ -192,6 +192,7 @@ export default async function NuestrosServiciosPage() {
           <EncabezadoSeccion
             rotulo={T.aliados.rotulo}
             titulo={T.aliados.titulo}
+            tamanoTitulo="h2"
             alineacion="centro"
           />
         </Seccion>

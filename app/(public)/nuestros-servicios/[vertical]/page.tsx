@@ -4,9 +4,9 @@ import { EncabezadoSeccion, Seccion, BandaCta } from "@/components/ui/seccion";
 import { BotonLink } from "@/components/ui/boton";
 import { Carrusel } from "@/components/ui/carrusel";
 import { Animacion } from "@/components/ui/animacion";
-import { CardProyecto, FilaProyecto } from "@/components/tarjetas/proyecto";
 import { CardPropuesta } from "@/components/tarjetas/servicios";
 import { BloqueDesplegable } from "@/components/secciones/desplegables";
+import { ProyectosDestacados } from "@/components/secciones/proyectos-destacados";
 import { Stack } from "@/components/secciones/stack";
 import { Aliados } from "@/components/secciones/aliados";
 import { Acordeon } from "@/components/ui/acordeon";
@@ -58,7 +58,7 @@ export default async function VerticalPage({
   if (!sector) notFound();
 
   const [proyectos, tecnologias, aliados] = await Promise.all([
-    getProyectos({ sector: sector.id, porPagina: 2 }),
+    getProyectos({ sector: sector.id, porPagina: 6 }),
     getTecnologias(),
     getOrganizaciones(),
   ]);
@@ -90,6 +90,7 @@ export default async function VerticalPage({
         <EncabezadoSeccion
           rotulo={T.propuesta.rotulo}
           titulo={T.propuesta.titulo}
+          tamanoTitulo="h2"
         />
 
         {/* En desktop son cuatro tarjetas que toman el color de la vertical al
@@ -116,15 +117,18 @@ export default async function VerticalPage({
         />
       </Seccion>
 
+      {/* Los aires de esta pantalla están medidos sobre la maqueta: 98px de
+          las tarjetas a la línea del stack, 57 de la línea al título de
+          metodologías y 118 del desplegable a proyectos. */}
       {tecnologias.length ? (
-        <Seccion>
+        <Seccion className="md:py-8">
           <Stack titulo={T.stack.titulo} tecnologias={tecnologias} />
         </Seccion>
       ) : null}
 
       {/* El aire de esta pantalla no es el del resto: entre metodologías y
           proyectos el diseño deja menos, y antes del cierre, más. */}
-      <Seccion className="md:pb-0">
+      <Seccion className="md:pt-6 md:pb-0">
         <BloqueDesplegable
           titulo={T.metodologia.titulo}
           tamano="h2"
@@ -137,30 +141,11 @@ export default async function VerticalPage({
       </Seccion>
 
       {proyectos.items.length ? (
-        <Seccion className="md:pt-8">
-          <EncabezadoSeccion
+        <Seccion className="md:pt-28">
+          <ProyectosDestacados
             titulo={T.proyectos.titulo}
-            accionAlPie
-            accion={<BotonLink href="/proyectos">Ver todos</BotonLink>}
+            proyectos={proyectos.items}
           />
-          {/* En mobile la maqueta no usa tarjetas con imagen: los proyectos van
-              en lista, con los servicios y los chips debajo del título. */}
-          <div className="md:hidden">
-            {proyectos.items.map((proyecto) => (
-              <FilaProyecto key={proyecto.id} proyecto={proyecto} />
-            ))}
-          </div>
-          <div className="hidden gap-5 md:grid md:grid-cols-[2.06fr_1fr]">
-            {proyectos.items.map((proyecto) => (
-              // 310px acá: en la maqueta de la vertical la tarjeta es más baja
-              // que la de la Home.
-              <CardProyecto
-                key={proyecto.id}
-                proyecto={proyecto}
-                alto="h-[310px]"
-              />
-            ))}
-          </div>
         </Seccion>
       ) : null}
 
@@ -169,6 +154,8 @@ export default async function VerticalPage({
           <EncabezadoSeccion
             rotulo={SERVICIOS_PAGINA.aliados.rotulo}
             titulo={SERVICIOS_PAGINA.aliados.titulo}
+            tamanoTitulo="h2"
+            alineacion="centro-en-desktop"
           />
         </Seccion>
       ) : null}

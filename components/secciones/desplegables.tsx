@@ -127,7 +127,7 @@ export function BloqueDesplegable({
 }) {
   return (
     <div
-      className={cn("grid gap-8 md:grid-cols-[1fr_2fr] md:gap-16", className)}
+      className={cn("grid gap-8 md:grid-cols-[352px_1fr] md:gap-16", className)}
     >
       {/* En desktop el título entra en una línea por columna: sin esto se parte
           y deja de coincidir con la maqueta. */}

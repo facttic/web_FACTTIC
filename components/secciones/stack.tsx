@@ -23,15 +23,18 @@ export function Stack({
     <div
       className={cn(
         // Las líneas que enmarcan el stack van en blanco pleno, no en el gris
-        // de los otros separadores punteados: medido sobre la maqueta, #F2F2F2.
-        "border-y border-dashed border-borde-pleno py-1",
-        "flex flex-col gap-6 md:flex-row md:items-center md:gap-10",
+        // de los otros separadores punteados: medido sobre la maqueta, #F2F2F2,
+        // con 27px de aire entre la línea y las tarjetas.
+        "border-y border-dashed border-borde-pleno py-7",
+        // La misma retícula que el bloque desplegable: así las tarjetas
+        // arrancan alineadas con la columna de contenido de metodologías.
+        "flex flex-col gap-6 md:grid md:grid-cols-[352px_1fr] md:items-center md:gap-16",
         className,
       )}
     >
-      <h2 className="text-h2 shrink-0">{titulo}</h2>
+      <h2 className="text-h2">{titulo}</h2>
 
-      <ul className="scroll-limpio -mx-6 flex gap-4 overflow-x-auto px-6 md:mx-0 md:flex-1 md:px-0">
+      <ul className="scroll-limpio -mx-6 flex gap-4 overflow-x-auto px-6 md:mx-0 md:px-0">
         {tecnologias.map((tecnologia) => (
           /*
             En la maqueta cada tarjeta es un isologo: el ícono arriba y el

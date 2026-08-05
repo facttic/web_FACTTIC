@@ -51,6 +51,7 @@ export function EncabezadoSeccion({
   accionAlPie = false,
   descripcionAlLado = false,
   alineacion = "izquierda",
+  tamanoTitulo = "h1",
   className,
 }: {
   rotulo?: string;
@@ -79,18 +80,26 @@ export function EncabezadoSeccion({
    * Servicios va a la izquierda en las dos. Por eso son tres valores y no un
    * comportamiento automático.
    */
-  alineacion?: "izquierda" | "centro" | "centro-en-mobile";
+  alineacion?:
+    "izquierda" | "centro" | "centro-en-mobile" | "centro-en-desktop";
+  /**
+   * Los títulos de sección no son todos H1: en las verticales van en H2, y el
+   * de aliados también en Nuestros servicios. Medido maqueta por maqueta.
+   */
+  tamanoTitulo?: "h1" | "h2";
   className?: string;
 }) {
   const centradoSiempre = alineacion === "centro";
   const centradoEnMobile = centradoSiempre || alineacion === "centro-en-mobile";
+  const centradoEnDesktop =
+    centradoSiempre || alineacion === "centro-en-desktop";
 
   return (
     <header
       className={cn(
         centradoEnMobile ? "text-center" : "text-left",
         accionAlPie ? "contents md:mb-8 md:block" : "mb-8",
-        centradoSiempre ? "md:text-center" : "md:text-left",
+        centradoEnDesktop ? "md:text-center" : "md:text-left",
         className,
       )}
     >
@@ -111,7 +120,7 @@ export function EncabezadoSeccion({
           "mt-3 flex flex-col gap-6",
           centradoEnMobile ? "items-center" : "items-start",
           accionAlPie && "contents md:mt-3 md:flex",
-          centradoSiempre
+          centradoEnDesktop
             ? "md:items-center"
             : "md:flex-row md:items-end md:justify-between",
         )}
@@ -130,7 +139,12 @@ export function EncabezadoSeccion({
             reparte distinto, así que ahí se ignoran y el balance del navegador
             arma las líneas parejas.
           */}
-          <h2 className="text-h1 text-balance whitespace-normal md:whitespace-pre-line">
+          <h2
+            className={cn(
+              "text-balance whitespace-normal md:whitespace-pre-line",
+              tamanoTitulo === "h1" ? "text-h1" : "text-h2",
+            )}
+          >
             {titulo}
           </h2>
           {descripcion && !descripcionAlLado ? (
