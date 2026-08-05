@@ -197,9 +197,14 @@ export function CardMetrica({
  * pregunta que, al pasar el mouse, se vuelve gris y muestra la explicación
  * con el enlace al pie.
  *
- * Las dos caras se apilan y se cruzan por opacidad —la de color queda debajo—
- * para que la tarjeta no cambie de alto ni empuje a las vecinas. Con el foco
- * del teclado pasa lo mismo, así que el enlace se alcanza tabulando.
+ * En el archivo la tarjeta **crece** al hacerlo, de 360 a 425 de alto, así que
+ * las medidas van fijas y la transición las anima. La grilla que las contiene
+ * tiene que alinear arriba (`items-start`) para que al estirarse una no se
+ * estiren las vecinas.
+ *
+ * Las dos caras se apilan y se cruzan por opacidad para que el texto no salte
+ * a mitad del camino. El foco del teclado dispara lo mismo que el mouse, así
+ * que el enlace se alcanza tabulando.
  */
 export function CardOportunidad({
   indice,
@@ -222,6 +227,7 @@ export function CardOportunidad({
     <div
       className={cn(
         "group relative isolate overflow-hidden rounded-xl",
+        "h-90 transition-[height] duration-300 hover:h-[425px] focus-within:h-[425px]",
         className,
       )}
     >

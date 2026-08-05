@@ -117,9 +117,10 @@ export default function SumaTuCoopPage() {
 
       <Seccion>
         <EncabezadoSeccion titulo={T.camino.titulo} tamanoTitulo="h2" />
-        {/* Al pasar el mouse la tarjeta se vuelve gris y muestra la
-            explicación con el enlace, como en el prototipo. */}
-        <div className="grid gap-5 md:grid-cols-3">
+        {/* Al pasar el mouse la tarjeta crece y se vuelve gris con la
+            explicación, como en el prototipo. Alineadas arriba para que al
+            estirarse una no se estiren las tres. */}
+        <div className="grid items-start gap-5 md:grid-cols-3">
           {T.camino.items.map((item, i) => (
             <CardOportunidad
               key={item.pregunta}
@@ -128,7 +129,6 @@ export default function SumaTuCoopPage() {
               descripcion={item.descripcion}
               enlace={item.enlace}
               acento={item.acento}
-              className="h-[350px]"
             />
           ))}
         </div>
