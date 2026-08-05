@@ -35,11 +35,12 @@ export default function SumaTuCoopPage() {
 
   return (
     <>
-      {/* El sol amarillo con su órbita punteada, arriba a la derecha del hero.
-          El fondo animado de esta página no vino en la entrega: mientras tanto
-          va esta versión fija con las formas de la identidad. */}
+      {/* El sol con su órbita punteada, arriba a la derecha del hero. Es Verde
+          (#8E8001), medido sobre el archivo, no el amarillo lima. El fondo
+          animado de esta página no vino en la entrega: mientras tanto va esta
+          versión propia con las formas de la identidad. */}
       <section className="relative isolate overflow-hidden">
-        <SolConOrbita className="pointer-events-none absolute top-4 right-[4%] -z-10 hidden w-44 text-amarillo opacity-90 md:block" />
+        <SolConOrbita className="pointer-events-none absolute -top-4 right-16 -z-10 hidden w-[500px] text-verde md:block" />
         <Seccion className="pt-32 md:pt-40">
           <h1 className="text-display whitespace-pre-line">{T.hero.titulo}</h1>
           <p className="text-p1 mt-6 max-w-2xl text-blanco/80">
@@ -144,37 +145,71 @@ export default function SumaTuCoopPage() {
   );
 }
 
-/** Sol de rayos con la órbita punteada, como las formas de la identidad. */
+/**
+ * El sol de rayos con su órbita punteada, como en el archivo: el sol gira
+ * despacio sobre sí mismo y los dos puntos recorren la órbita en sentido
+ * contrario. Con `prefers-reduced-motion` queda quieto.
+ *
+ * Los grupos giran con `transform-box: view-box`, que hace que la rotación
+ * tome el centro del viewBox y no el de cada figura.
+ */
 function SolConOrbita({ className }: { className?: string }) {
-  const rayos = Array.from({ length: 36 });
+  const rayos = Array.from({ length: 40 });
+  const giro = {
+    transformOrigin: "260px 260px",
+    transformBox: "view-box",
+  } as const;
 
   return (
-    <svg viewBox="0 0 260 260" fill="none" aria-hidden className={className}>
-      <circle
-        cx="150"
-        cy="110"
-        r="100"
-        stroke="currentColor"
-        strokeOpacity="0.5"
-        strokeWidth="1"
-        strokeDasharray="2 6"
-      />
-      <g>
+    <svg viewBox="0 0 520 520" fill="none" aria-hidden className={className}>
+      <g
+        className="animate-girar-lento motion-reduce:animate-none"
+        style={giro}
+      >
+        <circle
+          cx="260"
+          cy="260"
+          r="250"
+          stroke="var(--color-blanco)"
+          strokeOpacity="0.7"
+          strokeWidth="1.5"
+          strokeDasharray="1.5 7"
+        />
+        <circle
+          cx="35"
+          cy="185"
+          r="6"
+          fill="var(--color-blanco)"
+          fillOpacity="0.5"
+        />
+        <circle
+          cx="428"
+          cy="455"
+          r="6"
+          fill="var(--color-blanco)"
+          fillOpacity="0.5"
+        />
+      </g>
+
+      <g
+        className="animate-girar-medio motion-reduce:animate-none"
+        style={giro}
+      >
         {rayos.map((_, i) => {
           const angulo = (i / rayos.length) * Math.PI * 2;
           return (
             <line
               key={i}
-              x1={110 + Math.cos(angulo) * 18}
-              y1={130 + Math.sin(angulo) * 18}
-              x2={110 + Math.cos(angulo) * 52}
-              y2={130 + Math.sin(angulo) * 52}
+              x1={260 + Math.cos(angulo) * 60}
+              y1={260 + Math.sin(angulo) * 60}
+              x2={260 + Math.cos(angulo) * 145}
+              y2={260 + Math.sin(angulo) * 145}
               stroke="currentColor"
-              strokeWidth="3"
+              strokeWidth="7"
             />
           );
         })}
-        <circle cx="110" cy="130" r="24" fill="currentColor" />
+        <circle cx="260" cy="260" r="62" fill="currentColor" />
       </g>
     </svg>
   );

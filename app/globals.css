@@ -272,6 +272,21 @@
   }
 }
 
+/** Giro continuo, para el sol y su órbita en Sumá tu coop. */
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@utility animate-girar-lento {
+  animation: girar 120s linear infinite;
+}
+
+@utility animate-girar-medio {
+  animation: girar 60s linear infinite;
+}
+
 /** Listas que se desplazan de costado en mobile sin mostrar la barra. */
 @utility scroll-limpio {
   scrollbar-width: none;
