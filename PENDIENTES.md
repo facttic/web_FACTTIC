@@ -232,10 +232,9 @@ llevan indicaciones de implementación. Estado de las encontradas:
       1. **Las tres cooperativas de prueba** ("Cooperativa A/B/C") ahora se
          listan en público, mezcladas con las 37 reales que se cargaron desde
          la maqueta. Conviene borrarlas —es parte del ítem 12—.
-      2. **Autoridades**: el recurso está vacío y su POST tiene el bug del
-         ítem 3, así que la sección no se muestra. La maqueta nombra a Manuel
-         Leiva (presidente, Coop. Redjar) y Cecilia Muñoz Cancela
-         (vicepresidenta, Coop. Código Libre).
+      2. **Autoridades**: se cargaron las dos de la maqueta —Manuel Leiva y
+         Cecilia Muñoz Cancela—. Faltan las demás y toda la Sindicatura, cuya
+         solapa no se muestra hasta que haya alguien.
       3. **El sitio de cada cooperativa**: la anotación pide que la lista
          linkee a la página de cada una y el modelo no tiene el campo. Hoy
          llevan a Nuestra Red.

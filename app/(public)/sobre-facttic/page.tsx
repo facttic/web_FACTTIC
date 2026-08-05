@@ -50,10 +50,17 @@ export default async function SobreFactticPage() {
           extremo.
         */}
         <div className="contenedor pointer-events-none absolute inset-x-0 top-0 -z-10">
-          <Animacion
-            nombre={FONDOS.sobreFacttic}
-            className="absolute -top-40 -right-20 aspect-square w-[360px] md:-top-[725px] md:-right-[730px] md:w-[1600px]"
-          />
+          {/*
+            La caja recorta la animación a la franja derecha, que es donde el
+            diseño la deja: su composición es mucho más ancha que eso y sin el
+            recorte le cruzan círculos por encima al texto.
+          */}
+          <div className="absolute top-0 -right-4 h-[190px] w-[210px] overflow-hidden md:-right-10 md:h-[520px] md:w-[620px]">
+            <Animacion
+              nombre={FONDOS.sobreFacttic}
+              className="absolute -top-[150px] -left-[110px] aspect-square w-[420px] opacity-70 md:-top-[437px] md:-left-[154px] md:w-[1200px] md:opacity-100"
+            />
+          </div>
         </div>
 
         <Seccion className="pt-24 md:pt-32">
