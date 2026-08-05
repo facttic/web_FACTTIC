@@ -196,7 +196,9 @@ llevan indicaciones de implementación. Estado de las encontradas:
 
 - [ ] **31. Sumá tu coop: cuatro definiciones de contenido.**
       1. Los compromisos muestran cuatro tarjetas pero la maqueta solo escribe
-         dos textos y los repite: faltan los otros dos.
+         dos textos y los repite: faltan los otros dos. Además se pintan al
+         pasar el mouse y las descripciones que deberían revelarse tampoco
+         están escritas.
       2. La URL del código de conducta ("Ver Código" hoy apunta al sitio
          actual de FACTTIC).
       3. En mobile la sección de las tarjetas numeradas se titula "Tenemos
