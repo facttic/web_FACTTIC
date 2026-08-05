@@ -24,10 +24,17 @@ export const metadata: Metadata = {
 export default function ContactoPage() {
   return (
     <section className="relative isolate overflow-hidden">
-      <Animacion
-        nombre={FONDOS.contacto}
-        className="pointer-events-none absolute top-0 right-0 -z-10 aspect-square w-[420px] animate-acercar md:top-24 md:w-[620px]"
-      />
+      {/*
+        El envoltorio lleva la clase del contenedor para que la esfera se ate
+        al borde derecho del contenido y no al de la ventana, que en pantallas
+        anchas la deja lejos de la tarjeta.
+      */}
+      <div className="contenedor pointer-events-none absolute inset-x-0 top-0 -z-10">
+        <Animacion
+          nombre={FONDOS.contacto}
+          className="absolute top-0 -right-16 aspect-square w-[420px] animate-acercar md:top-24 md:w-[620px]"
+        />
+      </div>
 
       <Seccion className="pt-24 md:pt-32">
         <h1 className="text-h1 whitespace-pre-line md:text-center">

@@ -43,10 +43,18 @@ export default async function SobreFactticPage() {
   return (
     <>
       <section className="relative isolate overflow-hidden">
-        <Animacion
-          nombre={FONDOS.sobreFacttic}
-          className="pointer-events-none absolute -top-20 right-0 -z-10 aspect-square w-[380px] md:-top-32 md:w-[620px]"
-        />
+        {/*
+          El envoltorio lleva la clase del contenedor para que la animación se
+          ate al borde derecho del contenido y no al de la ventana: en
+          pantallas más anchas que 1440 se despegaba del texto y se iba al
+          extremo.
+        */}
+        <div className="contenedor pointer-events-none absolute inset-x-0 top-0 -z-10">
+          <Animacion
+            nombre={FONDOS.sobreFacttic}
+            className="absolute -top-6 -right-4 aspect-square w-[300px] md:-top-10 md:w-[520px]"
+          />
+        </div>
 
         <Seccion className="pt-24 md:pt-32">
           <h1 className="text-h1 whitespace-pre-line">{T.hero.titulo}</h1>
@@ -64,21 +72,25 @@ export default async function SobreFactticPage() {
         />
 
         {/*
-          Las dos tarjetas se apilan al desplazar, como las de servicios: lo
-          pide la anotación del archivo, que remite a ese mismo efecto.
+          Las tarjetas van debajo del párrafo y alineadas con él, o sea en la
+          columna derecha: la izquierda queda vacía. Y se apilan al desplazar,
+          como las de servicios, que es lo que pide la anotación del archivo.
         */}
-        <div className="mt-12 grid items-start gap-5 md:mt-16 md:grid-cols-2">
-          {T.quienes.tarjetas.map((tarjeta, i) => (
-            <CardOportunidad
-              key={tarjeta.pregunta}
-              indice={i}
-              pregunta={tarjeta.pregunta}
-              descripcion={T.hero.bajada}
-              acento={tarjeta.acento}
-              vidrioEnMobile={"vidrioEnMobile" in tarjeta}
-              className="md:sticky md:top-24"
-            />
-          ))}
+        <div className="mt-12 md:mt-16 md:grid md:grid-cols-[352px_1fr] md:gap-16">
+          <div aria-hidden />
+          <div className="grid items-start gap-5 md:grid-cols-2">
+            {T.quienes.tarjetas.map((tarjeta, i) => (
+              <CardOportunidad
+                key={tarjeta.pregunta}
+                indice={i}
+                pregunta={tarjeta.pregunta}
+                descripcion={T.hero.bajada}
+                acento={tarjeta.acento}
+                vidrioEnMobile={"vidrioEnMobile" in tarjeta}
+                className="md:sticky md:top-24"
+              />
+            ))}
+          </div>
         </div>
       </Seccion>
 
