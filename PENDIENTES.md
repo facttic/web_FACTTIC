@@ -120,6 +120,17 @@ llegue.
       usan el nombre completo. La API solo tiene el completo, así que hoy se usa
       ese en los dos lugares y las solapas quedan largas.
 
+- [ ] **36. Novedades: contenido y filtro.**
+      1. Las cuatro cargadas son **de ejemplo**, redactadas a partir de los
+         títulos de la maqueta para poder ver la pantalla. Hay que reemplazarlas
+         por las reales.
+      2. **Ninguna tiene imagen de portada**, así que las tarjetas muestran el
+         hueco gris. La subida va por multipart, campo `file`.
+      3. `GET /api/novedades` **no filtra por `tipo`**: el sitio trae de más y
+         filtra en el front. Con un `?tipo=` se resolvería en la consulta.
+      4. `fecha` exige un ISO completo con hora: `2025-11-04` responde 400
+         (`invalidString`). Conviene aceptar la fecha sola o documentarlo.
+
 ---
 
 ## Diseño
