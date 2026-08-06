@@ -108,6 +108,12 @@ export interface Consejo {
 
 export interface Proyecto {
   _id: string;
+  /**
+   * Lo genera la API a partir del nombre al crear el proyecto, y lo declara
+   * inmutable. Los que se cargaron antes de que existiera el campo no lo
+   * tienen, así que es opcional.
+   */
+  slug?: string;
   nombre: string;
   sector?: Ref<Sector>;
   cliente?: Ref<Cliente>;

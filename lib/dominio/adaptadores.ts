@@ -138,12 +138,17 @@ export function aOrganizacion(api: Api.Organizacion): Dominio.Organizacion {
 }
 
 /**
- * Identificador del proyecto en la URL. Hoy es el ObjectId porque la API no
- * expone slug; en cuanto lo agregue, se devuelve `api.slug` y las rutas
- * `/proyectos/[slug]` siguen funcionando sin tocar nada.
+ * Identificador del proyecto en la URL: el slug si la API lo trae y el
+ * ObjectId si no.
+ *
+ * La API genera el slug al crear el proyecto y lo declara inmutable, así que
+ * los que se cargaron antes de que existiera el campo se quedaron sin él —un
+ * PUT no lo rellena— y necesitan una migración del backend. Hasta entonces
+ * conviven las dos formas de URL, y el detalle resuelve cualquiera porque
+ * `GET /api/proyectos/{id}` acepta las dos.
  */
 function slugDeProyecto(api: Api.Proyecto): string {
-  return api._id;
+  return texto(api.slug) ?? api._id;
 }
 
 export function aProyecto(api: Api.Proyecto): Dominio.Proyecto {
