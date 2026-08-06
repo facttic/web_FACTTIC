@@ -124,10 +124,12 @@ llegue.
       1. Las cuatro cargadas son **de ejemplo**, redactadas a partir de los
          títulos de la maqueta para poder ver la pantalla. Hay que reemplazarlas
          por las reales.
-      2. Las portadas se recortaron de la maqueta mobile, así que van a 346px
-         de ancho y se ven blandas en desktop. Además son solo dos imágenes
-         repetidas —la foto del plenario y el gráfico de "Crónicas del
-         porvenir"—, que es lo que dibuja el archivo. Hacen falta las reales.
+      2. Las portadas son provisorias. El archivo solo dibuja dos imágenes —la
+         foto del plenario y el arte de "Crónicas del porvenir"—, así que esas
+         dos se recortaron de la maqueta mobile (van a 346px de ancho y se ven
+         blandas a tamaño completo) y las otras dos se generaron con la paleta
+         de la identidad para que la grilla no quedara repetida. Hacen falta
+         las reales.
       3. `GET /api/novedades` **no filtra por `tipo`**: el sitio trae de más y
          filtra en el front. Con un `?tipo=` se resolvería en la consulta.
       4. `fecha` exige un ISO completo con hora: `2025-11-04` responde 400
