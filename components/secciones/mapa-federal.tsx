@@ -41,18 +41,28 @@ const ANCHO = 420;
 
 /**
  * Los meridianos se juntan hacia el sur, así que un grado de longitud mide
- * menos que uno de latitud: a los -38° de la mitad del país, un 78%. Sin
- * corregirlo el mapa sale ancho y chato. Con la misma escala en los dos ejes,
- * el alto sale solo.
+ * menos que uno de latitud: a los -38° de la mitad del país, un 78%.
  */
 const LATITUD_MEDIA = (CAJA.norte + CAJA.sur) / 2;
 const ACHATE = Math.cos((LATITUD_MEDIA * Math.PI) / 180);
-const ESCALA = ANCHO / ((CAJA.este - CAJA.oeste) * ACHATE);
-const ALTO = Math.round((CAJA.norte - CAJA.sur) * ESCALA);
 
-/** Equirrectangular corregida por latitud: alcanza para un solo país. */
+/**
+ * Además, el diseño achata el mapa a propósito. Medida la ventana que dibuja
+ * la maqueta mobile, da una proporción de 0,84 donde la geografía pide 1,08:
+ * un 78% del alto. Sin esto Argentina entra con su relación real de 2,13 y el
+ * mapa se come la pantalla.
+ */
+const ACHATE_DEL_DISENO = 0.78;
+
+const ESCALA = ANCHO / ((CAJA.este - CAJA.oeste) * ACHATE);
+const ALTO = Math.round((CAJA.norte - CAJA.sur) * ESCALA * ACHATE_DEL_DISENO);
+
+/** Equirrectangular corregida por latitud, y achatada como el diseño. */
 function proyectar(lng: number, lat: number): [number, number] {
-  return [(lng - CAJA.oeste) * ACHATE * ESCALA, (CAJA.norte - lat) * ESCALA];
+  return [
+    (lng - CAJA.oeste) * ACHATE * ESCALA,
+    (CAJA.norte - lat) * ESCALA * ACHATE_DEL_DISENO,
+  ];
 }
 
 function trazo(anillos: number[][][]): string {
