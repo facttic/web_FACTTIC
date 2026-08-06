@@ -38,15 +38,21 @@ const COLORES = [
  */
 const CAJA = { oeste: -73.6, este: -53.6, norte: -21.8, sur: -55.1 };
 const ANCHO = 420;
-const ALTO = Math.round(
-  (ANCHO * (CAJA.norte - CAJA.sur)) / (CAJA.este - CAJA.oeste) / 0.62,
-);
 
-/** Proyección plana: alcanza para un mapa decorativo de un solo país. */
+/**
+ * Los meridianos se juntan hacia el sur, así que un grado de longitud mide
+ * menos que uno de latitud: a los -38° de la mitad del país, un 78%. Sin
+ * corregirlo el mapa sale ancho y chato. Con la misma escala en los dos ejes,
+ * el alto sale solo.
+ */
+const LATITUD_MEDIA = (CAJA.norte + CAJA.sur) / 2;
+const ACHATE = Math.cos((LATITUD_MEDIA * Math.PI) / 180);
+const ESCALA = ANCHO / ((CAJA.este - CAJA.oeste) * ACHATE);
+const ALTO = Math.round((CAJA.norte - CAJA.sur) * ESCALA);
+
+/** Equirrectangular corregida por latitud: alcanza para un solo país. */
 function proyectar(lng: number, lat: number): [number, number] {
-  const x = ((lng - CAJA.oeste) / (CAJA.este - CAJA.oeste)) * ANCHO;
-  const y = ((CAJA.norte - lat) / (CAJA.norte - CAJA.sur)) * ALTO;
-  return [x, y];
+  return [(lng - CAJA.oeste) * ACHATE * ESCALA, (CAJA.norte - lat) * ESCALA];
 }
 
 function trazo(anillos: number[][][]): string {
