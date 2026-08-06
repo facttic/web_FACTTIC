@@ -623,3 +623,31 @@ export const NOVEDADES = {
     cta: { texto: "Sumate a FACTTIC", href: "/suma-tu-coop" },
   },
 } as const;
+
+/**
+ * Nuestra Red: el mapa federal.
+ *
+ * Los datos —cooperativas, provincias, asociadxs, industrias y servicios—
+ * salen de la API y del cálculo de provincia por coordenada. Acá va el texto.
+ */
+export const NUESTRA_RED = {
+  hero: { titulo: "Somos\nuna red federal" },
+  panel: {
+    rotulo: "Provincia seleccionada",
+    cooperativas: (n: number) =>
+      `${n} ${n === 1 ? "cooperativa" : "cooperativas"}`,
+    asociados: (n: number) => `${n} ${n === 1 ? "asociadx" : "asociadxs"}`,
+    industrias: "Industrias especializadas",
+    servicios: "Servicios especializados",
+    sinDatos: "Todavía no cargamos el detalle de esta provincia.",
+  },
+  tarjeta: { sitio: "Ir al sitio" },
+  vacio: {
+    titulo: "Elegí una provincia",
+    sugerencia: "Tocá el mapa para ver las cooperativas de cada provincia.",
+  },
+  cierre: {
+    titulo: "Cada cooperativa que se suma, nos hace más fuertes.",
+    cta: { texto: "Sumate a FACTTIC", href: "/suma-tu-coop" },
+  },
+} as const;
