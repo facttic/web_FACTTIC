@@ -144,6 +144,19 @@ llegue.
       4. `fecha` exige un ISO completo con hora: `2025-11-04` responde 400
          (`invalidString`). Conviene aceptar la fecha sola o documentarlo.
 
+- [ ] **37. Datos de las cooperativas para Nuestra Red.**
+      1. **`asociados`, `servicios` y `sectores` están cargados con datos
+         inventados** para poder ver la pantalla: el panel de provincia muestra
+         cuántas cooperativas y asociadxs hay, y qué industrias y servicios
+         concentra. Hay que reemplazarlos por los reales.
+      2. **Falta el campo del sitio web en el modelo de cooperativa.** Las
+         tarjetas muestran "Ir al sitio". Mientras tanto las direcciones viven
+         en `lib/datos/sitios-cooperativas.ts`, tomadas de las fichas que
+         FACTTIC publicaba en su sitio anterior: hay 18 de 37, el resto queda
+         sin enlace.
+      3. **Ninguna cooperativa tiene logo cargado.** La tarjeta lo muestra
+         arriba; sin él va el nombre. La subida ya funciona por multipart.
+
 ---
 
 ## Diseño
