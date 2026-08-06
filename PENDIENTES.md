@@ -44,14 +44,18 @@ llegue.
       POST/PUT/DELETE—.
 - [x] ~~**8. Servicio "Datos e inteligencia artificial"**~~ → cargado, ya son
       cinco.
-- [x] ~~**9. Ubicación de las cooperativas**~~ → cargadas 34 de 37, a partir
-      de la ciudad que indicó FACTTIC. Quedan **dos cosas por confirmar**:
-      1. **Mover, Tau y Tropa Circa** no tienen ubicación; van a aparecer en la
-         lista pero no en el mapa.
-      2. **Boot Coop, Nayra y Proyecto wow** se indicaron como "BsAs", escrito
+- [x] ~~**9. Ubicación de las cooperativas**~~ → **las 37 cargadas**, a partir
+      de la ciudad que indicó FACTTIC. Dan nueve provincias: CABA (12), Buenos
+      Aires (11), Santa Fe (7), Córdoba (2), y una cada una en Tucumán,
+      Neuquén, Chaco, Entre Ríos y Río Negro.
+
+      Dos cosas por confirmar:
+      1. **Boot Coop, Nayra y Proyecto wow** se indicaron como "BsAs", escrito
          distinto de "CABA" en el resto de la lista, así que se tomaron como
-         provincia de Buenos Aires y se les puso el punto de La Plata. Si son
-         de CABA, o de otra localidad, hay que corregirlas.
+         provincia de Buenos Aires y llevan el punto de La Plata. Si son de la
+         ciudad, hay que corregirlas —CABA pasaría a 15—.
+      2. **La métrica de la Home dice "+10 provincias" y son nueve.** O falta
+         alguna cooperativa, o hay que corregir el número.
 
       Las coordenadas son las de la ciudad, no la dirección exacta: alcanzan
       para agrupar por provincia, que es lo que hace el mapa.
