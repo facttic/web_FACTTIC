@@ -11,12 +11,13 @@ llegue.
 
 ### Tanda 1 (enviada)
 
-- [ ] **1. GET públicos.** Hoy los 9 recursos devuelven 401 sin JWT, y las
-      imágenes también. Mientras tanto el sitio usa la credencial `admin`
-      guardada en `.env.local`, solo del lado del servidor.
-- [ ] **2. Recurso de novedades** (tipo comunicado/noticia/actividad, título,
-      bajada, cuerpo, imagen, fecha) y **endpoint de contacto** (nombre, email,
-      mensaje, motivo). Son dos pantallas maquetadas sin backend.
+- [x] ~~**1. GET públicos**~~ → abiertos. Las lecturas van sin credencial y
+      bajaron de ~4,9s a ~0,2s, lo que además destrabó `next build`.
+- [x] ~~**2. Novedades y contacto**~~ → existen los dos.
+      `GET/POST /api/novedades` con `tipo` (comunicado | noticia | actividad),
+      `titulo`, `bajada`, `cuerpo`, `fecha` y `file`, y paginado con `page` y
+      `perPage`. `POST /api/contacto` es público y pide `nombre`, `email`,
+      `mensaje` y `motivo`: el formulario ya envía contra él.
 - [ ] **3. Bug en `POST /api/consejo`.** El schema pide `cargo` con
       `maxLength: 0`, `nombre` con `maxLength: 5` y un `message` requerido sin
       tipo. **Bloquea el ABM de autoridades.**
@@ -38,15 +39,8 @@ llegue.
       `/api/files/{filename}`, no `/files/{filename}`. Y falta declarar
       `security` en clientes, consejo, organizaciones, tecnologías y users —ni
       siquiera en sus POST/PUT/DELETE.
-- [ ] **8. Cargar el servicio "Datos e inteligencia artificial".** Es un
-      registro más en la colección, no un campo nuevo del modelo —se preguntó en
-      la devolución del 3/8—: un POST a `/api/servicios` como cualquier otro. La
-      maqueta muestra 5 solapas y la API tiene 4. De paso, el `orden` cargado no
-      es el de la maqueta, que va: Desarrollo, Diseño y comunicación, Datos e
-      inteligencia artificial, Capacitación y consultoría, Infraestructura.
-
-### Tanda 2 (enviada)
-
+- [x] ~~**8. Servicio "Datos e inteligencia artificial"**~~ → cargado, ya son
+      cinco.
 - [ ] **9. `provincia` en cooperativa, o `ubicacion` cargada.** ← **bloquea
       Nuestra Red.** Ninguna de las 3 cooperativas tiene ubicación.
 - [ ] **10. Campo `logo` en cooperativa.** El punto 4 cubre la subida, no el campo.
@@ -250,16 +244,9 @@ llevan indicaciones de implementación. Estado de las encontradas:
          recurso `organizaciones` hoy tiene los aliados de la Home. Confirmar
          si son la misma lista o hacen falta dos.
 
-- [ ] **35. La API es demasiado lenta para compilar el sitio.** Un `GET
-      /api/sectores` tarda 4,9s solo y 12s cuando le entran seis pedidos a la
-      vez; `next build` prerenderiza con once workers en paralelo y se pasa del
-      tiempo de espera, así que la compilación corta con `ConnectTimeoutError`
-      —en una página distinta cada vez—. El sitio anda bien en desarrollo, pero
-      esto bloquea el despliegue. Hace falta que la API responda más rápido o
-      que acepte esa concurrencia.
-
-### Contenido a recibir
-
+- [x] ~~**35. La API era demasiado lenta para compilar**~~ → resuelto con los
+      GET públicos: sin el login de por medio las lecturas tardan ~0,2s y
+      `next build` pasa a 9 segundos.
 - [ ] **Doc con la información de las cooperativas.** Diseño lo mencionó el 4/8
       ("ese contenido está en el doc"). Si trae la provincia de cada una,
       **desbloquea Nuestra Red sin esperar al backend**: se cargan por el

@@ -18,9 +18,8 @@ import { CONTACTO as T } from "@/lib/contenido";
  * El textarea crece a medida que se escribe, como pide la anotación del
  * diseño ("Cuando se completa en este campo, se extiende el espacio").
  *
- * La API todavía no tiene dónde recibir esto (`PENDIENTES`, ítem 2). La
- * validación, los estados y el envío están hechos; cuando exista el endpoint
- * se cambia el `fetch` de `enviar()` y nada más.
+ * El envío va a `/api/contacto` de este mismo sitio, que lo reenvía a la API:
+ * así no se expone su URL ni se depende de su CORS.
  */
 
 type Estado = "editando" | "enviando" | "enviado" | "falló";

@@ -44,9 +44,17 @@ function buildUrl(path: string, params?: Record<string, QueryValue>): string {
 }
 
 /**
- * Hace una request autenticada. Ante un 401 descarta el token y reintenta una
- * vez: cubre el caso de que el token venza entre que se lee de cache y llega al
- * servidor.
+ * Hace una request contra la API.
+ *
+ * Las lecturas van sin credencial: los GET son públicos desde que el backend
+ * los abrió, y evitarse el login es lo que las vuelve rápidas —con token
+ * tardaban casi cinco segundos y hacían fallar `next build`, que prerenderiza
+ * con once workers en paralelo—. Si alguna respondiera 401, se reintenta una
+ * vez con el token de servicio, así el sitio sigue en pie si el backend vuelve
+ * a cerrar algún recurso.
+ *
+ * Las escrituras siguen autenticadas: el backoffice pasa el token de la
+ * persona en `token` para que `createdBy` quede bien.
  */
 export async function apiFetch<T>(
   path: string,
@@ -55,20 +63,28 @@ export async function apiFetch<T>(
   const { params, token: explicitToken, headers, ...init } = options;
   const url = buildUrl(path, params);
 
-  const run = async (token: string): Promise<Response> =>
+  const metodo = (init.method ?? "GET").toUpperCase();
+  const esLectura = metodo === "GET" || metodo === "HEAD";
+
+  const run = async (token?: string): Promise<Response> =>
     fetch(url, {
       ...init,
       cache: "no-store",
-      headers: { ...headers, Authorization: `Bearer ${token}` },
+      headers: token
+        ? { ...headers, Authorization: `Bearer ${token}` }
+        : { ...headers },
     });
 
-  let token = explicitToken ?? (await getServiceToken());
-  let res = await run(token);
+  // Lecturas sin credencial; escrituras con la que corresponda.
+  let res = await run(
+    esLectura && !explicitToken
+      ? undefined
+      : (explicitToken ?? (await getServiceToken())),
+  );
 
   if (res.status === 401 && !explicitToken) {
     invalidateServiceToken();
-    token = await getServiceToken();
-    res = await run(token);
+    res = await run(await getServiceToken());
   }
 
   if (!res.ok) {
