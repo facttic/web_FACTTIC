@@ -44,12 +44,17 @@ llegue.
       POST/PUT/DELETE—.
 - [x] ~~**8. Servicio "Datos e inteligencia artificial"**~~ → cargado, ya son
       cinco.
-- [x] ~~**9. Ubicación de las cooperativas**~~ → el campo `ubicacion
-      {lat,lng}` existe y funciona; se probó cargándolo y leyéndolo. **No es
-      un pendiente del backend sino de contenido**: está vacío en las 40, y
-      con las coordenadas la provincia sale por point-in-polygon contra un
-      GeoJSON del IGN. Hace falta la dirección o ciudad de cada una para
-      geocodificarlas y cargarlas. ← **es lo único que traba Nuestra Red.**
+- [x] ~~**9. Ubicación de las cooperativas**~~ → cargadas 34 de 37, a partir
+      de la ciudad que indicó FACTTIC. Quedan **dos cosas por confirmar**:
+      1. **Mover, Tau y Tropa Circa** no tienen ubicación; van a aparecer en la
+         lista pero no en el mapa.
+      2. **Boot Coop, Nayra y Proyecto wow** se indicaron como "BsAs", escrito
+         distinto de "CABA" en el resto de la lista, así que se tomaron como
+         provincia de Buenos Aires y se les puso el punto de La Plata. Si son
+         de CABA, o de otra localidad, hay que corregirlas.
+
+      Las coordenadas son las de la ciudad, no la dirección exacta: alcanzan
+      para agrupar por provincia, que es lo que hace el mapa.
 - [x] ~~**10. Imagen de cooperativa**~~ → la guarda en `fileName`, igual que
       el resto de los recursos con archivo.
 - [x] ~~**11. Usuario de solo lectura**~~ → ya no hace falta: con los GET
