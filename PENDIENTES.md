@@ -235,9 +235,14 @@ llevan indicaciones de implementación. Estado de las encontradas:
       2. **Autoridades**: se cargaron las dos de la maqueta —Manuel Leiva y
          Cecilia Muñoz Cancela—. Faltan las demás y toda la Sindicatura, cuya
          solapa no se muestra hasta que haya alguien.
-      3. **El sitio de cada cooperativa**: la anotación pide que la lista
-         linkee a la página de cada una y el modelo no tiene el campo. Hoy
-         llevan a Nuestra Red.
+      3. **¿A dónde linkea cada cooperativa?** La anotación pide que la lista
+         "linkee a la página de cada coop", pero en el prototipo esos nombres
+         no tienen enlace —al hacer clic no pasa nada y no se resalta ninguna
+         zona activa— y en el archivo no hay ninguna pantalla de cooperativa.
+         Por cómo está redactada parece ser el sitio propio de cada una, que
+         sería un enlace externo; el modelo no tiene ese campo. Hoy llevan a
+         Nuestra Red. Hace falta definir el destino y, si es el sitio propio,
+         agregar el campo y cargarlo.
       4. **La foto del plenario en alta**: se recortó de la maqueta mobile, así
          que va a 393 de ancho y se ve blanda a pantalla completa.
       5. **Los logos de "Somos parte de otros espacios cooperativos"**: la
