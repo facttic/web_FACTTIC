@@ -139,7 +139,6 @@ export function Autoridades({
           <CardAutoridad
             key={autoridad.id}
             autoridad={autoridad}
-            acento="lila"
             className="h-[190px] w-[190px] shrink-0 snap-start"
           />
         ))}

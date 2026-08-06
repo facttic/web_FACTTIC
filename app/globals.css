@@ -280,6 +280,34 @@
   }
 }
 
+/**
+ * El mismo borde violeta, pero que aparece al pasar el mouse. Es el hover de
+ * las tarjetas del consejo: no se rellenan, se les enciende el borde.
+ */
+@utility borde-degradado-hover {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 300ms;
+    background: linear-gradient(135deg, #3c3c3c 0%, #7a6a88 55%, #d6bbf2 100%);
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
 /** Giro continuo, para el sol y su órbita en Sumá tu coop. */
 @keyframes girar {
   to {

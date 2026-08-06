@@ -1,7 +1,6 @@
 import { cn } from "@/lib/cn";
 import { Tarjeta } from "@/components/ui/seccion";
 import { Chip } from "@/components/ui/chip";
-import { HOVER_ACENTO, type Acento } from "@/components/ui/acento";
 import type { Autoridad, Cooperativa, Organizacion } from "@/lib/dominio/tipos";
 
 /**
@@ -12,15 +11,9 @@ import type { Autoridad, Cooperativa, Organizacion } from "@/lib/dominio/tipos";
 /** Miembro del consejo de administración, para Sobre FACTTIC. */
 export function CardAutoridad({
   autoridad,
-  acento,
   className,
 }: {
   autoridad: Autoridad;
-  /**
-   * Color con el que se pinta al pasar el mouse. En el prototipo todas las
-   * tarjetas del consejo se pintan de lila, no de un color por tarjeta.
-   */
-  acento?: Acento;
   className?: string;
 }) {
   return (
@@ -28,23 +21,21 @@ export function CardAutoridad({
      * El cargo arriba como rótulo, el nombre en el medio y la cooperativa
      * abajo como chip: es la forma de la maqueta, con el nombre separado del
      * rótulo por el aire y no pegado a él.
+     *
+     * Al pasar el mouse no se rellena: se le enciende el borde violeta, el
+     * mismo degradado que llevan las tarjetas de vidrio.
      */
     <Tarjeta
       className={cn(
-        "group flex flex-col justify-between gap-8 p-5 transition-colors duration-300",
-        acento && HOVER_ACENTO[acento],
+        "borde-degradado-hover flex flex-col justify-between gap-8 p-5",
         className,
       )}
     >
-      <p className="text-eyebrow text-blanco/40 transition-colors group-hover:text-negro-oscuro/60">
-        {autoridad.cargo}
-      </p>
+      <p className="text-eyebrow text-blanco/40">{autoridad.cargo}</p>
       <div>
         <h3 className="text-p2 text-balance">{autoridad.nombre}</h3>
         {autoridad.cooperativa ? (
-          <Chip className="mt-4 transition-colors group-hover:bg-negro-oscuro/15 group-hover:text-negro-oscuro">
-            Coop. {autoridad.cooperativa.nombre}
-          </Chip>
+          <Chip className="mt-4">Coop. {autoridad.cooperativa.nombre}</Chip>
         ) : null}
       </div>
     </Tarjeta>
