@@ -193,3 +193,28 @@ export function aPagina<A, D>(
     paginas: pagina.pages,
   };
 }
+
+/**
+ * Novedad para las vistas.
+ *
+ * La API todavía no expone slug acá, así que la URL usa el id. El `tipo` se
+ * valida contra los tres que declara el backend: si llegara otro, cae en
+ * "comunicado" en vez de romper la pantalla.
+ */
+export function aNovedad(api: Api.Novedad): Dominio.Novedad {
+  const tipos: Dominio.TipoNovedad[] = ["comunicado", "noticia", "actividad"];
+  const tipo = tipos.includes(api.tipo as Dominio.TipoNovedad)
+    ? (api.tipo as Dominio.TipoNovedad)
+    : "comunicado";
+
+  return {
+    id: api._id,
+    slug: api._id,
+    tipo,
+    titulo: texto(api.titulo) ?? "Sin título",
+    bajada: texto(api.bajada) ?? null,
+    cuerpo: texto(api.cuerpo) ?? null,
+    fecha: texto(api.fecha) ?? texto(api.createdAt) ?? null,
+    imagen: mediaUrl(api.fileName ?? null),
+  };
+}

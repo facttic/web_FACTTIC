@@ -593,3 +593,33 @@ export const SOBRE_FACTTIC = {
     cta: { texto: "Sumate a FACTTIC", href: "/suma-tu-coop" },
   },
 } as const;
+
+/**
+ * Novedades (Comunicados en el archivo de diseño).
+ *
+ * Los tres tipos salen de la API —comunicado, noticia y actividad— y acá van
+ * sus etiquetas. La maqueta rotula una tarjeta como "NOVEDADES", que no es
+ * ninguno de los tres; se usan los del backend.
+ */
+export const NOVEDADES = {
+  hero: {
+    titulo: "Nuestro\ntrabajo",
+    bajada:
+      "Ya sea que tenés un proyecto, querés sumarte a la red o simplemente querés saber más, estamos acá.",
+  },
+  solapas: {
+    todos: "Todos",
+    comunicado: "Comunicados",
+    noticia: "Noticias",
+    actividad: "Actividades",
+  },
+  verMas: "Ver más",
+  vacio: {
+    titulo: "Todavía no hay novedades",
+    sugerencia: "Cuando publiquemos algo, vas a encontrarlo acá.",
+  },
+  cierre: {
+    titulo: "¿Sos parte de\nuna cooperativa?",
+    cta: { texto: "Sumate a FACTTIC", href: "/suma-tu-coop" },
+  },
+} as const;

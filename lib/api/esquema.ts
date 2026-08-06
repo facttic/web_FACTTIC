@@ -168,3 +168,18 @@ export interface ListFilters {
   order?: "ASC" | "DESC";
   search?: string;
 }
+
+/**
+ * Novedad: comunicados, noticias y actividades. El backend las guarda en un
+ * solo recurso y las distingue por `tipo`.
+ */
+export interface Novedad {
+  _id: string;
+  tipo: "comunicado" | "noticia" | "actividad";
+  titulo: string;
+  bajada?: string;
+  cuerpo?: string;
+  fecha?: string;
+  fileName?: string;
+  createdAt?: string;
+}

@@ -99,3 +99,18 @@ export interface FiltrosProyectos {
   cooperativa?: string;
   destacado?: boolean;
 }
+
+/** Tipos de novedad, en el orden en que el diseño los lista. */
+export type TipoNovedad = "comunicado" | "noticia" | "actividad";
+
+export interface Novedad {
+  id: string;
+  slug: string;
+  tipo: TipoNovedad;
+  titulo: string;
+  bajada: string | null;
+  cuerpo: string | null;
+  /** ISO, para el `datetime` del `<time>`. */
+  fecha: string | null;
+  imagen: string | null;
+}
