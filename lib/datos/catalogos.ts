@@ -28,15 +28,13 @@ const TODOS = 200;
 const MAX_PAGINAS = 20;
 
 /**
- * Trae una colección completa recorriendo sus páginas.
+ * Trae una colección completa.
  *
- * La API pagina de a diez y **no respeta el tamaño de página**: ignora `limit`,
- * `perPage` y `porPagina`, y solo atiende `page`. Pedir la lista entera de una
- * no funciona —devolvía diez tecnologías de diecisiete—, así que hay que ir
- * página por página hasta juntar el total que ella misma informa.
- *
- * Está pedido que unifique la paginación (ítem 14); cuando lo haga, esto vuelve
- * a ser una sola llamada.
+ * La API ya respeta `perPage`, así que normalmente alcanza con una llamada. El
+ * recorrido de páginas queda igual como red: si alguna colección creciera más
+ * que `TODOS`, o si un recurso volviera a ignorar el tamaño de página, la lista
+ * sigue llegando entera en vez de cortarse en silencio —que fue lo que pasó
+ * cuando las tecnologías pasaron de ocho a diecisiete y se veían diez—.
  */
 async function traerTodos<T>(path: string): Promise<T[]> {
   const items: T[] = [];

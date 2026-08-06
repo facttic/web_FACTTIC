@@ -3,7 +3,7 @@
 Lo que falta de terceros para terminar el sitio. Marcar con `[x]` a medida que
 llegue.
 
-Última actualización: 31/07/2026
+Última actualización: 06/08/2026
 
 ---
 
@@ -18,45 +18,54 @@ llegue.
       `titulo`, `bajada`, `cuerpo`, `fecha` y `file`, y paginado con `page` y
       `perPage`. `POST /api/contacto` es público y pide `nombre`, `email`,
       `mensaje` y `motivo`: el formulario ya envía contra él.
-- [ ] **3. Bug en `POST /api/consejo`.** El schema pide `cargo` con
-      `maxLength: 0`, `nombre` con `maxLength: 5` y un `message` requerido sin
-      tipo. **Bloquea el ABM de autoridades.**
-- [ ] **4. Multipart en cooperativas y consejo.** Hoy no aceptan archivos: no
-      hay forma de cargar el logo de una cooperativa ni la foto de una autoridad.
+- [x] ~~**3. `POST /api/consejo`**~~ → el endpoint anda: se cargaron las cuatro
+      autoridades sin problema. Lo que sigue mal es el **spec**, que declara
+      `cargo` con `maxLength: 0`, `nombre` con `maxLength: 5` y un `message`
+      requerido sin tipo (ver punto 7).
+- [x] ~~**4. Multipart en cooperativas y consejo**~~ → aceptan `file` en POST
+      y PUT. Se probó subiendo un PNG a cada uno y queda en `fileName`.
 - [ ] **5. Multipart de proyectos incompleto.** No acepta `servicios`,
       `tecnologias` ni `cooperativas`, que sí están en el schema JSON.
       **Además el spec miente en el nombre del campo de imágenes**: documenta
       `imageFiles[]` y con eso responde 500 (`MulterError: Unexpected field`);
       el que funciona es `imageFiles`, sin corchetes. Lo mismo habría que
       revisar en `videoFiles`.
-- [ ] **6. `slug` en proyectos**, para no tener URLs con ObjectId. Campo propio
-      —string, único, indexado—, derivado del nombre al crear y estable después,
-      para que los links compartidos no se rompan si editan el título. Que
-      `GET /api/proyectos/{...}` acepte id o slug. La función que genera el slug
-      en el front es `slugify()` de `lib/dominio/adaptadores.ts`; se le pasó al
-      dev para que el resultado sea idéntico de los dos lados.
-- [ ] **7. Corregir el spec.** La ruta real de archivos es
-      `/api/files/{filename}`, no `/files/{filename}`. Y falta declarar
-      `security` en clientes, consejo, organizaciones, tecnologías y users —ni
-      siquiera en sus POST/PUT/DELETE.
+- [x] ~~**6. `slug` en proyectos**~~ → se genera del nombre al crear;
+      verificado creando uno de prueba. **Falta migrar los que ya estaban**:
+      los cuatro cargados antes del campo no lo tienen y, como es inmutable,
+      un PUT no lo rellena. El sitio ya usa el slug si viene y el ObjectId si
+      no, así que no bloquea.
+- [ ] **7. Corregir el spec.** ~~La ruta real de archivos es
+      `/api/files/{filename}`~~ → ya está bien documentada. **Queda**: el
+      `POST /api/consejo` declara `cargo` con `maxLength: 0`, `nombre` con
+      `maxLength: 5` y un `message` requerido sin tipo, aunque el endpoint
+      acepta valores normales; y falta declarar `security` en clientes,
+      consejo, organizaciones, tecnologías y users —ni siquiera en sus
+      POST/PUT/DELETE—.
 - [x] ~~**8. Servicio "Datos e inteligencia artificial"**~~ → cargado, ya son
       cinco.
-- [ ] **9. `provincia` en cooperativa, o `ubicacion` cargada.** ← **bloquea
-      Nuestra Red.** Ninguna de las 3 cooperativas tiene ubicación.
-- [ ] **10. Campo `logo` en cooperativa.** El punto 4 cubre la subida, no el campo.
-- [ ] **11. Usuario de solo lectura** para el front.
-- [ ] **12. Higiene de datos**: espacio inicial en `" Capacitación y
-      consultoría"`; tres formas distintas de guardar la imagen en
-      `tecnologias`; URLs guardadas en `http://`; datos de prueba a limpiar
-      (`Cooperativa A/B/C`, `Proyecto1`). ~~`javaja` y las tecnologías con
-      logo de marcador~~ → borradas al cargar el stack real.
+- [x] ~~**9. Ubicación de las cooperativas**~~ → el campo `ubicacion
+      {lat,lng}` existe y funciona; se probó cargándolo y leyéndolo. **No es
+      un pendiente del backend sino de contenido**: está vacío en las 40, y
+      con las coordenadas la provincia sale por point-in-polygon contra un
+      GeoJSON del IGN. Hace falta la dirección o ciudad de cada una para
+      geocodificarlas y cargarlas. ← **es lo único que traba Nuestra Red.**
+- [x] ~~**10. Imagen de cooperativa**~~ → la guarda en `fileName`, igual que
+      el resto de los recursos con archivo.
+- [x] ~~**11. Usuario de solo lectura**~~ → ya no hace falta: con los GET
+      públicos el sitio lee sin credencial.
+- [ ] **12. Higiene de datos.** ~~Espacio inicial en `" Capacitación y
+      consultoría"`~~ → corregido. ~~Tres formas de guardar la imagen en
+      `tecnologias`~~ → unificadas en `fileName`. ~~`javaja` y las tecnologías
+      con logo de marcador~~ → borradas al cargar el stack real. **Queda**
+      limpiar los datos de prueba (`Cooperativa A/B/C`, `Proyecto1`), que
+      borramos nosotros por API.
 - [ ] **13. `createdBy`/`updatedBy`** expuestos en todas las respuestas.
-- [ ] **14. Unificar la paginación** entre proyectos y el resto. **Además, el
-      tamaño de página no se puede elegir**: los catálogos ignoran `limit`,
-      `perPage` y `porPagina`, y devuelven de a diez atendiendo solo a `page`.
-      Por eso el front recorre las páginas una por una en `traerTodos()`; se
-      notó cuando las tecnologías pasaron de ocho a dieciséis y el sitio
-      mostraba diez.
+- [ ] **14. Unificar la paginación.** ~~El tamaño de página no se podía
+      elegir~~ → `perPage` ya se respeta en los catálogos. **Queda** que la
+      forma sea la misma: los catálogos y novedades devuelven `{items,
+      totalCount}` y proyectos `{items, total, page, limit, pages}`, con
+      `limit` en vez de `perPage`.
 - [ ] **15. Token de 15 minutos**: extenderlo o permitir `refresh-token` sin cookie.
 - [ ] **16. `cache-control`** en las respuestas, para cachear en CDN.
 - [ ] **17. CORS**: hoy refleja cualquier `Origin` con `allow-credentials: true`.
