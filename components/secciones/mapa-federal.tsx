@@ -42,9 +42,12 @@ const CAJA = { oeste: -73.6, este: -53.6, norte: -21.8, sur: -55.1 };
 /**
  * Medidas del grupo del mapa en el archivo: 419,02 × 900,21, o sea una
  * proporción de 2,148. La proyección corregida por latitud da 2,126 sola, así
- * que la diferencia es de un 1%: se fuerza el alto para que coincida exacto.
+ * que se fuerza el alto para que coincida.
+ *
+ * Y sobre eso, un 5% más de ancho: el dibujo del archivo es un poco más
+ * panzón que la proyección fiel, y así calza.
  */
-const ANCHO = 419;
+const ANCHO = Math.round(419 * 1.05);
 const ALTO_DEL_DISENO = 900;
 
 /**
