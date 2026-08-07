@@ -11,11 +11,11 @@ import { PROVINCIAS } from "@/lib/mapa/provincias";
  * Resuelve las dos anotaciones del archivo:
  *
  *  - "Que cada provincia tenga un color distinto de la paleta de colores, de
- *    forma aleatoria": las que tienen cooperativas se pintan cada una de un
- *    color, tomándolo de su posición en la lista y no de un sorteo por visita
- *    —si cambiara en cada carga, el mapa parpadearía y el servidor y el
- *    browser dibujarían distinto—. Se ven repartidos al azar pero son
- *    estables. Las que no tienen quedan en gris oscuro.
+ *    forma aleatoria": el color aparece al pasar el mouse y al elegirla; en
+ *    reposo todas las que tienen cooperativas van en gris claro. Cada una
+ *    tiene el suyo, tomado de su posición en la lista y no de un sorteo por
+ *    visita —si cambiara en cada carga, el mapa parpadearía y el servidor y el
+ *    browser dibujarían distinto—. Las que no tienen quedan en gris oscuro.
  *  - "En cada provincia debería haber puntitos dependiendo la cantidad de coop
  *    que hay": un punto por cooperativa, repartidos dentro del contorno.
  *
@@ -161,14 +161,16 @@ export function MapaFederal({
                     }
                   : undefined
               }
-              fill={hay ? provincia.color : "var(--color-gris-oscuro)"}
-              fillOpacity={elegida ? 1 : hay ? 0.4 : 0.55}
+              style={{ "--prov": provincia.color } as React.CSSProperties}
               stroke="var(--color-blanco)"
               strokeOpacity={hay ? 0.35 : 0.12}
               strokeWidth="0.7"
               className={cn(
-                "transition-[fill-opacity] duration-300",
-                hay && `cursor-pointer hover:[fill-opacity:0.7] ${FOCO}`,
+                "transition-[fill,fill-opacity] duration-300",
+                hay
+                  ? `cursor-pointer fill-blanco/25 hover:fill-[var(--prov)] ${FOCO}`
+                  : "fill-gris-oscuro/55",
+                elegida && "fill-[var(--prov)]",
               )}
             />
             {provincia.disco ? (
@@ -176,15 +178,17 @@ export function MapaFederal({
                 cx={provincia.disco[0]}
                 cy={provincia.disco[1]}
                 r={elegida ? 7 : 5.5}
-                fill={hay ? provincia.color : "var(--color-gris-oscuro)"}
-                fillOpacity={elegida ? 1 : 0.7}
+                style={{ "--prov": provincia.color } as React.CSSProperties}
                 stroke="var(--color-blanco)"
                 strokeOpacity="0.6"
                 strokeWidth="0.8"
                 onClick={hay ? () => alElegir(provincia.nombre) : undefined}
                 className={cn(
                   "transition-all duration-300",
-                  hay && "cursor-pointer",
+                  hay
+                    ? "cursor-pointer fill-blanco/50 hover:fill-[var(--prov)]"
+                    : "fill-gris-oscuro/55",
+                  elegida && "fill-[var(--prov)]",
                 )}
               />
             ) : null}

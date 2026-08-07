@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { FOCO } from "@/components/ui/boton";
 import { Chip, ChipSector } from "@/components/ui/chip";
@@ -24,13 +24,41 @@ export function RedFederal({
   provincias: ProvinciaConRed[];
   className?: string;
 }) {
+  /*
+   * Dos estados y no uno: la provincia elegida manda en el mapa, las solapas y
+   * las tarjetas de abajo, y el panel es una ventanita que se abre sobre ella.
+   * Cerrar el panel no borra la elección —abajo sigue la última provincia—,
+   * que era lo que pasaba cuando eran la misma cosa.
+   */
   const [elegida, setElegida] = useState(provincias[0]?.nombre ?? null);
+  const [panelAbierto, setPanelAbierto] = useState(true);
   const provincia = provincias.find((p) => p.nombre === elegida) ?? null;
+
+  const elegir = (nombre: string) => {
+    setElegida(nombre);
+    setPanelAbierto(true);
+  };
 
   const cantidades = Object.fromEntries(
     provincias.map((p) => [p.nombre, p.cooperativas.length]),
   );
   const centro = elegida ? centroDe(elegida) : null;
+
+  /*
+   * Al tocar fuera del mapa y del panel, la tarjeta se cierra. Las solapas
+   * quedan afuera de esa regla porque su trabajo es justamente elegir otra.
+   */
+  const zona = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const alTocar = (evento: MouseEvent) => {
+      const destino = evento.target as Node;
+      if (zona.current && !zona.current.contains(destino)) {
+        setPanelAbierto(false);
+      }
+    };
+    document.addEventListener("click", alTocar);
+    return () => document.removeEventListener("click", alTocar);
+  }, []);
 
   return (
     <div className={className}>
@@ -42,26 +70,32 @@ export function RedFederal({
         comería el dibujo.
       */}
       <div
-        className="relative mx-auto h-[420px] md:h-[700px]"
+        ref={zona}
+        className="relative mx-auto h-[380px] md:h-[600px]"
         style={{ aspectRatio: PROPORCION_MAPA }}
       >
         <MapaFederal
           cantidadPorProvincia={cantidades}
           seleccionada={elegida}
-          alElegir={setElegida}
+          alElegir={elegir}
           className="size-full"
         />
 
-        {provincia ? (
+        {provincia && panelAbierto ? (
           <PanelProvincia
             provincia={provincia}
+            alCerrar={() => setPanelAbierto(false)}
             className="mt-6 md:absolute md:mt-0 md:w-[420px] md:-translate-y-1/3"
             style={
               centro ? { left: `${centro.x}%`, top: `${centro.y}%` } : undefined
             }
           />
         ) : (
-          <p className="text-p1 mt-6 text-blanco/60">{T.vacio.sugerencia}</p>
+          // Centrado sobre el mapa: si va en el flujo se sale de la caja de
+          // alto fijo y se pisa con las solapas.
+          <p className="text-p2 pointer-events-none absolute inset-x-0 bottom-8 text-center text-blanco/50">
+            {T.vacio.sugerencia}
+          </p>
         )}
       </div>
 
@@ -79,7 +113,10 @@ export function RedFederal({
               role="tab"
               type="button"
               aria-selected={activa}
-              onClick={() => setElegida(p.nombre)}
+              onClick={(e) => {
+                e.stopPropagation();
+                elegir(p.nombre);
+              }}
               className={cn(
                 "text-h4 -mb-px shrink-0 cursor-pointer border-b-2 pb-3 transition-colors",
                 FOCO,
@@ -112,10 +149,12 @@ export function RedFederal({
 /** La ficha de la provincia elegida, sobre vidrio como en la maqueta. */
 function PanelProvincia({
   provincia,
+  alCerrar,
   className,
   style,
 }: {
   provincia: ProvinciaConRed;
+  alCerrar: () => void;
   className?: string;
   style?: React.CSSProperties;
 }) {
@@ -123,12 +162,37 @@ function PanelProvincia({
     <div
       style={style}
       className={cn(
-        "borde-degradado textura-ruido rounded-2xl bg-negro/40 p-6 backdrop-blur-2xl md:p-8",
+        "borde-degradado textura-ruido relative rounded-2xl bg-negro/40 p-6 backdrop-blur-2xl md:p-8",
         className,
       )}
     >
+      {/* La cruz de cerrar, discreta: el panel también se cierra tocando
+          fuera, así que no tiene que pedir atención. */}
+      <button
+        type="button"
+        onClick={alCerrar}
+        aria-label="Cerrar"
+        className={cn(
+          "absolute top-5 right-5 cursor-pointer rounded p-1 text-blanco/40",
+          "transition-colors hover:text-blanco",
+          FOCO,
+        )}
+      >
+        <svg
+          viewBox="0 0 16 16"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          aria-hidden
+          className="size-4"
+        >
+          <path d="m4 4 8 8M12 4l-8 8" />
+        </svg>
+      </button>
+
       <p className="text-eyebrow text-blanco/40">{T.panel.rotulo}</p>
-      <h3 className="text-h2 mt-2">{provincia.nombre}</h3>
+      <h3 className="text-h2 mt-2 pr-8">{provincia.nombre}</h3>
 
       <div className="text-p1 mt-6 flex justify-between gap-4 border-y border-dotted border-punteado py-4">
         <span>{T.panel.cooperativas(provincia.cooperativas.length)}</span>
