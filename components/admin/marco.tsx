@@ -29,9 +29,7 @@ export async function MarcoAdmin({
     <div className="flex min-h-svh">
       <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-borde bg-negro-oscuro md:flex">
         <div className="border-b border-borde px-6 py-5">
-          <Link href="/admin" className="block">
-            <Logo />
-          </Link>
+          <Logo href="/admin" />
           <p className="text-eyebrow mt-2 text-blanco/40">Panel de contenido</p>
         </div>
 
@@ -65,9 +63,7 @@ export async function MarcoAdmin({
       <div className="flex min-w-0 flex-1 flex-col md:pl-64">
         <header className="sticky top-0 z-10 border-b border-borde bg-negro-oscuro/90 backdrop-blur md:hidden">
           <div className="flex items-center justify-between px-4 py-3">
-            <Link href="/admin">
-              <Logo />
-            </Link>
+            <Logo href="/admin" />
             <form action={salir}>
               <button
                 type="submit"
