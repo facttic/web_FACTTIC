@@ -101,14 +101,22 @@ export default async function SobreFactticPage() {
         </div>
       </Seccion>
 
-      {/* La foto cruza la pantalla de punta a punta. */}
-      <Image
-        src={T.foto.src}
-        alt={T.foto.alt}
-        width={1440}
-        height={470}
-        className="h-56 w-full object-cover md:h-[470px]"
-      />
+      {/*
+        La maqueta la pone de punta a punta, pero la única copia que tenemos
+        salió del PNG de mobile y mide 393px: a pantalla completa se agranda
+        3,7 veces y se pixela. Hasta que llegue la original va dentro del
+        contenedor, donde el aumento es mucho menor y se ve entera.
+      */}
+      <div className="contenedor">
+        <Image
+          src={T.foto.src}
+          alt={T.foto.alt}
+          width={786}
+          height={698}
+          sizes="(min-width: 768px) 786px, 100vw"
+          className="mx-auto w-full max-w-[786px] rounded-xl"
+        />
+      </div>
 
       <Seccion>
         <BloqueTexto
