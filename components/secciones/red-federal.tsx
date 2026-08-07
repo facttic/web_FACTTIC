@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { FOCO } from "@/components/ui/boton";
-import { Chip, ChipSector } from "@/components/ui/chip";
+import { ChipSector } from "@/components/ui/chip";
 import { Carrusel } from "@/components/ui/carrusel";
 import { MapaFederal, PROPORCION_MAPA, centroDe } from "./mapa-federal";
 import { NUESTRA_RED as T } from "@/lib/contenido";
@@ -46,15 +46,21 @@ export function RedFederal({
 
   /*
    * Al tocar fuera del mapa y del panel, la tarjeta se cierra. Las solapas
-   * quedan afuera de esa regla porque su trabajo es justamente elegir otra.
+   * quedan afuera de esa regla porque su trabajo es justamente elegir otra, y
+   * por eso se preguntan acá: no alcanza con frenar la propagación desde su
+   * `onClick`. React delega sus eventos en `document`, que es el mismo nodo
+   * donde vive este listener, y `stopPropagation()` no impide que corran los
+   * demás listeners del mismo nodo. Sin esto, la solapa abría el panel y este
+   * listener lo cerraba en el mismo clic.
    */
   const zona = useRef<HTMLDivElement>(null);
+  const solapas = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const alTocar = (evento: MouseEvent) => {
       const destino = evento.target as Node;
-      if (zona.current && !zona.current.contains(destino)) {
-        setPanelAbierto(false);
-      }
+      const adentro =
+        zona.current?.contains(destino) || solapas.current?.contains(destino);
+      if (!adentro) setPanelAbierto(false);
     };
     document.addEventListener("click", alTocar);
     return () => document.removeEventListener("click", alTocar);
@@ -101,6 +107,7 @@ export function RedFederal({
 
       {/* Las provincias como solapas, para llegar sin usar el mapa. */}
       <div
+        ref={solapas}
         role="tablist"
         aria-label="Provincias con cooperativas"
         className="scroll-limpio mt-12 flex gap-8 overflow-x-auto border-b border-borde"
@@ -113,10 +120,7 @@ export function RedFederal({
               role="tab"
               type="button"
               aria-selected={activa}
-              onClick={(e) => {
-                e.stopPropagation();
-                elegir(p.nombre);
-              }}
+              onClick={() => elegir(p.nombre)}
               className={cn(
                 "text-h4 -mb-px shrink-0 cursor-pointer border-b-2 pb-3 transition-colors",
                 FOCO,
