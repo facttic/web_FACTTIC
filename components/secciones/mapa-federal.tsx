@@ -44,10 +44,10 @@ const CAJA = { oeste: -73.6, este: -53.6, norte: -21.8, sur: -55.1 };
  * proporción de 2,148. La proyección corregida por latitud da 2,126 sola, así
  * que se fuerza el alto para que coincida.
  *
- * Y sobre eso, un 5% más de ancho: el dibujo del archivo es un poco más
- * panzón que la proyección fiel, y así calza.
+ * Y sobre eso, un 10% más de ancho: el dibujo del archivo es más panzón que la
+ * proyección fiel, y así calza.
  */
-const ANCHO = Math.round(419 * 1.05);
+const ANCHO = Math.round(419 * 1.1);
 const ALTO_DEL_DISENO = 900;
 
 /**
