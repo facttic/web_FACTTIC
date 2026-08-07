@@ -5,7 +5,7 @@ import { cn } from "@/lib/cn";
 import { FOCO } from "@/components/ui/boton";
 import { Chip, ChipSector } from "@/components/ui/chip";
 import { Carrusel } from "@/components/ui/carrusel";
-import { MapaFederal } from "./mapa-federal";
+import { MapaFederal, PROPORCION_MAPA, centroDe } from "./mapa-federal";
 import { NUESTRA_RED as T } from "@/lib/contenido";
 import type { CooperativaEnRed, ProvinciaConRed } from "@/lib/datos/red";
 
@@ -30,28 +30,35 @@ export function RedFederal({
   const cantidades = Object.fromEntries(
     provincias.map((p) => [p.nombre, p.cooperativas.length]),
   );
+  const centro = elegida ? centroDe(elegida) : null;
 
   return (
     <div className={className}>
       {/*
-        El panel se apoya sobre el mapa, como en la maqueta: en desktop flota a
-        su derecha tapándole la Patagonia, y en mobile queda debajo porque no
-        hay lugar para superponerlo sin comerse el dibujo.
+        El panel se abre al lado de la provincia que se toca, no en un lugar
+        fijo: se cuelga del centro de su forma, corrido hacia la derecha. Por
+        eso el mapa va dentro de una caja de su medida exacta, que es contra la
+        que se posiciona. En mobile queda debajo, porque superponerlo ahí se
+        comería el dibujo.
       */}
-      <div className="relative">
+      <div
+        className="relative mx-auto h-[420px] md:h-[700px]"
+        style={{ aspectRatio: PROPORCION_MAPA }}
+      >
         <MapaFederal
           cantidadPorProvincia={cantidades}
           seleccionada={elegida}
           alElegir={setElegida}
-          // El alto manda: así conserva su proporción real sin adueñarse de la
-          // pantalla, que es lo que pasaba al fijarle el ancho.
-          className="mx-auto h-[420px] w-auto md:h-[700px]"
+          className="size-full"
         />
 
         {provincia ? (
           <PanelProvincia
             provincia={provincia}
-            className="mt-6 md:absolute md:top-1/4 md:right-0 md:mt-0 md:w-[420px]"
+            className="mt-6 md:absolute md:mt-0 md:w-[420px] md:-translate-y-1/3"
+            style={
+              centro ? { left: `${centro.x}%`, top: `${centro.y}%` } : undefined
+            }
           />
         ) : (
           <p className="text-p1 mt-6 text-blanco/60">{T.vacio.sugerencia}</p>
@@ -106,12 +113,15 @@ export function RedFederal({
 function PanelProvincia({
   provincia,
   className,
+  style,
 }: {
   provincia: ProvinciaConRed;
   className?: string;
+  style?: React.CSSProperties;
 }) {
   return (
     <div
+      style={style}
       className={cn(
         "borde-degradado textura-ruido rounded-2xl bg-negro/40 p-6 backdrop-blur-2xl md:p-8",
         className,

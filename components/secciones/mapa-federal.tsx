@@ -61,6 +61,25 @@ function proyectar(lng: number, lat: number): [number, number] {
   return [(lng - CAJA.oeste) * ACHATE * ESCALA, (CAJA.norte - lat) * ESCALA];
 }
 
+/** Proporción del dibujo, para que quien lo enmarque reserve la caja justa. */
+export const PROPORCION_MAPA = ANCHO / ALTO;
+
+/**
+ * Centro de una provincia en porcentaje del dibujo, para colgarle algo encima
+ * —el panel se abre al lado de la provincia que se toca—.
+ */
+export function centroDe(nombre: string): { x: number; y: number } | null {
+  const provincia = PROVINCIAS.find((p) => p.nombre === nombre);
+  if (!provincia) return null;
+  const puntos = provincia.anillos.flat().map((p) => proyectar(p[0], p[1]));
+  const xs = puntos.map((p) => p[0]);
+  const ys = puntos.map((p) => p[1]);
+  return {
+    x: ((Math.min(...xs) + Math.max(...xs)) / 2 / ANCHO) * 100,
+    y: ((Math.min(...ys) + Math.max(...ys)) / 2 / ALTO) * 100,
+  };
+}
+
 function trazo(anillos: number[][][]): string {
   return anillos
     .map(
