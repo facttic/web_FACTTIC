@@ -321,8 +321,9 @@ llevan indicaciones de implementación. Estado de las encontradas:
          sería un enlace externo; el modelo no tiene ese campo. Hoy llevan a
          Nuestra Red. Hace falta definir el destino y, si es el sitio propio,
          agregar el campo y cargarlo.
-      4. **La foto del plenario en alta**: se recortó de la maqueta mobile, así
-         que va a 393 de ancho y se ve blanda a pantalla completa.
+      4. ~~**La foto del plenario en alta**~~ → llegó la original. Va a 2880 de
+         ancho, el doble de los 1440 a los que se muestra, guardada como JPEG
+         de 380 KB; el PNG original pesaba 2 MB y no tenía transparencia.
       5. **Los logos de "Somos parte de otros espacios cooperativos"**: la
          maqueta muestra Cooperar, patio, un centro cultural y mut_, pero el
          recurso `organizaciones` hoy tiene los aliados de la Home. Confirmar

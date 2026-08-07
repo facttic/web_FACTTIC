@@ -553,8 +553,7 @@ export const SOBRE_FACTTIC = {
   },
 
   foto: {
-    // Plenario de FACTTIC. La imagen sale de la maqueta hasta que haya una
-    // propia cargada por API.
+    // Plenario de FACTTIC, la original en alta que entregó la federación.
     src: "/marca/plenario.jpg",
     alt: "Plenario de FACTTIC: las cooperativas de la Federación reunidas",
   },

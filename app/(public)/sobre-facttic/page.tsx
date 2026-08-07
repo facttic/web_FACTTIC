@@ -102,12 +102,9 @@ export default async function SobreFactticPage() {
       </Seccion>
 
       {/*
-        La foto cruza la pantalla de punta a punta.
-
-        La copia que hay salió del PNG de mobile y mide 393px de ancho, así que
-        acá se agranda casi cuatro veces y se pixela. Queda igual porque es lo
-        que dibuja la maqueta; se arregla sola cuando llegue la original en
-        alta (PENDIENTES, ítem 34).
+        La foto cruza la pantalla de punta a punta, así que va en alta: 2880px
+        de ancho, el doble de los 1440 a los que se muestra, para que no se vea
+        blanda en pantallas densas.
       */}
       <Image
         src={T.foto.src}
