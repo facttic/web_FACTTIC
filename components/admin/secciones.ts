@@ -33,8 +33,8 @@ export const SECCIONES: Array<{ titulo: string; items: ItemAdmin[] }> = [
     items: [
       { href: "/admin/sectores", etiqueta: "Sectores", listo: false },
       { href: "/admin/servicios", etiqueta: "Servicios", listo: false },
-      { href: "/admin/tecnologias", etiqueta: "Tecnologías", listo: false },
-      { href: "/admin/clientes", etiqueta: "Clientes", listo: false },
+      { href: "/admin/tecnologias", etiqueta: "Tecnologías", listo: true },
+      { href: "/admin/clientes", etiqueta: "Clientes", listo: true },
       {
         href: "/admin/organizaciones",
         etiqueta: "Organizaciones",
