@@ -2,7 +2,7 @@ import { requerirSesion } from "@/lib/api/guardia";
 import { getCooperativas, getAutoridades } from "@/lib/datos/catalogos";
 import { getProyectos } from "@/lib/datos/proyectos";
 import { getNovedades } from "@/lib/datos/novedades";
-import { SECCIONES } from "@/components/admin/navegacion";
+import { SECCIONES } from "@/components/admin/secciones";
 import { cn } from "@/lib/cn";
 
 export const metadata = { title: "Inicio" };

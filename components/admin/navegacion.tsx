@@ -4,51 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { FOCO } from "@/components/ui/boton";
+import { SECCIONES } from "./secciones";
 
-/**
- * Navegación del panel.
- *
- * El orden no es alfabético sino el de urgencia para cargar contenido: primero
- * lo que el sitio está mostrando con datos de ejemplo o vacíos, después los
- * catálogos que casi no cambian.
- */
+/** Navegación del panel, en la lateral o como tira arriba en pantallas chicas. */
 
 /**
  * Los ABMs se construyen de a uno, en este orden. `listo` marca los que ya
  * existen; el resto se muestra apagado en vez de llevar a una ruta que no
  * está, así se ve el alcance completo del panel desde el primer día.
  */
-interface ItemAdmin {
-  href: string;
-  etiqueta: string;
-  listo: boolean;
-}
-
-export const SECCIONES: Array<{ titulo: string; items: ItemAdmin[] }> = [
-  {
-    titulo: "Contenido",
-    items: [
-      { href: "/admin/cooperativas", etiqueta: "Cooperativas", listo: true },
-      { href: "/admin/consejo", etiqueta: "Consejo", listo: false },
-      { href: "/admin/novedades", etiqueta: "Novedades", listo: false },
-      { href: "/admin/proyectos", etiqueta: "Proyectos", listo: false },
-    ],
-  },
-  {
-    titulo: "Catálogos",
-    items: [
-      { href: "/admin/sectores", etiqueta: "Sectores", listo: false },
-      { href: "/admin/servicios", etiqueta: "Servicios", listo: false },
-      { href: "/admin/tecnologias", etiqueta: "Tecnologías", listo: false },
-      { href: "/admin/clientes", etiqueta: "Clientes", listo: false },
-      {
-        href: "/admin/organizaciones",
-        etiqueta: "Organizaciones",
-        listo: false,
-      },
-    ],
-  },
-];
 
 export function NavegacionAdmin({
   variante = "lateral",
