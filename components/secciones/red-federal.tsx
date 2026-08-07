@@ -37,7 +37,9 @@ export function RedFederal({
           cantidadPorProvincia={cantidades}
           seleccionada={elegida}
           alElegir={setElegida}
-          className="mx-auto max-w-[420px]"
+          // El alto manda: así el mapa conserva su proporción real sin
+          // adueñarse de la pantalla, que es lo que pasaba al fijarle el ancho.
+          className="mx-auto h-[440px] w-auto md:h-[620px]"
         />
 
         {provincia ? (

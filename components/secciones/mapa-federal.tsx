@@ -46,23 +46,18 @@ const ANCHO = 420;
 const LATITUD_MEDIA = (CAJA.norte + CAJA.sur) / 2;
 const ACHATE = Math.cos((LATITUD_MEDIA * Math.PI) / 180);
 
-/**
- * Además, el diseño achata el mapa a propósito. Medida la ventana que dibuja
- * la maqueta mobile, da una proporción de 0,84 donde la geografía pide 1,08:
- * un 78% del alto. Sin esto Argentina entra con su relación real de 2,13 y el
- * mapa se come la pantalla.
- */
-const ACHATE_DEL_DISENO = 0.78;
-
 const ESCALA = ANCHO / ((CAJA.este - CAJA.oeste) * ACHATE);
-const ALTO = Math.round((CAJA.norte - CAJA.sur) * ESCALA * ACHATE_DEL_DISENO);
+const ALTO = Math.round((CAJA.norte - CAJA.sur) * ESCALA);
 
-/** Equirrectangular corregida por latitud, y achatada como el diseño. */
+/**
+ * Equirrectangular corregida por latitud. La proporción sale 2,13, que es la
+ * de Argentina: unos 3.700 km de norte a sur por 1.700 de este a oeste. No se
+ * deforma para que entre —la maqueta tampoco lo hace: lo que parecía un
+ * achatamiento es que el panel se le superpone y tapa la Patagonia—; el tamaño
+ * se resuelve en el layout, limitando el alto.
+ */
 function proyectar(lng: number, lat: number): [number, number] {
-  return [
-    (lng - CAJA.oeste) * ACHATE * ESCALA,
-    (CAJA.norte - lat) * ESCALA * ACHATE_DEL_DISENO,
-  ];
+  return [(lng - CAJA.oeste) * ACHATE * ESCALA, (CAJA.norte - lat) * ESCALA];
 }
 
 function trazo(anillos: number[][][]): string {
