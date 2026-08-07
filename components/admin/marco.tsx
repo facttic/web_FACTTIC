@@ -76,7 +76,11 @@ export async function MarcoAdmin({
           <NavegacionAdmin variante="tira" className="px-4 pb-3" />
         </header>
 
-        <main className="min-w-0 flex-1 p-4 md:p-8">{children}</main>
+        {/* El espacio de abajo es para la barra de acciones de los
+            formularios, que va fija al pie y si no taparía el final. */}
+        <main className="min-w-0 flex-1 p-4 pb-28 md:p-8 md:pb-28">
+          {children}
+        </main>
       </div>
     </div>
   );

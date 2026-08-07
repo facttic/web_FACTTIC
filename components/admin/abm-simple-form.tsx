@@ -3,6 +3,8 @@
 import {
   CampoTexto,
   CampoArchivo,
+  Columna,
+  Columnas,
   FormularioAdmin,
   type EstadoForm,
 } from "./piezas";
@@ -25,28 +27,34 @@ export function FormularioSimple({
 }) {
   return (
     <FormularioAdmin accion={accion} volverA={volverA}>
-      <CampoTexto
-        id="nombre"
-        name="nombre"
-        etiqueta="Nombre"
-        defaultValue={nombre}
-        required
-        minLength={3}
-        autoFocus
-      />
-      {conImagen ? (
-        <CampoArchivo
-          id="file"
-          name="file"
-          etiqueta="Imagen"
-          ayuda={
-            ayudaImagen ??
-            "PNG o SVG, preferentemente sobre fondo transparente."
-          }
-          accept="image/*"
-          actual={imagenActual}
-        />
-      ) : null}
+      <Columnas>
+        <Columna>
+          <CampoTexto
+            id="nombre"
+            name="nombre"
+            etiqueta="Nombre"
+            defaultValue={nombre}
+            required
+            minLength={3}
+            autoFocus
+          />
+        </Columna>
+        {conImagen ? (
+          <Columna>
+            <CampoArchivo
+              id="file"
+              name="file"
+              etiqueta="Imagen"
+              ayuda={
+                ayudaImagen ??
+                "PNG o SVG, preferentemente sobre fondo transparente."
+              }
+              accept="image/*"
+              actual={imagenActual}
+            />
+          </Columna>
+        ) : null}
+      </Columnas>
     </FormularioAdmin>
   );
 }

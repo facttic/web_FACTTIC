@@ -13,7 +13,6 @@ import type * as Dominio from "./tipos";
  *
  *   - `slug` en proyectos      → `slugDeProyecto()`
  *   - `provincia` en coops     → `provinciaDe()`
- *   - `logo` en cooperativas   → `aCooperativa()`
  *   - unificar la paginación   → `aPagina()` (hoy tolera las dos formas)
  *   - novedades y contacto     → recursos nuevos, no afectan a estos
  *   - GET públicos             → no llega hasta acá: es cosa del transporte
@@ -113,8 +112,9 @@ export function aCooperativa(api: Api.Cooperativa): Dominio.Cooperativa {
         ? api.ubicacion
         : null,
     provincia: provinciaDe(api),
-    // Pendiente: el modelo todavía no tiene campo de logo.
-    logo: null,
+    // La API lo guarda en `fileName`, igual que el resto de los recursos con
+    // archivo; hoy ninguna cooperativa tiene uno cargado.
+    logo: mediaUrl(api.fileName),
     servicios: aReferencias(api.servicios),
     sectores: aReferencias(api.sectores),
   };

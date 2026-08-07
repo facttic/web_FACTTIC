@@ -67,7 +67,7 @@ export function ListadoSimple({
   const columnas = config.conImagen ? ["Nombre", "Imagen", ""] : ["Nombre", ""];
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div>
       <Encabezado
         titulo={config.titulo}
         cantidad={registros.length}
@@ -104,7 +104,7 @@ export function ListadoSimple({
                 >
                   Editar
                 </EnlaceAdmin>
-                <BotonBorrarConId
+                <BotonBorrar
                   accion={borrarRegistro}
                   id={registro.id}
                   que={registro.nombre}
@@ -118,33 +118,13 @@ export function ListadoSimple({
   );
 }
 
-/** El botón de borrar necesita saber a quién borra. */
-function BotonBorrarConId({
-  accion,
-  id,
-  que,
-}: {
-  accion: (estado: EstadoForm, datos: FormData) => Promise<EstadoForm>;
-  id: string;
-  que: string;
-}) {
-  const conId = async (estado: EstadoForm, datos: FormData) => {
-    "use server";
-    datos.set("id", id);
-    return accion(estado, datos);
-  };
-  return <BotonBorrar accion={conId} que={que} />;
-}
-
 export function EdicionSimple({
   config,
   registro,
-  opciones,
 }: {
   config: ConfigSimple;
   /** Sin registro es un alta. */
   registro?: RegistroSimple;
-  opciones?: never;
 }) {
   async function guardar(
     _estado: EstadoForm,
@@ -187,7 +167,7 @@ export function EdicionSimple({
   }
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div>
       <Encabezado
         titulo={
           registro ? `Editar ${config.singular}` : `Agregar ${config.singular}`

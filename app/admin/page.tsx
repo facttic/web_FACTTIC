@@ -35,7 +35,7 @@ export default async function AdminPage() {
   ];
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div>
       <h1 className="text-h2">Hola, {sesion.usuario}</h1>
       <p className="text-p2 mt-2 text-blanco/60">
         Esto es lo que hay cargado hoy en el sitio.

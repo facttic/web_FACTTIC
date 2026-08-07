@@ -24,12 +24,22 @@ llegue.
       requerido sin tipo (ver punto 7).
 - [x] ~~**4. Multipart en cooperativas y consejo**~~ → aceptan `file` en POST
       y PUT. Se probó subiendo un PNG a cada uno y queda en `fileName`.
-- [ ] **5. Multipart de proyectos incompleto.** No acepta `servicios`,
-      `tecnologias` ni `cooperativas`, que sí están en el schema JSON.
+- [ ] **5. Multipart de proyectos incompleto.** `servicios`, `tecnologias` y
+      `cooperativas` **dependen de cuántos valores se manden**: con dos o más
+      partes del mismo nombre se guardan bien, pero con una sola el validador
+      responde `400 invalidType — Expected array, received string`, porque el
+      parser de formularios solo arma un array cuando el campo se repite. Un
+      proyecto con un único servicio es lo más común, así que en la práctica no
+      se puede usar.
       **Además el spec miente en el nombre del campo de imágenes**: documenta
       `imageFiles[]` y con eso responde 500 (`MulterError: Unexpected field`);
       el que funciona es `imageFiles`, sin corchetes. Lo mismo habría que
       revisar en `videoFiles`.
+
+      Mientras tanto el backoffice guarda los proyectos en dos pasos: los datos
+      y las relaciones por JSON, y las imágenes en un PUT multipart aparte, que
+      deja lo demás intacto. Si esto se arregla, se puede volver a un solo
+      envío.
 - [x] ~~**6. `slug` en proyectos**~~ → se genera del nombre al crear;
       verificado creando uno de prueba. **Falta migrar los que ya estaban**:
       los cuatro cargados antes del campo no lo tienen y, como es inmutable,
@@ -70,6 +80,13 @@ llegue.
       limpiar los datos de prueba (`Cooperativa A/B/C`, `Proyecto1`), que
       borramos nosotros por API.
 - [ ] **13. `createdBy`/`updatedBy`** expuestos en todas las respuestas.
+- [ ] **13 bis. Los archivos se guardan con el nombre original y se pisan entre
+      sí.** `POST /api/files` deja el archivo en `/api/files/{nombre original}`,
+      sin prefijo ni hash, y sin avisar si ya existía: subir un `logo.png` a una
+      cooperativa reemplaza el `logo.png` de otro recurso cualquiera, y el
+      registro anterior pasa a mostrar la imagen nueva. Nos pasó: una prueba con
+      un `p.png` sobrescribió el que usaban "Cooperativa A" y una autoridad del
+      consejo. Hace falta que el backend genere un nombre único al guardar.
 - [ ] **14. Unificar la paginación.** ~~El tamaño de página no se podía
       elegir~~ → `perPage` ya se respeta en los catálogos. **Queda** que la
       forma sea la misma: los catálogos y novedades devuelven `{items,
@@ -80,6 +97,25 @@ llegue.
 - [ ] **17. CORS**: hoy refleja cualquier `Origin` con `allow-credentials: true`.
 - [ ] **18. Consulta**: campo `verticales` no documentado en cooperativa, que
       convive con `sectores`. ¿Cuál se usa?
+- [ ] **19 bis. `destacado` en servicios.** Desde el backoffice, una cooperativa
+      puede dar de alta un servicio propio mientras completa su ficha. Hoy
+      `GET /api/servicios` es una lista sola, así que todo lo que se cree cae
+      igual en la vitrina de FACTTIC: las solapas de la Home, el bloque
+      "Soluciones" de Nuestros servicios y el filtro de Proyectos. Con dos
+      cooperativas cargando su vocabulario, esos tres lugares se llenan de
+      variantes del mismo servicio.
+
+      **Acordado:** el backend agrega `destacado` a `Servicio`. Los destacados
+      son el catálogo de la federación y son los únicos que salen en la Home y
+      en Nuestros servicios; el resto queda como especialidad de esa
+      cooperativa, visible en su ficha y en el panel de provincia de Nuestra
+      Red. Conviene que solo la federación pueda marcarlo: si lo marca quien
+      crea el servicio, el filtro no sirve de nada.
+
+      Cuando el campo exista hay que: marcar los cinco actuales, filtrar en
+      `getServicios()` —o agregar un `getServiciosDestacados()`— y mostrar el
+      estado en el ABM de servicios. Hasta entonces el alta rápida funciona sin
+      filtro y lo que se cree aparece en el sitio.
 
 ### Nuevos (sin enviar)
 
@@ -155,7 +191,9 @@ llegue.
          FACTTIC publicaba en su sitio anterior: hay 18 de 37, el resto queda
          sin enlace.
       3. **Ninguna cooperativa tiene logo cargado.** La tarjeta lo muestra
-         arriba; sin él va el nombre. La subida ya funciona por multipart.
+         arriba; sin él va el nombre. Ya está todo el camino hecho: la API lo
+         guarda en `fileName`, el sitio lo lee de ahí y el backoffice lo sube.
+         Falta juntar los archivos.
 
 ---
 

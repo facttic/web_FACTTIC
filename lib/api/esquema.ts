@@ -74,6 +74,8 @@ export interface Cooperativa {
   asociados?: number;
   /** Hoy ninguna cooperativa la tiene cargada; sin esto no hay mapa federal. */
   ubicacion?: Ubicacion;
+  /** Logo, subido por multipart. Ninguna lo tiene cargado todavía. */
+  fileName?: string;
   servicios?: Ref<Servicio>[];
   sectores?: Ref<Sector>[];
   /** No documentado en el spec, pero presente en los datos. */
@@ -103,6 +105,8 @@ export interface Consejo {
   nombre: string;
   cargo: string;
   cooperativa?: Ref<Cooperativa>;
+  /** Foto de la autoridad. El spec no la declara, pero la API la guarda acá. */
+  fileName?: string;
   createdAt?: string;
 }
 

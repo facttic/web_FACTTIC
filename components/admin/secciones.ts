@@ -23,22 +23,22 @@ export const SECCIONES: Array<{ titulo: string; items: ItemAdmin[] }> = [
     titulo: "Contenido",
     items: [
       { href: "/admin/cooperativas", etiqueta: "Cooperativas", listo: true },
-      { href: "/admin/consejo", etiqueta: "Consejo", listo: false },
-      { href: "/admin/novedades", etiqueta: "Novedades", listo: false },
-      { href: "/admin/proyectos", etiqueta: "Proyectos", listo: false },
+      { href: "/admin/consejo", etiqueta: "Consejo", listo: true },
+      { href: "/admin/novedades", etiqueta: "Novedades", listo: true },
+      { href: "/admin/proyectos", etiqueta: "Proyectos", listo: true },
     ],
   },
   {
     titulo: "Catálogos",
     items: [
-      { href: "/admin/sectores", etiqueta: "Sectores", listo: false },
-      { href: "/admin/servicios", etiqueta: "Servicios", listo: false },
+      { href: "/admin/sectores", etiqueta: "Sectores", listo: true },
+      { href: "/admin/servicios", etiqueta: "Servicios", listo: true },
       { href: "/admin/tecnologias", etiqueta: "Tecnologías", listo: true },
       { href: "/admin/clientes", etiqueta: "Clientes", listo: true },
       {
         href: "/admin/organizaciones",
         etiqueta: "Organizaciones",
-        listo: false,
+        listo: true,
       },
     ],
   },
