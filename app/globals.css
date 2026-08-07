@@ -233,9 +233,21 @@
  * Va en un pseudoelemento para no pisar el fondo de quien lo use, y en
  * `overlay` para que oscurezca y aclare según lo que tenga debajo en vez de
  * agregar una capa gris pareja.
+ *
+ * El `isolation` no es decorativo. `mix-blend-mode` mezcla con todo lo que haya
+ * debajo en el contexto de apilamiento, o sea también con lo que pasa por
+ * *detrás* de la tarjeta, que no es lo que se quiere: la textura es de la
+ * superficie, no del fondo de la página. Aislando, el grano se mezcla solo con
+ * la tarjeta.
+ *
+ * Además es lo que evita que Firefox dibuje un rectángulo opaco cuando la
+ * tarjeta lleva `backdrop-filter` y detrás pasa una forma de color: mezclar
+ * contra un backdrop que a su vez está siendo filtrado es justo el caso que su
+ * compositor resuelve mal.
  */
 @utility textura-ruido {
   position: relative;
+  isolation: isolate;
 
   &::after {
     content: "";
