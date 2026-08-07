@@ -38,7 +38,14 @@ const COLORES = [
 ];
 
 const CAJA = { oeste: -73.6, este: -53.6, norte: -21.8, sur: -55.1 };
-const ANCHO = 420;
+
+/**
+ * Medidas del grupo del mapa en el archivo: 419,02 × 900,21, o sea una
+ * proporción de 2,148. La proyección corregida por latitud da 2,126 sola, así
+ * que la diferencia es de un 1%: se fuerza el alto para que coincida exacto.
+ */
+const ANCHO = 419;
+const ALTO_DEL_DISENO = 900;
 
 /**
  * Los meridianos se juntan hacia el sur, así que un grado de longitud mide
@@ -48,7 +55,9 @@ const LATITUD_MEDIA = (CAJA.norte + CAJA.sur) / 2;
 const ACHATE = Math.cos((LATITUD_MEDIA * Math.PI) / 180);
 
 const ESCALA = ANCHO / ((CAJA.este - CAJA.oeste) * ACHATE);
-const ALTO = Math.round((CAJA.norte - CAJA.sur) * ESCALA);
+const ALTO = ALTO_DEL_DISENO;
+/** Ajuste del 1% entre la proyección y la medida del archivo. */
+const ESCALA_Y = ALTO / ((CAJA.norte - CAJA.sur) * ESCALA);
 
 /**
  * Equirrectangular corregida por latitud. La proporción sale 2,13, que es la
@@ -58,7 +67,10 @@ const ALTO = Math.round((CAJA.norte - CAJA.sur) * ESCALA);
  * se resuelve en el layout, limitando el alto.
  */
 function proyectar(lng: number, lat: number): [number, number] {
-  return [(lng - CAJA.oeste) * ACHATE * ESCALA, (CAJA.norte - lat) * ESCALA];
+  return [
+    (lng - CAJA.oeste) * ACHATE * ESCALA,
+    (CAJA.norte - lat) * ESCALA * ESCALA_Y,
+  ];
 }
 
 /** Proporción del dibujo, para que quien lo enmarque reserve la caja justa. */
