@@ -631,7 +631,10 @@ export const NOVEDADES = {
  * salen de la API y del cálculo de provincia por coordenada. Acá va el texto.
  */
 export const NUESTRA_RED = {
-  hero: { titulo: "Somos\nuna red federal" },
+  hero: {
+    titulo:
+      "Somos\nuna red federal\nde cooperativas\nde tecnología,\ninnovación y\nconocimiento",
+  },
   panel: {
     rotulo: "Provincia seleccionada",
     cooperativas: (n: number) =>

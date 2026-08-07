@@ -24,15 +24,18 @@ export default async function NuestraRedPage() {
 
   return (
     <>
-      <Seccion className="pt-24 md:pt-32">
-        <h1 className="text-h1 whitespace-pre-line">{T.hero.titulo}</h1>
+      <Seccion className="relative pt-24 md:pt-32">
+        {/* El título se apoya sobre el mapa en desktop, como en la maqueta. */}
+        <h1 className="text-h1 whitespace-pre-line md:absolute md:z-10 md:max-w-md">
+          {T.hero.titulo}
+        </h1>
 
-        <RedFederal provincias={provincias} className="mt-12 md:mt-16" />
+        <RedFederal provincias={provincias} className="mt-10 md:mt-0" />
       </Seccion>
 
       <div className="contenedor pb-12 md:pb-16">
         <BandaCta
-          variante="vidrio"
+          variante="punteada"
           titulo={T.cierre.titulo}
           accion={
             <BotonLink href={T.cierre.cta.href}>{T.cierre.cta.texto}</BotonLink>

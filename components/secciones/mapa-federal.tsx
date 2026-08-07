@@ -10,19 +10,24 @@ import { PROVINCIAS } from "@/lib/mapa/provincias";
  *
  * Resuelve las dos anotaciones del archivo:
  *
- *  - "Que cada provincia tenga un color distinto de la paleta": el color sale
- *    de la posición de la provincia en la lista, no de un sorteo en cada
- *    visita —si cambiara en cada carga, el mapa parpadearía y el servidor y el
- *    browser dibujarían distinto—. Se ven al azar pero son estables.
- *  - "En cada provincia debería haber pueblitos dependiendo la cantidad de
- *    coops que hay": cada provincia lleva un punto por cooperativa, repartidos
- *    dentro de su contorno.
+ *  - "Que cada provincia tenga un color distinto de la paleta de colores, de
+ *    forma aleatoria": las que tienen cooperativas se pintan cada una de un
+ *    color, tomándolo de su posición en la lista y no de un sorteo por visita
+ *    —si cambiara en cada carga, el mapa parpadearía y el servidor y el
+ *    browser dibujarían distinto—. Se ven repartidos al azar pero son
+ *    estables. Las que no tienen quedan en gris oscuro.
+ *  - "En cada provincia debería haber puntitos dependiendo la cantidad de coop
+ *    que hay": un punto por cooperativa, repartidos dentro del contorno.
  *
- * Las provincias sin cooperativas van apagadas y no se pueden elegir: el mapa
- * cuenta dónde está la red, no la división política.
+ * Las provincias sin cooperativas no se pueden elegir: el mapa cuenta dónde
+ * está la red, no la división política.
  */
 
-/** Los colores de la identidad que se usan para pintar el mapa. */
+/**
+ * Recuadro del país sin la Antártida ni las islas del Atlántico Sur, que
+ * estirarían el dibujo hasta volverlo ilegible.
+ */
+/** Los colores de la identidad con los que se pintan las provincias. */
 const COLORES = [
   "var(--color-lila)",
   "var(--color-celeste)",
@@ -32,10 +37,6 @@ const COLORES = [
   "var(--color-rojo)",
 ];
 
-/**
- * Recuadro del país sin la Antártida ni las islas del Atlántico Sur, que
- * estirarían el dibujo hasta volverlo ilegible.
- */
 const CAJA = { oeste: -73.6, este: -53.6, norte: -21.8, sur: -55.1 };
 const ANCHO = 420;
 
@@ -142,9 +143,9 @@ export function MapaFederal({
                   : undefined
               }
               fill={hay ? provincia.color : "var(--color-gris-oscuro)"}
-              fillOpacity={elegida ? 1 : hay ? 0.35 : 0.5}
+              fillOpacity={elegida ? 1 : hay ? 0.4 : 0.55}
               stroke="var(--color-blanco)"
-              strokeOpacity={hay ? 0.5 : 0.15}
+              strokeOpacity={hay ? 0.35 : 0.12}
               strokeWidth="0.7"
               className={cn(
                 "transition-[fill-opacity] duration-300",
@@ -157,7 +158,7 @@ export function MapaFederal({
                 cy={provincia.disco[1]}
                 r={elegida ? 7 : 5.5}
                 fill={hay ? provincia.color : "var(--color-gris-oscuro)"}
-                fillOpacity={elegida ? 1 : 0.75}
+                fillOpacity={elegida ? 1 : 0.7}
                 stroke="var(--color-blanco)"
                 strokeOpacity="0.6"
                 strokeWidth="0.8"
@@ -175,7 +176,7 @@ export function MapaFederal({
                 cy={y}
                 r="1.6"
                 fill="var(--color-blanco)"
-                fillOpacity={elegida ? 0.9 : 0.55}
+                fillOpacity={elegida ? 0.85 : 0.4}
                 className="pointer-events-none transition-[fill-opacity] duration-300"
               />
             ))}

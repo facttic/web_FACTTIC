@@ -4,6 +4,7 @@ import { useState } from "react";
 import { cn } from "@/lib/cn";
 import { FOCO } from "@/components/ui/boton";
 import { Chip, ChipSector } from "@/components/ui/chip";
+import { Carrusel } from "@/components/ui/carrusel";
 import { MapaFederal } from "./mapa-federal";
 import { NUESTRA_RED as T } from "@/lib/contenido";
 import type { CooperativaEnRed, ProvinciaConRed } from "@/lib/datos/red";
@@ -32,20 +33,28 @@ export function RedFederal({
 
   return (
     <div className={className}>
-      <div className="grid gap-10 md:grid-cols-[1fr_1fr] md:items-start md:gap-16">
+      {/*
+        El panel se apoya sobre el mapa, como en la maqueta: en desktop flota a
+        su derecha tapándole la Patagonia, y en mobile queda debajo porque no
+        hay lugar para superponerlo sin comerse el dibujo.
+      */}
+      <div className="relative">
         <MapaFederal
           cantidadPorProvincia={cantidades}
           seleccionada={elegida}
           alElegir={setElegida}
-          // El alto manda: así el mapa conserva su proporción real sin
-          // adueñarse de la pantalla, que es lo que pasaba al fijarle el ancho.
-          className="mx-auto h-[440px] w-auto md:h-[620px]"
+          // El alto manda: así conserva su proporción real sin adueñarse de la
+          // pantalla, que es lo que pasaba al fijarle el ancho.
+          className="mx-auto h-[420px] w-auto md:h-[700px]"
         />
 
         {provincia ? (
-          <PanelProvincia provincia={provincia} />
+          <PanelProvincia
+            provincia={provincia}
+            className="mt-6 md:absolute md:top-1/4 md:right-0 md:mt-0 md:w-[420px]"
+          />
         ) : (
-          <p className="text-p1 text-blanco/60">{T.vacio.sugerencia}</p>
+          <p className="text-p1 mt-6 text-blanco/60">{T.vacio.sugerencia}</p>
         )}
       </div>
 
@@ -79,20 +88,35 @@ export function RedFederal({
       </div>
 
       {provincia ? (
-        <div className="mt-8 grid gap-5 md:grid-cols-3">
+        <Carrusel grilla="md:grid-cols-4" gap="gap-5" className="mt-8">
           {provincia.cooperativas.map((coop) => (
-            <CardCooperativaRed key={coop.id} cooperativa={coop} />
+            <CardCooperativaRed
+              key={coop.id}
+              cooperativa={coop}
+              className="w-[280px] shrink-0 snap-start md:w-auto"
+            />
           ))}
-        </div>
+        </Carrusel>
       ) : null}
     </div>
   );
 }
 
 /** La ficha de la provincia elegida, sobre vidrio como en la maqueta. */
-function PanelProvincia({ provincia }: { provincia: ProvinciaConRed }) {
+function PanelProvincia({
+  provincia,
+  className,
+}: {
+  provincia: ProvinciaConRed;
+  className?: string;
+}) {
   return (
-    <div className="borde-degradado textura-ruido rounded-2xl bg-superficie/60 p-6 backdrop-blur-xl md:p-8">
+    <div
+      className={cn(
+        "borde-degradado textura-ruido rounded-2xl bg-negro/40 p-6 backdrop-blur-2xl md:p-8",
+        className,
+      )}
+    >
       <p className="text-eyebrow text-blanco/40">{T.panel.rotulo}</p>
       <h3 className="text-h2 mt-2">{provincia.nombre}</h3>
 
@@ -131,11 +155,20 @@ function PanelProvincia({ provincia }: { provincia: ProvinciaConRed }) {
 /** Tarjeta de cooperativa: logo, nombre, servicios y el enlace a su sitio. */
 function CardCooperativaRed({
   cooperativa,
+  className,
 }: {
   cooperativa: CooperativaEnRed;
+  className?: string;
 }) {
   return (
-    <div className="flex flex-col rounded-xl bg-superficie p-6">
+    <div
+      className={cn("flex flex-col rounded-xl bg-superficie p-6", className)}
+    >
+      {/*
+        Arriba el logo y debajo el nombre, como en la maqueta. Mientras no haya
+        logos cargados el nombre ocupa ese lugar y no se repite abajo, que es
+        lo que pasaba: la misma palabra dos veces en la misma tarjeta.
+      */}
       <div className="grid h-16 place-items-center">
         {cooperativa.logo ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -146,15 +179,18 @@ function CardCooperativaRed({
             className="max-h-12 w-auto object-contain"
           />
         ) : (
-          // Sin logo cargado va el nombre, que es mejor que un hueco.
-          <span className="text-h4 text-center">{cooperativa.nombre}</span>
+          <span className="text-h4 text-center text-balance">
+            {cooperativa.nombre}
+          </span>
         )}
       </div>
 
-      <h4 className="text-p1-bold mt-6">{cooperativa.nombre}</h4>
+      {cooperativa.logo ? (
+        <h4 className="text-p1-bold mt-6">{cooperativa.nombre}</h4>
+      ) : null}
 
       {cooperativa.servicios.length ? (
-        <p className="text-p2 mt-3 text-blanco/60">
+        <p className="text-p2 mt-6 text-blanco/60">
           {cooperativa.servicios.map((s) => s.nombre).join("  ·  ")}
         </p>
       ) : null}
