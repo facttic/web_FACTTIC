@@ -51,11 +51,15 @@ export default async function SobreFactticPage() {
         */}
         <div className="contenedor pointer-events-none absolute inset-x-0 top-0 -z-10">
           {/*
-            La caja recorta la animación a la franja derecha, que es donde el
-            diseño la deja: su composición es mucho más ancha que eso y sin el
-            recorte le cruzan círculos por encima al texto.
+            La caja recorta la animación por la izquierda, que es donde su
+            composición —mucho más ancha que esta franja— le cruzaría círculos
+            por encima al texto. Por la derecha, en cambio, se la deja seguir
+            hasta el borde de la pantalla: anclada al ancho del contenido se
+            cortaba en seco a mitad de un sol, y un corte recto en medio de la
+            página se lee como un error. Empieza donde empezaba y la sección,
+            que ya recorta, la termina contra el borde de la ventana.
           */}
-          <div className="absolute top-0 -right-4 h-[190px] w-[210px] overflow-hidden md:-right-10 md:h-[520px] md:w-[620px]">
+          <div className="absolute top-0 -right-4 h-[190px] w-[210px] overflow-hidden md:right-auto md:left-[calc(100%+2.5rem-620px)] md:h-[520px] md:w-screen">
             <Animacion
               nombre={FONDOS.sobreFacttic}
               className="absolute -top-[150px] -left-[110px] aspect-square w-[420px] opacity-70 md:-top-[437px] md:-left-[154px] md:w-[1200px] md:opacity-100"
