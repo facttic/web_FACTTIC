@@ -106,17 +106,20 @@ export default async function SobreFactticPage() {
       </Seccion>
 
       {/*
-        La foto cruza la pantalla de punta a punta, así que va en alta: 2880px
-        de ancho, el doble de los 1440 a los que se muestra, para que no se vea
-        blanda en pantallas densas.
+        En desktop la foto no va al corte: entra en el contenedor y queda
+        alineada con el texto. En mobile sigue cruzando la pantalla, como su
+        maqueta. Va en alta —2880px de ancho, el doble de los 1440 a los que se
+        muestra— para que no se vea blanda en pantallas densas.
       */}
-      <Image
-        src={T.foto.src}
-        alt={T.foto.alt}
-        width={1440}
-        height={470}
-        className="h-56 w-full object-cover md:h-[470px]"
-      />
+      <div className="md:contenedor">
+        <Image
+          src={T.foto.src}
+          alt={T.foto.alt}
+          width={1440}
+          height={470}
+          className="h-56 w-full rounded-xl object-cover md:h-[470px]"
+        />
+      </div>
 
       <Seccion>
         <BloqueTexto
