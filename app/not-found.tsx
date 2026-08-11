@@ -59,7 +59,6 @@ export default function NotFound() {
       {/* La tarjeta de cierre existe solo en la maqueta mobile. */}
       <div className="contenedor pb-12 md:hidden">
         <BandaCta
-          variante="vidrio"
           titulo={T.cierre.titulo}
           accion={
             <BotonLink href={T.cierre.cta.href}>{T.cierre.cta.texto}</BotonLink>

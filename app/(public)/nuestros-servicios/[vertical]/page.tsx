@@ -163,9 +163,10 @@ export default async function VerticalPage({
         <Aliados logos={aliados} className="pb-12 md:pb-24" />
       ) : null}
 
-      {/* El cierre va sobre el sol naranja, con la tarjeta de vidrio dejándolo
-          ver a través. El fondo propio de este bloque no vino en la entrega, así
-          que se usa el de "Trabajo con impacto", del mismo color. */}
+      {/* El cierre va sobre el sol naranja. La banda va punteada como en el
+          resto del sitio —el componente tiene un solo estilo—, y no de vidrio.
+          El fondo propio de este bloque no vino en la entrega, así que se usa
+          el de "Trabajo con impacto", del mismo color. */}
       <div className="relative isolate overflow-hidden pt-20 pb-12 md:pt-0 md:pb-16">
         <Animacion
           nombre="beneficio-trabajo"
@@ -173,7 +174,6 @@ export default async function VerticalPage({
         />
         <div className="contenedor">
           <BandaCta
-            variante="vidrio"
             titulo={T.cierre.titulo}
             accion={
               <BotonLink href={T.cierre.cta.href}>

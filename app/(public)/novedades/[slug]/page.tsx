@@ -119,7 +119,6 @@ export default async function NovedadPage({
 
       <div className="contenedor pb-12 md:pb-16">
         <BandaCta
-          variante="vidrio-en-mobile"
           titulo={T.cierre.titulo}
           accion={
             <BotonLink href={T.cierre.cta.href}>{T.cierre.cta.texto}</BotonLink>

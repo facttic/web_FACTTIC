@@ -194,6 +194,11 @@ export function Tarjeta({
 /**
  * Banda de conversión con borde punteado que cierra casi todas las páginas
  * ("¿Tenés algún proyecto en mente?", "¿Querés ser parte de la red?").
+ *
+ * Va siempre punteada: QA pidió el 10/8 que el componente tenga un solo
+ * estilo, así que las variantes de vidrio quedaron sin usar en todo el sitio.
+ * Se conservan porque son las que dibujan las maquetas mobile de Sumá tu coop
+ * y Novedades, que todavía no se revisaron.
  */
 export function BandaCta({
   titulo,

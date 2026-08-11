@@ -131,11 +131,12 @@ export default async function NuestrosServiciosPage() {
       </Seccion>
 
       {/*
-        La banda va sobre el sol naranja y lo deja ver a través del vidrio. El
-        fondo propio de este bloque no vino en la entrega —solo llegaron cinco—,
-        así que se usa el sol de "Trabajo con impacto", que es la misma forma y
-        el mismo naranja que muestra la maqueta. Queda anotado para cambiarlo
-        cuando diseño mande el que corresponde.
+        La banda va sobre el sol naranja, punteada como en el resto del sitio:
+        el componente tiene un solo estilo. El fondo propio de este bloque no
+        vino en la entrega —solo llegaron cinco—, así que se usa el sol de
+        "Trabajo con impacto", que es la misma forma y el mismo naranja que
+        muestra la maqueta. Queda anotado para cambiarlo cuando diseño mande el
+        que corresponde.
       */}
       <div className="relative isolate overflow-hidden pt-20 pb-12 md:pt-0 md:pb-16">
         <Animacion
@@ -144,7 +145,6 @@ export default async function NuestrosServiciosPage() {
         />
         <div className="contenedor">
           <BandaCta
-            variante="vidrio"
             alineacion="izquierda"
             titulo={T.metodologia.cierre.titulo}
             accion={

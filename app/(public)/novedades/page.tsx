@@ -126,9 +126,7 @@ export default async function NovedadesPage({
       </Seccion>
 
       <div className="contenedor pb-12 md:pb-16">
-        {/* Como en Sumá tu coop: de vidrio en mobile y punteada en desktop. */}
         <BandaCta
-          variante="vidrio-en-mobile"
           titulo={T.cierre.titulo}
           accion={
             <BotonLink href={T.cierre.cta.href}>{T.cierre.cta.texto}</BotonLink>

@@ -184,7 +184,6 @@ export default async function SobreFactticPage() {
 
       <div className="contenedor pb-12 md:pb-16">
         <BandaCta
-          variante="vidrio"
           titulo={T.cierre.titulo}
           accion={
             <BotonLink href={T.cierre.cta.href}>{T.cierre.cta.texto}</BotonLink>
