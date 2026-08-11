@@ -2,6 +2,7 @@
 
 import {
   CampoArchivo,
+  CampoCasilla,
   CampoTexto,
   Columna,
   Columnas,
@@ -56,6 +57,13 @@ export function FormularioSector({
             type="number"
             min={0}
             defaultValue={sector?.orden ?? ""}
+          />
+          <CampoCasilla
+            id="esDestacado"
+            name="esDestacado"
+            etiqueta="Destacado"
+            ayuda="Los destacados son el catálogo de la Federación: los únicos que muestran la Home y Nuestros servicios, y los únicos con pantalla propia. Los demás son los que carga cada cooperativa para su ficha."
+            defaultChecked={sector?.destacado}
           />
         </Columna>
 

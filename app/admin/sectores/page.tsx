@@ -30,7 +30,16 @@ export default async function SectoresPage() {
         }
       />
 
-      <Tabla columnas={["Orden", "Nombre", "Descripción", "Animación", ""]}>
+      <Tabla
+        columnas={[
+          "Orden",
+          "Nombre",
+          "Descripción",
+          "Destacado",
+          "Animación",
+          "",
+        ]}
+      >
         {sectores.map((sector) => (
           <Fila key={sector.id}>
             <Celda apagado={sector.orden === null}>{sector.orden ?? "—"}</Celda>
@@ -39,6 +48,9 @@ export default async function SectoresPage() {
               <span className="line-clamp-1 max-w-md">
                 {sector.descripcion || "falta"}
               </span>
+            </Celda>
+            <Celda apagado={!sector.destacado}>
+              {sector.destacado ? "sí" : "—"}
             </Celda>
             <Celda apagado={!sector.animacion}>
               {sector.animacion ? "sí" : "falta"}

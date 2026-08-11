@@ -32,6 +32,12 @@ export interface Servicio {
   nombre: string;
   descripcion?: string;
   orden?: number;
+  /**
+   * Los destacados son los del catálogo de la Federación, que es lo que se
+   * muestra en el sitio público. El resto los dan de alta las cooperativas
+   * para su propia ficha, y solo aparecen ahí.
+   */
+  esDestacado?: boolean;
   subservicios?: Subservicio[];
   createdAt?: string;
   updatedAt?: string;
@@ -42,6 +48,8 @@ export interface Sector {
   nombre: string;
   descripcion?: string;
   orden?: number;
+  /** Como en `Servicio`: solo los destacados salen en el sitio público. */
+  esDestacado?: boolean;
   /** Nombre de archivo servido por /api/files — resolver con `mediaUrl()`. */
   imageFileName?: string;
   /** Animación Lottie (JSON), también en /api/files. */

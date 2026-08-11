@@ -20,6 +20,8 @@ export interface Referencia {
 export interface Servicio extends Referencia {
   descripcion: string | null;
   orden: number;
+  /** Del catálogo de la Federación: es lo único que muestra el sitio. */
+  destacado: boolean;
   subservicios: { nombre: string; descripcion: string | null }[];
 }
 
@@ -28,6 +30,8 @@ export interface Sector extends Referencia {
   slug: string;
   descripcion: string | null;
   orden: number;
+  /** Del catálogo de la Federación: es lo único que muestra el sitio. */
+  destacado: boolean;
   /** URL lista para usar en un `<img>`, o null si no hay imagen cargada. */
   imagen: string | null;
   /** URL de la animación Lottie del sector, si tiene. */

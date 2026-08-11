@@ -52,6 +52,7 @@ export async function guardarServicio(
     nombre,
     descripcion: texto(datos, "descripcion"),
     ...(orden !== undefined ? { orden } : {}),
+    esDestacado: datos.get("esDestacado") === "on",
     subservicios: leerSubservicios(datos),
   });
 }

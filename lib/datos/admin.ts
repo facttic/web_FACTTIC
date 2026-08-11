@@ -107,6 +107,8 @@ export interface Sector {
   nombre: string;
   descripcion: string;
   orden: number | null;
+  /** Del catálogo de la Federación: es lo único que sale en el sitio. */
+  destacado: boolean;
   imagen: string | null;
   animacion: string | null;
 }
@@ -117,6 +119,7 @@ function aSector(api: Api.Sector): Sector {
     nombre: texto(api.nombre),
     descripcion: texto(api.descripcion),
     orden: api.orden ?? null,
+    destacado: api.esDestacado === true,
     imagen: mediaUrl(api.imageFileName),
     animacion: mediaUrl(api.lottieFileName),
   };
@@ -141,6 +144,8 @@ export interface Servicio {
   nombre: string;
   descripcion: string;
   orden: number | null;
+  /** Del catálogo de la Federación: es lo único que sale en el sitio. */
+  destacado: boolean;
   subservicios: Array<{ nombre: string; descripcion: string }>;
 }
 
@@ -150,6 +155,7 @@ function aServicio(api: Api.Servicio): Servicio {
     nombre: texto(api.nombre),
     descripcion: texto(api.descripcion),
     orden: api.orden ?? null,
+    destacado: api.esDestacado === true,
     subservicios: (api.subservicios ?? []).map((sub) => ({
       nombre: texto(sub.nombre),
       descripcion: texto(sub.descripcion),

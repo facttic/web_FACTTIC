@@ -60,6 +60,7 @@ export function aServicio(api: Api.Servicio): Dominio.Servicio {
     nombre: texto(api.nombre) ?? "Sin nombre",
     descripcion: texto(api.descripcion),
     orden: api.orden ?? 99,
+    destacado: api.esDestacado === true,
     subservicios: (api.subservicios ?? [])
       .map((s) => ({
         nombre: texto(s.nombre) ?? "",
@@ -77,6 +78,7 @@ export function aSector(api: Api.Sector): Dominio.Sector {
     slug: slugify(nombre),
     descripcion: texto(api.descripcion),
     orden: api.orden ?? 99,
+    destacado: api.esDestacado === true,
     imagen: mediaUrl(api.imageFileName),
     animacion: mediaUrl(api.lottieFileName),
   };

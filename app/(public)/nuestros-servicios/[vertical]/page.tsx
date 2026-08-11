@@ -14,7 +14,7 @@ import { acentoDeSector, animacionDeSector } from "@/lib/animaciones";
 import { SERVICIOS_PAGINA, VERTICALES as T } from "@/lib/contenido";
 import {
   getOrganizaciones,
-  getSectores,
+  getSectoresDestacados,
   getSectorPorSlug,
   getTecnologias,
 } from "@/lib/datos/catalogos";
@@ -29,8 +29,14 @@ import { getProyectos } from "@/lib/datos/proyectos";
  * y vive en `acentoDeSector`.
  */
 
+/*
+ * Solo las verticales de la Federación tienen pantalla propia. Los sectores
+ * que dan de alta las cooperativas describen lo suyo y se ven en su ficha, no
+ * acá: sin esto, cada uno abriría una vertical vacía —sin propuesta de valor,
+ * sin metodología y sin aliados—.
+ */
 export async function generateStaticParams() {
-  const sectores = await getSectores();
+  const sectores = await getSectoresDestacados();
   return sectores.map((sector) => ({ vertical: sector.slug }));
 }
 
@@ -41,7 +47,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { vertical } = await params;
   const sector = await getSectorPorSlug(vertical);
-  if (!sector) return {};
+  if (!sector?.destacado) return {};
   return {
     title: sector.nombre,
     description: T.descripciones[vertical] ?? sector.descripcion ?? undefined,
@@ -55,7 +61,7 @@ export default async function VerticalPage({
 }) {
   const { vertical } = await params;
   const sector = await getSectorPorSlug(vertical);
-  if (!sector) notFound();
+  if (!sector?.destacado) notFound();
 
   const [proyectos, tecnologias, aliados] = await Promise.all([
     getProyectos({ sector: sector.id, porPagina: 6 }),

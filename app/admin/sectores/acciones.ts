@@ -22,6 +22,7 @@ export async function guardarSector(
 
   const descripcion = texto(datos, "descripcion");
   const orden = numero(datos, "orden");
+  const esDestacado = datos.get("esDestacado") === "on";
   const imagen = archivo(datos, "imageFile");
   const animacion = archivo(datos, "lottieFile");
 
@@ -37,11 +38,17 @@ export async function guardarSector(
     form.set("nombre", nombre);
     if (descripcion) form.set("descripcion", descripcion);
     if (orden !== undefined) form.set("orden", String(orden));
+    form.set("esDestacado", String(esDestacado));
     if (imagen) form.set("imageFile", imagen);
     if (animacion) form.set("lottieFile", animacion);
     cuerpo = form;
   } else {
-    cuerpo = { nombre, descripcion, ...(orden !== undefined ? { orden } : {}) };
+    cuerpo = {
+      nombre,
+      descripcion,
+      ...(orden !== undefined ? { orden } : {}),
+      esDestacado,
+    };
   }
 
   return guardarEn(SECTORES, id, cuerpo);

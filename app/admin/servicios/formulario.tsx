@@ -5,6 +5,7 @@ import { cn } from "@/lib/cn";
 import { FOCO } from "@/components/ui/boton";
 import {
   BotonAdmin,
+  CampoCasilla,
   CampoTexto,
   Columna,
   Columnas,
@@ -59,6 +60,13 @@ export function FormularioServicio({
             type="number"
             min={0}
             defaultValue={servicio?.orden ?? ""}
+          />
+          <CampoCasilla
+            id="esDestacado"
+            name="esDestacado"
+            etiqueta="Destacado"
+            ayuda="Los destacados son el catálogo de la Federación: los únicos que muestran la Home y Nuestros servicios. Los demás son los que carga cada cooperativa para su ficha."
+            defaultChecked={servicio?.destacado}
           />
         </Columna>
 

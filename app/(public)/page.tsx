@@ -15,8 +15,8 @@ import { FONDOS, VIDEO_HERO } from "@/lib/animaciones";
 import { HOME } from "@/lib/contenido";
 import {
   getMetricasRed,
-  getSectores,
-  getServicios,
+  getSectoresDestacados,
+  getServiciosDestacados,
 } from "@/lib/datos/catalogos";
 import { getProyectosDestacados } from "@/lib/datos/proyectos";
 
@@ -42,9 +42,11 @@ import { getProyectosDestacados } from "@/lib/datos/proyectos";
  * desde el backoffice.
  */
 export default async function HomePage() {
+  // Solo el catálogo de la Federación: lo que cargan las cooperativas para su
+  // propia ficha no sale acá.
   const [sectores, servicios, destacados, metricas] = await Promise.all([
-    getSectores(),
-    getServicios(),
+    getSectoresDestacados(),
+    getServiciosDestacados(),
     getProyectosDestacados(2),
     getMetricasRed(),
   ]);

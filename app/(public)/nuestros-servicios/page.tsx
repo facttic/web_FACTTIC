@@ -16,8 +16,8 @@ import { FONDOS } from "@/lib/animaciones";
 import { SERVICIOS_PAGINA as T } from "@/lib/contenido";
 import {
   getOrganizaciones,
-  getSectores,
-  getServicios,
+  getSectoresDestacados,
+  getServiciosDestacados,
 } from "@/lib/datos/catalogos";
 
 export const metadata: Metadata = {
@@ -37,9 +37,10 @@ export const metadata: Metadata = {
  * de costado en pantallas chicas.
  */
 export default async function NuestrosServiciosPage() {
+  // Las verticales y los servicios de la Federación, no los de cada coop.
   const [sectores, servicios, aliados] = await Promise.all([
-    getSectores(),
-    getServicios(),
+    getSectoresDestacados(),
+    getServiciosDestacados(),
     getOrganizaciones(),
   ]);
 

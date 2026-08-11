@@ -28,7 +28,16 @@ export default async function ServiciosPage() {
         }
       />
 
-      <Tabla columnas={["Orden", "Nombre", "Descripción", "Subservicios", ""]}>
+      <Tabla
+        columnas={[
+          "Orden",
+          "Nombre",
+          "Descripción",
+          "Destacado",
+          "Subservicios",
+          "",
+        ]}
+      >
         {servicios.map((servicio) => (
           <Fila key={servicio.id}>
             <Celda apagado={servicio.orden === null}>
@@ -39,6 +48,9 @@ export default async function ServiciosPage() {
               <span className="line-clamp-1 max-w-sm">
                 {servicio.descripcion || "falta"}
               </span>
+            </Celda>
+            <Celda apagado={!servicio.destacado}>
+              {servicio.destacado ? "sí" : "—"}
             </Celda>
             <Celda apagado={servicio.subservicios.length === 0}>
               {servicio.subservicios.length || "—"}

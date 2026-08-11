@@ -55,6 +55,18 @@ function porOrden<T extends { orden: number }>(a: T, b: T): number {
   return a.orden - b.orden;
 }
 
+/**
+ * Sectores y servicios se cargan en dos niveles.
+ *
+ * Los **destacados** son el catálogo de la Federación: las tres verticales y
+ * los cinco servicios que muestran la Home y Nuestros servicios. Los demás los
+ * dan de alta las cooperativas para describir lo suyo, y solo aparecen a nivel
+ * cooperativa —Nuestra Red— y en los filtros de Proyectos, donde tiene sentido
+ * poder buscar por cualquiera.
+ *
+ * Por eso hay dos lecturas de cada uno: la completa y la del catálogo. Las
+ * pantallas públicas de la Federación piden la segunda.
+ */
 export const getSectores = cached(
   async (): Promise<Dominio.Sector[]> => {
     const sectores = await traerTodos<Api.Sector>("/api/sectores");
@@ -63,6 +75,11 @@ export const getSectores = cached(
   ["sectores"],
   { revalidate: TTL.catalogo, tags: ["sectores"] },
 );
+
+/** Las verticales de la Federación. */
+export async function getSectoresDestacados(): Promise<Dominio.Sector[]> {
+  return (await getSectores()).filter((sector) => sector.destacado);
+}
 
 export async function getSectorPorSlug(
   slug: string,
@@ -79,6 +96,11 @@ export const getServicios = cached(
   ["servicios"],
   { revalidate: TTL.catalogo, tags: ["servicios"] },
 );
+
+/** Los servicios del catálogo de la Federación. */
+export async function getServiciosDestacados(): Promise<Dominio.Servicio[]> {
+  return (await getServicios()).filter((servicio) => servicio.destacado);
+}
 
 export const getTecnologias = cached(
   async (): Promise<Dominio.Tecnologia[]> => {
