@@ -157,10 +157,12 @@ export default async function HomePage() {
             }
           />
           <Carrusel grilla="md:grid-cols-[2.06fr_1fr]" gap="gap-5">
-            {destacados.items.map((proyecto) => (
+            {destacados.items.map((proyecto, i) => (
               <CardProyecto
                 key={proyecto.id}
                 proyecto={proyecto}
+                // La primera es la ancha: la única que lleva la descripción.
+                destacada={i === 0}
                 className="w-[350px] shrink-0 snap-start md:w-auto"
               />
             ))}
