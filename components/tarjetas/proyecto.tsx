@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import type { Proyecto } from "@/lib/dominio/tipos";
-import { Chip, ChipSector } from "@/components/ui/chip";
+import { ChipCliente, ChipSector } from "@/components/ui/chip";
 import { Tarjeta } from "@/components/ui/seccion";
 import { IconoFlecha } from "@/components/ui/iconos";
 import { FOCO } from "@/components/ui/boton";
@@ -11,8 +11,8 @@ import { FOCO } from "@/components/ui/boton";
  *
  * La tarjeta tiene dos estados, como en el prototipo: en reposo se ve la imagen
  * grande con el título, y al pasar el mouse la imagen se achica para dejar
- * lugar a la descripción, el cliente, el sector y los servicios. La altura
- * total no cambia, así que la grilla no se mueve.
+ * lugar al cliente, el sector y los servicios —y a la descripción, solo en la
+ * destacada—. La altura total no cambia, así que la grilla no se mueve.
  *
  * Los títulos se acotan a dos líneas: vienen de la API sin límite de largo y,
  * sin eso, uno extenso desalinea toda la grilla. La anotación del diseño pide
@@ -61,21 +61,38 @@ function Portada({
   );
 }
 
-/** Datos que se revelan al pasar el mouse. */
-function Detalle({ proyecto }: { proyecto: Proyecto }) {
+/**
+ * Datos que se revelan al pasar el mouse.
+ *
+ * La descripción es lo único que separa las dos tarjetas: la de proyecto son
+ * imagen, título, etiquetas y servicios, y recién la destacada suma el texto.
+ *
+ * Las etiquetas van al pie —`mt-auto`— porque en la maqueta cierran la tarjeta:
+ * el alto no cambia entre reposo y hover, así que si el detalle se apila
+ * debajo del título queda un hueco muerto abajo.
+ */
+function Detalle({
+  proyecto,
+  conDescripcion,
+}: {
+  proyecto: Proyecto;
+  conDescripcion?: boolean;
+}) {
   const servicios = proyecto.servicios.map((s) => s.nombre).join(" · ");
 
   return (
-    <div className="space-y-5 pt-4">
-      {proyecto.desafio ? (
+    <div className="flex h-full flex-col gap-5 pt-4">
+      {conDescripcion && proyecto.desafio ? (
         <p className="text-p3 line-clamp-3 text-blanco/60">
           {proyecto.desafio}
         </p>
       ) : null}
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="mt-auto flex flex-wrap items-center justify-between gap-3">
         <span className="flex flex-wrap items-center gap-2">
-          {proyecto.cliente ? <Chip>{proyecto.cliente.nombre}</Chip> : null}
+          {proyecto.cliente ? (
+            <ChipCliente>{proyecto.cliente.nombre}</ChipCliente>
+          ) : null}
           {proyecto.sector ? (
             <ChipSector nombre={proyecto.sector.nombre} />
           ) : null}
@@ -97,11 +114,17 @@ function Detalle({ proyecto }: { proyecto: Proyecto }) {
 export function CardProyecto({
   proyecto,
   alto,
+  destacada,
   className,
 }: {
   proyecto: Proyecto;
   /** Alto propio de la pantalla: en las verticales la tarjeta es más baja. */
   alto?: string;
+  /**
+   * La tarjeta ancha de "Proyectos destacados", que es la única que muestra la
+   * descripción. En la angosta el texto no entra y el diseño no lo pide.
+   */
+  destacada?: boolean;
   className?: string;
 }) {
   return (
@@ -124,17 +147,22 @@ export function CardProyecto({
           )}
         />
         <div className="flex flex-1 flex-col justify-start p-6">
-          <h3 className="text-h4 line-clamp-2 text-balance">
+          <h3 className="text-h4 line-clamp-2 shrink-0 text-balance">
             {proyecto.nombre}
           </h3>
+          {/*
+            El detalle se despliega ocupando todo lo que sobra de la tarjeta
+            —de ahí el `flex-1`—, así el pie queda abajo en vez de dejar un
+            hueco entre las etiquetas y el borde.
+          */}
           <div
             className={cn(
-              "grid grid-rows-[0fr] transition-[grid-template-rows] duration-300",
+              "grid flex-1 grid-rows-[0fr] transition-[grid-template-rows] duration-300",
               "group-hover:grid-rows-[1fr] group-focus-visible:grid-rows-[1fr]",
             )}
           >
-            <div className="overflow-hidden">
-              <Detalle proyecto={proyecto} />
+            <div className="min-h-0 overflow-hidden">
+              <Detalle proyecto={proyecto} conDescripcion={destacada} />
             </div>
           </div>
         </div>
@@ -165,7 +193,7 @@ export function CardProyectoDetalle({
           <h3 className="text-h4 line-clamp-2 text-balance">
             {proyecto.nombre}
           </h3>
-          <Detalle proyecto={proyecto} />
+          <Detalle proyecto={proyecto} conDescripcion />
         </div>
       </Tarjeta>
     </Link>
@@ -221,9 +249,7 @@ export function FilaProyecto({
 
         <span className="hidden self-stretch border-l border-dotted border-punteado md:flex md:items-center md:pl-6">
           {proyecto.cliente ? (
-            <Chip className="border border-blanco/40 bg-transparent">
-              {proyecto.cliente.nombre}
-            </Chip>
+            <ChipCliente>{proyecto.cliente.nombre}</ChipCliente>
           ) : null}
         </span>
 
@@ -260,7 +286,9 @@ export function FilaProyecto({
       ) : null}
 
       <span className="flex flex-wrap items-center gap-3">
-        {proyecto.cliente ? <Chip>{proyecto.cliente.nombre}</Chip> : null}
+        {proyecto.cliente ? (
+          <ChipCliente>{proyecto.cliente.nombre}</ChipCliente>
+        ) : null}
         {proyecto.sector ? (
           <ChipSector nombre={proyecto.sector.nombre} />
         ) : null}

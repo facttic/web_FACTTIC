@@ -93,7 +93,9 @@ export function ProyectosDestacados({
             key={proyecto.id}
             proyecto={proyecto}
             alto="h-[310px]"
-            // El ritmo de la maqueta: una tarjeta ancha y una angosta.
+            // El ritmo de la maqueta: una tarjeta ancha y una angosta. La
+            // ancha es la destacada, la única que muestra la descripción.
+            destacada={i % 2 === 0}
             className={cn("shrink-0", i % 2 ? "w-[391px]" : "w-[808px]")}
           />
         ))}

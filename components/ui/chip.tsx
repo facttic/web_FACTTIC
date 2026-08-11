@@ -57,6 +57,33 @@ export function Chip({
   );
 }
 
+/**
+ * Chip de cliente: el único que va de contorno.
+ *
+ * En el board de Componentes la etiqueta del cliente es un rectángulo sin
+ * relleno con borde gris (`stroke #3C3C3C`), mientras que las de sector van
+ * rellenas y con el texto del color de la vertical. Tenerlo aparte evita que
+ * vuelvan a igualarse: el cliente nunca es un chip neutro.
+ */
+export function ChipCliente({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <Chip
+      className={cn(
+        "border border-gris-oscuro bg-transparent text-blanco",
+        className,
+      )}
+    >
+      {children}
+    </Chip>
+  );
+}
+
 /** Chip de sector que elige su color a partir del nombre. */
 export function ChipSector({
   nombre,
