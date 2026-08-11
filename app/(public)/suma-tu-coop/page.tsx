@@ -5,7 +5,9 @@ import { Carrusel } from "@/components/ui/carrusel";
 import { BloqueDesplegable } from "@/components/secciones/desplegables";
 import { CardRequisito } from "@/components/tarjetas/servicios";
 import { CardOportunidad } from "@/components/tarjetas/bloques";
-import { Estrella, SolConOrbita } from "@/components/ui/formas";
+import { Estrella } from "@/components/ui/formas";
+import { Animacion } from "@/components/ui/animacion";
+import { FONDOS } from "@/lib/animaciones";
 import { HOME, SUMA_TU_COOP as T } from "@/lib/contenido";
 
 export const metadata: Metadata = {
@@ -31,18 +33,21 @@ export default function SumaTuCoopPage() {
 
   return (
     <>
-      {/* El sol con su órbita punteada, arriba a la derecha del hero. Es Verde
-          (#8E8001), medido sobre el archivo, no el amarillo lima.
+      {/* El sol con su órbita punteada, arriba a la derecha del hero.
 
-          Va donde lo pone la maqueta: la órbita ocupa de 0 a 500 de la página
-          —o sea que su arco superior pasa por detrás del encabezado, que es
-          transparente— y termina 107px antes de "Sumate a FACTTIC". La
-          sección no puede recortar, o el círculo se corta arriba y abajo.
+          Es la misma animación que el hero de Servicios —"02-Para empresas" en
+          la entrega—: lo confirmó QA, así que la forma dibujada a mano que se
+          usaba mientras el fondo no llegaba ya no hace falta.
 
-          El fondo animado de esta página no vino en la entrega: mientras
-          tanto va esta versión propia con las formas de la identidad. */}
+          Las medidas salen de calzar la órbita sobre la maqueta: queda un
+          círculo de 458 centrado en (1115, 190) de la página, o sea que su
+          arco superior pasa por detrás del encabezado, que es transparente. La
+          sección no puede recortar, o el círculo se corta arriba. */}
       <section className="relative isolate">
-        <SolConOrbita className="pointer-events-none absolute -top-18 right-22 -z-10 hidden w-[500px] text-verde md:block" />
+        <Animacion
+          nombre={FONDOS.servicios}
+          className="pointer-events-none absolute -top-[123px] right-[89px] -z-10 hidden size-[477px] md:block"
+        />
         <Seccion className="pt-32 md:pt-40">
           <h1 className="text-display whitespace-pre-line">{T.hero.titulo}</h1>
           <p className="text-p1 mt-6 max-w-2xl text-blanco/80">
