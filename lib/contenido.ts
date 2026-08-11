@@ -547,7 +547,9 @@ export const SOBRE_FACTTIC = {
       {
         pregunta: "¿Querés formate\nen cooperativismo?",
         acento: "celeste" as Acento,
-        vidrioEnMobile: true,
+        // En mobile la maqueta la deja lisa y oscura —acá no hay animación
+        // detrás—; en desktop la pinta de celeste.
+        oscuraEnMobile: true,
       },
     ],
   },

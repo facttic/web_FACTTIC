@@ -144,7 +144,7 @@ export default function SumaTuCoopPage() {
               descripcion={item.descripcion}
               enlace={item.enlace}
               acento={item.acento}
-              vidrioEnMobile={"vidrioEnMobile" in item}
+              enMobile={"vidrioEnMobile" in item ? "vidrio" : undefined}
             />
           ))}
         </div>

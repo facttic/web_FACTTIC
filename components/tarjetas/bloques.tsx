@@ -213,7 +213,7 @@ export function CardOportunidad({
   descripcion,
   enlace,
   acento,
-  vidrioEnMobile = false,
+  enMobile,
   className,
 }: {
   indice: number;
@@ -222,12 +222,17 @@ export function CardOportunidad({
   enlace?: { texto: string; href: string };
   acento: Acento;
   /**
-   * En mobile la tarjeta es de vidrio en vez de ir pintada: deja pasar
-   * atenuada y difuminada la estrella naranja que tiene detrás. Lo pide la
-   * maqueta mobile de Sumá tu coop para la segunda de las tres, que en desktop
-   * sí es celeste y sin nada atrás.
+   * En mobile la segunda tarjeta no va pintada, y las dos maquetas la resuelven
+   * distinto:
+   *
+   *  - `vidrio`: deja pasar atenuada y difuminada la estrella naranja que tiene
+   *    detrás. Es la de Sumá tu coop.
+   *  - `oscura`: la misma caja pero sin nada atrás, así que va lisa con el
+   *    borde suave del sistema. Es la de Sobre Facttic.
+   *
+   * En desktop las dos se pintan con su acento.
    */
-  vidrioEnMobile?: boolean;
+  enMobile?: "vidrio" | "oscura";
   className?: string;
 }) {
   const numero = String(indice + 1).padStart(2, "0");
@@ -245,13 +250,24 @@ export function CardOportunidad({
         className={cn(
           "flex h-full flex-col justify-between p-6 transition-opacity duration-300",
           "group-hover:opacity-0 group-focus-within:opacity-0",
-          vidrioEnMobile
-            ? cn(
-                "textura-ruido borde-degradado rounded-xl bg-negro/45 text-blanco backdrop-blur-[1px]",
-                "md:bg-none md:backdrop-blur-none",
-                FONDO_ACENTO_DESKTOP[acento],
-              )
-            : FONDO_ACENTO[acento],
+          !enMobile && FONDO_ACENTO[acento],
+          /*
+            El borde en degradado es lo que le da al vidrio su trazo lila, así
+            que la variante lisa no lo lleva: va con el borde suave y nada más.
+            En desktop ninguna de las dos deja rastro —el acento pinta la caja
+            entera— y por eso el borde se apaga ahí.
+          */
+          enMobile === "vidrio" &&
+            cn(
+              "textura-ruido borde-degradado rounded-xl bg-negro/45 text-blanco backdrop-blur-[1px]",
+              "md:bg-none md:backdrop-blur-none",
+              FONDO_ACENTO_DESKTOP[acento],
+            ),
+          enMobile === "oscura" &&
+            cn(
+              "rounded-xl border border-borde bg-superficie text-blanco md:border-transparent",
+              FONDO_ACENTO_DESKTOP[acento],
+            ),
         )}
       >
         <p className="text-h4">{numero}.</p>

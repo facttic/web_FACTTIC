@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Grupo, Muestra } from "@/components/catalogo/muestra";
 import { Boton, BotonFlecha } from "@/components/ui/boton";
-import { Chip, ChipSector } from "@/components/ui/chip";
+import { Chip, ChipCliente, ChipSector } from "@/components/ui/chip";
 import { Acordeon } from "@/components/ui/acordeon";
 import { Tabs } from "@/components/ui/tabs";
 import { Campo, CampoTexto, Selector } from "@/components/ui/campo";
@@ -228,9 +228,9 @@ export default async function CatalogoPage() {
               <ChipSector nombre="Sector nuevo sin color" />
             </div>
           </Muestra>
-          <Muestra nombre="Chip neutro y de categoría">
+          <Muestra nombre="Chip de cliente y de categoría">
             <div className="flex flex-wrap items-center gap-3">
-              <Chip>Nombre cliente</Chip>
+              <ChipCliente>Nombre cliente</ChipCliente>
               <Chip tono="lila">Comunicados</Chip>
               <Chip tono="celeste">Novedades</Chip>
               <Chip tono="naranja">Agenda</Chip>

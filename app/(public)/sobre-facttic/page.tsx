@@ -97,7 +97,7 @@ export default async function SobreFactticPage() {
                 pregunta={tarjeta.pregunta}
                 descripcion={T.hero.bajada}
                 acento={tarjeta.acento}
-                vidrioEnMobile={"vidrioEnMobile" in tarjeta}
+                enMobile={"oscuraEnMobile" in tarjeta ? "oscura" : undefined}
                 className="md:sticky md:top-24"
               />
             ))}
