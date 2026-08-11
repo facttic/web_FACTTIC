@@ -79,10 +79,18 @@ export default async function HomePage() {
         // La primera sección respira más: en el SVG hay 112px entre el pie del
         // hero y el rótulo "INDUSTRIAS", contra los 64 del resto.
         <Seccion className="order-3 md:order-2 md:pt-28">
+          {/* El botón cambia de lugar entre maquetas: en desktop va a la
+              derecha del título y en mobile cierra la sección, a lo ancho. */}
           <EncabezadoSeccion
             rotulo={HOME.sectores.rotulo}
             titulo={HOME.sectores.titulo}
             alineacion="centro-en-mobile"
+            accionAlPie
+            accion={
+              <BotonLink href={HOME.sectores.cta.href}>
+                {HOME.sectores.cta.texto}
+              </BotonLink>
+            }
           />
           <div className="grid gap-10 md:grid-cols-3 md:gap-6">
             {sectores.map((sector, i) => (

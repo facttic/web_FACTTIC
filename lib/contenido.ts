@@ -24,6 +24,10 @@ export const HOME = {
   sectores: {
     rotulo: "Industrias",
     titulo: "Sectores\ncon los que trabajamos",
+    // El botón lo sumó diseño el 10/8, con una anotación de Desarrollo en el
+    // archivo: "Nuevo, va a sección 'nuestros servicios'". El texto todavía
+    // está en discusión —hay una anotación de Contenido al lado—.
+    cta: { texto: "Conocé nuestros servicios", href: "/nuestros-servicios" },
   },
 
   servicios: {
