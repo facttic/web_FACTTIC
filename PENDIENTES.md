@@ -119,6 +119,18 @@ llegue.
 
 ### Nuevos (sin enviar)
 
+- [ ] **36. Usuarios por cooperativa.** El plan es que cada coop pueda darse de
+      alta sus propios sectores y servicios —los que no son del catálogo de la
+      Federación— y asignárselos. Hoy no se puede: el usuario de la API tiene
+      solo `_id`, `username` y `email`, sin rol ni vínculo con una cooperativa,
+      así que cualquiera que entre al backoffice edita el catálogo entero. Hace
+      falta que el backend agregue el vínculo y los permisos; recién ahí se
+      puede armar la pantalla en `/admin`.
+
+      El resto ya está listo de este lado: `esDestacado` se lee, se filtra y se
+      edita desde el backoffice, y la ficha de cooperativa muestra todo lo que
+      tenga asignado, destacado o no.
+
 - [ ] **19. Borrar las imágenes de sector cargadas en el backoffice.** Son fotos
       de stock ajenas a la identidad (una de "RISK", otra de un diagrama de red
       genérico). Ahora quedan tapadas por las animaciones de diseño, pero
@@ -246,6 +258,13 @@ llevan indicaciones de implementación. Estado de las encontradas:
 - [ ] **Revisar las anotaciones del resto de las pantallas.** Se leyeron las de
       la Home y las del board de Componentes; faltan Proyectos, Sumá tu coop,
       Nuestra Red, Sobre Facttic, Comunicados, Contacto y 404.
+- [ ] **"Ver si va ese texto en el botón, o qué va mejor"** (anotación de
+      Contenido, Home, 10/8). Es el botón nuevo del bloque de Sectores, que hoy
+      dice "Conocé nuestros servicios" —el texto que está puesto en el
+      archivo—. El copy queda a confirmar; vive en `HOME.sectores.cta`.
+- [x] ~~"Nuevo, va a sección 'nuestros servicios'"~~ (Home, bloque de Sectores)
+      → implementado: botón a la derecha del título en desktop y al pie de las
+      tarjetas, a lo ancho, en mobile.
 - [x] ~~"Animación de conteo"~~ (Red contador) → implementado.
 - [x] ~~"Acá va un video"~~ (hero) → implementado con el video de Drive.
 - [x] ~~"Efecto typewriter"~~ (hero) → implementado.
@@ -310,9 +329,12 @@ llevan indicaciones de implementación. Estado de las encontradas:
       1. **Las tres cooperativas de prueba** ("Cooperativa A/B/C") ahora se
          listan en público, mezcladas con las 37 reales que se cargaron desde
          la maqueta. Conviene borrarlas —es parte del ítem 12—.
-      2. **Autoridades**: se cargaron las dos de la maqueta —Manuel Leiva y
-         Cecilia Muñoz Cancela—. Faltan las demás y toda la Sindicatura, cuya
-         solapa no se muestra hasta que haya alguien.
+      2. **Autoridades**: hoy hay cuatro cargadas —Manuel Leiva, Cecilia Muñoz
+         Cancela, María Cecilia Beccaria y Laura Arcuri—, todas del Consejo.
+         Falta toda la Sindicatura, cuya solapa no se muestra hasta que haya
+         alguien: **QA lo marcó el 10/8** ("falta la sindicatura"). Se resuelve
+         cargándola por el backoffice, con el cargo escrito "Síndica titular" /
+         "Síndico suplente", que es de donde el sitio deduce el órgano.
       3. **¿A dónde linkea cada cooperativa?** La anotación pide que la lista
          "linkee a la página de cada coop", pero en el prototipo esos nombres
          no tienen enlace —al hacer clic no pasa nada y no se resalta ninguna
@@ -326,8 +348,11 @@ llevan indicaciones de implementación. Estado de las encontradas:
          de 380 KB; el PNG original pesaba 2 MB y no tenía transparencia.
       5. **Los logos de "Somos parte de otros espacios cooperativos"**: la
          maqueta muestra Cooperar, patio, un centro cultural y mut_, pero el
-         recurso `organizaciones` hoy tiene los aliados de la Home. Confirmar
-         si son la misma lista o hacen falta dos.
+         recurso `organizaciones` hoy tiene los aliados de la Home. **QA lo
+         confirmó el 10/8: van los cuatro del archivo**, así que son dos listas
+         distintas. Hacen falta los logos y un recurso propio —o un campo que
+         separe aliados de espacios— porque hoy las dos secciones leen
+         `/api/organizaciones`.
 
 - [x] ~~**35. La API era demasiado lenta para compilar**~~ → resuelto con los
       GET públicos: sin el login de por medio las lecturas tardan ~0,2s y
