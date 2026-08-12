@@ -13,6 +13,11 @@ import { cn } from "@/lib/cn";
  *  - `scroll-pl` es lo que le devuelve el margen a la primera: sin eso, el
  *    `snap` alinea la tarjeta con el borde del área de scroll y se come el
  *    padding, dejándola pegada al canto.
+ *  - En grilla suelta el `overflow`. Un `overflow-x: auto` obliga al eje
+ *    vertical a recortar también —no se puede tener un eje visible y el otro
+ *    no—, y eso le comía el borde de arriba a las tarjetas cuando se inclinan
+ *    hacia el cursor. En mobile hace falta para el desplazamiento lateral; en
+ *    desktop no, porque ahí ya no hay scroll.
  */
 export function Carrusel({
   children,
@@ -30,7 +35,9 @@ export function Carrusel({
   className?: string;
 }) {
   const enGrilla =
-    desdeAncho === "sm" ? "sm:mx-0 sm:grid sm:px-0" : "md:mx-0 md:grid md:px-0";
+    desdeAncho === "sm"
+      ? "sm:mx-0 sm:grid sm:overflow-visible sm:px-0"
+      : "md:mx-0 md:grid md:overflow-visible md:px-0";
 
   return (
     <div
