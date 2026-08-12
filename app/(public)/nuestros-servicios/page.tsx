@@ -139,7 +139,10 @@ export default async function NuestrosServiciosPage() {
         muestra la maqueta. Queda anotado para cambiarlo cuando diseño mande el
         que corresponde.
       */}
-      <div className="relative isolate overflow-hidden pt-20 pb-12 md:pt-0 md:pb-16">
+      {/* Recorta solo a lo ancho: contiene la animación —que es más ancha que
+          la pantalla— sin cortarle el resplandor a la banda, que se derrama
+          por arriba y por abajo del panel. */}
+      <div className="relative isolate pt-20 pb-12 [overflow-x:clip] md:pt-0 md:pb-16">
         <Animacion
           nombre="beneficio-trabajo"
           className="pointer-events-none absolute -top-8 -left-52 -z-10 size-[30rem] opacity-80 blur-[2px] md:hidden"

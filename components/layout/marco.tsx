@@ -1,4 +1,5 @@
 import { ViewTransition } from "react";
+import { GrillaDeFondo } from "@/components/ui/grilla-viva";
 import { Header } from "./header";
 import { Footer } from "./footer";
 
@@ -12,6 +13,9 @@ import { Footer } from "./footer";
 export function MarcoPublico({ children }: { children: React.ReactNode }) {
   return (
     <>
+      {/* La grilla de puntos que se enciende alrededor del cursor, detrás de
+          todo el sitio. Solo en desktop: sin mouse no tiene nada que seguir. */}
+      <GrillaDeFondo />
       <Header />
       {/*
         El encabezado es fijo, así que el contenido arranca debajo. El hero se
