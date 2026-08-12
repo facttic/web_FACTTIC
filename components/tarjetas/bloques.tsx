@@ -49,7 +49,7 @@ export function CardBeneficioHover({
       className={cn("h-full", className)}
       // Menos que las otras: son cuatro en fila y con el mismo ángulo que una
       // tarjeta grande la fila entera se ve movida.
-      grados={4}
+      grados={6}
     >
       <div
         className={cn(
@@ -245,7 +245,7 @@ export function CardOportunidad({
   const numero = String(indice + 1).padStart(2, "0");
 
   return (
-    <Inclinar className={className} grados={5}>
+    <Inclinar className={className} grados={8}>
       <div
         className={cn(
           "group relative isolate overflow-hidden rounded-xl",

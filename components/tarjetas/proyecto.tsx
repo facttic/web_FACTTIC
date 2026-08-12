@@ -141,7 +141,7 @@ export function CardProyecto({
     >
       {/* Se inclina hacia el cursor. En reposo queda plana, así que la grilla
           se sigue viendo como en la maqueta. */}
-      <Inclinar>
+      <Inclinar grados={9}>
         <Tarjeta
           className={cn(
             "flex flex-col overflow-hidden",

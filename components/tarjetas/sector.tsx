@@ -125,9 +125,10 @@ export function CardSector({
 
   return (
     <Link href={href} className={cn("group block", FOCO, className)}>
-      {/* La tarjeta se inclina hacia el cursor: le da volumen sin salirse de
-          la maqueta, porque en reposo está perfectamente plana. */}
-      <Inclinar>
+      {/* Se inclina hacia donde está el cursor. Son tarjetas grandes, así que
+          aguantan más ángulo que las otras sin que el texto se deforme; en
+          reposo quedan planas y la maqueta no cambia. */}
+      <Inclinar grados={10}>
         <Tarjeta
           className={cn(
             "relative overflow-hidden transition-colors",
