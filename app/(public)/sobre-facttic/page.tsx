@@ -65,7 +65,15 @@ export default async function SobreFactticPage() {
             En mobile sigue recortada: ahí la franja es de 210x190 y la
             composición completa taparía la pantalla entera.
           */}
-          <div className="absolute top-0 -right-4 h-[190px] w-[210px] overflow-hidden md:right-auto md:left-[calc(100%+2.5rem-620px)] md:h-[520px] md:w-screen md:overflow-visible">
+          {/*
+            La máscara en diagonal es lo que la deja pasar por detrás del texto
+            sin pelearlo: los soles quedan a pleno arriba a la derecha, donde no
+            hay nada que leer, y de ahí se va apagando hasta el 22% por la
+            esquina de abajo a la izquierda, que es por donde cruza el título y
+            el párrafo. Se desvanece en vez de cortarse, así que no aparece
+            ninguna línea recta.
+          */}
+          <div className="absolute top-0 -right-4 h-[190px] w-[210px] overflow-hidden md:right-auto md:left-[calc(100%+2.5rem-620px)] md:h-[520px] md:w-screen md:overflow-visible md:[mask-image:linear-gradient(to_bottom_left,#000_45%,rgba(0,0,0,0.22)_85%)]">
             <Animacion
               nombre={FONDOS.sobreFacttic}
               className="absolute -top-[150px] -left-[110px] aspect-square w-[420px] opacity-70 md:-top-[437px] md:-left-[154px] md:w-[1200px] md:opacity-100"
