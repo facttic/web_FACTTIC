@@ -68,14 +68,24 @@ export function GrillaViva({
  *
  * Va fija al viewport y no estirada por toda la página: así el área que hay
  * que pintar es la de la ventana y no los cuatro mil píxeles que mide la Home,
- * y la luz sigue al cursor sin tener que corregir por el scroll. Escucha el
- * mouse en `window` porque el elemento no recibe eventos —está detrás de
- * todo—, y lo hace de forma pasiva y escribiendo dos variables CSS: no hay
- * render de React por movimiento.
+ * y la luz sigue al cursor sin tener que corregir por el scroll.
+ *
+ * El halo no es una máscara del tamaño de la pantalla, sino una caja de 440px
+ * con la suya, que se mueve con `transform` —o sea en el compositor—. Las dos
+ * decisiones son por Firefox: la máscara a pantalla completa y el
+ * `background-attachment: fixed` que tenía antes lo obligaban a rasterizar de
+ * nuevo en cada scroll, y medía trece cuadros largos contra tres.
+ *
+ * Escucha el mouse en `window` porque el elemento no recibe eventos —está
+ * detrás de todo—, de forma pasiva y escribiendo dos variables CSS una vez por
+ * cuadro: no hay render de React por movimiento.
  */
 export function GrillaDeFondo({
   paso = 32,
-  color = "var(--color-lila)",
+  // Blanco al 40%, el mismo tono de los punteados del sistema: la grilla
+  // apagada va al 10%, así que el halo se lee como los mismos puntos
+  // encendidos y no como una capa de color encima.
+  color = "var(--color-punteado)",
   className,
 }: {
   paso?: number;
@@ -113,28 +123,43 @@ export function GrillaDeFondo({
     };
   }, []);
 
+  const puntos = (tono: string) =>
+    `radial-gradient(circle at 1px 1px, ${tono} 1px, transparent 0)`;
+
   return (
     <div
       ref={caja}
       aria-hidden
       className={cn(
-        "pointer-events-none fixed inset-0 -z-10 hidden md:block",
+        "pointer-events-none fixed inset-0 -z-10 hidden overflow-hidden md:block",
         className,
       )}
     >
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, var(--color-borde) 1px, transparent 0)`,
+          backgroundImage: puntos("var(--color-borde)"),
           backgroundSize: `${paso}px ${paso}px`,
         }}
       />
       <div
-        className="absolute inset-0 motion-reduce:hidden"
+        className="absolute top-0 left-0 size-[440px] will-change-transform motion-reduce:hidden"
         style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, ${color} 1px, transparent 0)`,
+          backgroundImage: puntos(color),
           backgroundSize: `${paso}px ${paso}px`,
-          maskImage: `radial-gradient(220px circle at var(--x, -300px) var(--y, -300px), black 15%, transparent 72%)`,
+          /*
+            El patrón se ancla a la ventana corriendo su origen en sentido
+            contrario al de la caja, para que sus puntos caigan justo sobre los
+            de la capa apagada. Con `background-attachment: fixed` se lograba lo
+            mismo, pero Firefox repintaba las dos capas juntas en cada scroll:
+            trece cuadros largos contra tres.
+          */
+          backgroundPosition:
+            "calc(220px - var(--x, 0px)) calc(220px - var(--y, 0px))",
+          maskImage:
+            "radial-gradient(circle at center, black 12%, transparent 68%)",
+          transform:
+            "translate3d(var(--x, -600px), var(--y, -600px), 0) translate(-50%, -50%)",
         }}
       />
     </div>
