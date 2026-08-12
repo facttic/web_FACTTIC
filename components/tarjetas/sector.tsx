@@ -125,10 +125,15 @@ export function CardSector({
 
   return (
     <Link href={href} className={cn("group block", FOCO, className)}>
-      {/* Se inclina hacia donde está el cursor. Son tarjetas grandes, así que
-          aguantan más ángulo que las otras sin que el texto se deforme; en
-          reposo quedan planas y la maqueta no cambia. */}
-      <Inclinar grados={10}>
+      {/* Se inclina hacia donde está el cursor; en reposo queda plana y la
+          maqueta no cambia.
+
+          El ángulo es corto a propósito. Estas tarjetas no tienen relleno y su
+          borde es blanco pleno: una línea de 1px con ese contraste, rotada en
+          3D, se rasteriza a tramos claros y oscuros —el navegador la dibuja y
+          después la deforma como si fuera una textura—. Con cinco grados el
+          bandeado desaparece; con diez se veía de lejos. */}
+      <Inclinar grados={5}>
         <Tarjeta
           className={cn(
             "relative overflow-hidden transition-colors",

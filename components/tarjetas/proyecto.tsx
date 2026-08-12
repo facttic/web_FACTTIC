@@ -140,8 +140,13 @@ export function CardProyecto({
       className={cn("group block", FOCO, className)}
     >
       {/* Se inclina hacia el cursor. En reposo queda plana, así que la grilla
-          se sigue viendo como en la maqueta. */}
-      <Inclinar grados={9}>
+          se sigue viendo como en la maqueta.
+
+          El ángulo es corto por el borde: al pasar el mouse la tarjeta lo
+          cambia a blanco pleno, y una línea de 1px con ese contraste, rotada en
+          3D, se rasteriza a tramos claros y oscuros. Con seis grados el
+          bandeado desaparece; con diez se veía. */}
+      <Inclinar grados={6}>
         <Tarjeta
           className={cn(
             "flex flex-col overflow-hidden",
