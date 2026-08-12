@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { ViewTransition } from "react";
 import { EncabezadoSeccion, Seccion, BandaCta } from "@/components/ui/seccion";
 import { BotonLink } from "@/components/ui/boton";
 import { Acordeon, type ItemAcordeon } from "@/components/ui/acordeon";
@@ -71,13 +72,14 @@ export default async function ProyectoPage({
           El `viewTransitionName` la enlaza con la imagen de la tarjeta que
           trajo hasta acá: al abrir el proyecto, una se transforma en la otra. */}
       {portada ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={portada}
-          alt=""
-          style={{ viewTransitionName: `proyecto-${proyecto.slug}` }}
-          className="h-56 w-full object-cover md:h-[470px]"
-        />
+        <ViewTransition name={`proyecto-${proyecto.slug}`} share="morph">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={portada}
+            alt=""
+            className="h-56 w-full object-cover md:h-[470px]"
+          />
+        </ViewTransition>
       ) : null}
 
       <Seccion className={portada ? "pt-12 md:pt-16" : "pt-32 md:pt-40"}>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ViewTransition } from "react";
 import { cn } from "@/lib/cn";
 import type { Proyecto } from "@/lib/dominio/tipos";
 import { ChipCliente, ChipSector } from "@/components/ui/chip";
@@ -52,19 +53,25 @@ function Portada({
   }
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={proyecto.portada}
-      alt=""
-      /*
-       * El nombre lo comparte con la portada del detalle: al abrir el proyecto
-       * el navegador transforma una imagen en la otra en vez de cortar. Tiene
-       * que ser único en la página, y el slug ya lo es.
-       */
-      style={{ viewTransitionName: `proyecto-${proyecto.slug}` }}
-      className={cn("object-cover", className)}
-      loading="lazy"
-    />
+    /*
+     * El nombre lo comparte con la portada del detalle: al abrir el proyecto,
+     * una imagen se transforma en la otra en vez de cortar. Va con el
+     * componente de React y no con `view-transition-name` en CSS, porque el
+     * de CSS solo actúa cuando el navegador cambia de documento y acá la
+     * navegación la resuelve el router del lado del cliente.
+     *
+     * `share="morph"` es lo que le pone la clase al grupo, para poder ajustar
+     * la curva y la duración desde `globals.css`.
+     */
+    <ViewTransition name={`proyecto-${proyecto.slug}`} share="morph">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={proyecto.portada}
+        alt=""
+        className={cn("object-cover", className)}
+        loading="lazy"
+      />
+    </ViewTransition>
   );
 }
 
