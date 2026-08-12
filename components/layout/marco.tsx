@@ -1,3 +1,4 @@
+import { ViewTransition } from "react";
 import { Header } from "./header";
 import { Footer } from "./footer";
 
@@ -17,7 +18,17 @@ export function MarcoPublico({ children }: { children: React.ReactNode }) {
         mete por detrás con un margen negativo, para que el video llegue hasta
         el borde superior como en el diseño.
       */}
-      <main className="flex-1 pt-[72px]">{children}</main>
+      {/*
+        El contenido va envuelto para que el cambio de pantalla se anime. React
+        solo dispara la transición si hay un `ViewTransition` en juego: sin
+        esto, la única navegación que se animaba era la que abre un proyecto,
+        que es donde estaba el morph de la portada.
+
+        La animación en sí —cuánto dura y cómo entra— vive en `globals.css`.
+      */}
+      <ViewTransition>
+        <main className="flex-1 pt-[72px]">{children}</main>
+      </ViewTransition>
       <Footer />
     </>
   );
