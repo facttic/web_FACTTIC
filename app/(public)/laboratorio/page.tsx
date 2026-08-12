@@ -7,7 +7,7 @@ import { GrillaViva } from "@/components/ui/grilla-viva";
 import { HazDeBorde } from "@/components/ui/haz";
 import { PasosFijos } from "@/components/secciones/pasos-fijos";
 import { Acordeon } from "@/components/ui/acordeon";
-import { AcordeonPlop } from "@/components/ui/acordeon-plop";
+import { AcordeonVariante } from "@/components/ui/acordeon-variantes";
 import { Inclinar } from "@/components/ui/inclinar";
 import { Imantar } from "@/components/ui/imantar";
 import { Boton } from "@/components/ui/boton";
@@ -141,17 +141,43 @@ export default async function LaboratorioPage() {
 
       <Ficha
         numero="05"
-        titulo="El acordeón que hace plop"
-        nota="El de la izquierda es el que está hoy en Nuestros servicios: abre y ya. El de la derecha crece con un resorte, pasa de largo y se acomoda. Abrí y cerrá los dos."
+        titulo="Cinco maneras de abrir el acordeón"
+        nota="El primero es el que está hoy en Nuestros servicios: abre y ya. Abrí y cerrá los otros cuatro para comparar. El plop rebota; los tres siguientes no, y por eso se sienten más caros."
       >
-        <div className="grid gap-10 md:grid-cols-2">
+        <div className="grid gap-x-10 gap-y-12 md:grid-cols-2">
           <div>
             <p className="text-p3 mb-4 text-blanco/40">Como está hoy</p>
             <Acordeon items={itemsAcordeon} inicial={null} />
           </div>
           <div>
-            <p className="text-p3 mb-4 text-lila">Con plop</p>
-            <AcordeonPlop items={itemsAcordeon} inicial={null} />
+            <p className="text-p3 mb-4 text-blanco/40">Plop — crece y rebota</p>
+            <AcordeonVariante items={itemsAcordeon} efecto="plop" inicial={null} />
+          </div>
+          <div>
+            <p className="text-p3 mb-4 text-lila">
+              Suave — arranca rápido y frena largo
+            </p>
+            <AcordeonVariante items={itemsAcordeon} efecto="suave" inicial={null} />
+          </div>
+          <div>
+            <p className="text-p3 mb-4 text-lila">
+              Líneas — el texto sube palabra por palabra
+            </p>
+            <AcordeonVariante
+              items={itemsAcordeon}
+              efecto="lineas"
+              inicial={null}
+            />
+          </div>
+          <div>
+            <p className="text-p3 mb-4 text-lila">
+              Barrido — se descubre de arriba abajo, sin mover nada
+            </p>
+            <AcordeonVariante
+              items={itemsAcordeon}
+              efecto="barrido"
+              inicial={null}
+            />
           </div>
         </div>
       </Ficha>
