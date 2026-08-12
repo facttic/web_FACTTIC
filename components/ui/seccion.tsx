@@ -248,8 +248,9 @@ export function BandaCta({
         variante === "punteada" && "border-dashed border-borde-pleno",
         // 113px de alto en el SVG: el botón mide 53 y quedan 30 arriba y abajo.
         "md:flex-row md:items-center md:justify-between md:gap-6 md:px-10 md:py-7.5 md:text-left",
-        // Contiene el haz que recorre el borde.
-        "relative isolate overflow-hidden",
+        // Contiene el haz que recorre el borde. Sin `overflow-hidden`: el
+        // resplandor se derrama fuera del panel, que es donde se ve.
+        "relative isolate",
         className,
       )}
     >

@@ -8,8 +8,7 @@ import { Servicios } from "@/components/secciones/servicios";
 import { ServiciosMobile } from "@/components/secciones/servicios-mobile";
 import { CardSector } from "@/components/tarjetas/sector";
 import { CardProyecto } from "@/components/tarjetas/proyecto";
-import { CardBeneficioHover } from "@/components/tarjetas/bloques";
-import { RedViva } from "@/components/secciones/red-viva";
+import { CardBeneficioHover, CardMetrica } from "@/components/tarjetas/bloques";
 import { AlEntrar } from "@/components/ui/al-entrar";
 import { Animacion } from "@/components/ui/animacion";
 import { Carrusel } from "@/components/ui/carrusel";
@@ -86,6 +85,7 @@ export default async function HomePage() {
           {/* El botón cambia de lugar entre maquetas: en desktop va a la
               derecha del título y en mobile cierra la sección, a lo ancho. */}
           <EncabezadoSeccion
+            className="revelar-al-entrar"
             rotulo={HOME.sectores.rotulo}
             titulo={HOME.sectores.titulo}
             alineacion="centro-en-mobile"
@@ -136,6 +136,7 @@ export default async function HomePage() {
 
       <Seccion className="order-5 md:order-4">
         <EncabezadoSeccion
+          className="revelar-al-entrar"
           rotulo={HOME.metodologia.rotulo}
           titulo={HOME.metodologia.titulo}
           alineacion="centro-en-mobile"
@@ -151,6 +152,7 @@ export default async function HomePage() {
       {destacados.items.length ? (
         <Seccion className="order-10 md:order-5">
           <EncabezadoSeccion
+            className="revelar-al-entrar"
             rotulo={HOME.proyectos.rotulo}
             titulo={HOME.proyectos.titulo}
             alineacion="centro-en-mobile"
@@ -180,7 +182,7 @@ export default async function HomePage() {
       ) : null}
 
       {/* Va suelta: en mobile cierra la metodología y en desktop, los proyectos. */}
-      <div className="contenedor order-6 pb-16 md:order-6 md:pb-24">
+      <div className="revelar-al-entrar contenedor order-6 pb-16 md:order-6 md:pb-24">
         <BandaCta
           titulo={HOME.proyectos.cierre.titulo}
           accion={
@@ -229,6 +231,7 @@ export default async function HomePage() {
 
       <Seccion className="order-8">
         <EncabezadoSeccion
+          className="revelar-al-entrar"
           rotulo={HOME.beneficios.rotulo}
           titulo={HOME.beneficios.titulo}
           alineacion="centro-en-mobile"
@@ -265,6 +268,7 @@ export default async function HomePage() {
 
       <Seccion className="order-9">
         <EncabezadoSeccion
+          className="revelar-al-entrar"
           rotulo={HOME.red.rotulo}
           titulo={HOME.red.titulo}
           alineacion="centro-en-mobile"
@@ -273,19 +277,33 @@ export default async function HomePage() {
             <BotonLink href={HOME.red.cta.href}>{HOME.red.cta.texto}</BotonLink>
           }
         />
-        {/* El momento de la página: las tres métricas enlazadas por los haces
-            que dibujan la federación. */}
-        <RedViva
-          metricas={metricas}
-          etiquetas={{
-            profesionales: "Profesionales",
-            cooperativas: "Cooperativas",
-            provincias: "Provincias",
-          }}
-        />
+        <Carrusel grilla="md:grid-cols-3" gap="gap-10 md:gap-6">
+          {/* Un color por métrica, como en el board: lila, lima y naranja. */}
+          <AlEntrar indice={0} className="shrink-0">
+            <CardMetrica
+              rotulo="Profesionales"
+              valor={metricas.profesionales}
+              acentoHover="lila"
+            />
+          </AlEntrar>
+          <AlEntrar indice={1} className="shrink-0">
+            <CardMetrica
+              rotulo="Cooperativas"
+              valor={metricas.cooperativas}
+              acentoHover="amarillo"
+            />
+          </AlEntrar>
+          <AlEntrar indice={2} className="shrink-0">
+            <CardMetrica
+              rotulo="Provincias"
+              valor={metricas.provincias}
+              acentoHover="naranja"
+            />
+          </AlEntrar>
+        </Carrusel>
       </Seccion>
 
-      <div className="contenedor order-11 pb-16 md:order-10 md:pb-24">
+      <div className="revelar-al-entrar contenedor order-11 pb-16 md:order-10 md:pb-24">
         <BandaCta
           titulo={HOME.red.cierre.titulo}
           accion={

@@ -331,10 +331,6 @@
   animation: girar 120s linear infinite;
 }
 
-@utility animate-girar-medio {
-  animation: girar 60s linear infinite;
-}
-
 /**
  * Acercamiento lento y continuo. Es el "Zoom in en la img" que piden las
  * anotaciones de Contacto: la esfera respira en vez de quedarse quieta.
@@ -372,7 +368,12 @@
 @keyframes revelar {
   from {
     opacity: 0;
-    transform: translateY(1.5rem);
+    /*
+     * El recorrido es largo a propósito —80px y una escala corta—: con menos,
+     * la entrada termina antes de que la persona llegue a mirar el bloque y el
+     * efecto no se percibe. Las dos son `transform`, o sea compositor puro.
+     */
+    transform: translateY(5rem) scale(0.94);
   }
 }
 
@@ -387,9 +388,13 @@
     @media not (prefers-reduced-motion: reduce) {
       animation: revelar linear both;
       animation-timeline: view();
-      /* Termina de entrar cuando lleva un cuarto de pantalla recorrido. */
-      animation-range: entry 0% cover 25%;
-      animation-delay: calc(var(--i, 0) * 90ms);
+      /*
+       * Arranca apenas asoma y termina cuando lleva media pantalla recorrida:
+       * el tramo largo es lo que hace que la entrada se vea mientras se
+       * scrollea en vez de resolverse antes de llegar.
+       */
+      animation-range: entry 0% cover 45%;
+      animation-delay: calc(var(--i, 0) * 120ms);
     }
   }
 }
@@ -408,32 +413,17 @@
   }
 }
 
-/** Traza una línea a medida que su bloque sube por la pantalla. */
-@utility trazar-al-bajar {
-  @supports (animation-timeline: view()) {
-    @media not (prefers-reduced-motion: reduce) {
-      animation: trazar linear both;
-      animation-timeline: view();
-      animation-range: entry 20% cover 60%;
-    }
-  }
-}
-
 @keyframes paralaje {
+  /*
+   * La escala se mantiene corta: el fondo del hero es un video a pantalla
+   * completa y ampliarlo obliga al compositor a rehacer una superficie enorme
+   * en cada cuadro. Con 8% el desplazamiento se lee igual y no cuesta.
+   */
   from {
-    transform: translateY(-4%) scale(1.06);
+    transform: translateY(-8%) scale(1.08);
   }
   to {
-    transform: translateY(4%) scale(1);
-  }
-}
-
-@keyframes trazar {
-  from {
-    clip-path: inset(0 0 100% 0);
-  }
-  to {
-    clip-path: inset(0 0 0 0);
+    transform: translateY(8%) scale(1);
   }
 }
 
@@ -500,6 +490,13 @@ body {
   color: var(--color-texto);
   font-family: var(--font-mono);
   -webkit-font-smoothing: antialiased;
+  /*
+   * `clip` y no `hidden`: recorta lo que se derrama de costado —el resplandor
+   * de las bandas, las formas de la identidad— sin convertir al body en un
+   * contenedor de scroll, que es lo que rompe `position: sticky` y el
+   * desplazamiento a un ancla.
+   */
+  overflow-x: clip;
 }
 
 ::selection {
