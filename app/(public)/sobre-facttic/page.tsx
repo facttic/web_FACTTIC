@@ -42,7 +42,12 @@ export default async function SobreFactticPage() {
 
   return (
     <>
-      <section className="relative isolate overflow-hidden">
+      {/* Recorta solo a lo ancho: `overflow-x: clip` contiene el eje que
+          importa —el que le daría ancho de más a la página— y deja que la
+          animación siga hacia abajo por detrás de lo que viene. Con
+          `overflow-hidden` los dos ejes cortan, y la composición quedaba
+          cercenada en seco donde termina el hero. */}
+      <section className="relative isolate [overflow-x:clip]">
         {/*
           El envoltorio lleva la clase del contenedor para que la animación se
           ate al borde derecho del contenido y no al de la ventana: en

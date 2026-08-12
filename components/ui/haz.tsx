@@ -29,11 +29,14 @@ export function HazDeBorde({
 }) {
   return (
     /*
-      El recorte es solo horizontal y con margen. `overflow-x: clip` es la única
-      forma de contener un eje dejando el otro libre —con `hidden` el navegador
-      fuerza los dos—, y los 5rem de `overflow-clip-margin` le dan al resplandor
-      lugar de sobra para derramarse fuera del borde antes de cortarse. Arriba y
-      abajo no se recorta nada.
+      `overflow: clip` con margen: el resplandor se derrama 5rem hacia afuera
+      del panel —más de lo que mide su halo, así que nunca se lo ve cortado— y
+      recién ahí el navegador corta. Tiene que ser `clip` en los dos ejes: con
+      `clip` en uno solo, el margen no se aplica y el corte vuelve al borde.
+
+      Y tiene que ser `clip` y no `hidden`: `clip` no convierte al elemento en
+      un contenedor de scroll, así que lo que se pinta en ese margen no le
+      agrega ancho a la página.
 
       Así no hace falta ningún `overflow` global: uno en el body o en el main
       cambia el contexto contra el que se resuelven los `backdrop-filter`, y en
@@ -43,7 +46,7 @@ export function HazDeBorde({
       aria-hidden
       className={cn(
         "pointer-events-none absolute inset-0 rounded-[inherit]",
-        "[overflow-clip-margin:5rem] [overflow-x:clip]",
+        "[overflow-clip-margin:5rem] [overflow:clip]",
         className,
       )}
     >
