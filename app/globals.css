@@ -504,6 +504,13 @@
  * parpadeo. Este es más largo, con la curva del sistema —sale rápido y frena—,
  * y la pantalla que entra sube un poco mientras aparece. La que se va no se
  * mueve: si las dos se desplazan, el cruce se lee como un salto.
+ *
+ * Solo `opacity` y `transform`, que corren en el compositor. Se probó sumarle
+ * un desenfoque al cruce y sale caro: medido alternando en la misma sesión,
+ * un blur de 6px sobre la pantalla entera duplica los cuadros largos de la
+ * navegación (22 contra 11) y baja los cuadros dibujados un 15%. Con 3px no
+ * mejora: el costo no está en el radio sino en filtrar una superficie del
+ * tamaño de la ventana.
  */
 @keyframes entrar-vista {
   from {
