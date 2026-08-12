@@ -26,8 +26,9 @@ function Ilustracion({ sector }: { sector: Sector }) {
   // En el board la ilustración mide 235px y va centrada, no a todo el ancho.
   const medida = "size-[177px] md:size-[235px]";
 
+  // Sin bucle: corre al entrar y de nuevo al pasar el mouse por la tarjeta.
   if (animacion) {
-    return <Animacion nombre={animacion} className={medida} />;
+    return <Animacion nombre={animacion} bucle={false} className={medida} />;
   }
 
   if (!sector.imagen) {

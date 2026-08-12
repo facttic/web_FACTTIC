@@ -67,12 +67,15 @@ export default async function ProyectoPage({
 
   return (
     <>
-      {/* La portada cruza la pantalla de punta a punta, como en la maqueta. */}
+      {/* La portada cruza la pantalla de punta a punta, como en la maqueta.
+          El `viewTransitionName` la enlaza con la imagen de la tarjeta que
+          trajo hasta acá: al abrir el proyecto, una se transforma en la otra. */}
       {portada ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={portada}
           alt=""
+          style={{ viewTransitionName: `proyecto-${proyecto.slug}` }}
           className="h-56 w-full object-cover md:h-[470px]"
         />
       ) : null}

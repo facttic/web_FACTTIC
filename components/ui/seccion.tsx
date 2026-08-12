@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
+import { HazDeBorde } from "./haz";
 
 /**
  * Piezas de estructura que se repiten en todas las pantallas: el rótulo con el
@@ -247,9 +248,14 @@ export function BandaCta({
         variante === "punteada" && "border-dashed border-borde-pleno",
         // 113px de alto en el SVG: el botón mide 53 y quedan 30 arriba y abajo.
         "md:flex-row md:items-center md:justify-between md:gap-6 md:px-10 md:py-7.5 md:text-left",
+        // Contiene el haz que recorre el borde.
+        "relative isolate overflow-hidden",
         className,
       )}
     >
+      {/* Un punto de luz da vueltas por el borde punteado. Es lo único que se
+          mueve en la banda: el resto queda quieto, como en la maqueta. */}
+      <HazDeBorde duracion={9} />
       <p className="text-h2 text-balance">{titulo}</p>
       <div className="shrink-0">{accion}</div>
     </div>

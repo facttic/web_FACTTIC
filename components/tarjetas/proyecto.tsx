@@ -55,6 +55,12 @@ function Portada({
     <img
       src={proyecto.portada}
       alt=""
+      /*
+       * El nombre lo comparte con la portada del detalle: al abrir el proyecto
+       * el navegador transforma una imagen en la otra en vez de cortar. Tiene
+       * que ser único en la página, y el slug ya lo es.
+       */
+      style={{ viewTransitionName: `proyecto-${proyecto.slug}` }}
       className={cn("object-cover", className)}
       loading="lazy"
     />

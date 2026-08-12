@@ -355,6 +355,129 @@
   }
 }
 
+/**
+ * Movimiento atado al scroll, sin JavaScript.
+ *
+ * `animation-timeline: view()` hace que el progreso de la animación lo marque
+ * el recorrido del elemento por la pantalla en vez del reloj. Corre en el
+ * compositor —igual que el scroll—, así que no compite con nada en el hilo
+ * principal y no puede trabar la página.
+ *
+ * Todo va dentro de `@supports`: Chrome, Edge y Safari 26 lo tienen; Firefox
+ * lo mantiene detrás de un flag —está en Interop 2026—, y ahí el contenido
+ * simplemente se ve completo y quieto, que es como está el sitio hoy. Sin la
+ * guarda, los elementos quedarían invisibles en los navegadores sin soporte:
+ * el estado inicial de la animación nunca se aplicaría.
+ */
+@keyframes revelar {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+}
+
+/**
+ * Entrada del bloque. `--i` escalona a los hermanos de una grilla: la segunda
+ * tarjeta entra 90ms después de la primera. Se pasa por `style` desde el
+ * componente; cuando `sibling-index()` llegue a todos los navegadores, esto se
+ * calcula solo y la prop desaparece.
+ */
+@utility revelar-al-entrar {
+  @supports (animation-timeline: view()) {
+    @media not (prefers-reduced-motion: reduce) {
+      animation: revelar linear both;
+      animation-timeline: view();
+      /* Termina de entrar cuando lleva un cuarto de pantalla recorrido. */
+      animation-range: entry 0% cover 25%;
+      animation-delay: calc(var(--i, 0) * 90ms);
+    }
+  }
+}
+
+/**
+ * Fondo que se mueve más lento que el contenido. El recorrido es corto a
+ * propósito: el paralaje llamativo marea y pelea con el scroll del sistema.
+ */
+@utility paralaje-fondo {
+  @supports (animation-timeline: view()) {
+    @media not (prefers-reduced-motion: reduce) {
+      animation: paralaje linear both;
+      animation-timeline: view();
+      animation-range: cover;
+    }
+  }
+}
+
+/** Traza una línea a medida que su bloque sube por la pantalla. */
+@utility trazar-al-bajar {
+  @supports (animation-timeline: view()) {
+    @media not (prefers-reduced-motion: reduce) {
+      animation: trazar linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 60%;
+    }
+  }
+}
+
+@keyframes paralaje {
+  from {
+    transform: translateY(-4%) scale(1.06);
+  }
+  to {
+    transform: translateY(4%) scale(1);
+  }
+}
+
+@keyframes trazar {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/**
+ * Punto de luz recorriendo el contorno de una caja.
+ *
+ * `offset-path: rect()` sigue el borde sin que haya que medir nada: la caja
+ * cambia de ancho y el recorrido se adapta solo. El radio coincide con el de
+ * las bandas (`rounded-xl`, 12px).
+ */
+@keyframes recorrer-borde {
+  from {
+    offset-distance: 0%;
+  }
+  to {
+    offset-distance: 100%;
+  }
+}
+
+@utility recorre-el-borde {
+  offset-path: rect(0 auto auto 0 round 12px);
+  animation: recorrer-borde 9s linear infinite;
+}
+
+/**
+ * Transición entre páginas.
+ *
+ * Con esta regla el navegador cruza las dos pantallas al navegar dentro del
+ * sitio, y los elementos que comparten `view-transition-name` —la portada de un
+ * proyecto y la foto de su detalle— se transforman uno en otro en vez de
+ * cortar. Donde no hay soporte, la navegación es la de siempre.
+ */
+@view-transition {
+  navigation: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
 /** Listas que se desplazan de costado en mobile sin mostrar la barra. */
 @utility scroll-limpio {
   scrollbar-width: none;

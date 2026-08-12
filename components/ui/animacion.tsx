@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
+import type { LottieRefCurrentProps } from "lottie-react";
 import { cn } from "@/lib/cn";
 
 /**
@@ -27,9 +28,15 @@ export function Animacion({
   /** Nombre del archivo en public/animaciones, sin extensión. */
   nombre: string;
   className?: string;
+  /**
+   * En bucle mientras esté en pantalla. Es lo que corresponde a los fondos,
+   * que son atmósfera; las ilustraciones de las tarjetas van con `false` para
+   * que corran una vez al entrar y de nuevo al pasarles el mouse.
+   */
   bucle?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const lottie = useRef<LottieRefCurrentProps>(null);
   const [datos, setDatos] = useState<unknown>(null);
   const [visible, setVisible] = useState(false);
 
@@ -74,10 +81,27 @@ export function Animacion({
     typeof window !== "undefined" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  /*
+   * Sin bucle la animación corre una vez al entrar y vuelve a correr cuando el
+   * mouse pasa por encima: la ilustración deja de girar en el vacío y responde
+   * a la persona. Además es lo que baja el costo —cuatro Lottie en bucle
+   * permanente mantienen el hilo principal despierto todo el tiempo—.
+   */
+  const reproducir = () => {
+    if (menosMovimiento || bucle) return;
+    lottie.current?.goToAndPlay(0);
+  };
+
   return (
-    <div ref={ref} className={cn("relative", className)} aria-hidden>
+    <div
+      ref={ref}
+      className={cn("relative", className)}
+      aria-hidden
+      onMouseEnter={reproducir}
+    >
       {datos ? (
         <Lottie
+          lottieRef={lottie}
           animationData={datos}
           loop={bucle && !menosMovimiento}
           autoplay={!menosMovimiento}

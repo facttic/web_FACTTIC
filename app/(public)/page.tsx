@@ -8,7 +8,9 @@ import { Servicios } from "@/components/secciones/servicios";
 import { ServiciosMobile } from "@/components/secciones/servicios-mobile";
 import { CardSector } from "@/components/tarjetas/sector";
 import { CardProyecto } from "@/components/tarjetas/proyecto";
-import { CardBeneficioHover, CardMetrica } from "@/components/tarjetas/bloques";
+import { CardBeneficioHover } from "@/components/tarjetas/bloques";
+import { RedViva } from "@/components/secciones/red-viva";
+import { AlEntrar } from "@/components/ui/al-entrar";
 import { Animacion } from "@/components/ui/animacion";
 import { Carrusel } from "@/components/ui/carrusel";
 import { FONDOS, VIDEO_HERO } from "@/lib/animaciones";
@@ -96,12 +98,13 @@ export default async function HomePage() {
           />
           <div className="grid gap-10 md:grid-cols-3 md:gap-6">
             {sectores.map((sector, i) => (
-              <CardSector
-                key={sector.id}
-                sector={sector}
-                indice={i}
-                href={`/nuestros-servicios/${sector.slug}`}
-              />
+              <AlEntrar key={sector.id} indice={i}>
+                <CardSector
+                  sector={sector}
+                  indice={i}
+                  href={`/nuestros-servicios/${sector.slug}`}
+                />
+              </AlEntrar>
             ))}
           </div>
         </Seccion>
@@ -160,13 +163,17 @@ export default async function HomePage() {
           />
           <Carrusel grilla="md:grid-cols-[2.06fr_1fr]" gap="gap-5">
             {destacados.items.map((proyecto, i) => (
-              <CardProyecto
+              <AlEntrar
                 key={proyecto.id}
-                proyecto={proyecto}
-                // La primera es la ancha: la única que lleva la descripción.
-                destacada={i === 0}
+                indice={i}
                 className="w-[350px] shrink-0 snap-start md:w-auto"
-              />
+              >
+                <CardProyecto
+                  proyecto={proyecto}
+                  // La primera es la ancha: la única que lleva la descripción.
+                  destacada={i === 0}
+                />
+              </AlEntrar>
             ))}
           </Carrusel>
         </Seccion>
@@ -233,20 +240,25 @@ export default async function HomePage() {
           }
         />
         <Carrusel grilla="sm:grid-cols-2 lg:grid-cols-4" desdeAncho="sm">
-          {HOME.beneficios.items.map((beneficio) => (
-            <CardBeneficioHover
+          {HOME.beneficios.items.map((beneficio, i) => (
+            <AlEntrar
               key={beneficio.titulo}
-              titulo={beneficio.titulo}
-              descripcion={beneficio.descripcion}
-              acento={beneficio.acento}
+              indice={i}
               className="w-[287px] shrink-0 snap-start sm:w-auto"
-              ilustracion={
-                <Animacion
-                  nombre={beneficio.animacion}
-                  className="size-[70px]"
-                />
-              }
-            />
+            >
+              <CardBeneficioHover
+                titulo={beneficio.titulo}
+                descripcion={beneficio.descripcion}
+                acento={beneficio.acento}
+                ilustracion={
+                  <Animacion
+                    nombre={beneficio.animacion}
+                    bucle={false}
+                    className="size-[70px]"
+                  />
+                }
+              />
+            </AlEntrar>
           ))}
         </Carrusel>
       </Seccion>
@@ -261,27 +273,16 @@ export default async function HomePage() {
             <BotonLink href={HOME.red.cta.href}>{HOME.red.cta.texto}</BotonLink>
           }
         />
-        <Carrusel grilla="md:grid-cols-3" gap="gap-10 md:gap-6">
-          {/* Un color por métrica, como en el board: lila, lima y naranja. */}
-          <CardMetrica
-            rotulo="Profesionales"
-            valor={metricas.profesionales}
-            acentoHover="lila"
-            className="shrink-0"
-          />
-          <CardMetrica
-            rotulo="Cooperativas"
-            valor={metricas.cooperativas}
-            acentoHover="amarillo"
-            className="shrink-0"
-          />
-          <CardMetrica
-            rotulo="Provincias"
-            valor={metricas.provincias}
-            acentoHover="naranja"
-            className="shrink-0"
-          />
-        </Carrusel>
+        {/* El momento de la página: las tres métricas enlazadas por los haces
+            que dibujan la federación. */}
+        <RedViva
+          metricas={metricas}
+          etiquetas={{
+            profesionales: "Profesionales",
+            cooperativas: "Cooperativas",
+            provincias: "Provincias",
+          }}
+        />
       </Seccion>
 
       <div className="contenedor order-11 pb-16 md:order-10 md:pb-24">

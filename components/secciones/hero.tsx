@@ -52,7 +52,7 @@ export function Hero({
     >
       {video ? (
         <video
-          className="absolute inset-0 -z-10 size-full object-cover"
+          className="paralaje-fondo absolute inset-0 -z-10 size-full object-cover"
           poster={imagen}
           autoPlay
           muted
@@ -81,7 +81,7 @@ export function Hero({
         <img
           src={imagen}
           alt=""
-          className="absolute inset-0 -z-10 size-full object-cover"
+          className="paralaje-fondo absolute inset-0 -z-10 size-full object-cover"
         />
       ) : (
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(120%_120%_at_20%_0%,var(--color-gris-oscuro)_0%,var(--color-negro)_45%,var(--color-negro-oscuro)_100%)]" />
