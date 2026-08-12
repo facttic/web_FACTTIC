@@ -428,6 +428,43 @@
 }
 
 /**
+ * Curvas de movimiento del sistema.
+ *
+ * `--plop` es un resorte de verdad, no una aproximación: los puntos salen de
+ * integrar un oscilador amortiguado (ζ=0,42) y por eso pasa de largo el destino
+ * y vuelve, dos veces, antes de asentarse. `linear()` acepta esa lista de
+ * valores y el navegador interpola entre ellos, así que un rebote que antes
+ * pedía una librería de animación ahora es una línea de CSS.
+ */
+@theme {
+  --ease-plop: linear(
+    0,
+    0.103,
+    0.346,
+    0.632,
+    0.894,
+    1.087,
+    1.198,
+    1.234,
+    1.212,
+    1.156,
+    1.089,
+    1.028,
+    0.982,
+    0.955,
+    0.945,
+    0.95,
+    0.963,
+    0.978,
+    0.993,
+    1.004,
+    1.01,
+    1.013,
+    1.012
+  );
+}
+
+/**
  * Punto de luz recorriendo el contorno de una caja.
  *
  * `offset-path: rect()` sigue el borde sin que haya que medir nada: la caja

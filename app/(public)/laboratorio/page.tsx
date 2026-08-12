@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
-import { Seccion, Tarjeta, BandaCta } from "@/components/ui/seccion";
+import { Tarjeta, BandaCta } from "@/components/ui/seccion";
 import { BotonLink } from "@/components/ui/boton";
 import { CardSector } from "@/components/tarjetas/sector";
 import { Resplandor } from "@/components/ui/resplandor";
 import { GrillaViva } from "@/components/ui/grilla-viva";
 import { HazDeBorde } from "@/components/ui/haz";
 import { PasosFijos } from "@/components/secciones/pasos-fijos";
+import { Acordeon } from "@/components/ui/acordeon";
+import { AcordeonPlop } from "@/components/ui/acordeon-plop";
+import { Inclinar } from "@/components/ui/inclinar";
+import { Imantar } from "@/components/ui/imantar";
+import { Boton } from "@/components/ui/boton";
+import { SERVICIOS_PAGINA } from "@/lib/contenido";
 import { getSectoresDestacados } from "@/lib/datos/catalogos";
 import { acentoDeSector } from "@/lib/animaciones";
 import { HOME } from "@/lib/contenido";
@@ -58,6 +64,13 @@ function Ficha({
 
 export default async function LaboratorioPage() {
   const sectores = await getSectoresDestacados();
+
+  // Los mismos textos que muestra el acordeón de Nuestros servicios.
+  const itemsAcordeon = SERVICIOS_PAGINA.metodologia.items.map((item) => ({
+    id: item.titulo,
+    titulo: item.titulo.replace("\n", " "),
+    contenido: item.descripcion,
+  }));
 
   return (
     <div className="contenedor pt-32 pb-24">
@@ -128,6 +141,53 @@ export default async function LaboratorioPage() {
 
       <Ficha
         numero="05"
+        titulo="El acordeón que hace plop"
+        nota="El de la izquierda es el que está hoy en Nuestros servicios: abre y ya. El de la derecha crece con un resorte, pasa de largo y se acomoda. Abrí y cerrá los dos."
+      >
+        <div className="grid gap-10 md:grid-cols-2">
+          <div>
+            <p className="text-p3 mb-4 text-blanco/40">Como está hoy</p>
+            <Acordeon items={itemsAcordeon} inicial={null} />
+          </div>
+          <div>
+            <p className="text-p3 mb-4 text-lila">Con plop</p>
+            <AcordeonPlop items={itemsAcordeon} inicial={null} />
+          </div>
+        </div>
+      </Ficha>
+
+      <Ficha
+        numero="06"
+        titulo="La tarjeta se inclina hacia el cursor"
+        nota="Volumen sin 3D: dos rotaciones en perspectiva. Movete despacio por encima y mirá cómo sigue la mano."
+      >
+        <div className="grid gap-6 md:grid-cols-3">
+          {sectores.map((sector, i) => (
+            <Inclinar key={sector.id}>
+              <CardSector sector={sector} indice={i} conCaja />
+            </Inclinar>
+          ))}
+        </div>
+      </Ficha>
+
+      <Ficha
+        numero="07"
+        titulo="El botón sale a buscarte"
+        nota="Acercá el cursor sin llegar a tocarlo: el botón se mueve hacia vos y al irte vuelve con rebote."
+      >
+        <div className="flex flex-wrap items-center gap-10">
+          <Imantar>
+            <Boton>Trabajá con FACTTIC</Boton>
+          </Imantar>
+          <Imantar fuerza={0.5}>
+            <Boton>Con más imán</Boton>
+          </Imantar>
+          <Boton>Sin imán, para comparar</Boton>
+        </div>
+      </Ficha>
+
+      <Ficha
+        numero="08"
         titulo="Todo junto"
         nota="La banda de cierre con la luz, sobre la grilla viva. Para ver si conviven o se pelean."
       >

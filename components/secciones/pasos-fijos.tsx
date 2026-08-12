@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
+import { useMenosMovimiento } from "@/lib/movimiento";
 
 /**
  * Los pasos de la metodología, contados con el scroll.
@@ -28,13 +29,10 @@ export function PasosFijos({
 }) {
   const marco = useRef<HTMLDivElement>(null);
   const [activo, setActivo] = useState(0);
-  const [quieto, setQuieto] = useState(false);
+  const quieto = useMenosMovimiento();
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setQuieto(true);
-      return;
-    }
+    if (quieto) return;
 
     const nodo = marco.current;
     if (!nodo) return;
@@ -55,7 +53,9 @@ export function PasosFijos({
       if (!pedido) pedido = requestAnimationFrame(medir);
     };
 
-    medir();
+    // La primera medición va en el cuadro siguiente y no acá: llamarla en el
+    // cuerpo del efecto sería fijar estado durante el render.
+    alScrollear();
     window.addEventListener("scroll", alScrollear, { passive: true });
     window.addEventListener("resize", alScrollear);
     return () => {
@@ -63,7 +63,7 @@ export function PasosFijos({
       window.removeEventListener("resize", alScrollear);
       if (pedido) cancelAnimationFrame(pedido);
     };
-  }, [pasos.length]);
+  }, [pasos.length, quieto]);
 
   if (quieto) {
     return (
