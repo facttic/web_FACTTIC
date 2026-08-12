@@ -29,7 +29,7 @@ export function HazDeBorde({
 }) {
   return (
     /*
-      `overflow: clip` con margen: el resplandor se derrama 5rem hacia afuera
+      `overflow: clip` con margen: el resplandor se derrama 4rem hacia afuera
       del panel —más de lo que mide su halo, así que nunca se lo ve cortado— y
       recién ahí el navegador corta. Tiene que ser `clip` en los dos ejes: con
       `clip` en uno solo, el margen no se aplica y el corte vuelve al borde.
@@ -46,7 +46,7 @@ export function HazDeBorde({
       aria-hidden
       className={cn(
         "pointer-events-none absolute inset-0 rounded-[inherit]",
-        "[overflow-clip-margin:5rem] [overflow:clip]",
+        "[overflow-clip-margin:4rem] [overflow:clip]",
         className,
       )}
     >
@@ -56,7 +56,7 @@ export function HazDeBorde({
         cambia el ancho.
       */}
       <span
-        className="recorre-el-borde absolute size-28 rounded-full blur-[14px] motion-reduce:hidden"
+        className="recorre-el-borde absolute size-20 rounded-full blur-[10px] motion-reduce:hidden"
         style={{
           background: `radial-gradient(circle, ${color} 0%, color-mix(in srgb, ${color} 35%, transparent) 45%, transparent 72%)`,
           animationDuration: `${duracion}s`,
