@@ -5,6 +5,7 @@ import { Tarjeta } from "@/components/ui/seccion";
 import { IconoFlecha } from "@/components/ui/iconos";
 import { FOCO } from "@/components/ui/boton";
 import { Animacion } from "@/components/ui/animacion";
+import { Inclinar } from "@/components/ui/inclinar";
 import { animacionDeSector } from "@/lib/animaciones";
 import type { Sector } from "@/lib/dominio/tipos";
 
@@ -124,39 +125,43 @@ export function CardSector({
 
   return (
     <Link href={href} className={cn("group block", FOCO, className)}>
-      <Tarjeta
-        className={cn(
-          "relative overflow-hidden transition-colors",
-          caja,
-          ALTO_SECTOR,
-        )}
-      >
-        {reposo}
+      {/* La tarjeta se inclina hacia el cursor: le da volumen sin salirse de
+          la maqueta, porque en reposo está perfectamente plana. */}
+      <Inclinar>
+        <Tarjeta
+          className={cn(
+            "relative overflow-hidden transition-colors",
+            caja,
+            ALTO_SECTOR,
+          )}
+        >
+          {reposo}
 
-        {sector.descripcion ? (
-          /*
-            La propuesta de valor va centrada en el alto de la tarjeta entera,
-            no en el espacio que queda sobre el pie: por eso el "Ver más" se
-            ancla en absoluto abajo en vez de repartirse con `justify-between`.
-            Así está en el board de Componentes.
-          */
-          <div
-            className="absolute inset-0 p-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-            aria-hidden
-          >
-            <p className="text-h3 flex h-full items-center text-balance">
-              {sector.descripcion}
-            </p>
-            <div className="absolute inset-x-6 bottom-6">
-              <div className="border-t border-borde-pleno" />
-              <div className="text-p3 mt-4 flex items-center justify-between">
-                Ver más
-                <IconoFlecha className="transition-transform group-hover:translate-x-1" />
+          {sector.descripcion ? (
+            /*
+              La propuesta de valor va centrada en el alto de la tarjeta entera,
+              no en el espacio que queda sobre el pie: por eso el "Ver más" se
+              ancla en absoluto abajo en vez de repartirse con `justify-between`.
+              Así está en el board de Componentes.
+            */
+            <div
+              className="absolute inset-0 p-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+              aria-hidden
+            >
+              <p className="text-h3 flex h-full items-center text-balance">
+                {sector.descripcion}
+              </p>
+              <div className="absolute inset-x-6 bottom-6">
+                <div className="border-t border-borde-pleno" />
+                <div className="text-p3 mt-4 flex items-center justify-between">
+                  Ver más
+                  <IconoFlecha className="transition-transform group-hover:translate-x-1" />
+                </div>
               </div>
             </div>
-          </div>
-        ) : null}
-      </Tarjeta>
+          ) : null}
+        </Tarjeta>
+      </Inclinar>
     </Link>
   );
 }

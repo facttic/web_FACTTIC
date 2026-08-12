@@ -9,6 +9,7 @@ import {
 import { Tarjeta } from "@/components/ui/seccion";
 import { BotonTexto } from "@/components/ui/boton";
 import { Contador } from "@/components/ui/contador";
+import { Inclinar } from "@/components/ui/inclinar";
 
 /**
  * Bloques de contenido que se repiten a lo largo del sitio: beneficios,
@@ -44,40 +45,46 @@ export function CardBeneficioHover({
   className?: string;
 }) {
   return (
-    <div
-      className={cn(
-        "group relative overflow-hidden rounded-lg border border-borde bg-superficie",
-        "transition-colors duration-300 hover:border-transparent",
-        HOVER_ACENTO[acento],
-        ALTO_BENEFICIO,
-        className,
-      )}
+    <Inclinar
+      className={cn("h-full", className)}
+      // Menos que las otras: son cuatro en fila y con el mismo ángulo que una
+      // tarjeta grande la fila entera se ve movida.
+      grados={4}
     >
-      {/*
+      <div
+        className={cn(
+          "group relative overflow-hidden rounded-lg border border-borde bg-superficie",
+          "transition-colors duration-300 hover:border-transparent",
+          HOVER_ACENTO[acento],
+          ALTO_BENEFICIO,
+        )}
+      >
+        {/*
         En mobile no hay estado de reposo que valga: sin mouse no se llega a la
         otra cara, así que la maqueta muestra directo el título arriba y a la
         izquierda, sin ilustración. La ilustración centrada con el título al pie
         es la cara de reposo de desktop.
       */}
-      <div className="absolute inset-0 flex flex-col justify-start p-6 transition-opacity duration-300 group-hover:opacity-0 md:items-center md:justify-between md:text-center">
-        {ilustracion ? (
-          <div className="hidden flex-1 place-items-center md:grid">
-            {ilustracion}
-          </div>
-        ) : (
-          <div className="hidden flex-1 md:block" />
-        )}
-        <h3 className="text-h4 text-balance">{titulo}</h3>
-      </div>
+        <div className="absolute inset-0 flex flex-col justify-start p-6 transition-opacity duration-300 group-hover:opacity-0 md:items-center md:justify-between md:text-center">
+          {ilustracion ? (
+            <div className="hidden flex-1 place-items-center md:grid">
+              {ilustracion}
+            </div>
+          ) : (
+            <div className="hidden flex-1 md:block" />
+          )}
+          <h3 className="text-h4 text-balance">{titulo}</h3>
+        </div>
 
-      <div
-        className="absolute inset-0 flex flex-col justify-between p-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        aria-hidden
-      >
-        <h3 className="text-h4 text-balance">{titulo}</h3>
-        {descripcion ? <p className="text-p2">{descripcion}</p> : null}
+        <div
+          className="absolute inset-0 flex flex-col justify-between p-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          aria-hidden
+        >
+          <h3 className="text-h4 text-balance">{titulo}</h3>
+          {descripcion ? <p className="text-p2">{descripcion}</p> : null}
+        </div>
       </div>
-    </div>
+    </Inclinar>
   );
 }
 
@@ -238,60 +245,61 @@ export function CardOportunidad({
   const numero = String(indice + 1).padStart(2, "0");
 
   return (
-    <div
-      className={cn(
-        "group relative isolate overflow-hidden rounded-xl",
-        "h-90 transition-[height] duration-300 hover:h-[425px] focus-within:h-[425px]",
-        className,
-      )}
-    >
-      {/* La cara de color, en reposo. */}
+    <Inclinar className={className} grados={5}>
       <div
         className={cn(
-          "flex h-full flex-col justify-between p-6 transition-opacity duration-300",
-          "group-hover:opacity-0 group-focus-within:opacity-0",
-          !enMobile && FONDO_ACENTO[acento],
-          /*
+          "group relative isolate overflow-hidden rounded-xl",
+          "h-90 transition-[height] duration-300 hover:h-[425px] focus-within:h-[425px]",
+        )}
+      >
+        {/* La cara de color, en reposo. */}
+        <div
+          className={cn(
+            "flex h-full flex-col justify-between p-6 transition-opacity duration-300",
+            "group-hover:opacity-0 group-focus-within:opacity-0",
+            !enMobile && FONDO_ACENTO[acento],
+            /*
             El borde en degradado es lo que le da al vidrio su trazo lila, así
             que la variante lisa no lo lleva: va con el borde suave y nada más.
             En desktop ninguna de las dos deja rastro —el acento pinta la caja
             entera— y por eso el borde se apaga ahí.
           */
-          enMobile === "vidrio" &&
-            cn(
-              "textura-ruido borde-degradado rounded-xl bg-negro/45 text-blanco backdrop-blur-[1px]",
-              "md:bg-none md:backdrop-blur-none",
-              FONDO_ACENTO_DESKTOP[acento],
-            ),
-          enMobile === "oscura" &&
-            cn(
-              "rounded-xl border border-borde bg-superficie text-blanco md:border-transparent",
-              FONDO_ACENTO_DESKTOP[acento],
-            ),
-        )}
-      >
-        <p className="text-h4">{numero}.</p>
-        <p className="text-h3 whitespace-pre-line">{pregunta}</p>
-      </div>
+            enMobile === "vidrio" &&
+              cn(
+                "textura-ruido borde-degradado rounded-xl bg-negro/45 text-blanco backdrop-blur-[1px]",
+                "md:bg-none md:backdrop-blur-none",
+                FONDO_ACENTO_DESKTOP[acento],
+              ),
+            enMobile === "oscura" &&
+              cn(
+                "rounded-xl border border-borde bg-superficie text-blanco md:border-transparent",
+                FONDO_ACENTO_DESKTOP[acento],
+              ),
+          )}
+        >
+          <p className="text-h4">{numero}.</p>
+          <p className="text-h3 whitespace-pre-line">{pregunta}</p>
+        </div>
 
-      {/* El panel gris con la explicación, al pasar el mouse. */}
-      <div
-        className={cn(
-          "absolute inset-0 flex flex-col bg-superficie-alta p-6 opacity-0 transition-opacity duration-300",
-          "group-hover:opacity-100 group-focus-within:opacity-100",
-        )}
-      >
-        <p className="text-h4">{numero}.</p>
-        <p className="text-p2 mt-4 flex-1 text-blanco/80">{descripcion}</p>
-        {enlace ? (
-          <>
-            <div className="border-t border-blanco/20" />
-            <BotonTexto href={enlace.href} className="mt-4">
-              {enlace.texto}
-            </BotonTexto>
-          </>
-        ) : null}
+        {/* El panel gris con la explicación, al pasar el mouse. */}
+        <div
+          className={cn(
+            "absolute inset-0 flex flex-col bg-superficie-alta p-6 opacity-0 transition-opacity duration-300",
+            "group-hover:opacity-100 group-focus-within:opacity-100",
+          )}
+        >
+          <p className="text-h4">{numero}.</p>
+          <p className="text-p2 mt-4 flex-1 text-blanco/80">{descripcion}</p>
+          {enlace ? (
+            <>
+              <div className="border-t border-blanco/20" />
+              <BotonTexto href={enlace.href} className="mt-4">
+                {enlace.texto}
+              </BotonTexto>
+            </>
+          ) : null}
+        </div>
       </div>
-    </div>
+    </Inclinar>
   );
 }

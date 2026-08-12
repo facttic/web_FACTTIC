@@ -4,6 +4,7 @@ import { useId, useState, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { IconoFlecha } from "./iconos";
 import { FOCO } from "./boton";
+import { SUAVE, TextoQueSube } from "./texto-que-sube";
 
 /**
  * Acordeón de una sola apertura, como en "Nuestras soluciones" y en el detalle
@@ -12,6 +13,10 @@ import { FOCO } from "./boton";
  *
  * Se construye con <button> y aria-expanded en vez de <details> porque el
  * diseño exige que abrir uno cierre los demás.
+ *
+ * El panel no aparece de una: crece hasta su alto real —con `grid-template-rows:
+ * 0fr → 1fr`, que es la forma de animar hasta `auto` sin medir nada— y el texto
+ * sube palabra por palabra mientras tanto.
  */
 
 export interface ItemAcordeon {
@@ -60,18 +65,30 @@ export function Acordeon({
                 <IconoFlecha
                   direccion="abajo"
                   className={cn(
-                    "transition-transform duration-200",
+                    "transition-transform duration-500",
                     estaAbierto && "rotate-180",
                   )}
+                  style={{ transitionTimingFunction: SUAVE }}
                 />
               </button>
             </h3>
             <div
               id={panelId}
-              hidden={!estaAbierto}
-              className="text-p1 pb-6 text-blanco/70"
+              role="region"
+              className={cn(
+                "grid transition-[grid-template-rows] duration-500 motion-reduce:duration-0",
+                estaAbierto ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+              )}
+              style={{ transitionTimingFunction: SUAVE }}
             >
-              {item.contenido}
+              <div className="overflow-hidden">
+                <TextoQueSube
+                  visible={estaAbierto}
+                  className="text-p1 pb-6 text-blanco/70"
+                >
+                  {item.contenido}
+                </TextoQueSube>
+              </div>
             </div>
           </div>
         );

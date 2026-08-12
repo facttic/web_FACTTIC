@@ -45,6 +45,13 @@ export function Inclinar({
   };
 
   return (
+    /*
+     * La perspectiva vive en el envoltorio y el giro en el hijo. Ninguno de los
+     * dos fuerza una capa de GPU en reposo —nada de `translateZ(0)` ni de
+     * `will-change` permanente—: con nueve tarjetas en la Home, promoverlas
+     * todas desde el arranque multiplicaba los cuadros largos por diez. El
+     * navegador crea la capa cuando el giro empieza y la suelta al terminar.
+     */
     <div className={cn("[perspective:1000px]", className)}>
       <div
         ref={caja}
@@ -52,8 +59,7 @@ export function Inclinar({
         onMouseLeave={soltar}
         className="transition-transform duration-300 ease-out motion-reduce:transform-none"
         style={{
-          transform:
-            "rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0)",
+          transform: "rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg))",
         }}
       >
         {children}

@@ -4,6 +4,7 @@ import { useEffect, useId, useState } from "react";
 import { cn } from "@/lib/cn";
 import { FOCO } from "@/components/ui/boton";
 import { IconoFlecha } from "@/components/ui/iconos";
+import { SUAVE, TextoQueSube } from "@/components/ui/texto-que-sube";
 
 /**
  * Lista desplegable con el título de la sección al costado: la usan "Nuestras
@@ -89,13 +90,37 @@ export function Desplegables({
               </button>
             </h3>
 
-            <div id={panelId} hidden={!estaAbierto} className="pb-6">
-              {item.descripcion ? (
-                <p className="text-p1 text-blanco/80">{item.descripcion}</p>
-              ) : null}
-              {item.detalle ? (
-                <p className="text-p2 mt-3 text-blanco/50">{item.detalle}</p>
-              ) : null}
+            {/* El panel crece hasta su alto real y el texto sube palabra por
+                palabra, igual que en el acordeón. */}
+            <div
+              id={panelId}
+              role="region"
+              className={cn(
+                "grid transition-[grid-template-rows] duration-500 motion-reduce:duration-0",
+                estaAbierto ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+              )}
+              style={{ transitionTimingFunction: SUAVE }}
+            >
+              <div className="overflow-hidden">
+                <div className="pb-6">
+                  {item.descripcion ? (
+                    <TextoQueSube
+                      visible={estaAbierto}
+                      className="text-p1 text-blanco/80"
+                    >
+                      {item.descripcion}
+                    </TextoQueSube>
+                  ) : null}
+                  {item.detalle ? (
+                    <TextoQueSube
+                      visible={estaAbierto}
+                      className="text-p2 mt-3 text-blanco/50"
+                    >
+                      {item.detalle}
+                    </TextoQueSube>
+                  ) : null}
+                </div>
+              </div>
             </div>
           </div>
         );

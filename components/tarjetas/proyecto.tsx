@@ -5,6 +5,7 @@ import { ChipCliente, ChipSector } from "@/components/ui/chip";
 import { Tarjeta } from "@/components/ui/seccion";
 import { IconoFlecha } from "@/components/ui/iconos";
 import { FOCO } from "@/components/ui/boton";
+import { Inclinar } from "@/components/ui/inclinar";
 
 /**
  * Tarjetas y filas de proyecto.
@@ -138,41 +139,45 @@ export function CardProyecto({
       href={`/proyectos/${proyecto.slug}`}
       className={cn("group block", FOCO, className)}
     >
-      <Tarjeta
-        className={cn(
-          "flex flex-col overflow-hidden",
-          PIEL_TARJETA,
-          alto ?? ALTO_TARJETA,
-        )}
-      >
-        <Portada
-          proyecto={proyecto}
+      {/* Se inclina hacia el cursor. En reposo queda plana, así que la grilla
+          se sigue viendo como en la maqueta. */}
+      <Inclinar>
+        <Tarjeta
           className={cn(
-            "w-full shrink-0 transition-all duration-300",
-            ALTO_IMAGEN,
+            "flex flex-col overflow-hidden",
+            PIEL_TARJETA,
+            alto ?? ALTO_TARJETA,
           )}
-        />
-        <div className="flex flex-1 flex-col justify-start p-6">
-          <h3 className="text-h4 line-clamp-2 shrink-0 text-balance">
-            {proyecto.nombre}
-          </h3>
-          {/*
-            El detalle se despliega ocupando todo lo que sobra de la tarjeta
-            —de ahí el `flex-1`—, así el pie queda abajo en vez de dejar un
-            hueco entre las etiquetas y el borde.
-          */}
-          <div
+        >
+          <Portada
+            proyecto={proyecto}
             className={cn(
-              "grid flex-1 grid-rows-[0fr] transition-[grid-template-rows] duration-300",
-              "group-hover:grid-rows-[1fr] group-focus-visible:grid-rows-[1fr]",
+              "w-full shrink-0 transition-all duration-300",
+              ALTO_IMAGEN,
             )}
-          >
-            <div className="min-h-0 overflow-hidden">
-              <Detalle proyecto={proyecto} conDescripcion={destacada} />
+          />
+          <div className="flex flex-1 flex-col justify-start p-6">
+            <h3 className="text-h4 line-clamp-2 shrink-0 text-balance">
+              {proyecto.nombre}
+            </h3>
+            {/*
+              El detalle se despliega ocupando todo lo que sobra de la tarjeta
+              —de ahí el `flex-1`—, así el pie queda abajo en vez de dejar un
+              hueco entre las etiquetas y el borde.
+            */}
+            <div
+              className={cn(
+                "grid flex-1 grid-rows-[0fr] transition-[grid-template-rows] duration-300",
+                "group-hover:grid-rows-[1fr] group-focus-visible:grid-rows-[1fr]",
+              )}
+            >
+              <div className="min-h-0 overflow-hidden">
+                <Detalle proyecto={proyecto} conDescripcion={destacada} />
+              </div>
             </div>
           </div>
-        </div>
-      </Tarjeta>
+        </Tarjeta>
+      </Inclinar>
     </Link>
   );
 }

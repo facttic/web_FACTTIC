@@ -6,12 +6,8 @@ import { Resplandor } from "@/components/ui/resplandor";
 import { GrillaViva } from "@/components/ui/grilla-viva";
 import { HazDeBorde } from "@/components/ui/haz";
 import { PasosFijos } from "@/components/secciones/pasos-fijos";
-import { Acordeon } from "@/components/ui/acordeon";
-import { AcordeonVariante } from "@/components/ui/acordeon-variantes";
-import { Inclinar } from "@/components/ui/inclinar";
 import { Imantar } from "@/components/ui/imantar";
 import { Boton } from "@/components/ui/boton";
-import { SERVICIOS_PAGINA } from "@/lib/contenido";
 import { getSectoresDestacados } from "@/lib/datos/catalogos";
 import { acentoDeSector } from "@/lib/animaciones";
 import { HOME } from "@/lib/contenido";
@@ -65,19 +61,12 @@ function Ficha({
 export default async function LaboratorioPage() {
   const sectores = await getSectoresDestacados();
 
-  // Los mismos textos que muestra el acordeón de Nuestros servicios.
-  const itemsAcordeon = SERVICIOS_PAGINA.metodologia.items.map((item) => ({
-    id: item.titulo,
-    titulo: item.titulo.replace("\n", " "),
-    contenido: item.descripcion,
-  }));
-
   return (
     <div className="contenedor pt-32 pb-24">
       <h1 className="text-h1">Laboratorio de movimiento</h1>
       <p className="text-p1 mt-4 max-w-2xl text-blanco/70">
-        Cinco variantes sobre piezas reales del sitio. Pasá el mouse por todo y
-        scrolleá despacio: cada una responde distinto.
+        Lo que queda por decidir, sobre piezas reales del sitio. El acordeón por
+        líneas y la tarjeta que se inclina ya están en el sitio.
       </p>
 
       <Ficha
@@ -141,63 +130,6 @@ export default async function LaboratorioPage() {
 
       <Ficha
         numero="05"
-        titulo="Cinco maneras de abrir el acordeón"
-        nota="El primero es el que está hoy en Nuestros servicios: abre y ya. Abrí y cerrá los otros cuatro para comparar. El plop rebota; los tres siguientes no, y por eso se sienten más caros."
-      >
-        <div className="grid gap-x-10 gap-y-12 md:grid-cols-2">
-          <div>
-            <p className="text-p3 mb-4 text-blanco/40">Como está hoy</p>
-            <Acordeon items={itemsAcordeon} inicial={null} />
-          </div>
-          <div>
-            <p className="text-p3 mb-4 text-blanco/40">Plop — crece y rebota</p>
-            <AcordeonVariante items={itemsAcordeon} efecto="plop" inicial={null} />
-          </div>
-          <div>
-            <p className="text-p3 mb-4 text-lila">
-              Suave — arranca rápido y frena largo
-            </p>
-            <AcordeonVariante items={itemsAcordeon} efecto="suave" inicial={null} />
-          </div>
-          <div>
-            <p className="text-p3 mb-4 text-lila">
-              Líneas — el texto sube palabra por palabra
-            </p>
-            <AcordeonVariante
-              items={itemsAcordeon}
-              efecto="lineas"
-              inicial={null}
-            />
-          </div>
-          <div>
-            <p className="text-p3 mb-4 text-lila">
-              Barrido — se descubre de arriba abajo, sin mover nada
-            </p>
-            <AcordeonVariante
-              items={itemsAcordeon}
-              efecto="barrido"
-              inicial={null}
-            />
-          </div>
-        </div>
-      </Ficha>
-
-      <Ficha
-        numero="06"
-        titulo="La tarjeta se inclina hacia el cursor"
-        nota="Volumen sin 3D: dos rotaciones en perspectiva. Movete despacio por encima y mirá cómo sigue la mano."
-      >
-        <div className="grid gap-6 md:grid-cols-3">
-          {sectores.map((sector, i) => (
-            <Inclinar key={sector.id}>
-              <CardSector sector={sector} indice={i} conCaja />
-            </Inclinar>
-          ))}
-        </div>
-      </Ficha>
-
-      <Ficha
-        numero="07"
         titulo="El botón sale a buscarte"
         nota="Acercá el cursor sin llegar a tocarlo: el botón se mueve hacia vos y al irte vuelve con rebote."
       >
@@ -213,7 +145,7 @@ export default async function LaboratorioPage() {
       </Ficha>
 
       <Ficha
-        numero="08"
+        numero="06"
         titulo="Todo junto"
         nota="La banda de cierre con la luz, sobre la grilla viva. Para ver si conviven o se pelean."
       >
