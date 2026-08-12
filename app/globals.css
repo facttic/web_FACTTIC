@@ -527,13 +527,6 @@ body {
   color: var(--color-texto);
   font-family: var(--font-mono);
   -webkit-font-smoothing: antialiased;
-  /*
-   * `clip` y no `hidden`: recorta lo que se derrama de costado —el resplandor
-   * de las bandas, las formas de la identidad— sin convertir al body en un
-   * contenedor de scroll, que es lo que rompe `position: sticky` y el
-   * desplazamiento a un ancla.
-   */
-  overflow-x: clip;
 }
 
 ::selection {
