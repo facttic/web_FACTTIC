@@ -43,3 +43,6 @@ next-env.d.ts
 
 # material de diseño exportado de Figma (pesado, no versionado)
 /Material
+
+# Builds de comparación (temporales)
+/.next-*/
