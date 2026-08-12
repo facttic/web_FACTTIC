@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 /**
@@ -59,6 +59,84 @@ export function GrillaViva({
         }}
       />
       {children ? <div className="relative">{children}</div> : null}
+    </div>
+  );
+}
+
+/**
+ * La misma grilla, pero de fondo de una pantalla entera.
+ *
+ * Va fija al viewport y no estirada por toda la página: así el área que hay
+ * que pintar es la de la ventana y no los cuatro mil píxeles que mide la Home,
+ * y la luz sigue al cursor sin tener que corregir por el scroll. Escucha el
+ * mouse en `window` porque el elemento no recibe eventos —está detrás de
+ * todo—, y lo hace de forma pasiva y escribiendo dos variables CSS: no hay
+ * render de React por movimiento.
+ */
+export function GrillaDeFondo({
+  paso = 32,
+  color = "var(--color-lila)",
+  className,
+}: {
+  paso?: number;
+  color?: string;
+  className?: string;
+}) {
+  const caja = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const nodo = caja.current;
+    if (!nodo) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let pedido = 0;
+    let x = 0;
+    let y = 0;
+
+    const pintar = () => {
+      pedido = 0;
+      nodo.style.setProperty("--x", `${x}px`);
+      nodo.style.setProperty("--y", `${y}px`);
+    };
+
+    const seguir = (e: MouseEvent) => {
+      x = e.clientX;
+      y = e.clientY;
+      // Una escritura por cuadro: sin esto, un mouse rápido dispara cientos.
+      if (!pedido) pedido = requestAnimationFrame(pintar);
+    };
+
+    window.addEventListener("mousemove", seguir, { passive: true });
+    return () => {
+      window.removeEventListener("mousemove", seguir);
+      if (pedido) cancelAnimationFrame(pedido);
+    };
+  }, []);
+
+  return (
+    <div
+      ref={caja}
+      aria-hidden
+      className={cn(
+        "pointer-events-none fixed inset-0 -z-10 hidden md:block",
+        className,
+      )}
+    >
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, var(--color-borde) 1px, transparent 0)`,
+          backgroundSize: `${paso}px ${paso}px`,
+        }}
+      />
+      <div
+        className="absolute inset-0 motion-reduce:hidden"
+        style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, ${color} 1px, transparent 0)`,
+          backgroundSize: `${paso}px ${paso}px`,
+          maskImage: `radial-gradient(220px circle at var(--x, -300px) var(--y, -300px), black 15%, transparent 72%)`,
+        }}
+      />
     </div>
   );
 }

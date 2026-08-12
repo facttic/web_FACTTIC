@@ -10,6 +10,7 @@ import { CardSector } from "@/components/tarjetas/sector";
 import { CardProyecto } from "@/components/tarjetas/proyecto";
 import { CardBeneficioHover, CardMetrica } from "@/components/tarjetas/bloques";
 import { AlEntrar } from "@/components/ui/al-entrar";
+import { GrillaDeFondo } from "@/components/ui/grilla-viva";
 import { Animacion } from "@/components/ui/animacion";
 import { Carrusel } from "@/components/ui/carrusel";
 import { FONDOS, VIDEO_HERO } from "@/lib/animaciones";
@@ -54,6 +55,11 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col">
+      {/* La grilla de puntos que se enciende alrededor del cursor, detrás de
+          toda la pantalla. Solo en desktop: sin mouse no tiene nada que
+          seguir. */}
+      <GrillaDeFondo />
+
       <Hero
         className="order-1"
         titulo={HOME.hero.titulo}
