@@ -64,8 +64,9 @@ llegue.
          distinto de "CABA" en el resto de la lista, así que se tomaron como
          provincia de Buenos Aires y llevan el punto de La Plata. Si son de la
          ciudad, hay que corregirlas —CABA pasaría a 15—.
-      2. **La métrica de la Home dice "+10 provincias" y son nueve.** O falta
-         alguna cooperativa, o hay que corregir el número.
+      2. **El material de FACTTIC dice "+10 provincias" y son nueve.** La Home
+         muestra el número derivado de los datos, así que hoy dice nueve. O
+         falta cargar alguna cooperativa, o hay que corregir el número.
 
       Las coordenadas son las de la ciudad, no la dirección exacta: alcanzan
       para agrupar por provincia, que es lo que hace el mapa.
@@ -295,6 +296,35 @@ llevan indicaciones de implementación. Estado de las encontradas:
       1. Falta la URL del código de conducta: "Ver Código" apunta todavía al
          sitio actual de FACTTIC. El documento nombra el botón pero no da
          dirección.
+
+- [ ] **31 bis. Firefox le corta el vidrio a la tarjeta de Contacto.**
+      Aparece una línea horizontal que interrumpe el difuminado a media tarjeta,
+      con el resplandor del fondo pasando por detrás. **No se reproduce a
+      pedido**: ocho tarjetas idénticas fallaron todas en una recarga y la misma
+      configuración anduvo en la siguiente. Es estado del compositor, no una
+      propiedad CSS.
+
+      Ya se descartó, con dos muestras por variante y el orden intercalado para
+      que la posición no sesgue: `isolation: isolate` y `overflow-hidden` en la
+      sección, `will-change: backdrop-filter`, `transform: translateZ(0)`,
+      `contain: paint` y `backface-visibility: hidden` sobre la tarjeta,
+      `textura-ruido`, `borde-degradado`, la animación `animate-acercar` del
+      fondo, y el tamaño de la tarjeta —que parecía mandar hasta que una de 644
+      anduvo—.
+
+      Lo único aplicado es `will-change: transform` en la esfera del fondo, que
+      es correcto de por sí porque la esfera se anima con `transform`, y de paso
+      la deja en su propia capa. **No está confirmado que alcance.**
+
+      Si vuelve a aparecer, lo que queda es subir la opacidad del fondo de la
+      tarjeta —de `bg-superficie/60` a `/85`—: se filtra menos, así que el corte
+      deja de notarse aunque Firefox lo siga haciendo. Cuesta translucidez.
+      El mismo patrón —vidrio grande sobre animación— está en el panel de
+      Nuestra Red y en la tarjeta de Sumá tu coop, donde nadie lo reportó.
+
+      La herramienta no sirve para esto: `medir.py` levanta Chrome, y Firefox
+      headless saca la captura antes de que React hidrate, así que hay que
+      mirarlo a ojo en un Firefox de verdad.
 
 - [ ] **32. La animación del 404 no coincide con el fotograma de la maqueta.**
       `fondo-error404.json` trae toda la decoración —arco, planetas, sol lila y

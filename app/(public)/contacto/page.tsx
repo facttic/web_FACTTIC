@@ -30,9 +30,17 @@ export default function ContactoPage() {
         anchas la deja lejos de la tarjeta.
       */}
       <div className="contenedor pointer-events-none absolute inset-x-0 top-0 -z-10">
+        {/*
+          `will-change: transform` porque la esfera ya se anima con `transform`,
+          así que le corresponde igual que al halo de la grilla. De paso es la
+          única palanca de costo cero contra el corte que Firefox le hace al
+          vidrio de la tarjeta —ver PENDIENTES—: con el fondo en su propia capa,
+          el `backdrop-filter` lo toma ya rasterizado. No está confirmado que
+          alcance; el defecto no se reproduce a pedido.
+        */}
         <Animacion
           nombre={FONDOS.contacto}
-          className="absolute top-0 -right-16 aspect-square w-[420px] animate-acercar md:top-24 md:w-[620px]"
+          className="absolute top-0 -right-16 aspect-square w-[420px] animate-acercar will-change-transform md:top-24 md:w-[620px]"
         />
       </div>
 
