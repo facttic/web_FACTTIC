@@ -412,6 +412,69 @@
 }
 
 /**
+ * La línea que crece bajo cada paso de la metodología, de izquierda a derecha.
+ *
+ * Va con la entrada del bloque y un pelo después, así se lee como que el paso
+ * se apoya sobre su línea en vez de aparecer con ella ya puesta.
+ */
+@keyframes crecer {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@utility crecer-al-entrar {
+  transform-origin: left;
+
+  @supports (animation-timeline: view()) {
+    @media not (prefers-reduced-motion: reduce) {
+      animation: crecer linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 40%;
+      animation-delay: calc(var(--i, 0) * 120ms);
+    }
+  }
+}
+
+/**
+ * Las mismas dos entradas donde no hay `animation-timeline`.
+ *
+ * Cuelgan de `data-revelar="js"`, que escribe `RevelarSinTimeline` recién
+ * cuando confirma que hace falta y que puede observar: sin ese atributo no hay
+ * estado inicial, así que si el JavaScript no corre el contenido se ve completo
+ * y quieto en vez de quedar invisible para siempre.
+ *
+ * Son transiciones y no animaciones porque el estado final lo marca un
+ * atributo, no un reloj ni el scroll.
+ */
+@media not (prefers-reduced-motion: reduce) {
+  [data-revelar="js"] .revelar-al-entrar {
+    opacity: 0;
+    transform: translateY(5rem) scale(0.94);
+    /* La curva del sistema, la misma que `SUAVE` en `texto-que-sube`. */
+    transition:
+      opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: calc(var(--i, 0) * 90ms);
+  }
+
+  [data-revelar="js"] .revelar-al-entrar[data-visible] {
+    opacity: 1;
+    transform: none;
+  }
+
+  [data-revelar="js"] .crecer-al-entrar {
+    transform: scaleX(0);
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: calc(var(--i, 0) * 90ms);
+  }
+
+  [data-revelar="js"] .crecer-al-entrar[data-visible] {
+    transform: scaleX(1);
+  }
+}
+
+/**
  * Fondo que se mueve más lento que el contenido. El recorrido es corto a
  * propósito: el paralaje llamativo marea y pelea con el scroll del sistema.
  */
