@@ -141,28 +141,3 @@ export const getOrganizaciones = cached(
   ["organizaciones"],
   { revalidate: TTL.catalogo, tags: ["organizaciones"] },
 );
-
-/**
- * Métricas de la red que muestra la Home (+500 profesionales, +30 cooperativas,
- * +10 provincias). No hay endpoint de estadísticas, así que se derivan del
- * listado de cooperativas; si el backend agrega uno, se cambia solo esta función.
- */
-export async function getMetricasRed(): Promise<{
-  profesionales: number;
-  cooperativas: number;
-  provincias: number;
-}> {
-  const cooperativas = await getCooperativas();
-  const provincias = new Set(
-    cooperativas.map((coop) => coop.provincia).filter((p): p is string => !!p),
-  );
-
-  return {
-    profesionales: cooperativas.reduce(
-      (total, coop) => total + coop.asociados,
-      0,
-    ),
-    cooperativas: cooperativas.length,
-    provincias: provincias.size,
-  };
-}

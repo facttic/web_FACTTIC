@@ -15,11 +15,11 @@ import { Carrusel } from "@/components/ui/carrusel";
 import { FONDOS, VIDEO_HERO } from "@/lib/animaciones";
 import { HOME } from "@/lib/contenido";
 import {
-  getMetricasRed,
   getSectoresDestacados,
   getServiciosDestacados,
 } from "@/lib/datos/catalogos";
 import { getProyectosDestacados } from "@/lib/datos/proyectos";
+import { getMetricasRed } from "@/lib/datos/red";
 
 /**
  * Home.

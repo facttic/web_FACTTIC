@@ -95,3 +95,25 @@ export async function getRedFederal(): Promise<{
     },
   };
 }
+
+/**
+ * Las tres métricas de la Home: profesionales, cooperativas y provincias.
+ *
+ * Salen de la red ya armada y no del listado crudo, por dos razones: la
+ * provincia no viene de la API —se deriva de las coordenadas, y el campo
+ * `provincia` del dominio es null hasta que el backend lo tenga—, y las
+ * cooperativas de prueba no cuentan. Antes se contaban acá aparte y la Home
+ * decía un número distinto al de Nuestra Red.
+ */
+export async function getMetricasRed(): Promise<{
+  profesionales: number;
+  cooperativas: number;
+  provincias: number;
+}> {
+  const { totales } = await getRedFederal();
+  return {
+    profesionales: totales.asociados,
+    cooperativas: totales.cooperativas,
+    provincias: totales.provincias,
+  };
+}
