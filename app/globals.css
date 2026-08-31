@@ -226,6 +226,18 @@
 }
 
 /**
+ * Detiene una marquesina mientras el puntero está encima o algo de adentro
+ * tiene el foco. Las autoridades llevan nombres que hay que poder leer, y con
+ * teclado hace falta que la tarjeta enfocada no se siga moviendo.
+ */
+@utility marquesina-detenible {
+  &:hover,
+  &:focus-within {
+    animation-play-state: paused;
+  }
+}
+
+/**
  * Grano sobre la superficie, como el efecto "Ruido" que el archivo de Figma
  * aplica a las formas de la identidad. Se genera con una turbulencia SVG en
  * línea, así no hace falta ninguna imagen.
