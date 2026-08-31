@@ -64,7 +64,7 @@ export const HOME = {
     titulo: "Nuestros proyectos destacados",
     cta: { texto: "Ver todos", href: "/proyectos" },
     cierre: {
-      titulo: "¿Tenés algún proyecto en mente?",
+      titulo: "¿Tenés un proyecto en mente?",
       cta: { texto: "Trabajá con FACTTIC", href: "/contacto" },
     },
   },
@@ -91,28 +91,28 @@ export const HOME = {
         titulo: "Continuidad de trabajo",
         animacion: "beneficio-continuidad",
         descripcion:
-          "Accedés a una red que redistribuye oportunidades y sostiene la actividad en el tiempo",
+          "Accedés a una red que redistribuye oportunidades y sostiene la actividad en el tiempo. Escalá equipos y postulate a proyectos grandes sin tener que cubrir todos los perfiles.",
         acento: "rojo" as Acento,
       },
       {
         titulo: "Colaboración real, no competencia",
         animacion: "beneficio-colaboracion",
         descripcion:
-          "Colaborás con otras cooperativas, compartís conocimiento y armás equipos",
+          "Colaborás con otras cooperativas, compartís conocimiento y armás equipos. Priman lógicas de articulación basadas en la necesidad, el aprendizaje y la equidad, por fuera de las reglas estrictas del mercado.",
         acento: "azul" as Acento,
       },
       {
         titulo: "Autonomía con respaldo colectivo",
         animacion: "beneficio-autonomia",
         descripcion:
-          "Mantenés tu independencia como cooperativa, pero con capacidad de red",
+          "Mantenés tu independencia como cooperativa, pero con capacidad de red. Cada cooperativa define sus reglas, sabiendo que se apoya en un grupo más grande para mitigar crisis y alcanzar metas que sola no podría.",
         acento: "verde" as Acento,
       },
       {
         titulo: "Trabajo con impacto y propósito",
         animacion: "beneficio-trabajo",
         descripcion:
-          "Formás parte de proyectos que mejoran la calidad de vida de las personas",
+          "Participás en una red que construye tecnología más justa. Ponemos en el centro a las personas y basamos las decisiones en la sostenibilidad, buscando una sociedad más inclusiva y equitativa.",
         acento: "naranja" as Acento,
       },
     ],
@@ -162,28 +162,27 @@ export const SERVICIOS_PAGINA = {
     titulo: "¿Cómo trabajamos?",
     /*
      * En desktop son tres bloques de color con el nombre y nada más; en mobile
-     * se vuelven un carrusel y ahí sí aparece la descripción. El diseño solo
-     * escribió la de "Proyectos a medida"; las otras dos están redactadas acá
-     * siguiendo ese tono y hay que validarlas con FACTTIC.
+     * se vuelven un carrusel y ahí sí aparece la descripción. Las tres
+     * descripciones las escribió FACTTIC.
      */
     items: [
       {
         titulo: "Proyectos\na medida",
         acento: "lila" as Acento,
         descripcion:
-          "Nos encargamos de todo el proceso, desde la idea hasta la entrega final. Trabajamos junto a tu organización para entender sus necesidades, definir objetivos y construir una solución con identidad propia.",
+          "Trabajamos en todo el proceso, desde la idea hasta la entrega final. Planificamos con tu organización los requerimientos, los objetivos, construimos una solución y la ponemos en funcionamiento.",
       },
       {
         titulo: "Managed\nServices",
         acento: "verde" as Acento,
         descripcion:
-          "Nos hacemos cargo de la operación en el tiempo. Tu equipo se enfoca en lo suyo y nosotros sostenemos la infraestructura, las actualizaciones y el soporte del día a día.",
+          "Asumimos la gestión de proyectos específicos junto a un Product Owner de la organización. Podemos ser tu aliado, listos para colaborar con tu organización o empresa en un espíritu de cooperación mutua.",
       },
       {
         titulo: "Staff\nAugmentation",
         acento: "naranja" as Acento,
         descripcion:
-          "Sumamos perfiles de nuestras cooperativas a tu equipo. Trabajan con tus procesos y tus tiempos, con la experiencia y el respaldo de toda la red detrás.",
+          "Nos integramos a tu equipo, sumando experiencia y agilidad. Sumamos capacidades técnicas específicas que complementan las de tu organización, mientras impulsamos una transferencia de conocimiento constante.",
       },
     ],
     cierre: {
@@ -203,7 +202,7 @@ export const SERVICIOS_PAGINA = {
     /*
      * Cada tarjeta se pinta con su color al pasar el mouse y muestra la
      * explicación. Las dos primeras descripciones están tomadas del prototipo;
-     * las otras dos las redactamos siguiendo ese tono y hay que validarlas.
+     * las otras dos las escribió FACTTIC.
      */
     items: [
       {
@@ -222,13 +221,13 @@ export const SERVICIOS_PAGINA = {
         titulo: "Agilidad y capacidad de adaptación",
         acento: "celeste" as Acento,
         descripcion:
-          "Somos organizaciones chicas conectadas entre sí: armamos el equipo que cada proyecto necesita y lo ajustamos cuando el proyecto cambia.",
+          "Nuestra estructura cooperativa nos permite escalar y ajustar equipos garantizando agilidad y capacidad de adaptación en cada proyecto.",
       },
       {
         titulo: "Cada proyecto es nuestro",
         acento: "amarillo" as Acento,
         descripcion:
-          "Trabajamos sobre lo propio, no sobre el encargo de un tercero. Quien desarrolla es parte de la cooperativa que se hace cargo del resultado.",
+          "Somos dueñas y dueños de nuestras cooperativas y eso se nota: no ejecutamos tareas, nos involucramos.",
       },
     ],
   },
@@ -258,9 +257,14 @@ export const VERTICALES = {
   descripciones: {
     organizaciones:
       "Trabajamos con organizaciones sociales, cooperativas y organismos de derechos humanos que usan la tecnología como herramienta de transformación. Desarrollamos soluciones digitales que amplían su alcance, mejoran sus procesos y fortalecen su presencia.",
-    agro: "Acompañamos al sector agropecuario con sensores, análisis de datos y visión artificial. Llevamos la tecnología al campo para que las decisiones se tomen con información propia y en el momento en que hace falta.",
+    /*
+     * Agro es la única que viene en dos párrafos: se separan con una línea en
+     * blanco y el hero los reparte. Ver `parrafos()` más abajo.
+     */
+    agro:
+      "Somos una red de cooperativas especializadas en soluciones tecnológicas para el agro. Desarrollamos desde hace más de 15 años proyectos innovadores con IoT, Big Data y Computer Vision, enfocados en optimizar procesos administrativos, productivos, logísticos y de gestión. Trabajamos de manera colaborativa, ofreciendo soluciones a medida que generan impacto real en el sector.\n\nConocemos en profundidad las prácticas del sector agro en Argentina y entendemos sus desafíos. Sabemos cómo optimizarlas mediante tecnología, integrando herramientas para aumentar la productividad, reducir costos y garantizar una gestión más transparente y sostenible.",
     financiero:
-      "Desarrollamos soluciones para bancos, mutuales y fintech, donde la seguridad y la trazabilidad no son negociables. Construimos sistemas que sostienen operaciones críticas sin resignar la experiencia de quien los usa.",
+      "Tenemos amplia experiencia en el rubro banking y fintech. Ofrecemos soluciones que facilitan el acceso a servicios financieros, mejorando la operatoria diaria y asegurando el cumplimiento normativo.",
   } as Record<string, string>,
 
   propuesta: {
@@ -269,32 +273,84 @@ export const VERTICALES = {
     // la vertical el prototipo va directo del título a las tarjetas.
     titulo: "¿Por qué elegirnos?",
     /*
-     * Las cuatro se pintan con el color de la vertical al pasar el mouse. El
-     * prototipo solo escribe la primera; las otras tres están redactadas por
-     * nosotros y hay que validarlas.
+     * Cuatro motivos por vertical, escritos por FACTTIC: el módulo se repite
+     * pero el texto no, a diferencia de "¿Cómo trabajamos?", que sí es el mismo
+     * en las tres y vive en `SERVICIOS_PAGINA.metodologia`.
+     *
+     * El salto en el título lo pone el copy y lo respeta `whitespace-pre-line`
+     * en la tarjeta; donde no hay `\n`, el título se acomoda solo.
+     *
+     * Una vertical sin entrada acá no muestra la sección, que es preferible a
+     * mostrarle a un sector nuevo los motivos de otro.
      */
-    items: [
-      {
-        titulo: "Trabajamos\ncon compromiso",
-        descripcion:
-          "Compartimos una perspectiva política sobre el rol de la tecnología y el conocimiento en la sociedad. No es solo un servicio: es una convicción.",
-      },
-      {
-        titulo: "Somos parte",
-        descripcion:
-          "Venimos del mismo mundo que nuestras contrapartes: cooperativas, organizaciones y economía social. Entendemos cómo se decide y cómo se sostiene un proyecto colectivo.",
-      },
-      {
-        titulo: "Intercooperamos",
-        descripcion:
-          "Cuando un proyecto excede a una cooperativa, se arma equipo entre varias. La red permite tomar trabajos que ninguna podría sostener sola.",
-      },
-      {
-        titulo: "Nos\nconocemos",
-        descripcion:
-          "Trabajamos juntas hace años y nos elegimos por experiencia previa, no por catálogo. Eso acorta los tiempos y evita las fricciones de armar un equipo desde cero.",
-      },
-    ],
+    items: {
+      organizaciones: [
+        {
+          titulo: "Trabajamos\ncon compromiso",
+          descripcion:
+            "Compartimos una perspectiva política sobre el rol de la tecnología y el conocimiento en la sociedad. No es solo un servicio: es una convicción.",
+        },
+        {
+          titulo: "Somos parte",
+          descripcion:
+            "Nos organizamos colectivamente, por eso sabemos lo que implica trabajar con organizaciones que comparten esa lógica.",
+        },
+        {
+          titulo: "Intercooperamos",
+          descripcion:
+            "Contamos con especialistas en distintas ramas de la tecnología, la innovación y el conocimiento. Eso nos permite encarar proyectos complejos desde múltiples frentes.",
+        },
+        {
+          titulo: "Nos\nconocemos",
+          descripcion:
+            "Tenemos amplia trayectoria trabajando con organizaciones sociales y populares, tanto nacionales como internacionales.",
+        },
+      ],
+      agro: [
+        {
+          titulo: "Somos\nun montón",
+          descripcion:
+            "Somos más de 500 trabajadores tecnológicos con alta experiencia en desarrollo e innovación, lo que permite escalar los proyectos.",
+        },
+        {
+          titulo: "Manejamos amplias tecnologías",
+          descripcion:
+            "Contamos con equipos que trabajan con las más variadas herramientas tecnológicas, lo que permite contar con un gran paquete de opciones para la solución de los desafíos.",
+        },
+        {
+          titulo: "Trabajamos\nen equipo",
+          descripcion:
+            "Estamos familiarizados con el trabajo integrado, podemos construir metas en equipo con mucha facilidad y conjuntamente con el cliente para llegar al objetivo deseado.",
+        },
+        {
+          titulo: "Conocemos\nel campo",
+          descripcion:
+            "Tenemos mucha experiencia en resolución de problemas para el agro, conocemos las necesidades que tiene el sector y entendemos los desafíos que enfrenta.",
+        },
+      ],
+      financiero: [
+        {
+          titulo: "Trayectoria sectorial comprobada",
+          descripcion:
+            "Más de 20 años acompañando a bancos, fintechs y billeteras digitales en Latinoamérica, con proyectos activos en Argentina, Canadá y la región.",
+        },
+        {
+          titulo: "Especialización técnica en banking",
+          descripcion:
+            "Dominamos el stack completo del sector: core bancario, open banking, IaC, CRM, scoring, cobranzas y cumplimiento normativo con el BCRA.",
+        },
+        {
+          titulo: "Compromiso cooperativo como ventaja competitiva",
+          descripcion:
+            "Nuestros profesionales son socios de sus empresas. Eso asegura continuidad, responsabilidad y un vínculo de largo plazo con cada cliente.",
+        },
+        {
+          titulo: "Escalabilidad sin fricción",
+          descripcion:
+            "Podemos ampliar o reducir equipos en días. Como cluster de cooperativas, combinamos perfiles frontend, backend, infraestructura, QA y analistas funcionales.",
+        },
+      ],
+    } as Record<string, readonly { titulo: string; descripcion: string }[]>,
   },
 
   stack: { titulo: "Stack tecnológico" },
@@ -363,14 +419,14 @@ export const SUMA_TU_COOP = {
   hero: {
     titulo: "Todo es\nmejor cooperando",
     bajada:
-      "Somos cooperativas formadas por profesionales de tecnología y comunicación que desarrollan soluciones con impacto real. Creemos que la tecnología es más poderosa cuando se construye colectivamente, con solidaridad y responsabilidad.",
+      "Somos cooperativas de tecnología y de conocimiento formada por profesionales que desarrollan soluciones con impacto real. Creemos que la tecnología es más poderosa cuando se construye colectivamente, con solidaridad y responsabilidad.",
   },
 
   sumate: {
     rotulo: "Ventajas",
-    titulo: "Sumate a FACTTIC",
+    titulo: "¿Qué es FACTTIC?",
     texto:
-      "Una Federación es un espacio colectivo formado por cooperativas que deciden unirse para compartir saberes, crecer y potenciarse. En nuestro caso, somos cooperativas de desarrollo, comunicación y otras áreas que hace más de 10 años elegimos construir juntas. Porque creemos que el trabajo cooperativo es el camino.",
+      "Una federación es un espacio colectivo formado por cooperativas que deciden unirse para compartir saberes, crecer y potenciarse. En nuestro caso, somos cooperativas de desarrollo, comunicación, gestión, ingeniería, capacitaciones, entre otras áreas que hace más de 10 años elegimos construir juntas. Porque creemos que el trabajo cooperativo es el camino.",
     cta: { texto: "Conocer más", href: "/sobre-facttic" },
   },
 
@@ -389,20 +445,25 @@ export const SUMA_TU_COOP = {
   compromisos: {
     rotulo: "Obligaciones",
     titulo: "Ser parte implica compromisos y derechos",
+    bajada: "Formar parte de FACTTIC implica:",
     /*
-     * La maqueta muestra cuatro tarjetas pero solo escribe dos textos y los
-     * repite: faltan los otros dos.
+     * Son seis y no los cuatro de la maqueta, que repetía dos textos por falta
+     * de copy. Por eso la grilla va de a tres: seis en filas de cuatro dejan
+     * una segunda fila coja.
      */
     items: [
-      "Ser una cooperativa\no precooperativa",
-      "Participar en\nespacios colectivos",
-      "Ser una cooperativa\no precooperativa",
-      "Participar en\nespacios colectivos",
+      "Ser una cooperativa",
+      "Estar al día con\nla documentación",
+      // Los tres largos van sin salto: forzarlo les suma una línea y no entran.
+      "Designar una persona que represente tu coope ante FACTTIC",
+      "Abonar la cuota de sostenimiento (no excluyente)",
+      "Respetar nuestro\ncódigo de conducta",
+      "Participar en espacios colectivos de trabajo y plenarios de definiciones internas",
     ],
   },
 
   codigo: {
-    titulo: "Tenemos código\nde conducta",
+    titulo: "¡Tenemos código\nde conducta!",
     texto:
       "Todas las reuniones de FACTTIC se rigen por un código de conducta que garantiza la participación segura e igualitaria de quienes las integran.",
     // La URL exacta del código quedó pedida; mientras tanto va al sitio actual.
@@ -413,22 +474,25 @@ export const SUMA_TU_COOP = {
     titulo: "Elegí tu camino al cooperativismo",
     /*
      * Al pasar el mouse cada tarjeta se vuelve gris y muestra su explicación
-     * con el enlace. Los textos son los de la maqueta —Semillero y el Club de
-     * Formación son plataformas propias de FACTTIC—; faltan sus URLs, que hoy
-     * van a Contacto.
+     * con el enlace. Semillero y el Club de Formación son plataformas propias
+     * de FACTTIC y viven fuera del sitio: se abren en otra pestaña. La del
+     * medio sí va al formulario.
      */
     items: [
       {
-        pregunta: "¿Querés sumarte\na una cooperativa?",
+        pregunta: "¿Querés sumarte\na una coope?",
         descripcion:
-          "Semillero es la plataforma de FACTTIC que conecta a personas interesadas en el trabajo cooperativo con cooperativas que están buscando nuevos socios y socias.",
-        enlace: { texto: "Ir a Semillero", href: "/contacto" },
+          "Semillero es la plataforma de FACTTIC que conecta a personas interesadas en el trabajo cooperativo con cooperativas que están buscando nuevos socios y socias. Podés encontrar oportunidades en tecnología, diseño, desarrollo, marketing, gestión y administración.",
+        enlace: {
+          texto: "Ir a Semillero",
+          href: "https://semillero.coop.ar/home",
+        },
         acento: "lila" as Acento,
       },
       {
         pregunta: "¿Querés armar\ntu propia cooperativa?",
         descripcion:
-          "Acompañamos a proyectos cooperativos en sus primeros pasos de la creación.",
+          "Acompañamos a proyectos cooperativos de tecnología, innovación y conocimiento en sus primeros pasos. Compartimos nuestra experiencia y herramientas para ayudar a que se sumen al mundo cooperativo.",
         enlace: { texto: "Contactanos", href: "/contacto" },
         acento: "celeste" as Acento,
         // La maqueta mobile la hace de vidrio sobre la estrella naranja; la
@@ -439,7 +503,7 @@ export const SUMA_TU_COOP = {
         pregunta: "¿Querés formarte\nen cooperativismo?",
         descripcion:
           "El Club de Formación Cooperativa es una plataforma educativa de FACTTIC donde podés realizar cursos sobre cooperativismo y tecnología.",
-        enlace: { texto: "Ir al club", href: "/contacto" },
+        enlace: { texto: "Ir al club", href: "https://clubcooperativo.com.ar/" },
         acento: "naranja" as Acento,
       },
     ],
@@ -487,14 +551,13 @@ export const CONTACTO = {
     motivo: {
       etiqueta: "Seleccionar motivo",
       /*
-       * Desktop dice "Quiero formar una coope" y mobile "…una cooperativa".
-       * Va la corta, que es la que entra en la fila de desktop y la que hace
-       * juego con "Quiero sumar mi coope"; queda anotado en PENDIENTES.
+       * Las maquetas decían "formar" y diferían entre sí en "coope" y
+       * "cooperativa"; el documento de contenido cerró las dos cosas.
        */
       opciones: [
         "Necesito sus servicios",
         "Quiero sumar mi coope",
-        "Quiero formar una coope",
+        "Quiero armar una coope",
         "Otro",
       ],
     },
@@ -540,16 +603,25 @@ export const SOBRE_FACTTIC = {
       "Somos cooperativas de profesionales comprometidos en desarrollar soluciones tecnológicas y de conocimiento que mejoran la calidad de vida de las personas. Estamos agrupadas en la Federación Argentina de Cooperativas de Trabajo, Tecnología, Innovación y Conocimiento (FACTTIC).",
       "En nuestro modelo cooperativo no hay jefes ni empleados. Cada persona que trabaja es asociada: es parte, toma decisiones y se beneficia del trabajo colectivo.",
       "Eso no significa que hacemos todo entre todos, hay roles, responsabilidades y estructuras. La diferencia está en que ponemos a las personas en el centro. Somos quienes definimos cómo trabajamos, cómo nos organizamos y qué hacemos con lo que generamos.",
-      "En FACTTIC, este modelo se multiplica: somos cooperativas que cooperan entre sí, compartiendo conocimiento y perspectiva sobre el rol de la tecnología en la sociedad.",
+      "En FACTTIC, este modelo se multiplica: somos cooperativas que cooperan entre sí. Compartimos proyectos, recursos, conocimiento y perspectiva política sobre el rol de la tecnología y el conocimiento en la sociedad.",
     ],
     /*
      * Las dos tarjetas se apilan al desplazar, como las de servicios: lo pide
      * la anotación del archivo, que remite al mismo efecto.
      */
     tarjetas: [
-      { pregunta: "¿Querés sumarte\na una coope?", acento: "lila" as Acento },
       {
-        pregunta: "¿Querés formate\nen cooperativismo?",
+        pregunta: "¿Querés sumarte\na una coope?",
+        descripcion:
+          "Semillero es la plataforma de FACTTIC que conecta a personas interesadas en el trabajo cooperativo con cooperativas que están buscando nuevos socios y socias. Podés encontrar oportunidades en tecnología, diseño, desarrollo, marketing, gestión y administración.",
+        enlace: { texto: "Ir a Semillero", href: "https://semillero.coop.ar/home" },
+        acento: "lila" as Acento,
+      },
+      {
+        pregunta: "¿Querés formarte\nen cooperativismo\ny tecnología?",
+        descripcion:
+          "El Club de Formación Cooperativa es una plataforma educativa de FACTTIC donde podés realizar cursos sobre cooperativismo y tecnología.",
+        enlace: { texto: "Ir al club", href: "https://clubcooperativo.com.ar/" },
         acento: "celeste" as Acento,
         // En mobile la maqueta la deja lisa y oscura —acá no hay animación
         // detrás—; en desktop la pinta de celeste.

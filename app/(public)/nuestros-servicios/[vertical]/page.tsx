@@ -48,10 +48,20 @@ export async function generateMetadata({
   const { vertical } = await params;
   const sector = await getSectorPorSlug(vertical);
   if (!sector?.destacado) return {};
+  /*
+   * Agro trae dos párrafos y el buscador muestra una línea: alcanza con el
+   * primero, que es el que resume la vertical.
+   */
+  const descripcion = T.descripciones[vertical] ?? sector.descripcion;
   return {
     title: sector.nombre,
-    description: T.descripciones[vertical] ?? sector.descripcion ?? undefined,
+    description: descripcion ? parrafos(descripcion)[0] : undefined,
   };
+}
+
+/** Una descripción puede venir en varios párrafos, separados por una línea. */
+function parrafos(texto: string) {
+  return texto.split("\n\n").filter(Boolean);
 }
 
 export default async function VerticalPage({
@@ -69,6 +79,7 @@ export default async function VerticalPage({
     getOrganizaciones(),
   ]);
 
+  const motivos = T.propuesta.items[vertical] ?? [];
   const acento = acentoDeSector(sector.nombre);
   const animacion = animacionDeSector(sector.nombre);
   const descripcion = T.descripciones[vertical] ?? sector.descripcion;
@@ -85,43 +96,52 @@ export default async function VerticalPage({
           />
         ) : null}
         <h1 className="text-h1 md:mt-8">{sector.nombre}</h1>
-        {descripcion ? (
-          <p className="text-p1 mt-6 text-blanco/80 md:max-w-3xl md:text-balance">
-            {descripcion}
-          </p>
-        ) : null}
+        {descripcion
+          ? parrafos(descripcion).map((parrafo, i) => (
+              <p
+                key={parrafo}
+                className={`text-p1 text-blanco/80 md:max-w-3xl ${
+                  i === 0 ? "mt-6" : "mt-4"
+                } ${i === 0 ? "md:text-balance" : ""}`}
+              >
+                {parrafo}
+              </p>
+            ))
+          : null}
       </Seccion>
 
-      <Seccion>
-        <EncabezadoSeccion
-          rotulo={T.propuesta.rotulo}
-          titulo={T.propuesta.titulo}
-          tamanoTitulo="h2"
-        />
+      {motivos.length ? (
+        <Seccion>
+          <EncabezadoSeccion
+            rotulo={T.propuesta.rotulo}
+            titulo={T.propuesta.titulo}
+            tamanoTitulo="h2"
+          />
 
-        {/* En desktop son cuatro tarjetas que toman el color de la vertical al
-            pasar el mouse; en mobile, un acordeón. */}
-        <div className="hidden gap-5 md:grid md:grid-cols-4">
-          {T.propuesta.items.map((item) => (
-            <CardPropuesta
-              key={item.titulo}
-              titulo={item.titulo}
-              descripcion={item.descripcion}
-              acento={acento}
-              className="h-[264px] whitespace-pre-line"
-            />
-          ))}
-        </div>
-        <Acordeon
-          className="divide-dashed divide-gris-oscuro border-gris-oscuro md:hidden"
-          inicial={null}
-          items={T.propuesta.items.map((item) => ({
-            id: item.titulo,
-            titulo: item.titulo.replace("\n", " "),
-            contenido: item.descripcion,
-          }))}
-        />
-      </Seccion>
+          {/* En desktop son cuatro tarjetas que toman el color de la vertical al
+              pasar el mouse; en mobile, un acordeón. */}
+          <div className="hidden gap-5 md:grid md:grid-cols-4">
+            {motivos.map((item) => (
+              <CardPropuesta
+                key={item.titulo}
+                titulo={item.titulo}
+                descripcion={item.descripcion}
+                acento={acento}
+                className="h-[264px] whitespace-pre-line"
+              />
+            ))}
+          </div>
+          <Acordeon
+            className="divide-dashed divide-gris-oscuro border-gris-oscuro md:hidden"
+            inicial={null}
+            items={motivos.map((item) => ({
+              id: item.titulo,
+              titulo: item.titulo.replace("\n", " "),
+              contenido: item.descripcion,
+            }))}
+          />
+        </Seccion>
+      ) : null}
 
       {/* Los aires de esta pantalla están medidos sobre la maqueta: 98px de
           las tarjetas a la línea del stack, 57 de la línea al título de

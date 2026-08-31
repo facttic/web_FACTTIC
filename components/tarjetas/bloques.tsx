@@ -293,7 +293,15 @@ export function CardOportunidad({
           {enlace ? (
             <>
               <div className="border-t border-blanco/20" />
-              <BotonTexto href={enlace.href} className="mt-4">
+              {/* Semillero y el Club son sitios aparte: se abren en otra
+                  pestaña, como el resto de los enlaces que salen del sitio. */}
+              <BotonTexto
+                href={enlace.href}
+                {...(enlace.href.startsWith("http")
+                  ? { target: "_blank", rel: "noreferrer" }
+                  : {})}
+                className="mt-4"
+              >
                 {enlace.texto}
               </BotonTexto>
             </>

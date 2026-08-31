@@ -109,7 +109,8 @@ export default async function SobreFactticPage() {
                 key={tarjeta.pregunta}
                 indice={i}
                 pregunta={tarjeta.pregunta}
-                descripcion={T.hero.bajada}
+                descripcion={tarjeta.descripcion}
+                enlace={tarjeta.enlace}
                 acento={tarjeta.acento}
                 enMobile={"oscuraEnMobile" in tarjeta ? "oscura" : undefined}
                 className="md:sticky md:top-24"

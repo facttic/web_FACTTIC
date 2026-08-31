@@ -93,17 +93,22 @@ export default function SumaTuCoopPage() {
         <EncabezadoSeccion
           rotulo={T.compromisos.rotulo}
           titulo={T.compromisos.titulo}
+          descripcion={T.compromisos.bajada}
           tamanoTitulo="h2"
         />
         {/* Al pasar el mouse pierden el relleno gris y quedan con el borde
-            blanco: son las dos variantes del componente en el board. Cuatro en
-            fila en desktop; en mobile se desplazan de costado. */}
-        <Carrusel grilla="md:grid-cols-4" gap="gap-5">
+            blanco: son las dos variantes del componente en el board. En desktop
+            van de a tres —son seis, y en filas de cuatro la segunda queda
+            coja—; en mobile se desplazan de costado. */}
+        <Carrusel grilla="md:grid-cols-3" gap="gap-5">
           {T.compromisos.items.map((titulo, i) => (
             <CardRequisito
               key={`${titulo}-${i}`}
               titulo={<span className="whitespace-pre-line">{titulo}</span>}
-              className="h-[135px] w-[287px] shrink-0 snap-start md:w-auto"
+              /* Alto mínimo y no fijo: el compromiso más largo necesita una
+                 línea más en mobile, y así crece la fila entera pareja en vez
+                 de recortarlo. */
+              className="min-h-[135px] w-[287px] shrink-0 snap-start md:w-auto"
             />
           ))}
         </Carrusel>

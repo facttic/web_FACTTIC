@@ -153,17 +153,14 @@ llegue.
       Organizaciones, Agro, Finanzas; la API los tiene cargados como Financiero
       (1), Agro (2), Organizaciones (3). El sitio respeta el `orden` de la API,
       así que se arregla desde el backoffice.
-- [ ] **24. Textos de Servicios escritos por nosotros, a validar.** El diseño
-      no los define y se redactaron siguiendo el tono del resto. Conviene que
-      FACTTIC los revise:
+- [ ] **24. Textos de Servicios: queda un renglón.** El documento de contenido
+      del 27/8 trajo los de metodologías y los dos motivos que faltaban, así que
+      ya no son nuestros. Sigue sin validar:
       - **Subservicios de cuatro servicios** (Datos e IA, Diseño, Capacitación,
         Ingeniería), cargados en la API. Los de "Desarrollo de software" sí
-        salen de la maqueta.
-      - **Descripciones de "Managed Services" y "Staff Augmentation"**, que el
-        carrusel de metodologías muestra en mobile.
-      - **Descripciones de "Agilidad y capacidad de adaptación" y "Cada proyecto
-        es nuestro"**: el prototipo solo implementa el hover de las dos
-        primeras tarjetas de "¿Por qué elegirnos?".
+        salen de la maqueta. El documento los lista con diferencias: dice `ML`
+        donde la API guarda "Modelos de lenguaje" —que además está mal, ML es
+        machine learning— y "Diseño UI/UX" donde la API tiene "UX/UI".
 - [ ] **25. Logos de aliados: los cargados son provisorios.** Se dieron de alta
       las tres organizaciones de la maqueta —Cooperativa Obrera, Banco Credicoop
       y Abuelas de Plaza de Mayo— con logos bajados de fuentes públicas
@@ -279,10 +276,10 @@ llevan indicaciones de implementación. Estado de las encontradas:
       Intercooperamos · Nos conocemos" y en mobile "Soluciones adaptadas ·
       Alcance Federal · Trabajo colaborativo · Capacitación y consultoría". Se
       tomó la de desktop, que es la que también está en el prototipo.
-- [ ] **28. Textos de las verticales escritos por nosotros.** El prototipo solo
-      define la descripción de "Trabajamos con compromiso"; las otras tres
-      tarjetas y las descripciones largas de Agro y Financiero están redactadas
-      acá y hay que validarlas.
+- [x] ~~**28. Textos de las verticales escritos por nosotros.**~~ → los trajo el
+      documento de contenido del 27/8, y con un juego propio por vertical: los
+      cuatro motivos de "¿Por qué elegirnos?" dejaron de ser compartidos entre
+      Organizaciones, Agro y Financiero. Las descripciones también son suyas.
 
 - [ ] **29. Maqueta mobile del detalle de proyecto.** No existe en el archivo
       —hay desktop (03.A) y de mobile solo la grilla—. El orden apilado, la
@@ -291,20 +288,13 @@ llevan indicaciones de implementación. Estado de las encontradas:
       "¿se podría incorporar video?": la API ya guarda `videoFileNames`, así que
       es decidir cómo se muestra. Queda pendiente de esa definición.
 
-- [ ] **31. Sumá tu coop: cuatro definiciones de contenido.**
-      1. Los compromisos muestran cuatro tarjetas pero la maqueta solo escribe
-         dos textos y los repite: faltan los otros dos.
-      2. La URL del código de conducta ("Ver Código" hoy apunta al sitio
-         actual de FACTTIC).
-      3. En mobile la sección de las tarjetas numeradas se titula "Tenemos
-         código de conducta" —repetido de la anterior, parece error— y en
-         desktop "Elegí tu camino al cooperativismo"; se usó esta última.
-      4. Faltan las URLs de **Semillero** y del **Club de Formación
-         Cooperativa**, que las tarjetas de "Elegí tu camino" enlazan al
-         pasar el mouse; hoy las tres van a Contacto.
-      5. La primera pregunta dice "¿Querés sumarte a una cooperativa?" en
-         desktop y "¿Querés sumarte a FACTTIC?" en mobile; se usó la desktop,
-         que es la que coincide con el texto de Semillero.
+- [ ] **31. Sumá tu coop: queda una URL.**
+      El documento de contenido del 27/8 cerró los otros cuatro puntos: los seis
+      compromisos, las URLs de Semillero y del Club, el título de las tarjetas
+      numeradas y la primera pregunta, que quedó "¿Querés sumarte a una coope?".
+      1. Falta la URL del código de conducta: "Ver Código" apunta todavía al
+         sitio actual de FACTTIC. El documento nombra el botón pero no da
+         dirección.
 
 - [ ] **32. La animación del 404 no coincide con el fotograma de la maqueta.**
       `fondo-error404.json` trae toda la decoración —arco, planetas, sol lila y
@@ -319,9 +309,8 @@ llevan indicaciones de implementación. Estado de las encontradas:
       1. `fondo-contacto.json` no tiene ninguna capa naranja —su círculo grande
          es violeta— pero las dos maquetas dibujan un resplandor naranja. Se usa
          la animación tal como vino.
-      2. El tercer motivo dice "Quiero formar una coope" en desktop y "…una
-         cooperativa" en mobile. Va la corta, que es la que entra en la fila de
-         desktop y hace juego con "Quiero sumar mi coope".
+      2. ~~El tercer motivo difiere entre las maquetas.~~ → el documento de
+         contenido lo cerró en "Quiero armar una coope".
       3. Falta una dirección de correo de contacto para ofrecer como
          alternativa cuando el envío falla.
 
@@ -375,7 +364,52 @@ llevan indicaciones de implementación. Estado de las encontradas:
       está hoy.
 - [ ] **El mapa del sitio (`Propuesta B.2.pdf`) contradice a las maquetas.** Su
       menú usa nombres viejos ("Para empresas", "Para cooperativas", "Red"). O se
-      actualiza o se descarta como referencia.
+      actualiza o se descarta como referencia. **El documento de contenido se
+      contradice a sí mismo en lo mismo**: su tabla de títulos recomienda "Para
+      empresas" y "Para cooperativas" —con argumento: "indica el público"— pero
+      su "Menú elegido" mantiene "Nuestros servicios" y "Sumá tu coop". Cambiarlo
+      toca la navegación, las URLs y el footer.
+
+- [ ] **Lo que dejó abierto el documento de contenido (27/8).** Se aplicó todo lo
+      que era copy; queda esto:
+      1. **Las oportunidades, ¿un texto o dos?** Hoy la Home y Sumá tu coop
+         comparten los cuatro textos (`HOME.beneficios.items`). El documento
+         lista en Inicio solo los títulos y pone las descripciones largas —hasta
+         200— únicamente en Para cooperativas. Con las largas, en la Home tres de
+         las cuatro tarjetas se comen el padding inferior en mobile: la cara de
+         hover pide 237px y la caja da 214. Entran en desktop.
+      2. **La MIT no tiene dónde ir.** El documento le da texto ("la mutual de
+         quienes trabajan en informática y conocimiento: una organización amiga
+         de FACTTIC") y enlace a `https://mit.org.ar/`, pero la sección de
+         espacios cooperativos es una fila de logos que salen de la API. Hace
+         falta una definición de diseño, no de copy.
+      3. **Un párrafo sin sección.** El documento cierra con un texto de 336
+         caracteres —"Más de 30 cooperativas de 10 provincias forman parte de
+         nuestra Federación…"— sin decir dónde va. Por el contenido parece de
+         Nuestra Red.
+      4. **Los títulos con barra siguen sin resolver** en las tres verticales:
+         "Nuestros proyectos destacados / Nuestros casos de éxito" y "Ver
+         proyectos destacados / ¿Tenés un proyecto?".
+      5. **Financiero está marcado "completar"** en el propio documento, aunque
+         trae los cuatro motivos, que ya se cargaron.
+      6. **Nombres de servicios y sectores, que salen de la API.** El documento
+         dice "Inteligencia artificial y Datos" y "Diseño y comunicación
+         digital"; la API tiene "Datos e inteligencia artificial" y "Diseño y
+         comunicación". En las etiquetas, el documento dice `ML` y la API guarda
+         "Modelos de lenguaje", que además es un error: ML es machine learning y
+         "LLMs" ya está al lado. La frase del sector Agro mide 83 caracteres
+         contra el límite de 70 que el documento fija para ese lugar.
+      7. **Faltan cuatro proyectos destacados**, que son carga por API: Coopcycle
+         y Humanitarian OpenStreetMap en Organizaciones, Skyloop en Agro y
+         BuenBit en Financiero. Sin proyectos la sección no se renderiza, que es
+         lo que hoy les pasa a Agro y Financiero.
+      8. **Límites que el documento incumple**: "¿Qué es FACTTIC?" mide 355 sobre
+         300; dos de las cuatro oportunidades pasan los 200 (205 y 208); tres de
+         los seis compromisos pasan los 40 (48, 58 y 82); el bloque de tres
+         párrafos del modelo cooperativo mide 626 sobre 600; y "Equipos sin
+         rotación" mide 164 sobre los 160 de esa pantalla. Ninguno rompe el
+         diseño: se midió el DOM a 1440 y 393. Es material para devolverle a
+         quien escribió el documento.
 - [ ] **Copys definitivos** de las páginas que todavía no se construyeron.
 
 ---
