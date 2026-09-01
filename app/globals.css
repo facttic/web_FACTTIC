@@ -532,17 +532,6 @@
 }
 
 /**
- * Los tres pasos de la metodología, con foco al pasar el mouse.
- *
- * El que se mira sube apenas y los otros dos bajan de intensidad: leer una
- * etapa es dejar las otras en segundo plano, así que el movimiento hace lo
- * mismo que la lectura. El color del número y de la línea lo pone el propio
- * paso con `group-hover`, que es lo que ya usa el resto del sitio.
- *
- * Va sobre la lista y no sobre cada paso porque atenuar a los hermanos es algo
- * que solo el contenedor sabe hacer: `:has()` mira hacia adentro.
- */
-/**
  * Fondo que se mueve más lento que el contenido. El recorrido es corto a
  * propósito: el paralaje llamativo marea y pelea con el scroll del sistema.
  */

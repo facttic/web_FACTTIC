@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { Seccion, BandaCta } from "@/components/ui/seccion";
 import { BotonLink } from "@/components/ui/boton";
 import { Animacion } from "@/components/ui/animacion";
+import { Escaneo } from "@/components/ui/escaneo";
 import { Carrusel } from "@/components/ui/carrusel";
 import { CardLogo } from "@/components/tarjetas/red";
 import { CardOportunidad } from "@/components/tarjetas/bloques";
@@ -125,14 +125,22 @@ export default async function SobreFactticPage() {
         alineada con el texto. En mobile sigue cruzando la pantalla, como su
         maqueta. Va en alta —2880px de ancho, el doble de los 1440 a los que se
         muestra— para que no se vea blanda en pantallas densas.
+
+        355px y no los 470 de la maqueta: es el alto que le corresponde a una
+        panorámica de 2880×837 en el ancho del contenedor. Con 470 hay que
+        recortar un 12% de cada lado y se pierden las personas de los extremos,
+        que es justo lo que el escaneo invita a mirar. En mobile se mantiene el
+        recorte: a lo ancho de un teléfono la foto entera sería una franja de
+        poco más de cien píxeles.
       */}
       <div className="md:contenedor">
-        <Image
+        <Escaneo
           src={T.foto.src}
           alt={T.foto.alt}
-          width={1440}
-          height={470}
-          className="h-56 w-full rounded-xl object-cover md:h-[470px]"
+          relieve={0.15}
+          ancho={0.09}
+          duracion={9}
+          className="h-56 w-full rounded-xl md:h-[355px]"
         />
       </div>
 
