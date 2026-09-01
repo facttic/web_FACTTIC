@@ -14,6 +14,10 @@ import { Acordeon, type ItemAcordeon } from "@/components/ui/acordeon";
  * derecha: es un proceso ordenado y el movimiento lo dice. La línea va un paso
  * atrás de su bloque —`--i` corrido en uno— así que el número llega primero y
  * la línea se apoya debajo, en vez de aparecer ya puesta.
+ *
+ * Al pasar el mouse, el paso se enciende en lila y los otros dos se atenúan.
+ * El lila es el color con que el sistema marca lo activo —la selección, el haz
+ * del borde— y acá hace lo mismo: señala en cuál de las tres etapas se está.
  */
 export function Pasos({
   pasos,
@@ -39,18 +43,28 @@ export function Pasos({
         )}
       />
 
-      <ol className={cn("hidden gap-8 md:grid md:grid-cols-3", className)}>
+      <ol
+        className={cn(
+          "pasos-con-foco hidden gap-8 md:grid md:grid-cols-3",
+          className,
+        )}
+      >
         {pasos.map((paso, i) => (
+          /*
+            El color del hover lo pone `pasos-con-foco` en `globals.css`, no una
+            variante de Tailwind: compite con el revelado, que está fuera de
+            capas y le gana a cualquier utilidad. De ahí los dos ganchos.
+          */
           <li
             key={paso.titulo}
             className="revelar-al-entrar"
             style={{ "--i": i } as CSSProperties}
           >
-            <p className="text-h1 text-blanco/20">
+            <p className="numero text-h1 text-blanco/20">
               {String(i + 1).padStart(2, "0")}.
             </p>
             <div
-              className="crecer-al-entrar mt-4 border-t border-borde"
+              className="linea crecer-al-entrar mt-4 border-t border-borde"
               style={{ "--i": i + 1 } as CSSProperties}
             />
             <h3 className="text-h4 mt-5">{paso.titulo}</h3>

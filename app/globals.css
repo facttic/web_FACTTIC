@@ -465,7 +465,11 @@
 
   [data-revelar="js"] .crecer-al-entrar {
     transform: scaleX(0);
-    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    /* El color va en el mismo shorthand: si no, el `transition-colors` del
+       hover de los pasos queda pisado por esta regla. */
+    transition:
+      transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     transition-delay: calc(var(--i, 0) * 90ms);
   }
 
@@ -474,6 +478,70 @@
   }
 }
 
+/**
+ * Los tres pasos de la metodología, con foco al pasar el mouse.
+ *
+ * El que se mira sube apenas y los otros dos bajan de intensidad: leer una
+ * etapa es dejar las otras en segundo plano, así que el movimiento hace lo
+ * mismo que la lectura. El lila es el color con que el sistema marca lo
+ * activo —la selección, el haz del borde— y acá señala en cuál de las tres
+ * etapas se está.
+ *
+ * Va acá y no en un `@utility` a propósito: las utilidades caen en
+ * `layer utilities`, y el revelado de arriba —que fija la opacidad del mismo
+ * elemento— está fuera de capas. Una capa pierde contra lo que no está en
+ * ninguna por más específico que sea el selector, así que dentro de `@utility`
+ * la atenuación no llegaba a aplicarse.
+ *
+ * Atenuar a los hermanos es algo que solo el contenedor sabe hacer: `:has()`
+ * mira hacia adentro.
+ */
+.pasos-con-foco > li {
+  transition:
+    opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pasos-con-foco > li .numero,
+.pasos-con-foco > li .linea {
+  transition: color 0.3s ease-out, border-color 0.3s ease-out;
+}
+
+/* Los otros dos bajan a segundo plano. */
+.pasos-con-foco:has(> li:hover) > li:not(:hover) {
+  opacity: 0.4;
+}
+
+/* Y el que se mira se enciende. */
+.pasos-con-foco > li:hover .numero {
+  color: var(--color-lila);
+}
+
+.pasos-con-foco > li:hover .linea {
+  border-color: var(--color-lila);
+}
+
+@media not (prefers-reduced-motion: reduce) {
+  /*
+   * `.revelar-al-entrar` de más para ganarle al `transform: none` con que el
+   * revelado cierra su entrada, que es (0,3,0) por los dos atributos.
+   */
+  .pasos-con-foco > li.revelar-al-entrar:hover {
+    transform: translateY(-4px);
+  }
+}
+
+/**
+ * Los tres pasos de la metodología, con foco al pasar el mouse.
+ *
+ * El que se mira sube apenas y los otros dos bajan de intensidad: leer una
+ * etapa es dejar las otras en segundo plano, así que el movimiento hace lo
+ * mismo que la lectura. El color del número y de la línea lo pone el propio
+ * paso con `group-hover`, que es lo que ya usa el resto del sitio.
+ *
+ * Va sobre la lista y no sobre cada paso porque atenuar a los hermanos es algo
+ * que solo el contenedor sabe hacer: `:has()` mira hacia adentro.
+ */
 /**
  * Fondo que se mueve más lento que el contenido. El recorrido es corto a
  * propósito: el paralaje llamativo marea y pelea con el scroll del sistema.
