@@ -90,25 +90,37 @@ export function CardServicioSiguiente({
       onClick={onClick}
       aria-label={`Ver ${titulo}`}
       className={cn(
-        // 599x235 con radio 20 en el SVG de la Home, y borde blanco pleno.
-        // Es una caja ancha y baja, no el cuadrado de las otras tarjetas.
-        "group relative h-[235px] cursor-pointer overflow-hidden rounded-[20px] text-left",
+        /*
+          599x235 con radio 20 en el SVG de la Home, y borde blanco pleno: una
+          caja ancha y baja, no el cuadrado de las otras tarjetas.
+
+          El alto es mínimo y no fijo. Con 235 quedan 147px para el texto —el
+          resto se lo lleva el aire de 44— y las descripciones que manda FACTTIC
+          llegan a 400 caracteres: "Datos e inteligencia artificial" se pasaba
+          46px y el rótulo del pie quedaba cortado contra el borde. Las dos de
+          la fila crecen parejas porque la grilla las estira.
+        */
+        "group relative min-h-[235px] cursor-pointer overflow-hidden rounded-[20px] text-left",
         "border border-borde-pleno transition-colors duration-300 hover:border-transparent",
         HOVER_ACENTO[acento],
         FOCO,
         className,
       )}
     >
-      <span className="absolute inset-0 flex flex-col p-11 transition-opacity duration-300 group-hover:opacity-0">
-        <span className="text-h3 whitespace-pre-line">{titulo}</span>
-      </span>
-
-      <span
-        className="absolute inset-0 flex flex-col justify-between gap-8 p-11 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        aria-hidden
-      >
+      {/*
+        La cara del hover es la que va en el flujo, y por eso es la que le da
+        alto a la caja: es la que tiene más texto, así que la tarjeta mide
+        siempre lo que la descripción necesita. La de reposo va encima en
+        absoluto. Las dos se cruzan en opacidad, así el texto no se reacomoda a
+        mitad de la transición.
+      */}
+      <span className="flex flex-col justify-between gap-8 p-11 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
         {descripcion ? <span className="text-p2">{descripcion}</span> : null}
         <span className="text-eyebrow opacity-60">{titulo}</span>
+      </span>
+
+      <span className="absolute inset-0 flex flex-col p-11 transition-opacity duration-300 group-hover:opacity-0">
+        <span className="text-h3 whitespace-pre-line">{titulo}</span>
       </span>
     </button>
   );
