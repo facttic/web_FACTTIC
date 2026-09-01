@@ -37,19 +37,61 @@ import { Inclinar } from "@/components/ui/inclinar";
 const ALTO_TARJETA = "h-[366px] md:h-[406px]";
 const ALTO_IMAGEN =
   "h-[310px] group-hover:h-[129px] group-focus-visible:h-[129px]";
+/** Recortes de la textura, para que las tarjetas sin portada no se repitan. */
+const ENCUADRE = [
+  "object-left-top",
+  "object-right-bottom",
+  "object-center",
+  "object-left-bottom",
+  "object-right-top",
+];
+
 const PIEL_TARJETA =
   "transition-colors duration-300 group-hover:border-borde-pleno group-hover:bg-transparent " +
   "group-focus-visible:border-borde-pleno group-focus-visible:bg-transparent";
 
 function Portada({
   proyecto,
+  indice = 0,
   className,
 }: {
   proyecto: Proyecto;
+  /** Reparte los colores cuando el proyecto no tiene sector cargado. */
+  indice?: number;
   className?: string;
 }) {
+  /*
+   * Nueve de los once proyectos cargados no tienen imagen, así que el caso sin
+   * portada no es la excepción sino lo habitual. Va una textura gris —de
+   * Unsplash, licencia libre para uso comercial y sin atribución obligatoria—
+   * en vez de un rectángulo vacío: es neutra a propósito, porque una foto de
+   * archivo de gente trabajando diría algo del proyecto que no sabemos, y al
+   * lado de las portadas reales se leería como relleno.
+   *
+   * Encima va la estrella de la identidad, apenas insinuada y corrida según la
+   * posición, para que nueve tarjetas seguidas no sean nueve veces la misma
+   * imagen. Se reemplaza sola en cuanto FACTTIC cargue las portadas.
+   */
   if (!proyecto.portada) {
-    return <div className={cn("bg-superficie-alta/30", className)} />;
+    return (
+      <div
+        className={cn("relative overflow-hidden bg-superficie-alta", className)}
+        aria-hidden
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/marca/proyecto-sin-portada.jpg"
+          alt=""
+          className={cn(
+            "size-full object-cover opacity-60 grayscale",
+            // El encuadre cambia con la posición: es la misma textura, pero
+            // nueve tarjetas seguidas no muestran el mismo recorte.
+            ENCUADRE[indice % ENCUADRE.length],
+          )}
+          loading="lazy"
+        />
+      </div>
+    );
   }
 
   return (
@@ -127,11 +169,14 @@ function Detalle({
  */
 export function CardProyecto({
   proyecto,
+  indice = 0,
   alto,
   destacada,
   className,
 }: {
   proyecto: Proyecto;
+  /** Reparte los colores de la portada genérica cuando no hay sector. */
+  indice?: number;
   /** Alto propio de la pantalla: en las verticales la tarjeta es más baja. */
   alto?: string;
   /**
@@ -163,6 +208,7 @@ export function CardProyecto({
         >
           <Portada
             proyecto={proyecto}
+            indice={indice}
             className={cn(
               "w-full shrink-0 transition-all duration-300",
               ALTO_IMAGEN,
@@ -200,9 +246,12 @@ export function CardProyecto({
  */
 export function CardProyectoDetalle({
   proyecto,
+  indice = 0,
   className,
 }: {
   proyecto: Proyecto;
+  /** Reparte los colores de la portada genérica cuando no hay sector. */
+  indice?: number;
   className?: string;
 }) {
   return (
@@ -211,7 +260,11 @@ export function CardProyectoDetalle({
       className={cn("group block", FOCO, className)}
     >
       <Tarjeta className="overflow-hidden transition-colors hover:border-blanco/30">
-        <Portada proyecto={proyecto} className="h-56 w-full md:h-[310px]" />
+        <Portada
+          proyecto={proyecto}
+          indice={indice}
+          className="h-56 w-full md:h-[310px]"
+        />
         <div className="p-6">
           <h3 className="text-h4 line-clamp-2 text-balance">
             {proyecto.nombre}

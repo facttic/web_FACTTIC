@@ -93,6 +93,7 @@ export default async function ProyectosPage({
             <div className="flex flex-col gap-5 md:grid md:grid-cols-3">
               {proyectos.items.map((proyecto, i) => (
                 <CardProyecto
+                  indice={i}
                   key={proyecto.id}
                   proyecto={proyecto}
                   className={cn(esAncha(i) ? "md:col-span-2" : "")}

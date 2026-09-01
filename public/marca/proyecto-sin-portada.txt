@@ -1,0 +1,5 @@
+Textura gris usada como portada por defecto cuando un proyecto no tiene imagen.
+
+Origen: Unsplash, foto 1585314062604-1a357de8b000.
+Licencia: Unsplash License — permite uso comercial y no exige atribución.
+https://unsplash.com/license
