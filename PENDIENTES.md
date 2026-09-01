@@ -442,6 +442,37 @@ llevan indicaciones de implementación. Estado de las encontradas:
          quien escribió el documento.
 - [ ] **Copys definitivos** de las páginas que todavía no se construyeron.
 
+### Ideas probadas y dejadas para después
+
+- [ ] **Palabras del vocabulario cooperativo viajando de fondo.** Se probó el
+      "On-Scroll Text Motion" de Codrops (MIT, `codrops/ScrollTextMotion`), que
+      mueve cada palabra entre dos posiciones atada al scroll y la revela
+      descifrándola. **Corriendo solo queda muy bien**; el problema es meterlo
+      de fondo en la Home.
+
+      Lo que se aprendió, para no repetirlo:
+      1. **El demo es una página que existe para el efecto.** Su contenido *son*
+         las palabras, con `padding: 100vh`, nada opaco encima y ningún otro
+         sistema de animación. La Home tiene hero a pantalla completa, bloques
+         con fondo que las tapan, la grilla de puntos, los revelados atados a
+         `view()` y las transiciones entre pantallas.
+      2. **El efecto no es mover una coordenada.** Cada palabra tiene dos clases
+         de posición —`margin-left`, `margin-top`, `opacity` y `filter`— y Flip
+         interpola entre las dos a la vez; por eso se reacomodan en vez de
+         deslizarse. Son dos animaciones encadenadas: una hasta el centro de la
+         pantalla y otra del centro hacia arriba.
+      3. **ScrollSmoother no se puede sumar sin reestructurar el layout.** Mueve
+         el contenido con `transform`, y ahí adentro `position: fixed` deja de
+         anclarse a la ventana: se rompen el header (`header.tsx:55`), el menú
+         de mobile (`:136`), la grilla de fondo (`grilla-viva.tsx:134`), el
+         `sticky h-screen` del laboratorio y las tarjetas de Sobre Facttic.
+      4. **Cuesta 172 KB de GSAP** en cuatro plugins, contra las cuatro
+         dependencias chicas que tiene hoy el proyecto.
+
+      Si se retoma, el camino con sentido es una **pantalla propia** donde el
+      efecto sea el protagonista —un manifiesto, una landing de campaña— y no
+      el fondo de una pantalla que ya está llena.
+
 ---
 
 ## Resueltos
