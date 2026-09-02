@@ -444,34 +444,31 @@ llevan indicaciones de implementación. Estado de las encontradas:
 
 ### Ideas probadas y dejadas para después
 
-- [ ] **Palabras del vocabulario cooperativo viajando de fondo.** Se probó el
-      "On-Scroll Text Motion" de Codrops (MIT, `codrops/ScrollTextMotion`), que
-      mueve cada palabra entre dos posiciones atada al scroll y la revela
-      descifrándola. **Corriendo solo queda muy bien**; el problema es meterlo
-      de fondo en la Home.
+- [x] ~~**Palabras del vocabulario cooperativo viajando de fondo.**~~ → puesto
+      en la Home. Es el "On-Scroll Text Motion" de Codrops (MIT,
+      `codrops/ScrollTextMotion`) con su mecánica intacta: cada palabra tiene
+      dos clases de posición y Flip interpola entre las dos a la vez —margen,
+      opacidad y desenfoque—, en dos animaciones encadenadas, y se revela con
+      ScrambleText.
 
-      Lo que se aprendió, para no repetirlo:
-      1. **El demo es una página que existe para el efecto.** Su contenido *son*
-         las palabras, con `padding: 100vh`, nada opaco encima y ningún otro
-         sistema de animación. La Home tiene hero a pantalla completa, bloques
-         con fondo que las tapan, la grilla de puntos, los revelados atados a
-         `view()` y las transiciones entre pantallas.
-      2. **El efecto no es mover una coordenada.** Cada palabra tiene dos clases
-         de posición —`margin-left`, `margin-top`, `opacity` y `filter`— y Flip
-         interpola entre las dos a la vez; por eso se reacomodan en vez de
-         deslizarse. Son dos animaciones encadenadas: una hasta el centro de la
-         pantalla y otra del centro hacia arriba.
-      3. **ScrollSmoother no se puede sumar sin reestructurar el layout.** Mueve
-         el contenido con `transform`, y ahí adentro `position: fixed` deja de
-         anclarse a la ventana: se rompen el header (`header.tsx:55`), el menú
-         de mobile (`:136`), la grilla de fondo (`grilla-viva.tsx:134`), el
-         `sticky h-screen` del laboratorio y las tarjetas de Sobre Facttic.
-      4. **Cuesta 172 KB de GSAP** en cuatro plugins, contra las cuatro
-         dependencias chicas que tiene hoy el proyecto.
+      Dos cosas se apartan del demo, y conviene saber por qué:
+      1. **Sin ScrollSmoother.** Mueve el contenido con `transform`, y ahí
+         adentro `position: fixed` deja de anclarse a la ventana: se romperían
+         el encabezado, el menú de mobile y la grilla. Se reemplaza por `scrub`
+         con retardo, que amortigua sin tocar cómo scrollea la página.
+      2. **Los grupos se reparten por toda la altura de la Home.** En el demo
+         las palabras son el contenido y se apilan; acá son fondo de una
+         pantalla que mide cinco veces la ventana, y apiladas quedaban todas en
+         el primer tramo, detrás del hero y con su recorrido consumido antes de
+         que la página terminara de cargar. **Ese era el error de la primera
+         prueba**, no el smoother.
 
-      Si se retoma, el camino con sentido es una **pantalla propia** donde el
-      efecto sea el protagonista —un manifiesto, una landing de campaña— y no
-      el fondo de una pantalla que ya está llena.
+      Cuesta 168 KB de GSAP sin comprimir, en cuatro plugins. Se cargan con
+      `import()` aparte del bundle de la página, así que no demoran lo que se
+      lee, y si la carga falla las palabras quedan quietas y no pasa nada.
+
+      Medido: las diez palabras recorren entre 559 y 1008px, y el encabezado, la
+      grilla y los revelados siguen funcionando igual.
 
 ---
 

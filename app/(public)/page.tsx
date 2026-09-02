@@ -2,6 +2,7 @@ import { Hero } from "@/components/secciones/hero";
 import { RevelarPalabras } from "@/components/secciones/texto-animado";
 import { Marquesina } from "@/components/secciones/marquesina";
 import { Pasos } from "@/components/secciones/pasos";
+import { PalabrasDeFondo } from "@/components/secciones/palabras-de-fondo";
 import { BandaCta, EncabezadoSeccion, Seccion } from "@/components/ui/seccion";
 import { BotonLink } from "@/components/ui/boton";
 import { Servicios } from "@/components/secciones/servicios";
@@ -53,7 +54,12 @@ export default async function HomePage() {
   ]);
 
   return (
-    <div className="flex flex-col">
+    /*
+      `relative isolate` para que las palabras de fondo se midan contra la Home
+      entera y no contra la ventana: así se reparten por toda la página.
+    */
+    <div className="relative isolate flex flex-col">
+      <PalabrasDeFondo />
       <Hero
         className="order-1"
         titulo={HOME.hero.titulo}
