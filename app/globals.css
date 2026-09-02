@@ -532,53 +532,6 @@
 }
 
 /**
- * Palabras de fondo que viajan con el scroll.
- *
- * Las clases de posición son las del "On-Scroll Text Motion" de Codrops (MIT),
- * con sus mismos valores: el efecto no es mover una coordenada sino interpolar
- * entre dos de estas clases —margen, opacidad y desenfoque a la vez—, que es lo
- * que hace que las palabras se reacomoden en vez de deslizarse.
- */
-.pal-el {
-  white-space: nowrap;
-  filter: blur(0px);
-  text-transform: uppercase;
-  opacity: 0.6;
-  width: max-content;
-}
-
-/* Sin margen: es el punto de partida. Existe para poder nombrarla. */
-.pal-pos-1 {
-  margin-left: 0;
-}
-
-.pal-pos-2 {
-  margin-left: 25vw;
-}
-
-.pal-pos-3 {
-  margin-left: 70vw;
-}
-
-.pal-pos-4 {
-  margin-left: auto;
-}
-
-.pal-pos-5 {
-  opacity: 1;
-}
-
-.pal-pos-6 {
-  margin-left: auto;
-  opacity: 1;
-}
-
-.pal-pos-7 {
-  opacity: 1;
-  filter: blur(1.2px);
-}
-
-/**
  * Fondo que se mueve más lento que el contenido. El recorrido es corto a
  * propósito: el paralaje llamativo marea y pelea con el scroll del sistema.
  */

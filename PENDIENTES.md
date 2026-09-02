@@ -444,31 +444,32 @@ llevan indicaciones de implementación. Estado de las encontradas:
 
 ### Ideas probadas y dejadas para después
 
-- [x] ~~**Palabras del vocabulario cooperativo viajando de fondo.**~~ → puesto
-      en la Home. Es el "On-Scroll Text Motion" de Codrops (MIT,
-      `codrops/ScrollTextMotion`) con su mecánica intacta: cada palabra tiene
-      dos clases de posición y Flip interpola entre las dos a la vez —margen,
-      opacidad y desenfoque—, en dos animaciones encadenadas, y se revela con
-      ScrambleText.
+- [ ] **Palabras del vocabulario cooperativo viajando de fondo.** Probado dos
+      veces con el "On-Scroll Text Motion" de Codrops (MIT,
+      `codrops/ScrollTextMotion`) y descartado las dos. **No insistir sin un
+      cambio de enfoque.**
 
-      Dos cosas se apartan del demo, y conviene saber por qué:
-      1. **Sin ScrollSmoother.** Mueve el contenido con `transform`, y ahí
-         adentro `position: fixed` deja de anclarse a la ventana: se romperían
-         el encabezado, el menú de mobile y la grilla. Se reemplaza por `scrub`
-         con retardo, que amortigua sin tocar cómo scrollea la página.
-      2. **Los grupos se reparten por toda la altura de la Home.** En el demo
-         las palabras son el contenido y se apilan; acá son fondo de una
-         pantalla que mide cinco veces la ventana, y apiladas quedaban todas en
-         el primer tramo, detrás del hero y con su recorrido consumido antes de
-         que la página terminara de cargar. **Ese era el error de la primera
-         prueba**, no el smoother.
+      La segunda vez llegó a andar —las diez palabras recorrían entre 559 y
+      1008px, sin romper el encabezado, la grilla ni los revelados— y aun así
+      no se parecía al demo. Ahí está el punto: el problema no era técnico.
 
-      Cuesta 168 KB de GSAP sin comprimir, en cuatro plugins. Se cargan con
-      `import()` aparte del bundle de la página, así que no demoran lo que se
-      lee, y si la carga falla las palabras quedan quietas y no pasa nada.
+      1. **El demo es una página que existe para el efecto.** Sus palabras *son*
+         el contenido, ocupan la pantalla entera, no hay nada opaco encima y
+         nada más se mueve. De fondo en la Home compiten con el hero a pantalla
+         completa, con bloques que las tapan, con la grilla de puntos y con los
+         revelados: se ven a retazos, y a retazos el efecto no se lee.
+      2. **La mecánica no es mover una coordenada.** Cada palabra tiene dos
+         clases de posición y Flip interpola margen, opacidad y desenfoque a la
+         vez, en dos animaciones encadenadas. Reimplementarlo a mano da otra
+         cosa; hay que usar Flip.
+      3. **ScrollSmoother no entra sin reestructurar el layout.** Mueve el
+         contenido con `transform` y ahí adentro `position: fixed` deja de
+         anclarse a la ventana: encabezado, menú de mobile, grilla y sticky.
+      4. **Cuesta 168 KB de GSAP** en cuatro plugins.
 
-      Medido: las diez palabras recorren entre 559 y 1008px, y el encabezado, la
-      grilla y los revelados siguen funcionando igual.
+      Si se retoma, el camino es una **pantalla propia** donde el efecto sea el
+      protagonista —un manifiesto, una landing de campaña—, no el fondo de una
+      pantalla llena. Con eso el demo se puede usar casi tal cual.
 
 ---
 
