@@ -18,6 +18,9 @@ export const HOME = {
     tituloMobile: "Desarrollá\ntu proyecto\ntecnológico\ncon cooperativas",
     bajada:
       "Una red federal de cooperativas de tecnología, innovación y conocimiento que diseña, desarrolla e implementa soluciones digitales",
+    // Mobile la acorta: en la maqueta entra en cuatro renglones de mono.
+    bajadaMobile:
+      "Una red federal de cooperativas tecnológicas que diseña, desarrolla e implementa soluciones digitales.",
     cta: { texto: "Trabajá con FACTTIC", href: "/contacto" },
   },
 
@@ -49,6 +52,8 @@ export const HOME = {
       },
       {
         titulo: "Armamos el equipo intercoop",
+        // La maqueta mobile lo escribe entero; la de desktop lo abrevia.
+        tituloMobile: "Armamos el equipo intercooperativo",
         descripcion: "Seleccionamos las cooperativas y perfiles más adecuados.",
       },
       {
@@ -85,6 +90,7 @@ export const HOME = {
   beneficios: {
     rotulo: "Beneficios",
     titulo: "¿Qué oportunidades ofrece la Federación?",
+    tituloMobile: "¿Qué oportunidades ofrece FACTTIC?",
     cta: { texto: "Sumate a FACTTIC", href: "/suma-tu-coop" },
     items: [
       {
@@ -125,6 +131,9 @@ export const HOME = {
     cierre: {
       titulo: "¿Querés ser parte de la red?",
       cta: { texto: "Sumate a FACTTIC", href: "/suma-tu-coop" },
+      // En mobile la banda pregunta otra cosa y manda al formulario.
+      tituloMobile: "¿Sos parte de\nuna cooperativa?",
+      ctaMobile: { texto: "Trabajá con Facttic", href: "/contacto" },
     },
   },
 } as const;

@@ -23,12 +23,17 @@ export function Pasos({
   pasos,
   className,
 }: {
-  pasos: readonly { titulo: string; descripcion: string }[];
+  pasos: readonly {
+    titulo: string;
+    /** El segundo paso se escribe entero en la maqueta mobile. */
+    tituloMobile?: string;
+    descripcion: string;
+  }[];
   className?: string;
 }) {
   const items: ItemAcordeon[] = pasos.map((paso, i) => ({
     id: paso.titulo,
-    titulo: `${String(i + 1).padStart(2, "0")} / ${paso.titulo}`,
+    titulo: `${String(i + 1).padStart(2, "0")} / ${paso.tituloMobile ?? paso.titulo}`,
     contenido: paso.descripcion,
   }));
 
@@ -37,6 +42,8 @@ export function Pasos({
       {/* En la maqueta las líneas del acordeón son punteadas y en Gris oscuro. */}
       <Acordeon
         items={items}
+        // Cerrado: la maqueta mobile los muestra a los tres plegados.
+        inicial={null}
         className={cn(
           "divide-dashed divide-gris-oscuro border-gris-oscuro md:hidden",
           className,

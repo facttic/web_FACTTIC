@@ -1,5 +1,4 @@
 import { Hero } from "@/components/secciones/hero";
-import { RevelarPalabras } from "@/components/secciones/texto-animado";
 import { Marquesina } from "@/components/secciones/marquesina";
 import { Pasos } from "@/components/secciones/pasos";
 import { BandaCta, EncabezadoSeccion, Seccion } from "@/components/ui/seccion";
@@ -59,24 +58,12 @@ export default async function HomePage() {
         titulo={HOME.hero.titulo}
         tituloMobile={HOME.hero.tituloMobile}
         bajada={HOME.hero.bajada}
+        bajadaMobile={HOME.hero.bajadaMobile}
         accion={HOME.hero.cta}
         video={VIDEO_HERO.desktop}
         videoMobile={VIDEO_HERO.mobile}
         imagen={VIDEO_HERO.poster}
       />
-
-      {/*
-        En mobile la bajada del hero no va sobre el video: abre la página como
-        un bloque de texto grande. En desktop ese lugar no existe.
-      */}
-      <Seccion className="order-2 md:hidden">
-        {/* La anotación del diseño pide acá el "Scroll reveal": el texto se
-            enciende palabra por palabra a medida que sube por la pantalla. */}
-        <RevelarPalabras
-          texto={HOME.hero.bajada}
-          className="text-h1 text-balance"
-        />
-      </Seccion>
 
       {sectores.length ? (
         // La primera sección respira más: en el SVG hay 112px entre el pie del
@@ -140,6 +127,7 @@ export default async function HomePage() {
           rotulo={HOME.metodologia.rotulo}
           titulo={HOME.metodologia.titulo}
           alineacion="centro-en-mobile"
+          accionAlPie
           accion={
             <BotonLink href={HOME.metodologia.cta.href}>
               {HOME.metodologia.cta.texto}
@@ -234,6 +222,7 @@ export default async function HomePage() {
           className="revelar-al-entrar"
           rotulo={HOME.beneficios.rotulo}
           titulo={HOME.beneficios.titulo}
+          tituloMobile={HOME.beneficios.tituloMobile}
           alineacion="centro-en-mobile"
           accionAlPie
           accion={
@@ -304,12 +293,33 @@ export default async function HomePage() {
       </Seccion>
 
       <div className="revelar-al-entrar contenedor order-11 pb-16 md:order-10 md:pb-24">
+        {/* La maqueta mobile pregunta otra cosa y manda al formulario. */}
         <BandaCta
-          titulo={HOME.red.cierre.titulo}
+          titulo={
+            <>
+              <span className="whitespace-pre-line md:hidden">
+                {HOME.red.cierre.tituloMobile}
+              </span>
+              <span className="hidden md:inline">
+                {HOME.red.cierre.titulo}
+              </span>
+            </>
+          }
           accion={
-            <BotonLink href={HOME.red.cierre.cta.href}>
-              {HOME.red.cierre.cta.texto}
-            </BotonLink>
+            <>
+              <BotonLink
+                href={HOME.red.cierre.ctaMobile.href}
+                className="md:hidden"
+              >
+                {HOME.red.cierre.ctaMobile.texto}
+              </BotonLink>
+              <BotonLink
+                href={HOME.red.cierre.cta.href}
+                className="hidden md:inline-flex"
+              >
+                {HOME.red.cierre.cta.texto}
+              </BotonLink>
+            </>
           }
         />
       </div>

@@ -47,6 +47,7 @@ export function EncabezadoSeccion({
   rotulo,
   rotuloMobile,
   titulo,
+  tituloMobile,
   descripcion,
   accion,
   accionAlPie = false,
@@ -60,6 +61,8 @@ export function EncabezadoSeccion({
    *  desktop, "Industrias" en mobile). */
   rotuloMobile?: string;
   titulo: ReactNode;
+  /** El título también cambia entre maquetas en algunas pantallas. */
+  tituloMobile?: ReactNode;
   descripcion?: ReactNode;
   accion?: ReactNode;
   /**
@@ -146,7 +149,14 @@ export function EncabezadoSeccion({
               tamanoTitulo === "h1" ? "text-h1" : "text-h2",
             )}
           >
-            {titulo}
+            {tituloMobile ? (
+              <>
+                <span className="md:hidden">{tituloMobile}</span>
+                <span className="hidden md:inline">{titulo}</span>
+              </>
+            ) : (
+              titulo
+            )}
           </h2>
           {descripcion && !descripcionAlLado ? (
             <p className="text-p1 mt-4 max-w-2xl whitespace-pre-line text-blanco/60">

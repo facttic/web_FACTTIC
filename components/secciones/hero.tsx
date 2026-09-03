@@ -23,6 +23,7 @@ export function Hero({
   titulo,
   tituloMobile,
   bajada,
+  bajadaMobile,
   accion,
   video,
   videoMobile,
@@ -33,6 +34,8 @@ export function Hero({
   /** Variante para pantallas chicas: el diseño mobile suma una línea. */
   tituloMobile?: string;
   bajada?: string;
+  /** Variante para pantallas chicas: la maqueta mobile la escribe más corta. */
+  bajadaMobile?: string;
   accion?: { texto: string; href: string };
   /** Video de fondo; se reproduce en silencio y en bucle. */
   video?: string;
@@ -92,11 +95,13 @@ export function Hero({
       ) : null}
 
       {/*
-        En mobile el hero es solo el video con el título centrado: la maqueta no
-        lleva ni bajada ni botón ahí —ese texto pasa a ser el bloque grande que
-        abre la página— y el video ocupa casi toda la pantalla.
+        Las dos maquetas alinean a la izquierda y llevan el título arriba, la
+        bajada abajo y el botón al pie. Lo que cambia es el reparto: en mobile
+        el video ocupa la pantalla entera y el texto se apoya contra el borde
+        inferior; en desktop el bloque es más bajo y la bajada y el botón van
+        uno al lado del otro.
       */}
-      <div className="contenedor flex min-h-svh flex-col justify-start pt-[22vh] pb-10 text-center md:min-h-[39rem] md:pt-32 md:justify-end md:gap-8 md:pb-14 md:text-left">
+      <div className="contenedor flex min-h-svh flex-col justify-between pt-[18vh] pb-10 md:min-h-[39rem] md:justify-end md:gap-8 md:pt-32 md:pb-14">
         <h1 className="text-display text-balance md:max-w-3xl">
           <Typewriter
             texto={titulo}
@@ -106,16 +111,21 @@ export function Hero({
         </h1>
 
         <RevelarAlScroll retrasoMs={RETRASO_TITULO_MS}>
-          <div className="hidden flex-col gap-8 md:flex md:flex-row md:items-end md:justify-between">
+          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-8">
             {bajada ? (
-              <p className="text-p1 max-w-xl text-blanco/80">{bajada}</p>
+              <p className="text-p1 max-w-xl text-blanco/80">
+                {/* En mobile la maqueta la escribe más corta. */}
+                <span className="md:hidden">{bajadaMobile ?? bajada}</span>
+                <span className="hidden md:inline">{bajada}</span>
+              </p>
             ) : null}
             {accion ? (
               <BotonLink
                 href={accion.href}
                 variante="solida"
                 tamano="lg"
-                className="self-start md:self-auto"
+                // A lo ancho en mobile, como en la maqueta; suelto en desktop.
+                className="w-full md:w-auto md:self-auto"
               >
                 {accion.texto}
               </BotonLink>
