@@ -47,21 +47,24 @@ function Ilustracion({ sector }: { sector: Sector }) {
   );
 }
 
-/** Alto de la tarjeta en el SVG (391x359), para que las dos caras del hover coincidan. */
-const ALTO_SECTOR = "h-[275px] md:h-[359px]";
+/**
+ * 391x359 en el SVG de desktop y 345x449 en el board mobile. En desktop el alto
+ * fijo es lo que hace coincidir las dos caras del hover.
+ */
+const ALTO_SECTOR = "h-[449px] md:h-[359px]";
 
 /**
  * A diferencia de las de beneficio y proyecto, estas tarjetas no llevan relleno
  * —quedan sobre el fondo de la página— y su borde va a blanco pleno, no al 10%.
  * Así están en el SVG y es lo que las hace resaltar en la grilla.
  *
- * En mobile la maqueta las abre: dejan de ser tarjetas y pasan a ser una lista,
- * con la ilustración suelta y una única línea abajo separando cada sector. Por
- * eso el borde y el radio arrancan apagados y recién aparecen en desktop.
+ * En mobile el board las define como tarjeta cerrada con **borde punteado** y
+ * el contenido entero a la vista; en desktop el borde es sólido y blanco pleno,
+ * y la propuesta de valor aparece al pasar el mouse.
  */
 const CAJA_SECTOR =
-  "bg-transparent rounded-none border-x-0 border-t-0 border-b border-borde-pleno pb-4 " +
-  "md:rounded-lg md:border md:pb-0";
+  "bg-transparent rounded-lg border border-dashed border-punteado " +
+  "md:border-solid md:border-borde-pleno";
 
 /** Con caja en los dos anchos, como en la pantalla de Servicios. */
 const CAJA_SIEMPRE = "bg-transparent rounded-lg border border-borde-pleno";
@@ -96,12 +99,34 @@ export function CardSector({
   const numero = String(indice + 1).padStart(2, "0");
   const caja = conCaja ? CAJA_SIEMPRE : CAJA_SECTOR;
 
+  /*
+    En mobile no hay dos caras: el board muestra la ilustración, el nombre, la
+    propuesta de valor, una línea y el "Ver más", todo junto y centrado. El
+    hover solo existe en desktop, donde el nombre y la descripción se cruzan.
+  */
+  const completo = (
+    <div className="flex h-full flex-col items-center justify-center gap-5 p-5 text-center md:hidden">
+      <Ilustracion sector={sector} />
+      {/* `H2/Mobile` el nombre y `H3/Mobile` la propuesta, los dos en la sans
+          en negrita: en el board no van en mono. */}
+      <span className="text-h2">{sector.nombre}</span>
+      {sector.descripcion ? (
+        <p className="text-h3 text-balance">{sector.descripcion}</p>
+      ) : null}
+      <div className="mt-auto w-full">
+        <div className="border-t border-borde-pleno" />
+        <div className="text-p3 mt-4 flex items-center justify-between">
+          Ver más
+          <IconoFlecha />
+        </div>
+      </div>
+    </div>
+  );
+
   const reposo = (
-    /* Sin padding en mobile: ahí el número y el nombre van contra los bordes
-       del contenedor, no de una tarjeta. */
     <div
       className={cn(
-        "absolute inset-0 flex flex-col transition-opacity duration-300 group-hover:opacity-0 md:p-6",
+        "absolute inset-0 hidden flex-col transition-opacity duration-300 group-hover:opacity-0 md:flex md:p-6",
         conCaja && "p-6",
       )}
     >
@@ -118,6 +143,7 @@ export function CardSector({
   if (!href) {
     return (
       <Tarjeta className={cn("relative", caja, ALTO_SECTOR, className)}>
+        {completo}
         {reposo}
       </Tarjeta>
     );
@@ -141,6 +167,7 @@ export function CardSector({
             ALTO_SECTOR,
           )}
         >
+          {completo}
           {reposo}
 
           {sector.descripcion ? (
@@ -151,7 +178,7 @@ export function CardSector({
               Así está en el board de Componentes.
             */
             <div
-              className="absolute inset-0 p-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+              className="absolute inset-0 hidden p-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100 md:block"
               aria-hidden
             >
               <p className="text-h3 flex h-full items-center text-balance">
