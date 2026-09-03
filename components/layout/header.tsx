@@ -152,6 +152,19 @@ export function Header() {
                 </li>
               ))}
             </ul>
+
+            {/* El board mobile cierra el desplegable con el selector de idioma,
+                a la derecha. Va en el mismo estado que en desktop: el inglés
+                todavía no existe porque la API no tiene campos por idioma. */}
+            <div className="mt-8 flex items-center justify-end gap-1">
+              <BotonIdioma
+                idioma="en"
+                activo={false}
+                disabled
+                title="Próximamente"
+              />
+              <BotonIdioma idioma="es" activo />
+            </div>
           </nav>
         </div>
       ) : null}

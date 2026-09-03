@@ -59,7 +59,9 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col gap-6 md:mt-24 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-6">
+          {/* El board mobile los apila: el © arriba y las redes debajo. En
+              desktop van en la misma línea, como en el SVG. */}
+          <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:gap-6">
             <p className="text-p3 font-sans text-blanco/40">
               © {new Date().getFullYear()} FACTTIC
             </p>
