@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import {
   FONDO_ACENTO,
+  FONDO_ACENTO_MOBILE,
   FONDO_ACENTO_DESKTOP,
   HOVER_ACENTO,
   type Acento,
@@ -161,22 +162,30 @@ export function CardMetrica({
   valor: number | ReactNode;
   /** Color fijo, para mostrar la tarjeta ya pintada. */
   acento?: Acento;
-  /** Color que toma al pasar el mouse, que es como va en la Home. */
+  /**
+   * Color que toma al pasar el mouse en desktop, y con el que ya viene pintada
+   * en mobile: el board mobile las define de color, y la maqueta de desktop
+   * las deja grises hasta que se las apunta.
+   */
   acentoHover?: Acento;
   className?: string;
 }) {
   return (
     /*
-      Dos formas según el ancho. En desktop es la tarjeta del SVG: 394x312 con
-      radio 8, rótulo arriba y número abajo. En mobile la maqueta la desarma en
-      una línea suelta —"+30 Cooperativas", sin caja ni fondo— que se lee de
-      corrido; por eso el orden de los dos textos se invierte con `order`.
+      La misma caja en las dos maquetas, con otras medidas y otro relleno. En
+      desktop es la tarjeta del SVG —394x312 con radio 8, gris hasta que se la
+      apunta—; en mobile el board la define en 346x154 con 20 de aire y ya
+      pintada de su color, apiladas una debajo de la otra.
     */
     <div
       className={cn(
-        "flex items-center gap-4 transition-colors duration-300",
-        "md:min-h-78 md:flex-col md:items-stretch md:justify-between md:rounded-lg md:p-6",
-        acento ? FONDO_ACENTO[acento] : "text-blanco md:bg-superficie-alta",
+        "flex h-[154px] flex-col justify-between rounded-lg p-5 transition-colors duration-300",
+        "md:h-auto md:min-h-78 md:p-6",
+        acento
+          ? FONDO_ACENTO[acento]
+          : acentoHover
+            ? FONDO_ACENTO_MOBILE[acentoHover]
+            : "text-blanco md:bg-superficie-alta",
         acentoHover ? HOVER_ACENTO[acentoHover] : null,
         className,
       )}
@@ -186,10 +195,8 @@ export function CardMetrica({
         contenedor, que pasa de claro a oscuro cuando la tarjeta se pinta. Con
         `text-blanco/70` quedaba ilegible sobre el lima.
       */}
-      <p className="text-p2 order-2 w-24 opacity-70 md:order-none md:w-auto md:text-eyebrow">
-        {rotulo}
-      </p>
-      <p className="text-display order-1 md:order-none">
+      <p className="text-eyebrow opacity-70">{rotulo}</p>
+      <p className="text-display">
         {typeof valor === "number" ? (
           <Contador valor={valor} prefijo="+" />
         ) : (

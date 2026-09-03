@@ -60,6 +60,22 @@ export const FONDO_ACENTO_DESKTOP: Record<Acento, string> = {
   azul: "md:bg-azul md:text-blanco",
 };
 
+/**
+ * El caso inverso: la maqueta mobile pinta la pieza y la de desktop la deja
+ * gris para que tome color al pasar el mouse, como las métricas de la Home.
+ * También van escritas enteras, por lo mismo.
+ */
+export const FONDO_ACENTO_MOBILE: Record<Acento, string> = {
+  lila: "bg-lila text-negro-oscuro md:bg-superficie-alta md:text-blanco",
+  celeste: "bg-celeste text-negro-oscuro md:bg-superficie-alta md:text-blanco",
+  naranja: "bg-naranja text-negro-oscuro md:bg-superficie-alta md:text-blanco",
+  amarillo:
+    "bg-amarillo text-negro-oscuro md:bg-superficie-alta md:text-blanco",
+  verde: "bg-verde text-negro-oscuro md:bg-superficie-alta md:text-blanco",
+  rojo: "bg-rojo text-negro-oscuro md:bg-superficie-alta md:text-blanco",
+  azul: "bg-azul text-blanco md:bg-superficie-alta md:text-blanco",
+};
+
 /** Secuencia con la que el diseño alterna colores en las grillas. */
 export const CICLO_ACENTOS: Acento[] = [
   "lila",

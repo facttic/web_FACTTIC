@@ -266,30 +266,34 @@ export default async function HomePage() {
             <BotonLink href={HOME.red.cta.href}>{HOME.red.cta.texto}</BotonLink>
           }
         />
-        <Carrusel grilla="md:grid-cols-3" gap="gap-10 md:gap-6">
+        {/*
+          Apiladas en mobile y en tres columnas en desktop. No van en carrusel:
+          el board mobile las define una debajo de la otra, a lo ancho.
+        */}
+        <div className="grid gap-4 md:grid-cols-3 md:gap-6">
           {/* Un color por métrica, como en el board: lila, lima y naranja. */}
-          <AlEntrar indice={0} className="shrink-0">
+          <AlEntrar indice={0}>
             <CardMetrica
               rotulo="Profesionales"
               valor={metricas.profesionales}
               acentoHover="lila"
             />
           </AlEntrar>
-          <AlEntrar indice={1} className="shrink-0">
+          <AlEntrar indice={1}>
             <CardMetrica
               rotulo="Cooperativas"
               valor={metricas.cooperativas}
               acentoHover="amarillo"
             />
           </AlEntrar>
-          <AlEntrar indice={2} className="shrink-0">
+          <AlEntrar indice={2}>
             <CardMetrica
               rotulo="Provincias"
               valor={metricas.provincias}
               acentoHover="naranja"
             />
           </AlEntrar>
-        </Carrusel>
+        </div>
       </Seccion>
 
       <div className="revelar-al-entrar contenedor order-11 pb-16 md:order-10 md:pb-24">
