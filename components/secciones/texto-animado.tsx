@@ -114,7 +114,8 @@ export function Typewriter({
 
 /**
  * Revelado palabra por palabra atado al scroll, como pide la anotación
- * "Animación: Scroll reveal" sobre el bloque que abre la Home en mobile.
+ * "Animación: Scroll reveal" que el archivo tiene puesta sobre la bajada del
+ * hero en mobile.
  *
  * A diferencia de `RevelarAlScroll`, que anima el bloque entero una sola vez,
  * acá cada palabra se enciende según cuánto avanzó el texto en la pantalla: al

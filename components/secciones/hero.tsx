@@ -1,6 +1,10 @@
 import { cn } from "@/lib/cn";
 import { BotonLink } from "@/components/ui/boton";
-import { RevelarAlScroll, Typewriter } from "./texto-animado";
+import {
+  RevelarAlScroll,
+  RevelarPalabras,
+  Typewriter,
+} from "./texto-animado";
 
 /**
  * Encabezado principal de la Home.
@@ -113,11 +117,22 @@ export function Hero({
         <RevelarAlScroll retrasoMs={RETRASO_TITULO_MS}>
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-8">
             {bajada ? (
-              <p className="text-p1 max-w-xl text-blanco/80">
-                {/* En mobile la maqueta la escribe más corta. */}
-                <span className="md:hidden">{bajadaMobile ?? bajada}</span>
-                <span className="hidden md:inline">{bajada}</span>
-              </p>
+              <>
+                {/*
+                  La anotación "Animación: Scroll reveal" del archivo está
+                  puesta sobre esta bajada: en mobile se lee sola a medida que
+                  sube por la pantalla, palabra por palabra. En desktop es un
+                  párrafo común —ahí la anotación no está— y además el texto es
+                  más largo.
+                */}
+                <RevelarPalabras
+                  texto={bajadaMobile ?? bajada}
+                  className="text-p1 max-w-xl text-blanco/80 md:hidden"
+                />
+                <p className="text-p1 hidden max-w-xl text-blanco/80 md:block">
+                  {bajada}
+                </p>
+              </>
             ) : null}
             {accion ? (
               <BotonLink

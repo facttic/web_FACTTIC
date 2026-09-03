@@ -42,7 +42,8 @@ export function ServiciosMobile({
             estaAbierto ? "opacity-100" : "opacity-0",
           )}
         >
-          <span className="text-h4 text-balance">
+          {/* `P2/Regular` en el archivo: DM Mono 14, no la sans en negrita. */}
+          <span className="text-p2">
             {servicio.descripcion ??
               servicio.subservicios.map((sub) => sub.nombre).join(" · ")}
           </span>
