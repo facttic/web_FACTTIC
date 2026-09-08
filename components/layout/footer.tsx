@@ -62,10 +62,12 @@ export function Footer() {
           {/* El board mobile los apila: el © arriba y las redes debajo. En
               desktop van en la misma línea, como en el SVG. */}
           <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:gap-6">
-            <p className="text-p3 font-sans text-blanco/40">
+            {/* En mobile el board escribe el © y las redes en blanco pleno; en
+                desktop van atenuados, como en el SVG. */}
+            <p className="text-p3 font-sans text-blanco md:text-blanco/40">
               © {new Date().getFullYear()} FACTTIC
             </p>
-            <ul className="flex items-center gap-4">
+            <ul className="flex items-center gap-5 md:gap-4">
               {REDES.map((red) => (
                 <li key={red.href}>
                   <a
@@ -73,13 +75,13 @@ export function Footer() {
                     target="_blank"
                     rel="noreferrer noopener"
                     aria-label={red.etiqueta}
-                    className="block text-blanco/50 transition-colors hover:text-blanco"
+                    className="block text-blanco transition-colors md:text-blanco/50 md:hover:text-blanco"
                   >
                     <svg
                       viewBox="0 0 24 24"
                       fill="currentColor"
                       aria-hidden
-                      className="size-4"
+                      className="size-[18px] md:size-4"
                     >
                       <path d={ICONOS[red.etiqueta]} />
                     </svg>

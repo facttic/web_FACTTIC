@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { FOCO } from "@/components/ui/boton";
 
@@ -33,6 +33,7 @@ export function Mazo<T>({
   etiquetaDe,
   alTocarLaAbierta,
   claseCarta = "border-borde-pleno bg-superficie-alta",
+  porScroll = false,
   children,
   className,
 }: {
@@ -56,16 +57,67 @@ export function Mazo<T>({
    * sitio y con borde punteado.
    */
   claseCarta?: string;
-  children: (item: T, estaAbierto: boolean, i: number) => ReactNode;
+  /**
+   * Además del clic, la carta al frente cambia sola con el scroll: cada una se
+   * adelanta cuando el mazo lleva su tramo recorrido por la pantalla. Es la
+   * "animación de superposición" que pide la anotación del archivo sobre los
+   * servicios de la Home.
+   */
+  porScroll?: boolean;
+  children: (
+    item: T,
+    estaAbierto: boolean,
+    i: number,
+    /** Cuál está al frente, para saber de qué lado asoma esta carta. */
+    abierto: number,
+  ) => ReactNode;
   className?: string;
 }) {
   const [abierto, setAbierto] = useState(0);
   const baseId = useId();
+  const caja = useRef<HTMLDivElement>(null);
+  /* El clic manda: si alguien eligió una carta, el scroll deja de moverlas. */
+  const elegidaAMano = useRef(false);
+
+  useEffect(() => {
+    if (!porScroll) return;
+    const nodo = caja.current;
+    if (!nodo) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let pedido = 0;
+    const pintar = () => {
+      pedido = 0;
+      if (elegidaAMano.current) return;
+      const r = nodo.getBoundingClientRect();
+      const pantalla = window.innerHeight;
+      /*
+       * 0 cuando el mazo entra por abajo y 1 cuando termina de salir por
+       * arriba. El recorrido se reparte en tantos tramos como cartas, así cada
+       * una pasa al frente en su turno.
+       */
+      const t = (pantalla - r.top) / (pantalla + r.height);
+      const i = Math.floor(Math.min(0.999, Math.max(0, t)) * items.length);
+      setAbierto(i);
+    };
+    const alScrollear = () => {
+      if (!pedido) pedido = requestAnimationFrame(pintar);
+    };
+    pintar();
+    window.addEventListener("scroll", alScrollear, { passive: true });
+    window.addEventListener("resize", alScrollear, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", alScrollear);
+      window.removeEventListener("resize", alScrollear);
+      if (pedido) cancelAnimationFrame(pedido);
+    };
+  }, [porScroll, items.length]);
 
   if (!items.length) return null;
 
   return (
     <div
+      ref={caja}
       style={{ height: alto + (items.length - 1) * asoma }}
       className={cn("relative", className)}
     >
@@ -81,7 +133,10 @@ export function Mazo<T>({
             aria-controls={panelId}
             onClick={() => {
               if (estaAbierto) alTocarLaAbierta?.(item, i);
-              else setAbierto(i);
+              else {
+                elegidaAMano.current = true;
+                setAbierto(i);
+              }
             }}
             style={{
               top: i * asoma,
@@ -100,7 +155,7 @@ export function Mazo<T>({
           >
             <span className="sr-only">{etiquetaDe(item, i)}</span>
             <span id={panelId} className="block h-full">
-              {children(item, estaAbierto, i)}
+              {children(item, estaAbierto, i, abierto)}
             </span>
           </button>
         );

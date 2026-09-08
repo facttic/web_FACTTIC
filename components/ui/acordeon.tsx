@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState, type ReactNode } from "react";
+import { useEffect, useId, useState, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { IconoFlecha } from "./iconos";
 import { FOCO } from "./boton";
@@ -28,17 +28,39 @@ export interface ItemAcordeon {
 export function Acordeon({
   items,
   inicial = 0,
+  inicialMobile,
+  claseTitulo,
   className,
 }: {
   items: ItemAcordeon[];
   /** Índice abierto al montar; null para arrancar todo cerrado. */
   inicial?: number | null;
+  /**
+   * El mismo, cuando las dos maquetas no coinciden: el detalle de proyecto
+   * abre el primero en desktop y los muestra todos cerrados en mobile. Se
+   * resuelve al montar, que es cuando se conoce el ancho.
+   */
+  inicialMobile?: number | null;
+  /**
+   * Tipografía y aire de la fila. Cambia entre pantallas: los pasos de la
+   * metodología en mobile van en `H3/Mobile` y bien separados de la flecha,
+   * para que el texto corte en dos líneas como en el board.
+   */
+  claseTitulo?: string;
   className?: string;
 }) {
-  const [abierto, setAbierto] = useState<string | null>(
-    inicial === null ? null : (items[inicial]?.id ?? null),
-  );
+  const deIndice = (i: number | null) =>
+    i === null ? null : (items[i]?.id ?? null);
+  const [abierto, setAbierto] = useState<string | null>(deIndice(inicial));
   const baseId = useId();
+
+  useEffect(() => {
+    if (inicialMobile === undefined) return;
+    if (window.matchMedia("(min-width: 768px)").matches) return;
+    setAbierto(deIndice(inicialMobile));
+    // Solo al montar: después manda lo que toque la persona.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div
@@ -59,6 +81,7 @@ export function Acordeon({
                 className={cn(
                   "text-h4 flex w-full cursor-pointer items-center justify-between gap-6 py-5 text-left",
                   `transition-colors hover:text-blanco/70 ${FOCO}`,
+                  claseTitulo,
                 )}
               >
                 {item.titulo}

@@ -35,7 +35,8 @@ const TAMANOS: Record<Tamano, string> = {
   md: "h-[53px] px-6 text-p1-bold",
   // El CTA del hero es el único con texto de 18px: en el SVG mide 247x53 y
   // "Trabajá con FACTTIC" solo llega a ese ancho en P1 regular, no en P1/Bold.
-  lg: "h-[53px] px-5 text-p1",
+  // En mobile el board lo dibuja más alto, de 60.
+  lg: "h-[60px] px-5 text-p1 md:h-[53px]",
 };
 
 /** Anillo de foco compartido por todo lo interactivo. */
@@ -142,6 +143,60 @@ export function BotonIdioma({
  * Botón cuadrado de navegación de carrusel. En el diseño, el que no se puede
  * usar queda punteado y el activo va sólido.
  */
+/**
+ * La misma flecha, pero como enlace: en Novedades las solapas filtran sin
+ * JavaScript, así que las flechas también tienen que ser navegación. Sin
+ * `href` queda el mismo aspecto apagado que el botón deshabilitado.
+ */
+export function BotonFlechaLink({
+  direccion,
+  href,
+  variante = "punteada",
+  className,
+}: {
+  direccion: "anterior" | "siguiente";
+  href?: string;
+  variante?: "punteada" | "solida";
+  className?: string;
+}) {
+  const aspecto = cn(
+    "grid size-13 place-items-center rounded-lg transition-colors duration-200",
+    variante === "solida"
+      ? "bg-blanco text-negro-oscuro hover:bg-blanco/85"
+      : "border border-dashed border-borde-pleno text-blanco hover:border-solid hover:bg-blanco hover:text-negro-oscuro",
+    FOCO,
+    className,
+  );
+  const icono = (
+    <IconoFlecha
+      direccion={direccion === "anterior" ? "izquierda" : "derecha"}
+      className="size-4"
+    />
+  );
+
+  if (!href) {
+    return (
+      <span
+        aria-hidden
+        className={cn(aspecto, "pointer-events-none opacity-30")}
+      >
+        {icono}
+      </span>
+    );
+  }
+
+  return (
+    <Link
+      href={href}
+      scroll={false}
+      aria-label={direccion === "anterior" ? "Anterior" : "Siguiente"}
+      className={aspecto}
+    >
+      {icono}
+    </Link>
+  );
+}
+
 export function BotonFlecha({
   direccion,
   variante = "punteada",

@@ -19,13 +19,7 @@ import { cn } from "@/lib/cn";
  *    hacia el cursor. En mobile hace falta para el desplazamiento lateral; en
  *    desktop no, porque ahí ya no hay scroll.
  */
-export function Carrusel({
-  children,
-  grilla,
-  gap = "gap-6",
-  desdeAncho = "md",
-  className,
-}: {
+export interface PropsCarrusel {
   children: ReactNode;
   /** Clases de grilla para desktop, por ejemplo `grid-cols-3`. */
   grilla: string;
@@ -33,23 +27,32 @@ export function Carrusel({
   /** A partir de qué ancho deja de desplazarse y pasa a grilla. */
   desdeAncho?: "sm" | "md";
   className?: string;
-}) {
+}
+
+/**
+ * Las clases de la pista. Van aparte porque `CarruselConFlechas` necesita
+ * montar la misma pista desde un componente de cliente, para poder moverla.
+ */
+export function clasesCarrusel({
+  grilla,
+  gap = "gap-6",
+  desdeAncho = "md",
+  className,
+}: Omit<PropsCarrusel, "children">) {
   const enGrilla =
     desdeAncho === "sm"
       ? "sm:mx-0 sm:grid sm:overflow-visible sm:px-0"
       : "md:mx-0 md:grid md:overflow-visible md:px-0";
 
-  return (
-    <div
-      className={cn(
-        "scroll-limpio -mx-6 flex snap-x snap-mandatory scroll-pl-6 overflow-x-auto px-6",
-        gap,
-        enGrilla,
-        grilla,
-        className,
-      )}
-    >
-      {children}
-    </div>
+  return cn(
+    "scroll-limpio -mx-6 flex snap-x snap-mandatory scroll-pl-6 overflow-x-auto px-6",
+    gap,
+    enGrilla,
+    grilla,
+    className,
   );
+}
+
+export function Carrusel({ children, ...resto }: PropsCarrusel) {
+  return <div className={clasesCarrusel(resto)}>{children}</div>;
 }

@@ -23,16 +23,19 @@ export function Seccion({
   className?: string;
 }) {
   /*
-    64px de aire arriba y abajo, o sea 128 entre dos secciones seguidas.
-    Medido sobre el SVG: del pie de un bloque al rótulo del siguiente hay entre
-    88 y 195px según la sección —el diseño no es parejo— y 128 es el punto que
-    deja el ritmo general alineado. Con los 96px que había antes, la página
-    terminaba 542px más larga que la maqueta.
+    64px de aire arriba y abajo en desktop, o sea 128 entre dos secciones
+    seguidas. Medido sobre el SVG: del pie de un bloque al rótulo del siguiente
+    hay entre 88 y 195px según la sección —el diseño no es parejo— y 128 es el
+    punto que deja el ritmo general alineado. Con los 96px que había antes, la
+    página terminaba 542px más larga que la maqueta.
+
+    En mobile el board es bastante más compacto: entre el pie de una sección y
+    el rótulo de la siguiente hay 54-62px, así que 28 por lado.
   */
   return (
     <section
       id={id}
-      className={cn("contenedor flex flex-col py-12 md:py-16", className)}
+      className={cn("contenedor flex flex-col py-7 md:py-16", className)}
     >
       {children}
     </section>
@@ -49,6 +52,7 @@ export function EncabezadoSeccion({
   titulo,
   tituloMobile,
   descripcion,
+  descripcionSoloMobile = false,
   accion,
   accionAlPie = false,
   descripcionAlLado = false,
@@ -64,6 +68,12 @@ export function EncabezadoSeccion({
   /** El título también cambia entre maquetas en algunas pantallas. */
   tituloMobile?: ReactNode;
   descripcion?: ReactNode;
+  /**
+   * Algunas secciones llevan bajada solo en mobile: en las verticales el
+   * prototipo de desktop va directo del título a las tarjetas y el board mobile
+   * suma "La tecnología es nuestra herramienta…".
+   */
+  descripcionSoloMobile?: boolean;
   accion?: ReactNode;
   /**
    * En mobile la maqueta baja el botón al final de la sección, después del
@@ -143,15 +153,22 @@ export function EncabezadoSeccion({
             reparte distinto, así que ahí se ignoran y el balance del navegador
             arma las líneas parejas.
           */}
+          {/*
+            En mobile el board escribe todos los títulos de sección en
+            `H2/Mobile` —26px—, sin importar cuál de los dos tamaños usen en
+            desktop. Por eso el salto va con `md:`.
+          */}
           <h2
             className={cn(
               "text-balance whitespace-normal md:whitespace-pre-line",
-              tamanoTitulo === "h1" ? "text-h1" : "text-h2",
+              tamanoTitulo === "h1" ? "text-h2 md:text-h1" : "text-h2",
             )}
           >
             {tituloMobile ? (
               <>
-                <span className="md:hidden">{tituloMobile}</span>
+                <span className="whitespace-pre-line md:hidden">
+                  {tituloMobile}
+                </span>
                 <span className="hidden md:inline">{titulo}</span>
               </>
             ) : (
@@ -159,7 +176,12 @@ export function EncabezadoSeccion({
             )}
           </h2>
           {descripcion && !descripcionAlLado ? (
-            <p className="text-p1 mt-4 max-w-2xl whitespace-pre-line text-blanco/60">
+            <p
+              className={cn(
+                "text-p1 mt-4 max-w-2xl whitespace-pre-line text-blanco/60",
+                descripcionSoloMobile && "md:hidden",
+              )}
+            >
               {descripcion}
             </p>
           ) : null}
@@ -216,10 +238,17 @@ export function BandaCta({
   accion,
   variante = "punteada",
   alineacion = "centro-en-mobile",
+  claseTitulo,
   className,
 }: {
   titulo: ReactNode;
   accion: ReactNode;
+  /**
+   * El cuerpo del título. En mobile no es parejo entre bandas: la de la Home
+   * va en `H2/Mobile` y la de Nuestros servicios, que tiene tres renglones, en
+   * `H3/Mobile`.
+   */
+  claseTitulo?: string;
   /**
    * `vidrio` es la que va sobre una animación de fondo: en vez del borde
    * punteado lleva un vidrio esmerilado que deja pasar el color de atrás
@@ -240,7 +269,7 @@ export function BandaCta({
     <div
       className={cn(
         // En mobile la banda va centrada y con el botón debajo del título.
-        "flex flex-col gap-10 rounded-xl px-6 py-14",
+        "flex flex-col gap-12 rounded-xl px-6 py-14",
         variante !== "vidrio" && "border",
         alineacion === "centro-en-mobile"
           ? "items-center text-center"
@@ -265,10 +294,18 @@ export function BandaCta({
       )}
     >
       {/* Un punto de luz da vueltas por el borde punteado. Es lo único que se
-          mueve en la banda: el resto queda quieto, como en la maqueta. */}
-      <HazDeBorde duracion={9} />
-      <p className="text-h2 text-balance">{titulo}</p>
-      <div className="shrink-0">{accion}</div>
+          mueve en la banda: el resto queda quieto, como en la maqueta.
+
+          Solo en desktop: en una banda de 347px el halo es casi tan ancho como
+          la tarjeta y se lee como una mancha, no como un punto recorriendo el
+          borde. El board mobile tampoco lo tiene. */}
+      <HazDeBorde duracion={9} className="hidden md:block" />
+      <p className={cn("text-h2 text-balance", claseTitulo)}>{titulo}</p>
+      {/* A lo ancho de la tarjeta en mobile, como en el board; en desktop el
+          botón va al lado del título y toma el ancho de su texto. */}
+      <div className="w-full shrink-0 *:w-full md:w-auto md:*:w-auto">
+        {accion}
+      </div>
     </div>
   );
 }

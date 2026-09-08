@@ -83,6 +83,11 @@ export function IconoUbicacion({ className, ...props }: IconoProps) {
   );
 }
 
+/**
+ * Menú de mobile. Es el único icono que no entra en la caja de 24: en el board
+ * mide 42x26 —tres trazos de 2px con 12 de paso, de punta plana— y a ese tamaño
+ * es la pieza más visible de la barra.
+ */
 export function IconoMenu({
   abierto = false,
   className,
@@ -90,17 +95,16 @@ export function IconoMenu({
 }: IconoProps & { abierto?: boolean }) {
   return (
     <svg
-      viewBox="0 0 24 24"
+      viewBox="0 0 42 26"
       fill="none"
       aria-hidden
-      className={cn("size-6", className)}
+      className={cn("h-[26px] w-[42px]", className)}
       {...props}
     >
       <path
-        d={abierto ? "M6 6l12 12M18 6L6 18" : "M3 7h18M3 12h18M3 17h18"}
+        d={abierto ? "M1 1L41 25M41 1L1 25" : "M0 1h42M0 13h42M0 25h42"}
         stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
+        strokeWidth="2"
       />
     </svg>
   );

@@ -170,10 +170,16 @@ export function RevelarPalabras({
     };
   }, []);
 
-  const palabras = texto.split(" ");
+  /*
+   * Palabras y separadores alternados. Se parte así, y no por espacios, porque
+   * algunos textos del board traen cortes de línea propios —la bajada del hero
+   * de la Home— y hay que devolverlos tal cual, no convertidos en espacio.
+   */
+  const trozos = texto.split(/(\s+)/);
+  const palabras = trozos.filter((_, i) => i % 2 === 0);
 
   return (
-    <p ref={ref} className={className}>
+    <p ref={ref} className={cn("whitespace-pre-line", className)}>
       {palabras.map((palabra, i) => {
         /*
          * Cada palabra se enciende a lo largo de una ventana que se solapa con
@@ -196,7 +202,7 @@ export function RevelarPalabras({
             className="transition-opacity duration-300 motion-reduce:opacity-100"
           >
             {palabra}
-            {i < palabras.length - 1 ? " " : ""}
+            {trozos[i * 2 + 1] ?? ""}
           </span>
         );
       })}

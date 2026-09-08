@@ -58,7 +58,7 @@ export function Header() {
           : "border-b border-transparent",
       )}
     >
-      <div className="contenedor flex h-[90px] items-center justify-between gap-8">
+      <div className="contenedor flex h-[68px] items-center justify-between gap-8 md:h-[90px]">
         <Logo />
 
         <div className="hidden items-center gap-8 md:flex">
@@ -116,7 +116,7 @@ export function Header() {
           aria-controls="menu-mobile"
           aria-label={abierto ? "Cerrar menú" : "Abrir menú"}
           className={cn(
-            "-mr-2 grid size-10 cursor-pointer place-items-center md:hidden",
+            "grid h-10 w-[42px] cursor-pointer place-items-center md:hidden",
             FOCO,
           )}
         >
@@ -127,8 +127,10 @@ export function Header() {
       {/*
         Separador punteado entre el menú y el contenido. Va de borde a borde,
         no acotado al contenedor: en el diseño cruza todo el ancho del frame.
+        Solo en desktop: en mobile el board deja la barra suelta sobre el hero,
+        sin línea.
       */}
-      <div className="border-t border-dashed border-blanco/20" />
+      <div className="hidden border-t border-dashed border-blanco/20 md:block" />
 
       {abierto ? (
         <div
