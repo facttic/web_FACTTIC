@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
-import { FOCO } from "@/components/ui/boton";
+import { BotonFlecha, FOCO } from "@/components/ui/boton";
 
 /**
  * Cartas apiladas: una se ve entera y de las otras asoma solo el canto. Al
@@ -34,6 +34,7 @@ export function Mazo<T>({
   alTocarLaAbierta,
   claseCarta = "border-borde-pleno bg-superficie-alta",
   porScroll = false,
+  conFlechas = false,
   children,
   className,
 }: {
@@ -64,6 +65,12 @@ export function Mazo<T>({
    * servicios de la Home.
    */
   porScroll?: boolean;
+  /**
+   * Suma el par de flechas debajo, para pasar las cartas a mano además de con
+   * el scroll. Hace falta donde las tapadas no muestran su nombre y no hay
+   * nada evidente que tocar, como en los beneficios de la Home.
+   */
+  conFlechas?: boolean;
   children: (
     item: T,
     estaAbierto: boolean,
@@ -113,13 +120,19 @@ export function Mazo<T>({
     };
   }, [porScroll, items.length]);
 
+  /** Traer una carta al frente a mano. Desde acá el scroll ya no las mueve. */
+  const elegir = (i: number) => {
+    elegidaAMano.current = true;
+    setAbierto(i);
+  };
+
   if (!items.length) return null;
 
-  return (
+  const mazo = (
     <div
       ref={caja}
       style={{ height: alto + (items.length - 1) * asoma }}
-      className={cn("relative", className)}
+      className={cn("relative", conFlechas ? undefined : className)}
     >
       {items.map((item, i) => {
         const estaAbierto = i === abierto;
@@ -133,10 +146,7 @@ export function Mazo<T>({
             aria-controls={panelId}
             onClick={() => {
               if (estaAbierto) alTocarLaAbierta?.(item, i);
-              else {
-                elegidaAMano.current = true;
-                setAbierto(i);
-              }
+              else elegir(i);
             }}
             style={{
               top: i * asoma,
@@ -160,6 +170,27 @@ export function Mazo<T>({
           </button>
         );
       })}
+    </div>
+  );
+
+  if (!conFlechas) return mazo;
+
+  return (
+    <div className={className}>
+      {mazo}
+      <div className="mt-5 flex justify-end gap-2">
+        <BotonFlecha
+          direccion="anterior"
+          disabled={abierto === 0}
+          onClick={() => elegir(abierto - 1)}
+        />
+        <BotonFlecha
+          direccion="siguiente"
+          variante={abierto < items.length - 1 ? "solida" : "punteada"}
+          disabled={abierto >= items.length - 1}
+          onClick={() => elegir(abierto + 1)}
+        />
+      </div>
     </div>
   );
 }

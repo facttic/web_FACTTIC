@@ -35,6 +35,7 @@ export function BeneficiosMobile({
       alto={ALTO}
       asoma={ASOMA}
       porScroll
+      conFlechas
       claveDe={(b) => b.titulo}
       etiquetaDe={(b) => b.titulo}
       // El relleno es el mismo fondo de la página: la tarjeta se recorta sola
