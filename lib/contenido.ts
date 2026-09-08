@@ -19,14 +19,21 @@ export const HOME = {
     bajada:
       "Una red federal de cooperativas de tecnología, innovación y conocimiento que diseña, desarrolla e implementa soluciones digitales",
     // Mobile la acorta: en la maqueta entra en cuatro renglones de mono.
+    /*
+      Los cortes de línea son los del board: sin ellos el ancho de la columna
+      dejaría "Una red federal de cooperativas" en el primer renglón y el
+      bloque perdería la forma escalonada del diseño.
+    */
     bajadaMobile:
-      "Una red federal de cooperativas tecnológicas que diseña, desarrolla e implementa soluciones digitales.",
+      "Una red federal\nde cooperativas tecnológicas\nque diseña, desarrolla\ne implementa soluciones\ndigitales.",
     cta: { texto: "Trabajá con FACTTIC", href: "/contacto" },
   },
 
   sectores: {
     rotulo: "Industrias",
     titulo: "Sectores\ncon los que trabajamos",
+    // El corte cae en otro lado en cada maqueta.
+    tituloMobile: "Sectores con\nlos que trabajamos",
     // El botón lo sumó diseño el 10/8, con una anotación de Desarrollo en el
     // archivo: "Nuevo, va a sección 'nuestros servicios'". El texto todavía
     // está en discusión —hay una anotación de Contenido al lado—.
@@ -157,6 +164,8 @@ export const SERVICIOS_PAGINA = {
     rotulo: "Verticales",
     rotuloMobile: "Industrias",
     titulo: "Sectores con\nlos que trabajamos",
+    // El corte cae en otro lado en cada maqueta.
+    tituloMobile: "Sectores\ncon los que trabajamos",
     descripcion:
       "Cada rubro tiene sus propias reglas.\nDesarrollamos soluciones que se adaptan a ellas.",
   },
@@ -168,6 +177,8 @@ export const SERVICIOS_PAGINA = {
 
   metodologia: {
     rotulo: "Metodologías",
+    // En singular en el board mobile de las verticales.
+    rotuloMobile: "Metodología",
     titulo: "¿Cómo trabajamos?",
     /*
      * En desktop son tres bloques de color con el nombre y nada más; en mobile
@@ -270,8 +281,7 @@ export const VERTICALES = {
      * Agro es la única que viene en dos párrafos: se separan con una línea en
      * blanco y el hero los reparte. Ver `parrafos()` más abajo.
      */
-    agro:
-      "Somos una red de cooperativas especializadas en soluciones tecnológicas para el agro. Desarrollamos desde hace más de 15 años proyectos innovadores con IoT, Big Data y Computer Vision, enfocados en optimizar procesos administrativos, productivos, logísticos y de gestión. Trabajamos de manera colaborativa, ofreciendo soluciones a medida que generan impacto real en el sector.\n\nConocemos en profundidad las prácticas del sector agro en Argentina y entendemos sus desafíos. Sabemos cómo optimizarlas mediante tecnología, integrando herramientas para aumentar la productividad, reducir costos y garantizar una gestión más transparente y sostenible.",
+    agro: "Somos una red de cooperativas especializadas en soluciones tecnológicas para el agro. Desarrollamos desde hace más de 15 años proyectos innovadores con IoT, Big Data y Computer Vision, enfocados en optimizar procesos administrativos, productivos, logísticos y de gestión. Trabajamos de manera colaborativa, ofreciendo soluciones a medida que generan impacto real en el sector.\n\nConocemos en profundidad las prácticas del sector agro en Argentina y entendemos sus desafíos. Sabemos cómo optimizarlas mediante tecnología, integrando herramientas para aumentar la productividad, reducir costos y garantizar una gestión más transparente y sostenible.",
     financiero:
       "Tenemos amplia experiencia en el rubro banking y fintech. Ofrecemos soluciones que facilitan el acceso a servicios financieros, mejorando la operatoria diaria y asegurando el cumplimiento normativo.",
   } as Record<string, string>,
@@ -512,7 +522,10 @@ export const SUMA_TU_COOP = {
         pregunta: "¿Querés formarte\nen cooperativismo?",
         descripcion:
           "El Club de Formación Cooperativa es una plataforma educativa de FACTTIC donde podés realizar cursos sobre cooperativismo y tecnología.",
-        enlace: { texto: "Ir al club", href: "https://clubcooperativo.com.ar/" },
+        enlace: {
+          texto: "Ir al club",
+          href: "https://clubcooperativo.com.ar/",
+        },
         acento: "naranja" as Acento,
       },
     ],
@@ -623,14 +636,20 @@ export const SOBRE_FACTTIC = {
         pregunta: "¿Querés sumarte\na una coope?",
         descripcion:
           "Semillero es la plataforma de FACTTIC que conecta a personas interesadas en el trabajo cooperativo con cooperativas que están buscando nuevos socios y socias. Podés encontrar oportunidades en tecnología, diseño, desarrollo, marketing, gestión y administración.",
-        enlace: { texto: "Ir a Semillero", href: "https://semillero.coop.ar/home" },
+        enlace: {
+          texto: "Ir a Semillero",
+          href: "https://semillero.coop.ar/home",
+        },
         acento: "lila" as Acento,
       },
       {
         pregunta: "¿Querés formarte\nen cooperativismo\ny tecnología?",
         descripcion:
           "El Club de Formación Cooperativa es una plataforma educativa de FACTTIC donde podés realizar cursos sobre cooperativismo y tecnología.",
-        enlace: { texto: "Ir al club", href: "https://clubcooperativo.com.ar/" },
+        enlace: {
+          texto: "Ir al club",
+          href: "https://clubcooperativo.com.ar/",
+        },
         acento: "celeste" as Acento,
         // En mobile la maqueta la deja lisa y oscura —acá no hay animación
         // detrás—; en desktop la pinta de celeste.
@@ -704,6 +723,12 @@ export const NOVEDADES = {
     titulo: "Todavía no hay novedades",
     sugerencia: "Cuando publiquemos algo, vas a encontrarlo acá.",
   },
+  /* El bloque que cierra el detalle. */
+  relacionadas: {
+    rotulo: "Recomendaciones",
+    titulo: "También te puede interesar",
+    cta: { texto: "Ver todo", href: "/novedades" },
+  },
   cierre: {
     titulo: "¿Sos parte de\nuna cooperativa?",
     cta: { texto: "Sumate a FACTTIC", href: "/suma-tu-coop" },
@@ -720,6 +745,8 @@ export const NUESTRA_RED = {
   hero: {
     titulo:
       "Somos\nuna red federal\nde cooperativas\nde tecnología,\ninnovación y\nconocimiento",
+    // El board mobile lo corta en dos renglones: el mapa entra justo abajo.
+    tituloMobile: "Somos\nuna red federal",
   },
   panel: {
     rotulo: "Provincia seleccionada",

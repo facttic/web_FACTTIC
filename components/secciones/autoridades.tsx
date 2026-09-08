@@ -105,7 +105,8 @@ export function Autoridades({
               aria-selected={esActiva}
               onClick={() => setActivo(grupo.id)}
               className={cn(
-                "text-h4 -mb-px cursor-pointer border-b-2 pb-3 transition-colors",
+                // Chicas en mobile: en el board entran las dos en un renglón.
+                "text-p3-bold md:text-h4 -mb-px cursor-pointer border-b-2 pb-3 transition-colors",
                 FOCO,
                 esActiva
                   ? "border-blanco text-blanco"

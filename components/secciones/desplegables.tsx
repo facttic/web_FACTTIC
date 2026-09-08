@@ -68,7 +68,9 @@ export function Desplegables({
                 aria-controls={panelId}
                 onClick={() => setAbierto(estaAbierto ? -1 : i)}
                 className={cn(
-                  "text-h4 flex w-full cursor-pointer items-start justify-between gap-6 py-8 text-left",
+                  // `H3/Mobile` en el board y `H4` en desktop, como los pasos
+                  // de la metodología en la Home.
+                  "text-h3 md:text-h4 flex w-full cursor-pointer items-start justify-between gap-6 py-8 text-left",
                   /*
                     Solo el primero arranca sin aire arriba, para quedar a la
                     altura del título de la sección. Va por índice y no con
@@ -144,7 +146,8 @@ export function BloqueDesplegable({
   titulo: string;
   /**
    * "Nuestras soluciones" va en H1 y "Metodologías de trabajo" en H2, medido
-   * sobre cada maqueta. No hay una regla común entre pantallas.
+   * sobre cada maqueta de desktop. No hay una regla común entre pantallas. En
+   * mobile los dos van en `H2/Mobile`, como el resto de los títulos.
    */
   tamano?: "h1" | "h2";
   items: ItemDesplegable[];
@@ -159,7 +162,7 @@ export function BloqueDesplegable({
       <h2
         className={cn(
           "whitespace-pre-line",
-          tamano === "h1" ? "text-h1" : "text-h2",
+          tamano === "h1" ? "text-h2 md:text-h1" : "text-h2",
         )}
       >
         {rotulo ? (

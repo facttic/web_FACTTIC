@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Seccion, BandaCta } from "@/components/ui/seccion";
-import { BotonLink } from "@/components/ui/boton";
+import { BotonLink, BotonFlechaLink } from "@/components/ui/boton";
 import { SinResultados } from "@/components/ui/sin-resultados";
 import { CardNovedad } from "@/components/tarjetas/novedad";
 import { NOVEDADES as T } from "@/lib/contenido";
@@ -60,6 +60,7 @@ export default async function NovedadesPage({
     { id: undefined, etiqueta: T.solapas.todos },
     ...TIPOS.map((t) => ({ id: t, etiqueta: T.solapas[t] })),
   ];
+  const indiceSolapa = solapas.findIndex((s) => s.id === tipo);
 
   return (
     <>
@@ -67,33 +68,60 @@ export default async function NovedadesPage({
         <h1 className="text-h1 whitespace-pre-line">{T.hero.titulo}</h1>
         <p className="text-p1 mt-6 max-w-2xl text-blanco/80">{T.hero.bajada}</p>
 
-        {/* Las solapas son enlaces, así que filtran sin JavaScript. */}
-        <div
-          role="tablist"
-          aria-label="Tipo de novedad"
-          className="scroll-limpio mt-12 flex gap-8 overflow-x-auto border-b border-borde md:mt-16"
-        >
-          {solapas.map((solapa) => {
-            const activa = solapa.id === tipo;
-            return (
-              <Link
-                key={solapa.etiqueta}
-                role="tab"
-                aria-selected={activa}
-                href={enlace({ tipo: solapa.id })}
-                scroll={false}
-                className={cn(
-                  "text-h4 -mb-px shrink-0 border-b-2 pb-3 transition-colors",
-                  FOCO,
-                  activa
-                    ? "border-lila text-lila"
-                    : "border-transparent text-blanco/40 hover:text-blanco/70",
-                )}
-              >
-                {solapa.etiqueta}
-              </Link>
-            );
-          })}
+        {/* Las solapas son enlaces, así que filtran sin JavaScript. En mobile
+            el board suma las flechas a la derecha, por encima de la línea; son
+            enlaces también, a la solapa de al lado. */}
+        <div className="relative mt-12 md:mt-16">
+          <div
+            role="tablist"
+            aria-label="Tipo de novedad"
+            className="scroll-limpio flex gap-8 overflow-x-auto border-b border-borde pr-28 md:pr-0"
+          >
+            {solapas.map((solapa) => {
+              const activa = solapa.id === tipo;
+              return (
+                <Link
+                  key={solapa.etiqueta}
+                  role="tab"
+                  aria-selected={activa}
+                  href={enlace({ tipo: solapa.id })}
+                  scroll={false}
+                  className={cn(
+                    "text-h4 -mb-px shrink-0 border-b-2 pb-3 transition-colors",
+                    FOCO,
+                    activa
+                      ? "border-lila text-lila"
+                      : "border-transparent text-blanco/40 hover:text-blanco/70",
+                  )}
+                >
+                  {solapa.etiqueta}
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Con relleno propio: la lista se desplaza por debajo. */}
+          <div className="bg-fondo absolute right-0 bottom-2.5 flex items-center gap-2 pl-3 md:hidden">
+            <BotonFlechaLink
+              direccion="anterior"
+              href={
+                indiceSolapa > 0
+                  ? enlace({ tipo: solapas[indiceSolapa - 1].id })
+                  : undefined
+              }
+            />
+            <BotonFlechaLink
+              direccion="siguiente"
+              variante={
+                indiceSolapa < solapas.length - 1 ? "solida" : "punteada"
+              }
+              href={
+                indiceSolapa < solapas.length - 1
+                  ? enlace({ tipo: solapas[indiceSolapa + 1].id })
+                  : undefined
+              }
+            />
+          </div>
         </div>
       </Seccion>
 

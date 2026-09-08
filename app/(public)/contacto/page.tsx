@@ -40,7 +40,7 @@ export default function ContactoPage() {
         */}
         <Animacion
           nombre={FONDOS.contacto}
-          className="absolute top-0 -right-16 aspect-square w-[420px] animate-acercar will-change-transform md:top-24 md:w-[620px]"
+          className="absolute top-0 -right-44 aspect-square w-[560px] animate-acercar will-change-transform md:-right-16 md:top-24 md:w-[620px]"
         />
       </div>
 
@@ -50,7 +50,7 @@ export default function ContactoPage() {
         </h1>
         {/* La bajada cambia de tipografía entre maquetas: Inter en mobile,
             DM Mono en desktop. */}
-        <p className="text-h4 mt-6 max-w-2xl text-blanco md:text-p1 md:mx-auto md:text-center md:text-blanco/80">
+        <p className="text-p1 mt-6 max-w-2xl text-blanco/80 md:mx-auto md:text-center">
           {T.hero.bajada}
         </p>
 

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Seccion, BandaCta } from "@/components/ui/seccion";
+import { EncabezadoSeccion, Seccion, BandaCta } from "@/components/ui/seccion";
 import { BotonLink } from "@/components/ui/boton";
 import { Chip } from "@/components/ui/chip";
 import { CardNovedad } from "@/components/tarjetas/novedad";
@@ -49,7 +49,9 @@ export default async function NovedadPage({
 
   return (
     <>
-      <Seccion className="pt-24 md:pt-32">
+      {/* La tarjeta arranca casi pegada a la barra: el board le deja 32px,
+          no los 96 del resto de las pantallas. */}
+      <Seccion className="pt-8 md:pt-32">
         <article className="relative isolate overflow-hidden rounded-2xl">
           {/* La imagen queda de fondo, difuminada y oscurecida. */}
           {novedad.imagen ? (
@@ -78,7 +80,9 @@ export default async function NovedadPage({
               </Chip>
             </div>
 
-            <h1 className="text-h1 mt-8 max-w-3xl text-balance">
+            {/* Un escalón más chico en mobile: el board lo escribe en
+                `H2/Mobile` y con seis renglones no entraría de otra forma. */}
+            <h1 className="text-h2 md:text-h1 mt-8 max-w-3xl text-balance">
               {novedad.titulo}
             </h1>
 
@@ -109,15 +113,29 @@ export default async function NovedadPage({
 
       {otras.length ? (
         <Seccion className="pt-0">
+          {/* El board mobile cierra con este bloque y el "Ver todo": la banda
+              de "¿Sos parte de una cooperativa?" es de la maqueta de desktop. */}
+          <EncabezadoSeccion
+            className="md:hidden"
+            rotulo={T.relacionadas.rotulo}
+            titulo={T.relacionadas.titulo}
+            tamanoTitulo="h2"
+          />
           <div className="grid gap-5 md:grid-cols-2">
             {otras.map((otra) => (
               <CardNovedad key={otra.id} novedad={otra} />
             ))}
           </div>
+          <BotonLink
+            href={T.relacionadas.cta.href}
+            className="mt-6 w-full md:hidden"
+          >
+            {T.relacionadas.cta.texto}
+          </BotonLink>
         </Seccion>
       ) : null}
 
-      <div className="contenedor pb-12 md:pb-16">
+      <div className="contenedor hidden pb-12 md:block md:pb-16">
         <BandaCta
           titulo={T.cierre.titulo}
           accion={

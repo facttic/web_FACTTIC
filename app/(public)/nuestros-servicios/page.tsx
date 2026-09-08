@@ -49,13 +49,20 @@ export default async function NuestrosServiciosPage() {
       {/* El hero de esta pantalla no lleva video. El fondo animado que entregó
           diseño aparece solo en mobile: el prototipo desktop lo deja liso. */}
       <section className="relative isolate overflow-hidden">
+        {/* Cruza todo el ancho y se apoya contra el borde de arriba: en el
+            board los rayos se ven por detrás de la barra. */}
         <Animacion
           nombre={FONDOS.servicios}
-          className="pointer-events-none absolute -top-[25rem] left-1/2 -z-10 size-[40rem] -translate-x-1/2 opacity-70 md:hidden"
+          className="pointer-events-none absolute -top-[39rem] left-1/2 -z-10 size-[64rem] -translate-x-1/2 blur-[2px] md:hidden"
         />
-        <Seccion className="pt-32 md:pt-40">
+        {/* El hero respira más abajo que el resto de las secciones: en el
+            board hay 121px entre la última línea de la bajada y el rótulo
+            "INDUSTRIAS". */}
+        <Seccion className="pt-24 pb-20 md:pt-40 md:pb-16">
           <h1 className="text-h1 whitespace-pre-line">{T.hero.titulo}</h1>
-          <p className="text-p1 mt-6 max-w-xl text-balance text-blanco/80">
+          {/* En mobile el archivo la escribe en `P1/Bold` —DM Mono 16— y sin
+              balancear: los renglones cortan a lo ancho de la columna. */}
+          <p className="text-p1-bold mt-6 max-w-xl text-blanco/80 md:text-p1 md:text-balance">
             {T.hero.bajada}
           </p>
         </Seccion>
@@ -69,6 +76,7 @@ export default async function NuestrosServiciosPage() {
             rotulo={T.sectores.rotulo}
             rotuloMobile={T.sectores.rotuloMobile}
             titulo={T.sectores.titulo}
+            tituloMobile={T.sectores.tituloMobile}
             descripcion={T.sectores.descripcion}
             descripcionAlLado
           />
@@ -111,6 +119,7 @@ export default async function NuestrosServiciosPage() {
       <Seccion id="metodologias">
         <EncabezadoSeccion
           rotulo={T.metodologia.rotulo}
+          rotuloMobile={T.metodologia.rotuloMobile}
           titulo={T.metodologia.titulo}
         />
 
@@ -132,24 +141,15 @@ export default async function NuestrosServiciosPage() {
       </Seccion>
 
       {/*
-        La banda va sobre el sol naranja, punteada como en el resto del sitio:
-        el componente tiene un solo estilo. El fondo propio de este bloque no
-        vino en la entrega —solo llegaron cinco—, así que se usa el sol de
-        "Trabajo con impacto", que es la misma forma y el mismo naranja que
-        muestra la maqueta. Queda anotado para cambiarlo cuando diseño mande el
-        que corresponde.
+        Hasta el board de agosto esta banda iba en mobile sobre un sol naranja
+        y alineada a la izquierda. El archivo nuevo la deja igual que las otras:
+        punteada, centrada y sin fondo. Solo cambia el cuerpo del título, que
+        acá entra en tres renglones y va un escalón más chico.
       */}
-      {/* Recorta solo a lo ancho: contiene la animación —que es más ancha que
-          la pantalla— sin cortarle el resplandor a la banda, que se derrama
-          por arriba y por abajo del panel. */}
-      <div className="relative isolate pt-20 pb-12 [overflow-x:clip] md:pt-0 md:pb-16">
-        <Animacion
-          nombre="beneficio-trabajo"
-          className="pointer-events-none absolute -top-8 -left-52 -z-10 size-[30rem] opacity-80 blur-[2px] md:hidden"
-        />
+      <div className="pt-8 pb-12 md:pt-0 md:pb-16">
         <div className="contenedor">
           <BandaCta
-            alineacion="izquierda"
+            claseTitulo="text-h3 md:text-h2"
             titulo={T.metodologia.cierre.titulo}
             accion={
               <>
@@ -197,7 +197,9 @@ export default async function NuestrosServiciosPage() {
             rotulo={T.aliados.rotulo}
             titulo={T.aliados.titulo}
             tamanoTitulo="h2"
-            alineacion="centro"
+            // Centrado solo en desktop: el board mobile lo alinea a la
+            // izquierda, como el resto de los encabezados de la pantalla.
+            alineacion="centro-en-desktop"
           />
         </Seccion>
       ) : null}

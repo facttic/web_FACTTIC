@@ -68,9 +68,11 @@ export default async function ProyectosPage({
 
   return (
     <>
-      <Seccion className="pt-32 md:pt-40">
+      <Seccion className="pt-24 md:pt-40">
         <h1 className="text-h1 whitespace-pre-line">{T.hero.titulo}</h1>
-        <p className="text-p1 mt-6 max-w-2xl text-blanco/80">{T.hero.bajada}</p>
+        <p className="text-p1-bold md:text-p1 mt-6 max-w-2xl text-blanco/80">
+          {T.hero.bajada}
+        </p>
 
         <Suspense>
           <FiltrosProyectos
@@ -96,6 +98,7 @@ export default async function ProyectosPage({
                   indice={i}
                   key={proyecto.id}
                   proyecto={proyecto}
+                  caraMobile="listado"
                   className={cn(esAncha(i) ? "md:col-span-2" : "")}
                 />
               ))}

@@ -4,12 +4,14 @@ import { Pasos } from "@/components/secciones/pasos";
 import { BandaCta, EncabezadoSeccion, Seccion } from "@/components/ui/seccion";
 import { BotonLink } from "@/components/ui/boton";
 import { Servicios } from "@/components/secciones/servicios";
+import { BeneficiosMobile } from "@/components/secciones/beneficios-mobile";
 import { ServiciosMobile } from "@/components/secciones/servicios-mobile";
 import { CardSector } from "@/components/tarjetas/sector";
 import { CardProyecto } from "@/components/tarjetas/proyecto";
 import { CardBeneficioHover, CardMetrica } from "@/components/tarjetas/bloques";
 import { AlEntrar } from "@/components/ui/al-entrar";
 import { Animacion } from "@/components/ui/animacion";
+import { CarruselConFlechas } from "@/components/ui/carrusel-con-flechas";
 import { Carrusel } from "@/components/ui/carrusel";
 import { FONDOS, VIDEO_HERO } from "@/lib/animaciones";
 import { HOME } from "@/lib/contenido";
@@ -32,8 +34,8 @@ import { getMetricasRed } from "@/lib/datos/red";
  * acá con `order`, sobre un contenedor flex, así el HTML sale una sola vez y no
  * hay que duplicar bloques enteros para reubicarlos.
  *
- *   mobile   hero · texto · sectores · servicios · método · cta · lema ·
- *            beneficios · red · proyectos · cta
+ *   mobile   hero · texto · sectores · servicios · método · proyectos · cta ·
+ *            lema · beneficios · red · cta
  *   desktop  hero · sectores · servicios · método · proyectos · cta · lema ·
  *            beneficios · red · cta
  *
@@ -67,14 +69,16 @@ export default async function HomePage() {
 
       {sectores.length ? (
         // La primera sección respira más: en el SVG hay 112px entre el pie del
-        // hero y el rótulo "INDUSTRIAS", contra los 64 del resto.
-        <Seccion className="order-3 md:order-2 md:pt-28">
+        // hero y el rótulo "INDUSTRIAS", contra los 64 del resto. En el board
+        // mobile la diferencia es la misma pero más chica: 47 contra 28.
+        <Seccion className="order-3 pt-11 md:order-2 md:pt-28">
           {/* El botón cambia de lugar entre maquetas: en desktop va a la
               derecha del título y en mobile cierra la sección, a lo ancho. */}
           <EncabezadoSeccion
             className="revelar-al-entrar"
             rotulo={HOME.sectores.rotulo}
             titulo={HOME.sectores.titulo}
+            tituloMobile={HOME.sectores.tituloMobile}
             alineacion="centro-en-mobile"
             accionAlPie
             accion={
@@ -83,7 +87,7 @@ export default async function HomePage() {
               </BotonLink>
             }
           />
-          <div className="grid gap-10 md:grid-cols-3 md:gap-6">
+          <div className="grid gap-5 md:grid-cols-3 md:gap-6">
             {sectores.map((sector, i) => (
               <AlEntrar key={sector.id} indice={i}>
                 <CardSector
@@ -138,7 +142,7 @@ export default async function HomePage() {
       </Seccion>
 
       {destacados.items.length ? (
-        <Seccion className="order-10 md:order-5">
+        <Seccion className="order-6 md:order-5">
           <EncabezadoSeccion
             className="revelar-al-entrar"
             rotulo={HOME.proyectos.rotulo}
@@ -146,17 +150,22 @@ export default async function HomePage() {
             alineacion="centro-en-mobile"
             accionAlPie
             accion={
-              <BotonLink href={HOME.proyectos.cta.href}>
+              /* En mobile el board cierra el bloque con las flechas del
+                 carrusel, no con este botón. */
+              <BotonLink
+                href={HOME.proyectos.cta.href}
+                className="hidden md:inline-flex"
+              >
                 {HOME.proyectos.cta.texto}
               </BotonLink>
             }
           />
-          <Carrusel grilla="md:grid-cols-[2.06fr_1fr]" gap="gap-5">
+          <CarruselConFlechas grilla="md:grid-cols-[2.06fr_1fr]" gap="gap-5">
             {destacados.items.map((proyecto, i) => (
               <AlEntrar
                 key={proyecto.id}
                 indice={i}
-                className="w-[350px] shrink-0 snap-start md:w-auto"
+                className="w-[347px] shrink-0 snap-start md:w-auto"
               >
                 <CardProyecto
                   proyecto={proyecto}
@@ -165,12 +174,12 @@ export default async function HomePage() {
                 />
               </AlEntrar>
             ))}
-          </Carrusel>
+          </CarruselConFlechas>
         </Seccion>
       ) : null}
 
       {/* Va suelta: en mobile cierra la metodología y en desktop, los proyectos. */}
-      <div className="revelar-al-entrar contenedor order-6 pb-16 md:order-6 md:pb-24">
+      <div className="revelar-al-entrar contenedor order-7 pb-7 md:order-6 md:pb-24">
         <BandaCta
           titulo={HOME.proyectos.cierre.titulo}
           accion={
@@ -182,42 +191,27 @@ export default async function HomePage() {
       </div>
 
       {/*
-        El lema también cambia de forma: marquesina que cruza la pantalla en
-        desktop, sección centrada con bajada y botón en mobile.
-      */}
-      {/*
+        El lema es la misma marquesina en los dos anchos: cruza la pantalla con
+        el texto en gris muy tenue. La animación de fondo va solo en desktop.
+
+        Hasta el board de agosto mobile lo resolvía como una sección propia
+        —animación, rótulo, bajada y botón—; el archivo nuevo la reemplazó por
+        la marquesina sola, así que en mobile ya no hay enlace a Sobre FACTTIC
+        desde acá.
+
         `overflow-hidden` no es decorativo: la animación mide 576px y va
         centrada, así que en pantallas angostas se salía del viewport y le daba
         scroll horizontal a toda la página.
       */}
-      <div className="relative isolate order-7 overflow-hidden">
+      <div className="relative isolate order-8 overflow-hidden md:order-7">
         <Animacion
           nombre={FONDOS.homeLema}
           className="pointer-events-none absolute top-1/2 left-1/2 -z-10 hidden size-[36rem] -translate-x-1/2 -translate-y-1/2 opacity-40 md:block"
         />
-        <div className="hidden md:block">
-          <Marquesina texto={HOME.lema.texto} />
-        </div>
-        <Seccion className="items-center text-center md:hidden">
-          {/* En mobile la animación va en el flujo, arriba del rótulo, y no
-              como fondo: en la maqueta ocupa su propio bloque de 137px. */}
-          <Animacion nombre={FONDOS.homeLema} className="mb-8 size-[137px]" />
-          <p className="text-eyebrow text-blanco/40">{HOME.lema.rotulo}</p>
-          <h2 className="text-h1 mt-3 text-balance">{HOME.lema.texto}</h2>
-          <p className="text-p1 mt-4 text-balance text-blanco/80">
-            {HOME.lema.bajada}
-          </p>
-          <BotonLink
-            href={HOME.lema.cta.href}
-            variante="solida"
-            className="mt-8 w-full"
-          >
-            {HOME.lema.cta.texto}
-          </BotonLink>
-        </Seccion>
+        <Marquesina texto={HOME.lema.texto} />
       </div>
 
-      <Seccion className="order-8">
+      <Seccion className="order-9 md:order-8">
         <EncabezadoSeccion
           className="revelar-al-entrar"
           rotulo={HOME.beneficios.rotulo}
@@ -231,31 +225,48 @@ export default async function HomePage() {
             </BotonLink>
           }
         />
-        <Carrusel grilla="sm:grid-cols-2 lg:grid-cols-4" desdeAncho="sm">
-          {HOME.beneficios.items.map((beneficio, i) => (
-            <AlEntrar
-              key={beneficio.titulo}
-              indice={i}
-              className="w-[287px] shrink-0 snap-start sm:w-auto"
-            >
-              <CardBeneficioHover
-                titulo={beneficio.titulo}
-                descripcion={beneficio.descripcion}
-                acento={beneficio.acento}
-                ilustracion={
-                  <Animacion
-                    nombre={beneficio.animacion}
-                    bucle={false}
-                    className="size-[70px]"
-                  />
-                }
+        {/*
+          Dos formas distintas, no la misma reacomodada: en desktop son cuatro
+          tarjetas en fila que cambian de cara al pasar el mouse y en mobile un
+          mazo que se pasa solo con el scroll.
+        */}
+        <BeneficiosMobile
+          className="md:hidden"
+          items={HOME.beneficios.items.map((beneficio) => ({
+            titulo: beneficio.titulo,
+            descripcion: beneficio.descripcion,
+            ilustracion: (
+              <Animacion
+                nombre={beneficio.animacion}
+                bucle={false}
+                className="size-[80px]"
               />
-            </AlEntrar>
-          ))}
-        </Carrusel>
+            ),
+          }))}
+        />
+        <div className="hidden md:block">
+          <Carrusel grilla="sm:grid-cols-2 lg:grid-cols-4" desdeAncho="sm">
+            {HOME.beneficios.items.map((beneficio, i) => (
+              <AlEntrar key={beneficio.titulo} indice={i}>
+                <CardBeneficioHover
+                  titulo={beneficio.titulo}
+                  descripcion={beneficio.descripcion}
+                  acento={beneficio.acento}
+                  ilustracion={
+                    <Animacion
+                      nombre={beneficio.animacion}
+                      bucle={false}
+                      className="size-[70px]"
+                    />
+                  }
+                />
+              </AlEntrar>
+            ))}
+          </Carrusel>
+        </div>
       </Seccion>
 
-      <Seccion className="order-9">
+      <Seccion className="order-10 md:order-9">
         <EncabezadoSeccion
           className="revelar-al-entrar"
           rotulo={HOME.red.rotulo}
@@ -304,9 +315,7 @@ export default async function HomePage() {
               <span className="whitespace-pre-line md:hidden">
                 {HOME.red.cierre.tituloMobile}
               </span>
-              <span className="hidden md:inline">
-                {HOME.red.cierre.titulo}
-              </span>
+              <span className="hidden md:inline">{HOME.red.cierre.titulo}</span>
             </>
           }
           accion={

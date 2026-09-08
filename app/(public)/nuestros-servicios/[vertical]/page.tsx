@@ -7,6 +7,7 @@ import { Animacion } from "@/components/ui/animacion";
 import { CardPropuesta } from "@/components/tarjetas/servicios";
 import { BloqueDesplegable } from "@/components/secciones/desplegables";
 import { ProyectosDestacados } from "@/components/secciones/proyectos-destacados";
+import { Metodologias } from "@/components/secciones/metodologias";
 import { Stack } from "@/components/secciones/stack";
 import { Aliados } from "@/components/secciones/aliados";
 import { Acordeon } from "@/components/ui/acordeon";
@@ -88,7 +89,7 @@ export default async function VerticalPage({
     <>
       {/* En desktop el hero va centrado y con la ilustración del sector; en
           mobile la maqueta la saca y alinea el texto a la izquierda. */}
-      <Seccion className="pt-32 md:items-center md:pt-24 md:text-center">
+      <Seccion className="pt-24 md:items-center md:pt-24 md:text-center">
         {animacion ? (
           <Animacion
             nombre={animacion}
@@ -100,7 +101,9 @@ export default async function VerticalPage({
           ? parrafos(descripcion).map((parrafo, i) => (
               <p
                 key={parrafo}
-                className={`text-p1 text-blanco/80 md:max-w-3xl ${
+                /* En mobile el board la escribe en `P1/Bold` —DM Mono 16—,
+                   como el hero de Nuestros servicios. */
+                className={`text-p1-bold md:text-p1 text-blanco/80 md:max-w-3xl ${
                   i === 0 ? "mt-6" : "mt-4"
                 } ${i === 0 ? "md:text-balance" : ""}`}
               >
@@ -116,6 +119,11 @@ export default async function VerticalPage({
             rotulo={T.propuesta.rotulo}
             titulo={T.propuesta.titulo}
             tamanoTitulo="h2"
+            descripcion={SERVICIOS_PAGINA.porQue.descripcion}
+            descripcionSoloMobile
+            /* La bajada y el primer ítem quedan pegados en el board: 26px
+               entre el último renglón y "Soluciones adaptadas". */
+            className="mb-1 md:mb-8"
           />
 
           {/* En desktop son cuatro tarjetas que toman el color de la vertical al
@@ -132,7 +140,8 @@ export default async function VerticalPage({
             ))}
           </div>
           <Acordeon
-            className="divide-dashed divide-gris-oscuro border-gris-oscuro md:hidden"
+            className="divide-dashed divide-gris-oscuro border-t-0 border-gris-oscuro md:hidden"
+            claseTitulo="text-h3"
             inicial={null}
             items={motivos.map((item) => ({
               id: item.titulo,
@@ -155,7 +164,26 @@ export default async function VerticalPage({
       {/* El aire de esta pantalla no es el del resto: entre metodologías y
           proyectos el diseño deja menos, y antes del cierre, más. */}
       <Seccion className="md:pt-6 md:pb-0">
+        {/*
+          Las dos maquetas resuelven este bloque distinto: desktop lo lista
+          como desplegables bajo "Metodologías de trabajo" y el board mobile lo
+          convierte en el mismo carrusel de "¿Cómo trabajamos?" que Nuestros
+          servicios, pero con la solapa subrayada en vez de la tarjeta pintada.
+        */}
+        <EncabezadoSeccion
+          className="md:hidden"
+          rotulo={SERVICIOS_PAGINA.metodologia.rotuloMobile}
+          titulo={SERVICIOS_PAGINA.metodologia.titulo}
+          tamanoTitulo="h2"
+        />
+        <Metodologias
+          items={SERVICIOS_PAGINA.metodologia.items}
+          variante="solapa"
+          className="md:hidden"
+        />
+
         <BloqueDesplegable
+          className="hidden md:grid"
           titulo={T.metodologia.titulo}
           tamano="h2"
           items={SERVICIOS_PAGINA.metodologia.items.map((item) => ({

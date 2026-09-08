@@ -217,11 +217,12 @@ llegue.
 - [ ] **`images/img_0.png` de `07-Icono_Oportunidades-Trabajo`.** El Lottie lo
       referencia y no vino. Se quitó esa capa (59×59) para que no se viera roto;
       puede faltarle un detalle al sol naranja.
-- [ ] **Fondos de las páginas que no vinieron**: Sumá tu coop, Proyectos y
-      Nuestra Red. La entrega trajo cinco (Home, Servicios, Sobre Facttic,
-      Contacto, Error 404). **Falta también el sol naranja** que va detrás de la
-      banda "¿Cuál es el modelo ideal…?" en Servicios mobile: por ahora se usa
-      el de la tarjeta "Trabajo con impacto", que es la misma forma y color.
+- [ ] **Fondos de las páginas que no vinieron**: Sumá tu coop, Proyectos,
+      Nuestra Red y Comunicados. La entrega trajo cinco (Home, Servicios, Sobre Facttic,
+      Contacto, Error 404). El que más se nota es el **resplandor azul** detrás
+      de la banda "Cada cooperativa que se suma…" del board mobile de Sumá tu
+      coop, que hoy queda sin fondo. (El sol naranja de la banda "¿Cuál es el
+      modelo ideal…?" ya no hace falta: el board nuevo dejó ese bloque liso.)
 - [ ] **Logo FACT[TIC] en SVG**, en sus variantes. Se exportó del archivo a PNG
       4x y ya está en uso, pero en Figma también está insertado como imagen, así
       que el vector original hay que pedirlo aparte.
@@ -244,6 +245,168 @@ llegue.
       template, así que no hace falta maqueta nueva. Existen Organizaciones y
       Agro; Financiero sale del mismo molde.
 
+### Revisión de la vista mobile (agosto/septiembre 2026)
+
+El archivo de Figma cambió bastante en mobile y se está rehaciendo pantalla por
+pantalla contra las maquetas exportadas de `Material/mobile/`. **La Home,
+Nuestros servicios, las verticales, Sumá tu coop, Proyectos, el detalle de
+proyecto, Nuestra red, Sobre FACTTIC, Contacto, Comunicados, el detalle de
+Comunicados y el 404 ya están**: la revisión mobile está completa. Lo que sigue
+son las preguntas de abajo.
+
+Lo que salió de la Home y vale para todo el sitio:
+
+- Los títulos de sección en mobile van en `H2/Mobile` (26px), no en 34.
+  Resuelto en `EncabezadoSeccion` con `text-h2 md:text-h1`.
+- Entre el pie de una sección y el rótulo de la siguiente hay 54-62px, no 96:
+  `Seccion` pasó a `py-7 md:py-16`.
+- La barra superior mide 68 en mobile —no 90—, el ícono del menú es de 42x26 y
+  no hay separador punteado abajo.
+- El botón del hero mide 60 de alto en mobile; en desktop sigue en 53.
+- Las redes del pie van en blanco pleno y a 18px, igual que el ©.
+
+De **Nuestros servicios** salió además:
+
+- El hero de la pantalla usa `P1/Bold` —DM Mono 16— para la bajada, no los 18
+  de `P1/Regular`. Confirmado en el inspector de Figma.
+- La banda "¿Cuál es el modelo ideal…" ya no va sobre el sol naranja ni
+  alineada a la izquierda: el board la deja punteada y centrada como las otras,
+  con el título un escalón más chico.
+- "¿Cómo trabajamos?" en mobile es una tarjeta pintada con el color de la
+  modalidad y las flechas debajo, no una solapa con subrayado.
+- Las tarjetas de "¿Por qué elegirnos?" van sobre el fondo de la página con
+  borde blanco pleno, no en gris.
+- El mazo de sectores muestra la misma cara que en la Home y de las tapadas
+  asoman 37px, sin texto.
+
+De las **verticales** salió además:
+
+- "¿Cómo trabajamos?" se dibuja **distinto en cada pantalla**: tarjeta pintada
+  en Nuestros servicios y solapa subrayada acá. Por eso `secciones/metodologias`
+  tiene las dos variantes; no es una sola con un ajuste.
+- La sección "¿Por qué elegirnos?" lleva bajada en mobile aunque el prototipo
+  de desktop vaya directo del título a las tarjetas.
+- Las tarjetas del stack miden 160x82 en mobile y 180x90 en desktop.
+
+De **Sumá tu coop** salió además:
+
+- El título del hero va en `H1/Mobile` (34) y no en el display, y el sol con su
+  órbita —que en el código estaba solo en desktop— también va en mobile, de 196
+  arriba a la derecha.
+- "Elegí tu camino al cooperativismo" es un carrusel de una tarjeta por vez,
+  pintada y con la explicación y el enlace a la vista; no las tres apiladas y
+  cerradas.
+- Los compromisos van en `H3/Mobile` y con el texto a 48 del borde de arriba.
+
+De **Proyectos** salió además:
+
+- La tarjeta de proyecto tiene **dos caras distintas en mobile**: la del
+  carrusel de destacados —imagen de 204, título y etiquetas— y la del listado
+  —imagen de 276 y solo el título, sin etiquetas—. De ahí el prop `caraMobile`.
+- En "Últimos proyectos" el nombre va en la sans en negrita en mobile y en mono
+  en la tabla de desktop.
+
+Del **detalle de proyecto** salió además:
+
+- La portada arranca pegada al borde de arriba —por detrás de la barra— y mide
+  488 con las esquinas de abajo redondeadas.
+- La ficha se resuelve con dos etiquetas arriba del título y la lista de
+  servicios debajo; los rótulos "Sector"/"Servicios"/"Cliente" son de desktop.
+- "Stack tecnológico" y "Cooperativas" van como tarjetas con isologo de 184x92
+  en una fila que se desplaza, sin las líneas punteadas.
+- La galería va **antes** del stack, y "Últimos proyectos" no existe en mobile:
+  la pantalla cierra con los relacionados, que ahí son un carrusel con flechas.
+
+De **Nuestra red** salió además:
+
+- El panel de la provincia se apoya **encima** del mapa, tapándole el tercio de
+  abajo; no va debajo. El mapa mide 607 de alto y va centrado.
+- Las solapas de provincia llevan flechas a la derecha, por encima de la línea.
+- Las tarjetas de cooperativa se apilan a lo ancho, no en carrusel.
+- Se arregló de paso el desborde horizontal que arrastraba la pantalla: el
+  panel es `relative` también en mobile y el `left: 68%` con el que se cuelga
+  de la provincia lo empujaba fuera de la pantalla. Ahora el corrimiento va por
+  variable y solo se aplica desde `md`.
+
+De **Sobre FACTTIC** salió además:
+
+- Las tarjetas "01. / 02." van en el mismo carrusel de una tarjeta desplegada
+  por vez que Sumá tu coop.
+- Las solapas "Consejo de administración / Sindicatura" van chicas en mobile,
+  para que entren las dos en un renglón.
+- La anotación del frame pide "Zoom in en la foto" sobre la del plenario. Ahí
+  está puesto el efecto de escaneo que pediste vos, que es más que un zoom, así
+  que la dejé como está.
+
+De **Contacto** salió además:
+
+- Las dos anotaciones del frame están cumplidas: el mensaje se estira con lo que
+  se escribe (ya estaba) y **la línea del campo pasa de punteada a entera apenas
+  hay algo escrito** (nuevo, con `:placeholder-shown`, sin estado de React).
+- La bajada va en mono 18, no en la sans en negrita.
+
+Del **detalle de Comunicados** salió: el título va en `H2/Mobile` (26) y no en
+los 34 de desktop; la tarjeta arranca a 32 de la barra y no a 96; y la pantalla
+cierra con "Recomendaciones / También te puede interesar" más un "Ver todo" en
+vez de la banda "¿Sos parte de una cooperativa?", que es de desktop.
+
+Del **404** salió: el título "Esta conexión no existe" se escribe a máquina
+—confirmado en el archivo, la anotación está puesta sobre ese texto—. Las otras
+dos anotaciones del frame ("el chiste sería que este elemento nunca entre al
+sistema, que rebote y gravite por fuera" y "el resto de los elementos sí
+graviten sobre el eje") describen el movimiento del Lottie que entregó diseño,
+que ya está en uso: son 161 fotogramas y los cuerpos se desplazan solos.
+
+Del **listado de Comunicados** salió además:
+
+- Las solapas llevan flechas a la derecha. Como el filtro anda sin JavaScript
+  —son enlaces—, las flechas también son enlaces: de ahí `BotonFlechaLink`.
+- La foto de la tarjeta mide 345x174 —proporción 2:1, radio 12— contra la
+  proporción más apaisada de desktop.
+
+Abierto, para preguntar:
+
+- [ ] **El copy de la banda de cierre de proyectos.** El board mobile dice
+      "¿Tenés **algún** proyecto en mente?" y el sitio "¿Tenés un proyecto en
+      mente?", que es lo que quedó del documento de contenido.
+- [ ] **Las descripciones de beneficios no entran en la tarjeta del board.** Es
+      de 346x403 fijos y el texto del archivo es más corto que el que está
+      cargado; hoy se recorta contra el borde de la tarjeta. O se acorta el
+      copy o la tarjeta crece.
+- [ ] **El copy del cierre de Nuestros servicios.** El board dice "¿Tenés algún
+      proyecto en mente?" y el sitio "¿Tenés un proyecto?". Va con lo de la
+      banda de la Home, que tiene la misma diferencia.
+- [ ] **Los proyectos de la vertical.** El board mobile tiene *dos* bloques
+      —"Nuestra experiencia en el sector" con tres tarjetas con foto y, más
+      abajo, "Últimos proyectos" como lista— y el sitio tiene uno solo, en
+      lista. Además las tres tarjetas aparecen superpuestas entre sí, con el
+      título de las dos primeras tapado por la que sigue: no queda claro si es
+      una pila a propósito o un descuido del archivo.
+- [ ] **La anotación "Animación: Zoom in" de la galería del detalle no tiene
+      disparador en mobile.** Hoy el acercamiento está en el hover, que en una
+      pantalla táctil no existe. ¿Va al entrar en pantalla, o queda solo en
+      desktop?
+- [ ] **Dos títulos que en el board miden 30 y no 26.** "El cooperativismo se
+      multiplica" (Sobre FACTTIC) y "Envíanos un mensaje" (Contacto) miden un
+      15% más que el resto de los títulos de sección, que son todos 26 —lo
+      verifiqué comparando la misma cadena—. Puede ser que ahí esté aplicado
+      `H2/Desktop` por error. Los dejé en 26 para no meter un cuerpo fuera de
+      escala; confirmar cuál va.
+- [ ] **La esfera de Contacto no coincide en color.** El board la muestra gris
+      virando a naranja y el Lottie que llegó (`fondo-contacto`) la dibuja lila
+      con una órbita punteada. Puede ser otro fotograma de la misma animación o
+      un asset cambiado.
+- [ ] **El orden de las tarjetas.** El board pone los sectores como
+      Organizaciones · Financiero · Agro y los servicios empezando por
+      Desarrollo · Diseño · IA y Datos; la API los devuelve en otro orden. Se
+      arregla desde el backoffice, no desde el código.
+- [ ] **El título de Nuestra red y el copy de las bandas de cierre.** El board
+      mobile dice "Somos una red federal" a secas —ya está puesto como
+      `tituloMobile`— y en las bandas usa "¿Tenés algún proyecto en mente?" y
+      "Trabajá con Facttic" donde el sitio dice otra cosa. Todo eso viene del
+      documento de contenido que ya validamos, así que probablemente el board
+      esté atrasado: confirmar.
+
 ### Anotaciones del archivo pendientes de definir
 
 Las anotaciones verdes de "Desarrollo" en Figma —distintas de los comentarios—
@@ -254,8 +417,15 @@ llevan indicaciones de implementación. Estado de las encontradas:
       proyecto se acotan a dos líneas para que no desalineen la grilla, pero
       convendría validarlo también en el backoffice al cargar.
 - [ ] **Revisar las anotaciones del resto de las pantallas.** Se leyeron las de
-      la Home y las del board de Componentes; faltan Proyectos, Sumá tu coop,
-      Nuestra Red, Sobre Facttic, Comunicados, Contacto y 404.
+      la Home —desktop y mobile— y las del board de Componentes; faltan
+      Proyectos, Sumá tu coop, Nuestra Red, Sobre Facttic, Comunicados,
+      Contacto y 404.
+
+      Las cinco de la Home mobile están hechas: máquina de escribir en el
+      título (`Typewriter`), Scroll reveal en la bajada (`RevelarPalabras`),
+      Spotlight Card en las tarjetas de sector (`ui/foco-puntero`) y animación
+      de superposición en los dos mazos —servicios y beneficios— con el
+      `porScroll` de `ui/mazo`.
 - [ ] **"Ver si va ese texto en el botón, o qué va mejor"** (anotación de
       Contenido, Home, 10/8). Es el botón nuevo del bloque de Sectores, que hoy
       dice "Conocé nuestros servicios" —el texto que está puesto en el

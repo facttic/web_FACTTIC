@@ -4,7 +4,9 @@ import { ViewTransition } from "react";
 import { EncabezadoSeccion, Seccion, BandaCta } from "@/components/ui/seccion";
 import { BotonLink } from "@/components/ui/boton";
 import { Acordeon, type ItemAcordeon } from "@/components/ui/acordeon";
-import { Chip, ChipSector } from "@/components/ui/chip";
+import { Chip, ChipCliente, ChipSector } from "@/components/ui/chip";
+import { LogoRemoto } from "@/components/ui/logo-remoto";
+import { CarruselConFlechas } from "@/components/ui/carrusel-con-flechas";
 import { CardProyecto, FilaProyecto } from "@/components/tarjetas/proyecto";
 import { PROYECTOS_PAGINA as T } from "@/lib/contenido";
 import {
@@ -74,19 +76,38 @@ export default async function ProyectoPage({
       {portada ? (
         <ViewTransition name={`proyecto-${proyecto.slug}`} share="morph">
           {/* eslint-disable-next-line @next/next/no-img-element */}
+          {/* En mobile arranca pegada al borde de arriba —por detrás de la
+              barra, que es transparente— y cierra con las esquinas
+              redondeadas: así la dibuja el board. */}
           <img
             src={portada}
             alt=""
-            className="h-56 w-full object-cover md:h-[470px]"
+            className="-mt-[72px] h-[488px] w-full rounded-b-3xl object-cover md:mt-0 md:h-[470px] md:rounded-none"
           />
         </ViewTransition>
       ) : null}
 
-      <Seccion className={portada ? "pt-12 md:pt-16" : "pt-32 md:pt-40"}>
+      <Seccion className={portada ? "pt-8 md:pt-16" : "pt-24 md:pt-40"}>
+        {/* En mobile la ficha se resuelve con dos etiquetas arriba del título y
+            la lista de servicios debajo, sin los rótulos "Sector" y
+            "Servicios" de la columna de desktop. */}
+        <div className="mb-5 flex flex-wrap items-center gap-2 md:hidden">
+          {proyecto.cliente ? (
+            <ChipCliente>{proyecto.cliente.nombre}</ChipCliente>
+          ) : null}
+          {proyecto.sector ? (
+            <ChipSector nombre={proyecto.sector.nombre} />
+          ) : null}
+        </div>
+
         <h1 className="text-h1 max-w-4xl text-balance">{proyecto.nombre}</h1>
 
+        {servicios ? (
+          <p className="text-p3 mt-4 text-blanco/60 md:hidden">{servicios}</p>
+        ) : null}
+
         {/* Ficha: sector y servicios, separados por una línea punteada. */}
-        <div className="mt-10 flex flex-col gap-6 md:flex-row md:items-start md:gap-10">
+        <div className="mt-10 hidden flex-col gap-6 md:flex md:flex-row md:items-start md:gap-10">
           {proyecto.sector ? (
             <div className="border-l border-dotted border-punteado pl-4">
               <p className="text-eyebrow text-blanco/40">Sector</p>
@@ -115,57 +136,59 @@ export default async function ProyectoPage({
       {resena.length ? (
         <Seccion>
           <EncabezadoSeccion titulo={T.detalle.resena} tamanoTitulo="h2" />
+          {/* En mobile el board los muestra a los tres cerrados, sin la línea
+              de arriba y con el título un cuerpo más grande. */}
           <Acordeon
             items={resena}
-            className="divide-dashed divide-gris-oscuro border-gris-oscuro"
+            inicialMobile={null}
+            claseTitulo="text-h3 py-8 md:text-h4 md:py-5"
+            className="divide-dashed divide-gris-oscuro border-t-0 border-gris-oscuro md:border-t"
           />
         </Seccion>
       ) : null}
 
-      {proyecto.tecnologias.length ? (
-        <Seccion className="py-0 md:py-0">
-          <FichaEnLinea titulo={T.detalle.stack}>
-            {proyecto.tecnologias.map((tecnologia) => (
-              <Chip key={tecnologia.id} className="px-4 py-2">
-                {tecnologia.nombre}
-              </Chip>
-            ))}
-          </FichaEnLinea>
-        </Seccion>
-      ) : null}
+      {/* Las dos maquetas los ordenan al revés: desktop pone el stack antes de
+          la galería y el board mobile, después. */}
+      <div className="flex flex-col">
+        {proyecto.tecnologias.length ? (
+          <Seccion className="py-0 md:py-0">
+            <FichaEnLinea
+              titulo={T.detalle.stack}
+              items={proyecto.tecnologias}
+            />
+          </Seccion>
+        ) : null}
 
-      {galeria.length ? (
-        <Seccion>
-          {/*
+        {galeria.length ? (
+          <Seccion className="order-first md:order-none">
+            {/*
             Dos por fila, con el acercamiento al pasar el mouse que pide la
             anotación "Animación: Zoom in". El video quedó consultado —"¿se
             podría incorporar?"— y entra acá cuando el backend lo sirva.
           */}
-          <div className="grid gap-5 md:grid-cols-2">
-            {galeria.map((imagen) => (
-              <div key={imagen} className="overflow-hidden rounded-xl">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={imagen}
-                  alt=""
-                  loading="lazy"
-                  className="aspect-[587/341] w-full object-cover transition-transform duration-500 hover:scale-105"
-                />
-              </div>
-            ))}
-          </div>
-        </Seccion>
-      ) : null}
+            <div className="grid gap-5 md:grid-cols-2">
+              {galeria.map((imagen) => (
+                <div key={imagen} className="overflow-hidden rounded-xl">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={imagen}
+                    alt=""
+                    loading="lazy"
+                    className="aspect-[587/341] w-full object-cover transition-transform duration-500 hover:scale-105"
+                  />
+                </div>
+              ))}
+            </div>
+          </Seccion>
+        ) : null}
+      </div>
 
       {proyecto.cooperativas.length ? (
         <Seccion className="py-0 md:py-0">
-          <FichaEnLinea titulo={T.detalle.cooperativas}>
-            {proyecto.cooperativas.map((cooperativa) => (
-              <Chip key={cooperativa.id} className="px-4 py-2">
-                {cooperativa.nombre}
-              </Chip>
-            ))}
-          </FichaEnLinea>
+          <FichaEnLinea
+            titulo={T.detalle.cooperativas}
+            items={proyecto.cooperativas}
+          />
         </Seccion>
       ) : null}
 
@@ -175,16 +198,24 @@ export default async function ProyectoPage({
             titulo={T.detalle.relacionados}
             tamanoTitulo="h2"
           />
-          <div className="flex flex-col gap-5 md:grid md:grid-cols-3">
+          {/* En mobile se pasan con las flechas, de a uno. */}
+          <CarruselConFlechas grilla="md:grid-cols-3" gap="gap-5">
             {relacionados.map((otro) => (
-              <CardProyecto key={otro.id} proyecto={otro} alto="h-[310px]" />
+              <CardProyecto
+                key={otro.id}
+                proyecto={otro}
+                alto="h-[366px] md:h-[310px]"
+                className="w-full shrink-0 snap-start md:w-auto"
+              />
             ))}
-          </div>
+          </CarruselConFlechas>
         </Seccion>
       ) : null}
 
+      {/* El board mobile cierra el detalle con los relacionados: esta tabla
+          existe solo en la maqueta de desktop. */}
       {ultimos.items.length ? (
-        <Seccion>
+        <Seccion className="hidden md:flex">
           <EncabezadoSeccion titulo={T.ultimos.titulo} tamanoTitulo="h2" />
           <div className="border-t border-dotted border-punteado">
             {ultimos.items
@@ -214,20 +245,47 @@ export default async function ProyectoPage({
 }
 
 /**
- * Fila con el rótulo a la izquierda y chips a la derecha, entre líneas
- * punteadas: el "Stack tecnológico" y las "Cooperativas" del detalle.
+ * "Stack tecnológico" y "Cooperativas" del detalle.
+ *
+ * Las dos maquetas los resuelven distinto: desktop pone el rótulo a la
+ * izquierda y los nombres como chips, entre dos líneas punteadas; el board
+ * mobile los dibuja como tarjetas con el isologo, en una fila que se desplaza,
+ * y sin líneas.
  */
 function FichaEnLinea({
   titulo,
-  children,
+  items,
 }: {
   titulo: string;
-  children: React.ReactNode;
+  items: readonly { id: string; nombre: string; logo?: string | null }[];
 }) {
   return (
-    <div className="flex flex-col gap-4 border-y border-dashed border-borde-pleno py-6 md:grid md:grid-cols-[352px_1fr] md:items-center md:gap-16">
+    <div className="flex flex-col gap-4 py-6 md:grid md:grid-cols-[352px_1fr] md:items-center md:gap-16 md:border-y md:border-dashed md:border-borde-pleno">
       <h2 className="text-h2">{titulo}</h2>
-      <div className="flex flex-wrap items-center gap-3">{children}</div>
+
+      <div className="scroll-limpio -mx-6 flex gap-2 overflow-x-auto px-6 md:mx-0 md:hidden md:px-0">
+        {items.map((item) => (
+          <div
+            key={item.id}
+            className="flex h-[92px] w-[184px] shrink-0 flex-col items-center justify-center gap-1.5 rounded-lg bg-superficie-alta px-4"
+          >
+            {item.logo ? (
+              <LogoRemoto src={item.logo} nombre="" className="max-h-6" />
+            ) : null}
+            <span className="text-h4 text-center leading-tight">
+              {item.nombre}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="hidden flex-wrap items-center gap-3 md:flex">
+        {items.map((item) => (
+          <Chip key={item.id} className="px-4 py-2">
+            {item.nombre}
+          </Chip>
+        ))}
+      </div>
     </div>
   );
 }

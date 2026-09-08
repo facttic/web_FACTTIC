@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { cn } from "@/lib/cn";
-import { FOCO } from "@/components/ui/boton";
+import { BotonFlecha, FOCO } from "@/components/ui/boton";
 import { ChipSector } from "@/components/ui/chip";
-import { Carrusel } from "@/components/ui/carrusel";
 import { MapaFederal, PROPORCION_MAPA, centroDe } from "./mapa-federal";
 import { NUESTRA_RED as T } from "@/lib/contenido";
 import type { CooperativaEnRed, ProvinciaConRed } from "@/lib/datos/red";
@@ -32,7 +31,8 @@ export function RedFederal({
    */
   const [elegida, setElegida] = useState(provincias[0]?.nombre ?? null);
   const [panelAbierto, setPanelAbierto] = useState(true);
-  const provincia = provincias.find((p) => p.nombre === elegida) ?? null;
+  const indice = provincias.findIndex((p) => p.nombre === elegida);
+  const provincia = provincias[indice] ?? null;
 
   const elegir = (nombre: string) => {
     setElegida(nombre);
@@ -75,25 +75,45 @@ export function RedFederal({
         que se posiciona. En mobile queda debajo, porque superponerlo ahí se
         comería el dibujo.
       */}
+      {/*
+        En desktop la caja toma la medida exacta del mapa —de ahí la
+        proporción— porque el panel se cuelga del centro de la provincia que se
+        tocó. En mobile no: el mapa mide 607 de alto, va centrado, y el panel se
+        apoya encima tapándole el tercio de abajo, como en el board. Por eso ahí
+        la caja ocupa el ancho del contenedor y crece con su contenido, en vez
+        de tener alto fijo: si no, el panel se salía y se pisaba con las
+        solapas.
+      */}
       <div
         ref={zona}
-        className="relative mx-auto h-[380px] md:h-[600px]"
-        style={{ aspectRatio: PROPORCION_MAPA }}
+        className="relative mx-auto md:aspect-[var(--proporcion-mapa)] md:h-[600px]"
+        style={{ "--proporcion-mapa": PROPORCION_MAPA } as CSSProperties}
       >
         <MapaFederal
           cantidadPorProvincia={cantidades}
           seleccionada={elegida}
           alElegir={elegir}
-          className="size-full"
+          className="mx-auto h-[607px] w-auto md:size-full"
         />
 
         {provincia && panelAbierto ? (
           <PanelProvincia
             provincia={provincia}
             alCerrar={() => setPanelAbierto(false)}
-            className="mt-6 md:absolute md:mt-0 md:w-[420px] md:-translate-y-1/3"
+            /*
+              El corrimiento va por variable y no como `left`/`top` directos:
+              el panel es `relative` también en mobile —donde va debajo del
+              mapa, en el flujo— y ahí un `left: 68%` lo empujaba fuera de la
+              pantalla, estirando la página a lo ancho.
+            */
+            className="relative z-10 -mt-[323px] md:absolute md:top-[var(--py)] md:left-[var(--px)] md:z-auto md:mt-0 md:w-[420px] md:-translate-y-1/3"
             style={
-              centro ? { left: `${centro.x}%`, top: `${centro.y}%` } : undefined
+              centro
+                ? ({
+                    "--px": `${centro.x}%`,
+                    "--py": `${centro.y}%`,
+                  } as CSSProperties)
+                : undefined
             }
           />
         ) : (
@@ -105,46 +125,65 @@ export function RedFederal({
         )}
       </div>
 
-      {/* Las provincias como solapas, para llegar sin usar el mapa. */}
-      <div
-        ref={solapas}
-        role="tablist"
-        aria-label="Provincias con cooperativas"
-        className="scroll-limpio mt-12 flex gap-8 overflow-x-auto border-b border-borde"
-      >
-        {provincias.map((p) => {
-          const activa = p.nombre === elegida;
-          return (
-            <button
-              key={p.nombre}
-              role="tab"
-              type="button"
-              aria-selected={activa}
-              onClick={() => elegir(p.nombre)}
-              className={cn(
-                "text-h4 -mb-px shrink-0 cursor-pointer border-b-2 pb-3 transition-colors",
-                FOCO,
-                activa
-                  ? "border-lila text-lila"
-                  : "border-transparent text-blanco/40 hover:text-blanco/70",
-              )}
-            >
-              {p.nombre}
-            </button>
-          );
-        })}
+      {/* Las provincias como solapas, para llegar sin usar el mapa. En mobile
+          el board suma las flechas a la derecha, por encima de la línea. */}
+      <div className="relative mt-12">
+        <div
+          ref={solapas}
+          role="tablist"
+          aria-label="Provincias con cooperativas"
+          // Aire a la derecha para que la última solapa no quede debajo de las
+          // flechas, que van encima de la línea.
+          className="scroll-limpio flex gap-8 overflow-x-auto border-b border-borde pr-28 md:pr-0"
+        >
+          {provincias.map((p) => {
+            const activa = p.nombre === elegida;
+            return (
+              <button
+                key={p.nombre}
+                role="tab"
+                type="button"
+                aria-selected={activa}
+                onClick={() => elegir(p.nombre)}
+                className={cn(
+                  "text-h4 -mb-px shrink-0 cursor-pointer border-b-2 pb-3 transition-colors",
+                  FOCO,
+                  activa
+                    ? "border-lila text-lila"
+                    : "border-transparent text-blanco/40 hover:text-blanco/70",
+                )}
+              >
+                {p.nombre}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Con relleno propio: la lista se desplaza por debajo y sin esto las
+            provincias del final se leerían a través de las flechas. */}
+        <div className="bg-fondo absolute right-0 bottom-2.5 flex items-center gap-2 pl-3 md:hidden">
+          <BotonFlecha
+            direccion="anterior"
+            disabled={indice <= 0}
+            onClick={() => elegir(provincias[indice - 1].nombre)}
+          />
+          <BotonFlecha
+            direccion="siguiente"
+            variante={indice < provincias.length - 1 ? "solida" : "punteada"}
+            disabled={indice >= provincias.length - 1}
+            onClick={() => elegir(provincias[indice + 1].nombre)}
+          />
+        </div>
       </div>
 
       {provincia ? (
-        <Carrusel grilla="md:grid-cols-4" gap="gap-5" className="mt-8">
+        /* Apiladas a lo ancho en mobile —así las dibuja el board— y en cuatro
+           columnas en desktop. */
+        <div className="mt-8 flex flex-col gap-5 md:grid md:grid-cols-4">
           {provincia.cooperativas.map((coop) => (
-            <CardCooperativaRed
-              key={coop.id}
-              cooperativa={coop}
-              className="w-[280px] shrink-0 snap-start md:w-auto"
-            />
+            <CardCooperativaRed key={coop.id} cooperativa={coop} />
           ))}
-        </Carrusel>
+        </div>
       ) : null}
     </div>
   );

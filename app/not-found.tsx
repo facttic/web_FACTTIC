@@ -1,6 +1,7 @@
 import { BotonLink } from "@/components/ui/boton";
 import { BandaCta } from "@/components/ui/seccion";
 import { Animacion } from "@/components/ui/animacion";
+import { Typewriter } from "@/components/secciones/texto-animado";
 import { MarcoPublico } from "@/components/layout/marco";
 import { FONDOS } from "@/lib/animaciones";
 import { ERROR_404 as T } from "@/lib/contenido";
@@ -42,7 +43,12 @@ export default function NotFound() {
 
         <div className="contenedor pt-72 pb-16 md:w-full md:py-24">
           <div className="text-center md:text-left">
-            <h1 className="text-h1">{T.titulo}</h1>
+            {/* "Animación de Texto máquina escribir", dice la anotación del
+                archivo sobre este título. El texto está entero en el DOM desde
+                el inicio: lo que se escribe es la presentación. */}
+            <h1 className="text-h1">
+              <Typewriter texto={T.titulo} retrasoMs={400} />
+            </h1>
             <p className="text-p1 mx-auto mt-6 max-w-xl text-blanco/80 md:mx-0">
               {T.texto}
             </p>

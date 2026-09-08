@@ -1,10 +1,6 @@
 import { cn } from "@/lib/cn";
 import { BotonLink } from "@/components/ui/boton";
-import {
-  RevelarAlScroll,
-  RevelarPalabras,
-  Typewriter,
-} from "./texto-animado";
+import { RevelarAlScroll, RevelarPalabras, Typewriter } from "./texto-animado";
 
 /**
  * Encabezado principal de la Home.
@@ -105,7 +101,7 @@ export function Hero({
         inferior; en desktop el bloque es más bajo y la bajada y el botón van
         uno al lado del otro.
       */}
-      <div className="contenedor flex min-h-svh flex-col justify-between pt-[18vh] pb-10 md:min-h-[39rem] md:justify-end md:gap-8 md:pt-32 md:pb-14">
+      <div className="contenedor flex min-h-svh flex-col justify-between pt-[121px] pb-11 md:min-h-[39rem] md:justify-end md:gap-8 md:pt-32 md:pb-14">
         <h1 className="text-display text-balance md:max-w-3xl">
           <Typewriter
             texto={titulo}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { EncabezadoSeccion, Seccion, BandaCta } from "@/components/ui/seccion";
 import { BotonLink } from "@/components/ui/boton";
 import { Carrusel } from "@/components/ui/carrusel";
+import { CarruselConFlechas } from "@/components/ui/carrusel-con-flechas";
 import { BloqueDesplegable } from "@/components/secciones/desplegables";
 import { CardRequisito } from "@/components/tarjetas/servicios";
 import { CardOportunidad } from "@/components/tarjetas/bloques";
@@ -48,9 +49,19 @@ export default function SumaTuCoopPage() {
           nombre={FONDOS.servicios}
           className="pointer-events-none absolute -top-[123px] right-[89px] -z-10 hidden size-[477px] md:block"
         />
-        <Seccion className="pt-32 md:pt-40">
-          <h1 className="text-display whitespace-pre-line">{T.hero.titulo}</h1>
-          <p className="text-p1 mt-6 max-w-2xl text-blanco/80">
+        {/* El mismo sol, mucho más chico: en el board mobile la órbita mide 188
+            y su arco de arriba también pasa por detrás del encabezado. */}
+        <Animacion
+          nombre={FONDOS.servicios}
+          className="pointer-events-none absolute -top-[50px] right-[40px] -z-10 size-[196px] md:hidden"
+        />
+        <Seccion className="pt-44 md:pt-40">
+          {/* Un escalón más chico en mobile: el board lo escribe en `H1/Mobile`
+              y no en el display, que es el cuerpo de desktop. */}
+          <h1 className="text-h1 md:text-display whitespace-pre-line">
+            {T.hero.titulo}
+          </h1>
+          <p className="text-p1-bold md:text-p1 mt-6 max-w-2xl text-blanco/80">
             {T.hero.bajada}
           </p>
         </Seccion>
@@ -142,10 +153,28 @@ export default function SumaTuCoopPage() {
         <Estrella className="pointer-events-none absolute top-[421px] -right-4 -z-10 w-[210px] text-naranja md:hidden" />
 
         <EncabezadoSeccion titulo={T.camino.titulo} tamanoTitulo="h2" />
+
+        {/* En mobile el board muestra una tarjeta por vez, pintada y con todo
+            desplegado, y se pasan con las flechas. */}
+        <CarruselConFlechas grilla="" gap="gap-5" className="md:hidden">
+          {T.camino.items.map((item, i) => (
+            <CardOportunidad
+              key={item.pregunta}
+              indice={i}
+              pregunta={item.pregunta}
+              descripcion={item.descripcion}
+              enlace={item.enlace}
+              acento={item.acento}
+              desplegada
+              className="w-full shrink-0 snap-start"
+            />
+          ))}
+        </CarruselConFlechas>
+
         {/* Al pasar el mouse la tarjeta crece y se vuelve gris con la
             explicación, como en el prototipo. Alineadas arriba para que al
             estirarse una no se estiren las tres. */}
-        <div className="grid items-start gap-5 md:grid-cols-3">
+        <div className="hidden items-start gap-5 md:grid md:grid-cols-3">
           {T.camino.items.map((item, i) => (
             <CardOportunidad
               key={item.pregunta}

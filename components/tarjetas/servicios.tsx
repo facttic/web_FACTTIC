@@ -217,12 +217,15 @@ export function CardRequisito({
       className={cn(
         // El borde transparente ya está en reposo para que al aparecer no
         // corra el texto un pixel.
-        "flex min-h-32 items-start rounded-xl border border-transparent bg-superficie-alta p-6",
+        "flex min-h-32 items-start rounded-xl border border-transparent bg-superficie-alta",
+        // En mobile el board escribe el compromiso en `H3/Mobile` y lo baja:
+        // el texto arranca a 48 del borde, no a 24.
+        "px-6 pt-12 pb-6 md:p-6",
         "transition-colors duration-300 hover:border-borde-pleno hover:bg-transparent",
         className,
       )}
     >
-      <h3 className="text-h4 text-balance">{titulo}</h3>
+      <h3 className="text-h3 text-balance md:text-h4">{titulo}</h3>
     </div>
   );
 }
@@ -251,14 +254,17 @@ export function CardPropuesta({
   return (
     <div
       className={cn(
-        "group relative overflow-hidden rounded-lg bg-superficie-alta",
+        "group relative overflow-hidden rounded-lg",
+        // En mobile el board la deja sobre el fondo de la página, con borde
+        // blanco pleno; en desktop es un bloque gris sin borde.
+        "border border-borde-pleno md:border-0 md:bg-superficie-alta",
         "transition-colors duration-300",
         HOVER_ACENTO[acento],
         className,
       )}
     >
-      <div className="absolute inset-0 p-6 transition-opacity duration-300 group-hover:opacity-0">
-        <h3 className="text-h4 text-balance">{titulo}</h3>
+      <div className="absolute inset-0 px-6 pt-12 pb-6 transition-opacity duration-300 group-hover:opacity-0 md:p-6">
+        <h3 className="text-h3 text-balance md:text-h4">{titulo}</h3>
       </div>
 
       {descripcion ? (

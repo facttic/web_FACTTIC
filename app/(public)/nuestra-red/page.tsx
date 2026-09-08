@@ -27,7 +27,8 @@ export default async function NuestraRedPage() {
       <Seccion className="relative pt-24 md:pt-32">
         {/* El título se apoya sobre el mapa en desktop, como en la maqueta. */}
         <h1 className="text-h1 whitespace-pre-line md:absolute md:z-10 md:max-w-md">
-          {T.hero.titulo}
+          <span className="md:hidden">{T.hero.tituloMobile}</span>
+          <span className="hidden md:inline">{T.hero.titulo}</span>
         </h1>
 
         <RedFederal provincias={provincias} className="mt-10 md:mt-0" />

@@ -57,7 +57,7 @@ export function Stack({
             reconocen solo por su símbolo —y algunas, como nextAuth, ni
             siquiera tienen uno—.
           */
-          <div className="flex h-[90px] w-[180px] flex-col items-center justify-center gap-1.5 rounded-lg bg-superficie-alta px-4">
+          <div className="flex h-[82px] w-[160px] flex-col items-center justify-center gap-1.5 rounded-lg bg-superficie-alta px-4 md:h-[90px] md:w-[180px]">
             {tecnologia.logo ? (
               <LogoRemoto src={tecnologia.logo} nombre="" className="max-h-6" />
             ) : null}

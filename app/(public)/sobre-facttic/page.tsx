@@ -4,6 +4,7 @@ import { BotonLink } from "@/components/ui/boton";
 import { Animacion } from "@/components/ui/animacion";
 import { Escaneo } from "@/components/ui/escaneo";
 import { Carrusel } from "@/components/ui/carrusel";
+import { CarruselConFlechas } from "@/components/ui/carrusel-con-flechas";
 import { CardLogo } from "@/components/tarjetas/red";
 import { CardOportunidad } from "@/components/tarjetas/bloques";
 import { Autoridades } from "@/components/secciones/autoridades";
@@ -83,7 +84,9 @@ export default async function SobreFactticPage() {
 
         <Seccion className="pt-24 md:pt-32">
           <h1 className="text-h1 whitespace-pre-line">{T.hero.titulo}</h1>
-          <p className="text-p1 mt-8 max-w-3xl text-blanco/80">
+          {/* `P1/Bold` —DM Mono 16— en mobile, como el resto de las bajadas
+              de hero del board. */}
+          <p className="text-p1-bold md:text-p1 mt-8 max-w-3xl text-blanco/80">
             {T.hero.bajada}
           </p>
         </Seccion>
@@ -101,7 +104,24 @@ export default async function SobreFactticPage() {
           columna derecha: la izquierda queda vacía. Y se apilan al desplazar,
           como las de servicios, que es lo que pide la anotación del archivo.
         */}
-        <div className="mt-12 md:mt-16 md:grid md:grid-cols-[352px_1fr] md:gap-16">
+        {/* En mobile el board muestra una tarjeta por vez, pintada y con todo
+            desplegado, igual que en Sumá tu coop. */}
+        <CarruselConFlechas grilla="" gap="gap-5" className="mt-12 md:hidden">
+          {T.quienes.tarjetas.map((tarjeta, i) => (
+            <CardOportunidad
+              key={tarjeta.pregunta}
+              indice={i}
+              pregunta={tarjeta.pregunta}
+              descripcion={tarjeta.descripcion}
+              enlace={tarjeta.enlace}
+              acento={tarjeta.acento}
+              desplegada
+              className="w-full shrink-0 snap-start"
+            />
+          ))}
+        </CarruselConFlechas>
+
+        <div className="mt-12 hidden md:mt-16 md:grid md:grid-cols-[352px_1fr] md:gap-16">
           <div aria-hidden />
           <div className="grid items-start gap-5 md:grid-cols-2">
             {T.quienes.tarjetas.map((tarjeta, i) => (

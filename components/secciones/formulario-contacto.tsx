@@ -197,6 +197,13 @@ function CampoContacto({
   const apariencia = cn(
     "w-full bg-transparent text-p2 text-blanco placeholder:text-blanco/40",
     "border-b border-dotted border-punteado pb-3 transition-colors",
+    /*
+      "Cuando se completa el campo la línea es continua", dice la anotación del
+      archivo: el punteado marca el campo vacío y se vuelve trazo entero apenas
+      hay algo escrito. Va con `:placeholder-shown`, que es CSS puro y no
+      necesita estado.
+    */
+    "[&:not(:placeholder-shown)]:border-solid [&:not(:placeholder-shown)]:border-blanco/60",
     // En desktop el campo pasa a ser un recuadro con fondo propio.
     "md:rounded-lg md:border md:border-solid md:border-borde md:bg-negro-oscuro/60 md:px-4 md:py-3",
     "focus:border-blanco focus:outline-none md:focus:border-blanco/40",

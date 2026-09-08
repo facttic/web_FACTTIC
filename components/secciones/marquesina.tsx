@@ -97,14 +97,16 @@ export function Marquesina({
 
   return (
     <div
-      className={cn("overflow-hidden py-10 md:py-16", className)}
+      className={cn("overflow-hidden pt-6 pb-0 md:py-16", className)}
       aria-hidden
     >
       <div ref={pista} className="flex w-max gap-8 will-change-transform">
         {repeticiones.map((_, i) => (
           <span
             key={i}
-            className="text-display shrink-0 whitespace-nowrap text-blanco/10"
+            /* El único texto que no sale de la escala: en el board la banda
+               mide 65px en mobile y 56 en desktop, al revés que el resto. */
+            className="shrink-0 font-sans text-[65px] leading-none font-bold tracking-[-0.01em] whitespace-nowrap text-blanco/10 md:text-[56px] md:leading-[56.6px]"
           >
             {texto} /
           </span>

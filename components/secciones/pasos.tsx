@@ -39,13 +39,21 @@ export function Pasos({
 
   return (
     <>
-      {/* En la maqueta las líneas del acordeón son punteadas y en Gris oscuro. */}
+      {/*
+        En la maqueta las líneas del acordeón son punteadas y en Gris oscuro, y
+        van solo *debajo* de cada paso: arriba del primero no hay ninguna.
+
+        La flecha queda lejos del texto a propósito: en el board los tres pasos
+        cortan en dos líneas, y con el aire normal "01 / Nos contás tu
+        necesidad" entra en una sola.
+      */}
       <Acordeon
         items={items}
         // Cerrado: la maqueta mobile los muestra a los tres plegados.
         inicial={null}
+        claseTitulo="text-h3 gap-16 md:text-h4 md:gap-6"
         className={cn(
-          "divide-dashed divide-gris-oscuro border-gris-oscuro md:hidden",
+          "divide-dashed divide-gris-oscuro border-t-0 border-gris-oscuro md:hidden",
           className,
         )}
       />

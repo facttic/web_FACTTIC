@@ -6,6 +6,7 @@ import { IconoFlecha } from "@/components/ui/iconos";
 import { FOCO } from "@/components/ui/boton";
 import { Animacion } from "@/components/ui/animacion";
 import { Inclinar } from "@/components/ui/inclinar";
+import { FocoPuntero } from "@/components/ui/foco-puntero";
 import { animacionDeSector } from "@/lib/animaciones";
 import type { Sector } from "@/lib/dominio/tipos";
 
@@ -25,7 +26,7 @@ function Ilustracion({ sector }: { sector: Sector }) {
   const animacion = animacionDeSector(sector.nombre);
 
   // En el board la ilustración mide 235px y va centrada, no a todo el ancho.
-  const medida = "size-[177px] md:size-[235px]";
+  const medida = "size-[157px] md:size-[235px]";
 
   // Sin bucle: corre al entrar y de nuevo al pasar el mouse por la tarjeta.
   if (animacion) {
@@ -63,11 +64,51 @@ const ALTO_SECTOR = "h-[449px] md:h-[359px]";
  * y la propuesta de valor aparece al pasar el mouse.
  */
 const CAJA_SECTOR =
-  "bg-transparent rounded-lg border border-dashed border-punteado " +
-  "md:border-solid md:border-borde-pleno";
+  "bg-transparent rounded-lg border border-dotted border-borde-pleno " +
+  "md:border-solid";
 
 /** Con caja en los dos anchos, como en la pantalla de Servicios. */
 const CAJA_SIEMPRE = "bg-transparent rounded-lg border border-borde-pleno";
+
+/**
+ * La cara de mobile: ilustración, nombre, propuesta de valor, una línea y el
+ * "Ver más", todo junto y centrado. En mobile no hay dos caras —el cruce del
+ * hover existe solo en desktop— y es la misma cara que muestra el mazo de
+ * Nuestros servicios, así que vive acá y no adentro de `CardSector`.
+ */
+export function CaraSectorMobile({
+  sector,
+  className,
+}: {
+  sector: Sector;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "relative flex h-full flex-col items-center justify-center gap-5 p-5 text-center",
+        className,
+      )}
+    >
+      <Ilustracion sector={sector} />
+      {/* `H2/Mobile` el nombre y `H3/Mobile` la propuesta, los dos en la sans
+          en negrita: en el board no van en mono. */}
+      <span className="text-h2">{sector.nombre}</span>
+      {/* Sin balancear: el board corta los renglones a lo ancho de la caja, y
+          balanceados quedan tres cortos y desalineados con la maqueta. */}
+      {sector.descripcion ? (
+        <p className="text-h3">{sector.descripcion}</p>
+      ) : null}
+      <div className="w-full">
+        <div className="border-t border-borde-pleno" />
+        <div className="text-p3 mt-4 flex items-center justify-between">
+          Ver más
+          <IconoFlecha />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 /**
  * Tarjeta de sector de la Home.
@@ -104,24 +145,14 @@ export function CardSector({
     propuesta de valor, una línea y el "Ver más", todo junto y centrado. El
     hover solo existe en desktop, donde el nombre y la descripción se cruzan.
   */
-  const completo = (
-    <div className="flex h-full flex-col items-center justify-center gap-5 p-5 text-center md:hidden">
-      <Ilustracion sector={sector} />
-      {/* `H2/Mobile` el nombre y `H3/Mobile` la propuesta, los dos en la sans
-          en negrita: en el board no van en mono. */}
-      <span className="text-h2">{sector.nombre}</span>
-      {sector.descripcion ? (
-        <p className="text-h3 text-balance">{sector.descripcion}</p>
-      ) : null}
-      <div className="mt-auto w-full">
-        <div className="border-t border-borde-pleno" />
-        <div className="text-p3 mt-4 flex items-center justify-between">
-          Ver más
-          <IconoFlecha />
-        </div>
-      </div>
-    </div>
-  );
+  /*
+    En mobile la anotación del archivo pide un "Spotlight Card": el halo sigue
+    al dedo dentro de la tarjeta. En desktop no va, que ahí la tarjeta ya cambia
+    de cara con el mouse.
+  */
+  const foco = <FocoPuntero className="md:hidden" />;
+
+  const completo = <CaraSectorMobile sector={sector} className="md:hidden" />;
 
   const reposo = (
     <div
@@ -143,6 +174,7 @@ export function CardSector({
   if (!href) {
     return (
       <Tarjeta className={cn("relative", caja, ALTO_SECTOR, className)}>
+        {foco}
         {completo}
         {reposo}
       </Tarjeta>
@@ -167,6 +199,7 @@ export function CardSector({
             ALTO_SECTOR,
           )}
         >
+          {foco}
           {completo}
           {reposo}
 

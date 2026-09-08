@@ -35,12 +35,13 @@ export function CardNovedad({
             src={novedad.imagen}
             alt=""
             loading="lazy"
-            className="aspect-[443/196] w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            // 345x174 en el board mobile; en desktop la proporción es otra.
+            className="aspect-[2/1] w-full object-cover transition-transform duration-500 group-hover:scale-105 md:aspect-[443/196]"
           />
         ) : (
           // Sin imagen queda el hueco en gris, con la misma proporción, para
           // que la grilla no se descuadre.
-          <div className="aspect-[443/196] w-full bg-gris-oscuro" />
+          <div className="aspect-[2/1] w-full bg-gris-oscuro md:aspect-[443/196]" />
         )}
       </div>
 

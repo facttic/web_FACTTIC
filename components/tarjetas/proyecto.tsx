@@ -35,8 +35,13 @@ import { Inclinar } from "@/components/ui/inclinar";
  * pasa de 10% a blanco pleno.
  */
 const ALTO_TARJETA = "h-[366px] md:h-[406px]";
+/*
+  En mobile no hay cara de hover: el board dibuja la tarjeta con la imagen a
+  204 y las etiquetas siempre a la vista. Con los 310 de desktop no entraba ni
+  el título —dos líneas quedaban cortadas por el borde de abajo—.
+*/
 const ALTO_IMAGEN =
-  "h-[310px] group-hover:h-[129px] group-focus-visible:h-[129px]";
+  "h-[204px] md:h-[310px] md:group-hover:h-[129px] md:group-focus-visible:h-[129px]";
 /** Recortes de la textura, para que las tarjetas sin portada no se repitan. */
 const ENCUADRE = [
   "object-left-top",
@@ -130,16 +135,20 @@ function Portada({
 function Detalle({
   proyecto,
   conDescripcion,
+  className,
 }: {
   proyecto: Proyecto;
   conDescripcion?: boolean;
+  className?: string;
 }) {
   const servicios = proyecto.servicios.map((s) => s.nombre).join(" · ");
 
   return (
-    <div className="flex h-full flex-col gap-5 pt-4">
+    <div className={cn("flex h-full flex-col gap-5 pt-4", className)}>
+      {/* En mobile no: el board deja la tarjeta en título y etiquetas, y con
+          la descripción no entra ninguna de las dos. */}
       {conDescripcion && proyecto.desafio ? (
-        <p className="text-p3 line-clamp-3 text-blanco/60">
+        <p className="text-p3 hidden line-clamp-3 text-blanco/60 md:block">
           {proyecto.desafio}
         </p>
       ) : null}
@@ -153,8 +162,12 @@ function Detalle({
             <ChipSector nombre={proyecto.sector.nombre} />
           ) : null}
         </span>
+        {/* Solo en desktop: en mobile el board deja las etiquetas solas y no
+            hay ancho para la lista de servicios al lado. */}
         {servicios ? (
-          <span className="text-p3 text-blanco/40">{servicios}</span>
+          <span className="text-p3 hidden text-blanco/40 md:inline">
+            {servicios}
+          </span>
         ) : null}
       </div>
     </div>
@@ -172,6 +185,7 @@ export function CardProyecto({
   indice = 0,
   alto,
   destacada,
+  caraMobile = "destacada",
   className,
 }: {
   proyecto: Proyecto;
@@ -184,8 +198,17 @@ export function CardProyecto({
    * descripción. En la angosta el texto no entra y el diseño no lo pide.
    */
   destacada?: boolean;
+  /**
+   * En mobile el board dibuja dos tarjetas distintas: la del carrusel de
+   * destacados —imagen de 204, título y etiquetas— y la del listado de
+   * Proyectos —imagen de 276 y solo el título—. En desktop las dos son la
+   * misma y cambian de cara con el mouse.
+   */
+  caraMobile?: "destacada" | "listado";
   className?: string;
 }) {
+  const listado = caraMobile === "listado";
+
   return (
     <Link
       href={`/proyectos/${proyecto.slug}`}
@@ -204,6 +227,7 @@ export function CardProyecto({
             "flex flex-col overflow-hidden",
             PIEL_TARJETA,
             alto ?? ALTO_TARJETA,
+            listado && "h-[374px] md:h-[406px]",
           )}
         >
           <Portada
@@ -212,6 +236,7 @@ export function CardProyecto({
             className={cn(
               "w-full shrink-0 transition-all duration-300",
               ALTO_IMAGEN,
+              listado && "h-[276px] md:h-[310px]",
             )}
           />
           <div className="flex flex-1 flex-col justify-start p-6">
@@ -225,12 +250,21 @@ export function CardProyecto({
             */}
             <div
               className={cn(
-                "grid flex-1 grid-rows-[0fr] transition-[grid-template-rows] duration-300",
-                "group-hover:grid-rows-[1fr] group-focus-visible:grid-rows-[1fr]",
+                "grid flex-1 transition-[grid-template-rows] duration-300",
+                // Desplegado de entrada en mobile; en desktop se abre al pasar
+                // el mouse.
+                "grid-rows-[1fr] md:grid-rows-[0fr]",
+                "md:group-hover:grid-rows-[1fr] md:group-focus-visible:grid-rows-[1fr]",
               )}
             >
               <div className="min-h-0 overflow-hidden">
-                <Detalle proyecto={proyecto} conDescripcion={destacada} />
+                {/* El listado no muestra etiquetas en mobile: el board deja
+                    solo el título debajo de la foto. */}
+                <Detalle
+                  proyecto={proyecto}
+                  conDescripcion={destacada}
+                  className={listado ? "hidden md:flex" : undefined}
+                />
               </div>
             </div>
           </div>
@@ -319,7 +353,9 @@ export function FilaProyecto({
           <IconoFlecha className="shrink-0 text-lila transition-transform group-hover:translate-x-1" />
         </span>
 
-        <span className="text-p1 text-balance md:truncate md:text-nowrap">
+        {/* En mobile el board lo escribe en la sans en negrita; en desktop la
+            tabla lo lleva en mono, como el resto de la fila. */}
+        <span className="text-h4 md:text-p1 text-balance md:truncate md:text-nowrap">
           {proyecto.nombre}
         </span>
 

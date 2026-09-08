@@ -228,6 +228,7 @@ export function CardOportunidad({
   enlace,
   acento,
   enMobile,
+  desplegada = false,
   className,
 }: {
   indice: number;
@@ -247,9 +248,51 @@ export function CardOportunidad({
    * En desktop las dos se pintan con su acento.
    */
   enMobile?: "vidrio" | "oscura";
+  /**
+   * Una sola cara, pintada y con todo desplegado. Es la de mobile en Sumá tu
+   * coop, donde el board muestra una tarjeta por vez en un carrusel en vez de
+   * apilar las tres cerradas.
+   */
+  desplegada?: boolean;
   className?: string;
 }) {
   const numero = String(indice + 1).padStart(2, "0");
+
+  if (desplegada) {
+    /*
+      La cara única de mobile: pintada con su acento y con todo a la vista
+      —número, pregunta, explicación y enlace—, sin el cruce del hover. Es como
+      la dibuja el board de Sumá tu coop, que en pantallas chicas muestra una
+      sola tarjeta por vez.
+    */
+    return (
+      <div
+        className={cn(
+          "flex flex-col rounded-xl px-6 pt-12 pb-6",
+          FONDO_ACENTO[acento],
+          className,
+        )}
+      >
+        <p className="text-h3">{numero}.</p>
+        <p className="text-h3 mt-6 whitespace-pre-line">{pregunta}</p>
+        <p className="text-p1 mt-6 flex-1">{descripcion}</p>
+        {enlace ? (
+          <>
+            <div className="mt-6 border-t border-current/25" />
+            <BotonTexto
+              href={enlace.href}
+              {...(enlace.href.startsWith("http")
+                ? { target: "_blank", rel: "noreferrer" }
+                : {})}
+              className="mt-4"
+            >
+              {enlace.texto}
+            </BotonTexto>
+          </>
+        ) : null}
+      </div>
+    );
+  }
 
   return (
     <Inclinar className={className} grados={8}>
