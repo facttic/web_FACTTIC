@@ -30,7 +30,8 @@ export function RedFederal({
    * que era lo que pasaba cuando eran la misma cosa.
    */
   const [elegida, setElegida] = useState(provincias[0]?.nombre ?? null);
-  const [panelAbierto, setPanelAbierto] = useState(true);
+  // Arranca cerrado: primero se ve el mapa entero y la ficha aparece al tocar.
+  const [panelAbierto, setPanelAbierto] = useState(false);
   const indice = provincias.findIndex((p) => p.nombre === elegida);
   const provincia = provincias[indice] ?? null;
 
@@ -101,10 +102,8 @@ export function RedFederal({
         En desktop la caja toma la medida exacta del mapa —de ahí la
         proporción— porque el panel se cuelga del centro de la provincia que se
         tocó. En mobile no: el mapa mide 607 de alto, va centrado, y el panel se
-        apoya encima tapándole el tercio de abajo, como en el board. Por eso ahí
-        la caja ocupa el ancho del contenedor y crece con su contenido, en vez
-        de tener alto fijo: si no, el panel se salía y se pisaba con las
-        solapas.
+        apoya encima, centrado sobre él. Por eso ahí la caja ocupa el ancho del
+        contenedor y toma su alto del mapa.
       */}
       <div
         ref={zona}
@@ -128,7 +127,7 @@ export function RedFederal({
               mapa, en el flujo— y ahí un `left: 68%` lo empujaba fuera de la
               pantalla, estirando la página a lo ancho.
             */
-            className="relative z-10 -mt-[323px] md:absolute md:top-[var(--py)] md:left-[var(--px)] md:z-auto md:mt-0 md:w-[420px] md:-translate-y-1/3"
+            className="absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 md:top-[var(--py)] md:right-auto md:left-[var(--px)] md:z-auto md:w-[420px] md:-translate-y-1/3"
             style={
               centro
                 ? ({
