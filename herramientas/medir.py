@@ -95,6 +95,26 @@ class Sesion:
         self.js("window.scrollTo(0, 0)")
         time.sleep(2.5)
 
+        # Las entradas usan `animation-timeline: view()`, que no "queda hecha":
+        # el progreso lo marca la posición de scroll, así que todo lo que está
+        # lejos del viewport vuelve a su estado inicial —invisible— apenas se
+        # sube al tope. Para la captura completa se apagan y se deja el final.
+        self.js("""
+          const sel = '.revelar-al-entrar,.crecer-al-entrar,[data-revelar],'
+            + '[class*=revelar],[class*=entrar]';
+          const e = document.createElement('style');
+          e.textContent = sel + '{animation-timeline:none !important;'
+            + 'animation-name:none !important;opacity:1 !important;'
+            + 'transform:none !important;filter:none !important}';
+          document.head.appendChild(e);
+          document.querySelectorAll(sel).forEach(n => {
+            n.style.setProperty('opacity', '1', 'important');
+            n.style.setProperty('transform', 'none', 'important');
+            n.style.setProperty('filter', 'none', 'important');
+          });
+        """)
+        time.sleep(0.6)
+
         m = self.cmd("Page.getLayoutMetrics")
         alto = int(m["cssContentSize"]["height"])
         r = self.cmd(
