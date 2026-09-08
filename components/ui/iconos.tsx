@@ -101,8 +101,11 @@ export function IconoMenu({
       className={cn("h-[26px] w-[42px]", className)}
       {...props}
     >
+      {/* La cruz va cuadrada y centrada en la misma caja: dibujada de punta a
+          punta de los 42 salía achatada, porque la caja es más ancha que alta.
+          El botón no se mueve al abrir. */}
       <path
-        d={abierto ? "M1 1L41 25M41 1L1 25" : "M0 1h42M0 13h42M0 25h42"}
+        d={abierto ? "M9 1L33 25M33 1L9 25" : "M0 1h42M0 13h42M0 25h42"}
         stroke="currentColor"
         strokeWidth="2"
       />
