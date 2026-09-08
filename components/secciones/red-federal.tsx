@@ -55,6 +55,28 @@ export function RedFederal({
    */
   const zona = useRef<HTMLDivElement>(null);
   const solapas = useRef<HTMLDivElement>(null);
+  const pista = useRef<HTMLDivElement>(null);
+
+  /*
+   * La lista de provincias no entra en la pantalla, así que al cambiar de una
+   * con las flechas la solapa activa se quedaba fuera de vista y no se veía
+   * cuál estaba elegida. Se centra sola; el desplazamiento va sobre la pista y
+   * no con `scrollIntoView`, que además movería la página entera.
+   */
+  useEffect(() => {
+    const lista = pista.current;
+    if (!lista || !elegida) return;
+    const solapa = lista.querySelector<HTMLElement>(
+      `[data-provincia="${CSS.escape(elegida)}"]`,
+    );
+    if (!solapa) return;
+    const caja = lista.getBoundingClientRect();
+    const suya = solapa.getBoundingClientRect();
+    lista.scrollBy({
+      left: suya.left - caja.left - (caja.width - suya.width) / 2,
+      behavior: "smooth",
+    });
+  }, [elegida]);
   useEffect(() => {
     const alTocar = (evento: MouseEvent) => {
       const destino = evento.target as Node;
@@ -127,9 +149,12 @@ export function RedFederal({
 
       {/* Las provincias como solapas, para llegar sin usar el mapa. En mobile
           el board suma las flechas a la derecha, por encima de la línea. */}
-      <div className="relative mt-12">
+      {/* El ref envuelve también a las flechas: si no, tocarlas cuenta como
+          "afuera" y el listener de abajo cierra el panel en el mismo clic que
+          lo acaba de abrir. */}
+      <div ref={solapas} className="relative mt-12">
         <div
-          ref={solapas}
+          ref={pista}
           role="tablist"
           aria-label="Provincias con cooperativas"
           // Aire a la derecha para que la última solapa no quede debajo de las
@@ -143,6 +168,7 @@ export function RedFederal({
                 key={p.nombre}
                 role="tab"
                 type="button"
+                data-provincia={p.nombre}
                 aria-selected={activa}
                 onClick={() => elegir(p.nombre)}
                 className={cn(
