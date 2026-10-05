@@ -176,9 +176,10 @@ export const SERVICIOS_PAGINA = {
   },
 
   metodologia: {
-    rotulo: "Metodologías",
-    // En singular en el board mobile de las verticales.
-    rotuloMobile: "Metodología",
+    // Decía "Metodologías" —y "Metodología" en el board mobile de las
+    // verticales— hasta que contenido lo cambió por "Formas de trabajo".
+    rotulo: "Formas de trabajo",
+    rotuloMobile: "Formas de trabajo",
     titulo: "¿Cómo trabajamos?",
     /*
      * En desktop son tres bloques de color con el nombre y nada más; en mobile
@@ -385,8 +386,9 @@ export const VERTICALES = {
 
   stack: { titulo: "Stack tecnológico" },
   /* En la vertical la metodología es un desplegable con el título al costado,
-     no los tres bloques de color de Nuestros servicios. */
-  metodologia: { titulo: "Metodologías\nde trabajo" },
+     no los tres bloques de color de Nuestros servicios. El corte de renglón es
+     el de la maqueta; el título decía "Metodologías de trabajo". */
+  metodologia: { titulo: "Formas\nde trabajo" },
   proyectos: { titulo: "Proyectos destacados" },
 
   cierre: {
