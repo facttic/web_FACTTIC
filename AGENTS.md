@@ -76,6 +76,6 @@ encarga `proxy.ts`, y por eso todas las pantallas viven en `app/[idioma]/`.
 
 - `lib/api/` transporte, `lib/dominio/` traducción, `lib/datos/` lo único que
   importan las vistas. Si la API cambia, se toca `adaptadores.ts` y nada más.
-- `lib/contenido.ts` los textos fijos, incluidas las variantes mobile.
+- `lib/contenido/` los textos fijos de cada idioma, con las variantes mobile.
 - `app/globals.css` los tokens y la escala tipográfica, relevados del archivo de
   Figma.
