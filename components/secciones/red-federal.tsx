@@ -304,57 +304,68 @@ function CardCooperativaRed({
 }) {
   return (
     <div
-      className={cn("flex flex-col rounded-xl bg-superficie p-6", className)}
+      className={cn(
+        "flex flex-col overflow-hidden rounded-xl bg-superficie",
+        className,
+      )}
     >
       {/*
-        Arriba el logo y debajo el nombre, como en la maqueta. Mientras no haya
-        logos cargados el nombre ocupa ese lugar y no se repite abajo, que es
-        lo que pasaba: la misma palabra dos veces en la misma tarjeta.
+        El logo va en un header propio: una franja blanca a lo ancho de la
+        tarjeta, pegada al borde de arriba, de 85px como en el archivo. El
+        `overflow-hidden` de la tarjeta es lo que le redondea las dos esquinas
+        de arriba sin tener que repetir el radio acá.
+
+        Mientras no haya logo cargado el nombre ocupa ese lugar y no se repite
+        abajo, que es lo que pasaba: la misma palabra dos veces en la tarjeta.
       */}
-      <div className="grid h-16 place-items-center">
+      <div className="grid h-[85px] shrink-0 place-items-center bg-blanco px-6">
         {cooperativa.logo ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={cooperativa.logo}
             alt={cooperativa.nombre}
             loading="lazy"
-            className="max-h-12 w-auto object-contain"
+            className="max-h-14 w-auto max-w-full object-contain"
           />
         ) : (
-          <span className="text-h4 text-center text-balance">
+          <span className="text-h4 text-center text-balance text-negro-oscuro">
             {cooperativa.nombre}
           </span>
         )}
       </div>
 
-      {cooperativa.logo ? (
-        <h4 className="text-p1-bold mt-6">{cooperativa.nombre}</h4>
-      ) : null}
-
-      {cooperativa.servicios.length ? (
-        <p className="text-p2 mt-6 text-blanco/60">
-          {cooperativa.servicios.map((s) => s.nombre).join("  ·  ")}
-        </p>
-      ) : null}
-
-      <div className="mt-6 flex items-center justify-between gap-4 border-t border-dotted border-punteado pt-4">
-        <span className="text-p3 flex items-center gap-2 text-blanco/70">
-          <span aria-hidden className="size-1.5 rounded-full bg-blanco/70" />
-          {cooperativa.provincia ?? "—"}
-        </span>
-        {cooperativa.sitio ? (
-          <a
-            href={cooperativa.sitio}
-            target="_blank"
-            rel="noreferrer noopener"
-            className={cn(
-              "text-p3 shrink-0 underline-offset-4 hover:underline",
-              FOCO,
-            )}
-          >
-            {T.tarjeta.sitio}
-          </a>
+      <div className="flex flex-1 flex-col p-6">
+        {cooperativa.logo ? (
+          <h4 className="text-p1-bold">{cooperativa.nombre}</h4>
         ) : null}
+
+        {cooperativa.servicios.length ? (
+          <p className="text-p2 mt-6 text-blanco/60">
+            {cooperativa.servicios.map((s) => s.nombre).join("  ·  ")}
+          </p>
+        ) : null}
+
+        {/* El pie va abajo de todo: con tarjetas de distinto largo en la misma
+            fila, la línea punteada queda a la misma altura en todas. */}
+        <div className="mt-auto flex items-center justify-between gap-4 border-t border-dotted border-punteado pt-4">
+          <span className="text-p3 flex items-center gap-2 text-blanco/70">
+            <span aria-hidden className="size-1.5 rounded-full bg-blanco/70" />
+            {cooperativa.provincia ?? "—"}
+          </span>
+          {cooperativa.sitio ? (
+            <a
+              href={cooperativa.sitio}
+              target="_blank"
+              rel="noreferrer noopener"
+              className={cn(
+                "text-p3 shrink-0 underline-offset-4 hover:underline",
+                FOCO,
+              )}
+            >
+              {T.tarjeta.sitio}
+            </a>
+          ) : null}
+        </div>
       </div>
     </div>
   );
