@@ -14,7 +14,6 @@ export async function generateMetadata({
   params: Promise<{ slug: string; idioma: Idioma }>;
 }): Promise<Metadata> {
   const { slug, idioma } = await params;
-  const T = contenido(idioma).NOVEDADES;
   const novedad = await getNovedad(slug, idioma);
   if (!novedad) return {};
   return { title: novedad.titulo, description: novedad.bajada ?? undefined };
