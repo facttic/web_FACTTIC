@@ -63,8 +63,6 @@ export function FiltrosProyectos({
       nombre: "cooperativa",
       etiqueta: T.filtros.cooperativa,
       opciones: cooperativas,
-      // En la maqueta este es el único con borde; los demás van rellenos.
-      conBorde: true,
     },
   ];
 
@@ -112,13 +110,13 @@ export function FiltrosProyectos({
               name={grupo.nombre}
               defaultValue={params.get(grupo.nombre) ?? ""}
               onChange={aplicar}
+              /* Los cuatro iguales. En la maqueta el de cooperativa va con
+                 borde y sin relleno, pero quedaba como de otra familia al lado
+                 de los otros tres. */
               className={cn(
                 // 56px de alto y radio 6, como los Menu-item de la maqueta.
-                "text-p2 h-14 w-full cursor-pointer appearance-none rounded-md px-5 pr-11 text-blanco",
+                "text-p2 h-14 w-full cursor-pointer appearance-none rounded-md border border-transparent bg-superficie-alta px-5 pr-11 text-blanco",
                 FOCO,
-                grupo.conBorde
-                  ? "border border-blanco/60 bg-transparent"
-                  : "border border-transparent bg-superficie-alta",
               )}
             >
               <option value="">{grupo.etiqueta}</option>
