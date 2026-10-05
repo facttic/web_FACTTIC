@@ -142,7 +142,10 @@ export function BotonIdioma({
       hrefLang={idioma}
       aria-current={activo ? "true" : undefined}
       className={cn(
-        "text-p3 size-10 cursor-pointer rounded-lg font-mono uppercase transition-colors",
+        /* `grid place-items-center`: un enlace es inline y no toma alto ni
+           ancho, así que sin esto la caja se encogía al tamaño del texto y las
+           dos quedaban desparejas y desalineadas. */
+        "text-p3 grid size-10 cursor-pointer place-items-center rounded-lg font-mono uppercase transition-colors",
         FOCO,
         activo
           ? sobreColor
