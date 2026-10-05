@@ -145,10 +145,10 @@ llegue.
       **escribir los textos**: hasta que se carguen, el sitio en inglés muestra
       el español campo por campo.
 
-      Dos cosas quedaron fuera a propósito: los **subservicios** —la API los
-      acepta, pero el formulario los arma como dos listas paralelas y hay que
-      resolver cómo emparejarlas— y los **slugs**, que siguen en español en los
-      dos idiomas para no romper las direcciones que ya circulan.
+      Los subservicios ya se editan en inglés en el mismo formulario, y las
+      secciones tienen dirección propia (`/en/projects`). Lo que sigue en
+      español en los dos idiomas son los **slugs** de proyectos y verticales,
+      para no romper las direcciones que ya circulan.
 
 - [ ] **19. Borrar las imágenes de sector cargadas en el backoffice.** Son fotos
       de stock ajenas a la identidad (una de "RISK", otra de un diagrama de red

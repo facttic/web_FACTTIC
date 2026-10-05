@@ -31,15 +31,6 @@ export function FormularioServicio({
 }) {
   return (
     <FormularioAdmin accion={accion} volverA="/admin/servicios">
-      {/* Las traducciones de los subservicios no se editan acá, pero viajan
-          para no perderse al guardar. */}
-      {servicio?.en.subservicios.length ? (
-        <input
-          type="hidden"
-          name="en.subservicios"
-          defaultValue={JSON.stringify(servicio.en.subservicios)}
-        />
-      ) : null}
       <Columnas>
         <Columna>
           <CampoTraducible
@@ -83,7 +74,10 @@ export function FormularioServicio({
         </Columna>
 
         <Columna>
-          <Subservicios iniciales={servicio?.subservicios ?? []} />
+          <Subservicios
+            iniciales={servicio?.subservicios ?? []}
+            enIngles={servicio?.en.subservicios ?? []}
+          />
         </Columna>
       </Columnas>
     </FormularioAdmin>
@@ -94,6 +88,7 @@ interface Fila {
   clave: number;
   nombre: string;
   descripcion: string;
+  nombreEn: string;
 }
 
 /**
@@ -104,21 +99,32 @@ interface Fila {
  * cada fila es un número propio y no el índice: si fuera el índice, borrar una
  * fila del medio haría que React reusara los inputs de la siguiente y el texto
  * saltaría de lugar.
+ *
+ * El inglés va en la misma fila, al lado del nombre: las dos listas se guardan
+ * en el mismo envío, así que no pueden desfasarse. Antes viajaban escondidas y
+ * se emparejaban por posición: reordenar o borrar un subservicio dejaba las
+ * traducciones corridas, mostrando el nombre de otro.
  */
 function Subservicios({
   iniciales,
+  enIngles,
 }: {
   iniciales: Array<{ nombre: string; descripcion: string }>;
+  enIngles: Array<{ nombre?: string; descripcion?: string }>;
 }) {
   const proxima = useRef(iniciales.length);
   const [filas, setFilas] = useState<Fila[]>(() =>
-    iniciales.map((sub, i) => ({ clave: i, ...sub })),
+    iniciales.map((sub, i) => ({
+      clave: i,
+      ...sub,
+      nombreEn: enIngles[i]?.nombre ?? "",
+    })),
   );
 
   const agregar = () =>
     setFilas((previas) => [
       ...previas,
-      { clave: proxima.current++, nombre: "", descripcion: "" },
+      { clave: proxima.current++, nombre: "", descripcion: "", nombreEn: "" },
     ]);
 
   const quitar = (clave: number) =>
@@ -128,7 +134,8 @@ function Subservicios({
     <fieldset>
       <legend className="text-p3 mb-2 text-blanco/70">Subservicios</legend>
       <p className="text-p3 mb-3 text-blanco/35">
-        Lo que se lista dentro del servicio. Las filas sin nombre se descartan.
+        Lo que se lista dentro del servicio, con su nombre en inglés al lado.
+        Las filas sin nombre en español se descartan.
       </p>
 
       {filas.length === 0 ? (
@@ -140,13 +147,20 @@ function Subservicios({
           {filas.map((fila) => (
             <li
               key={fila.clave}
-              className="grid items-start gap-2 sm:grid-cols-[1fr_1.6fr_auto]"
+              className="grid items-start gap-2 sm:grid-cols-[1fr_1fr_1.6fr_auto]"
             >
               <input
                 name="subservicioNombre"
                 defaultValue={fila.nombre}
                 placeholder="Nombre"
                 aria-label="Nombre del subservicio"
+                className={cn(CONTROL, FOCO)}
+              />
+              <input
+                name="subservicioNombreEn"
+                defaultValue={fila.nombreEn}
+                placeholder="Name · English"
+                aria-label="Nombre del subservicio en inglés"
                 className={cn(CONTROL, FOCO)}
               />
               <input

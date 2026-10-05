@@ -11,28 +11,39 @@ const SERVICIOS: Destino = {
 };
 
 /**
- * Los subservicios llegan como dos listas paralelas —los nombres por un lado y
- * las descripciones por otro— porque un formulario HTML no anida. Se juntan por
- * posición y se descartan las filas sin nombre, que son las que quedaron
- * vacías.
+ * Los subservicios llegan como listas paralelas —los nombres por un lado, las
+ * descripciones por otro y los nombres en inglés por un tercero— porque un
+ * formulario HTML no anida. Se juntan por posición y se descartan las filas sin
+ * nombre, que son las que quedaron vacías.
+ *
+ * Devuelve las dos versiones ya alineadas: como salen del mismo envío, el
+ * inglés no puede quedar corrido respecto del español.
  */
-function leerSubservicios(
-  datos: FormData,
-): Array<{ nombre: string; descripcion?: string }> {
+function leerSubservicios(datos: FormData) {
   const nombres = datos.getAll("subservicioNombre");
   const descripciones = datos.getAll("subservicioDescripcion");
+  const nombresEn = datos.getAll("subservicioNombreEn");
 
-  return nombres
+  const filas = nombres
     .map((nombre, i) => ({
       nombre: String(nombre).trim(),
       descripcion: String(descripciones[i] ?? "").trim(),
+      nombreEn: String(nombresEn[i] ?? "").trim(),
     }))
-    .filter((sub) => sub.nombre)
-    .map((sub) =>
-      sub.descripcion
-        ? { nombre: sub.nombre, descripcion: sub.descripcion }
-        : { nombre: sub.nombre },
-    );
+    .filter((fila) => fila.nombre);
+
+  return {
+    es: filas.map((fila) =>
+      fila.descripcion
+        ? { nombre: fila.nombre, descripcion: fila.descripcion }
+        : { nombre: fila.nombre },
+    ),
+    /* El inglés viaja completo, con los huecos incluidos: es lo que mantiene
+       la correspondencia por posición con la lista de arriba. */
+    en: filas.some((fila) => fila.nombreEn)
+      ? filas.map((fila) => ({ nombre: fila.nombreEn }))
+      : [],
+  };
 }
 
 export async function guardarServicio(
@@ -50,16 +61,14 @@ export async function guardarServicio(
      pero el formulario los arma como dos listas paralelas y hay que resolver
      cómo emparejarlas con su traducción. */
   const enIngles = traducciones(datos, ["nombre", "descripcion"]);
-  /* Los subservicios en inglés vuelven como vinieron: el formulario no los
-     edita y sin esto se perderían en el primer guardado. */
-  const subserviciosEn = texto(datos, "en.subservicios");
+  const subservicios = leerSubservicios(datos);
   const traduccion =
-    enIngles || subserviciosEn
+    enIngles || subservicios.en.length
       ? {
           en: {
             ...(enIngles?.en ?? {}),
-            ...(subserviciosEn
-              ? { subservicios: JSON.parse(subserviciosEn) }
+            ...(subservicios.en.length
+              ? { subservicios: subservicios.en }
               : {}),
           },
         }
@@ -71,7 +80,7 @@ export async function guardarServicio(
     descripcion: texto(datos, "descripcion"),
     ...(orden !== undefined ? { orden } : {}),
     esDestacado: datos.get("esDestacado") === "on",
-    subservicios: leerSubservicios(datos),
+    subservicios: subservicios.es,
     ...(traduccion ? { traducciones: traduccion } : {}),
   });
 }

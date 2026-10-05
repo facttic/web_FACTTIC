@@ -68,9 +68,13 @@ encarga `proxy.ts`, y por eso todas las pantallas viven en `app/[idioma]/`.
 - **Contenido de la API**: se traduce en `lib/dominio/adaptadores.ts`, que lee
   `traducciones.en` con reserva al español **campo por campo**. Lo carga el
   backoffice, que muestra cada campo con su par en inglés debajo.
-- **Enlaces**: se escriben sin prefijo y `components/ui/enlace.tsx` les agrega
-  el del idioma actual. El selector EN/ES es la excepción: ahí la ruta ya viene
-  con el idioma de destino, así que usa el `Link` crudo.
+- **Enlaces**: se escriben siempre en español y sin prefijo;
+  `components/ui/enlace.tsx` les pone el idioma actual y traduce la sección
+  —`/proyectos` se dibuja como `/en/projects`—. El selector EN/ES es la
+  excepción: ahí la ruta ya viene resuelta, así que usa el `Link` crudo.
+- **Rutas**: las carpetas de `app/` están en español y son las internas; el
+  mapa de secciones vive en `lib/idioma.ts` y lo aplica `proxy.ts`. Los slugs
+  de proyectos y verticales no se traducen.
 
 ## Cómo está organizado
 

@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { IDIOMA_POR_DEFECTO, IDIOMAS } from "@/lib/idioma";
+import { IDIOMA_POR_DEFECTO, IDIOMAS, rutaEn, rutaInterna } from "@/lib/idioma";
 
 /**
  * Reescritura de idioma y guardia del panel.
@@ -9,8 +9,9 @@ import { IDIOMA_POR_DEFECTO, IDIOMAS } from "@/lib/idioma";
  * mismas. Así que acá se traduce la URL pública a la ruta interna:
  *
  *   /proyectos      → /es/proyectos   (reescritura, la barra no cambia)
- *   /en/proyectos   → /en/proyectos   (pasa igual)
+ *   /en/projects    → /en/proyectos   (las secciones tienen nombre en inglés)
  *   /es/proyectos   → /proyectos      (redirección: una sola URL por pantalla)
+ *   /en/proyectos   → /en/projects    (ídem: la sección va con su nombre)
  *
  * Se llama `proxy` y no `middleware` porque es el nombre que usa esta versión
  * de Next; el archivo anterior quedaba deprecado.
@@ -40,7 +41,10 @@ export function proxy(request: NextRequest) {
 
   // El español no se escribe en la URL: si alguien la pide con prefijo, se la
   // devuelve sin él, para no tener la misma pantalla en dos direcciones.
-  if (pathname === `/${IDIOMA_POR_DEFECTO}` || pathname.startsWith(`/${IDIOMA_POR_DEFECTO}/`)) {
+  if (
+    pathname === `/${IDIOMA_POR_DEFECTO}` ||
+    pathname.startsWith(`/${IDIOMA_POR_DEFECTO}/`)
+  ) {
     const destino = request.nextUrl.clone();
     destino.pathname = pathname.slice(IDIOMA_POR_DEFECTO.length + 1) || "/";
     return NextResponse.redirect(destino);
@@ -49,19 +53,32 @@ export function proxy(request: NextRequest) {
   const conPrefijo = IDIOMAS.some(
     (idioma) => pathname === `/${idioma}` || pathname.startsWith(`/${idioma}/`),
   );
-  const ruta = conPrefijo
-    ? pathname.replace(/^\/[a-z]{2}/, "") || "/"
-    : pathname;
+  // La ruta interna: la que existe en `app/`, siempre con los nombres en español.
+  const ruta = conPrefijo ? rutaInterna(pathname) : pathname;
+
+  /*
+   * En inglés cada sección tiene su propia dirección, así que la versión con
+   * el nombre en español se manda a la buena en vez de servir la misma
+   * pantalla en dos URLs.
+   */
+  if (conPrefijo) {
+    const publica = rutaEn("en", pathname);
+    if (publica !== pathname && !pathname.startsWith("/admin")) {
+      const destino = request.nextUrl.clone();
+      destino.pathname = publica;
+      return NextResponse.redirect(destino);
+    }
+  }
 
   if (ruta === "/admin" || ruta.startsWith("/admin/")) {
     const respuesta = guardiaDelPanel(request, ruta);
     if (respuesta) return respuesta;
   }
 
-  if (conPrefijo) return NextResponse.next();
-
   const destino = request.nextUrl.clone();
-  destino.pathname = `/${IDIOMA_POR_DEFECTO}${pathname}`;
+  destino.pathname = conPrefijo
+    ? `/en${ruta === "/" ? "" : ruta}`
+    : `/${IDIOMA_POR_DEFECTO}${pathname}`;
   return NextResponse.rewrite(destino);
 }
 
