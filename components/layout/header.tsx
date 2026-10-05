@@ -17,6 +17,10 @@ import { Logo } from "./logo";
  * fondo con desenfoque —eso no está maquetado, pero sin ello el menú se vuelve
  * ilegible sobre el contenido de abajo.
  *
+ * En las verticales el hero arranca con un bloque pintado que pasa por detrás
+ * de la barra, así que ahí el menú se lee en negro hasta que se desplaza. Es
+ * lo que pide la anotación "cambié la diagramación del header" del archivo.
+ *
  * El selector EN/ES sí está en el diseño, así que se muestra, pero el botón de
  * inglés va deshabilitado: la v1 sale solo en español porque el contenido de la
  * API no tiene campos por idioma.
@@ -49,6 +53,13 @@ export function Header() {
   const esActiva = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
 
+  /*
+    Sobre el bloque de color de una vertical —y solo mientras no se haya
+    desplazado ni abierto el menú, que traen fondo oscuro propio—.
+  */
+  const sobreColor =
+    /^\/nuestros-servicios\/[^/]+$/.test(pathname) && !desplazado && !abierto;
+
   return (
     /*
       El vidrio va en la barra y no en el <header>: `backdrop-filter` convierte
@@ -66,7 +77,9 @@ export function Header() {
         )}
       >
         <div className="contenedor flex h-[68px] items-center justify-between gap-8 md:h-[90px]">
-          <Logo />
+          {/* El wordmark es un PNG blanco, así que sobre el color se invierte.
+              Cuando diseño entregue el SVG conviene pasarlo a `currentColor`. */}
+          <Logo className={sobreColor ? "invert" : undefined} />
 
           <div className="hidden items-center gap-8 md:flex">
             <nav aria-label="Principal">
@@ -80,8 +93,12 @@ export function Header() {
                         "text-p3-bold group/item relative block py-6 transition-colors",
                         FOCO,
                         esActiva(enlace.href)
-                          ? "text-blanco"
-                          : "text-blanco/70 hover:text-blanco",
+                          ? sobreColor
+                            ? "text-negro-oscuro"
+                            : "text-blanco"
+                          : sobreColor
+                            ? "text-negro-oscuro/70 hover:text-negro-oscuro"
+                            : "text-blanco/70 hover:text-blanco",
                       )}
                     >
                       {enlace.etiqueta}
@@ -111,8 +128,9 @@ export function Header() {
                 activo={false}
                 disabled
                 title="Próximamente"
+                sobreColor={sobreColor}
               />
-              <BotonIdioma idioma="es" activo />
+              <BotonIdioma idioma="es" activo sobreColor={sobreColor} />
             </div>
           </div>
 
@@ -125,6 +143,7 @@ export function Header() {
             className={cn(
               "grid h-10 w-[42px] cursor-pointer place-items-center md:hidden",
               FOCO,
+              sobreColor ? "text-negro-oscuro" : null,
             )}
           >
             <IconoMenu abierto={abierto} />
@@ -137,7 +156,12 @@ export function Header() {
         Solo en desktop: en mobile el board deja la barra suelta sobre el hero,
         sin línea.
       */}
-        <div className="hidden border-t border-dashed border-blanco/20 md:block" />
+        <div
+          className={cn(
+            "hidden border-t border-dashed md:block",
+            sobreColor ? "border-negro-oscuro/20" : "border-blanco/20",
+          )}
+        />
       </div>
 
       {abierto ? (

@@ -117,9 +117,15 @@ export function BotonTexto({
 export function BotonIdioma({
   idioma,
   activo,
+  /** Sobre el bloque de color de las verticales se invierte, para que se lea. */
+  sobreColor = false,
   className,
   ...props
-}: { idioma: string; activo: boolean } & ComponentProps<"button">) {
+}: {
+  idioma: string;
+  activo: boolean;
+  sobreColor?: boolean;
+} & ComponentProps<"button">) {
   return (
     <button
       type="button"
@@ -128,8 +134,12 @@ export function BotonIdioma({
         "text-p3 size-10 cursor-pointer rounded-lg font-mono uppercase transition-colors",
         FOCO,
         activo
-          ? "bg-blanco text-negro-oscuro"
-          : "border border-dashed border-blanco/40 text-blanco/60 hover:text-blanco",
+          ? sobreColor
+            ? "bg-negro-oscuro text-blanco"
+            : "bg-blanco text-negro-oscuro"
+          : sobreColor
+            ? "border border-dashed border-negro-oscuro/40 text-negro-oscuro/60 hover:text-negro-oscuro"
+            : "border border-dashed border-blanco/40 text-blanco/60 hover:text-blanco",
         className,
       )}
       {...props}

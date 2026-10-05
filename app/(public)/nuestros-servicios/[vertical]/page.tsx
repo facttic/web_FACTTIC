@@ -4,6 +4,8 @@ import { EncabezadoSeccion, Seccion, BandaCta } from "@/components/ui/seccion";
 import { BotonLink } from "@/components/ui/boton";
 import { Carrusel } from "@/components/ui/carrusel";
 import { Animacion } from "@/components/ui/animacion";
+import { FONDO_ACENTO } from "@/components/ui/acento";
+import { cn } from "@/lib/cn";
 import { CardPropuesta } from "@/components/tarjetas/servicios";
 import { BloqueDesplegable } from "@/components/secciones/desplegables";
 import { ProyectosDestacados } from "@/components/secciones/proyectos-destacados";
@@ -11,7 +13,7 @@ import { Metodologias } from "@/components/secciones/metodologias";
 import { Stack } from "@/components/secciones/stack";
 import { Aliados } from "@/components/secciones/aliados";
 import { Acordeon } from "@/components/ui/acordeon";
-import { acentoDeSector, animacionDeSector } from "@/lib/animaciones";
+import { acentoDeSector } from "@/lib/animaciones";
 import { SERVICIOS_PAGINA, VERTICALES as T } from "@/lib/contenido";
 import {
   getOrganizaciones,
@@ -25,7 +27,7 @@ import { getProyectos } from "@/lib/datos/proyectos";
  * Vertical: Organizaciones, Agro o Financiero.
  *
  * Una sola plantilla para las tres —diseño confirmó que se reúsa— y lo que
- * cambia sale de la API: el nombre, la ilustración y los proyectos del sector.
+ * cambia sale de la API: el nombre, la descripción y los proyectos del sector.
  * El color con el que se pintan las tarjetas lo fija una anotación del archivo
  * y vive en `acentoDeSector`.
  */
@@ -82,36 +84,46 @@ export default async function VerticalPage({
 
   const motivos = T.propuesta.items[vertical] ?? [];
   const acento = acentoDeSector(sector.nombre);
-  const animacion = animacionDeSector(sector.nombre);
   const descripcion = T.descripciones[vertical] ?? sector.descripcion;
 
   return (
     <>
-      {/* En desktop el hero va centrado y con la ilustración del sector; en
-          mobile la maqueta la saca y alinea el texto a la izquierda. */}
-      <Seccion className="pt-24 md:items-center md:pt-24 md:text-center">
-        {animacion ? (
-          <Animacion
-            nombre={animacion}
-            className="hidden size-[200px] md:block"
-          />
-        ) : null}
-        <h1 className="text-h1 md:mt-8">{sector.nombre}</h1>
-        {descripcion
-          ? parrafos(descripcion).map((parrafo, i) => (
-              <p
-                key={parrafo}
-                /* En mobile el board la escribe en `P1/Bold` —DM Mono 16—,
-                   como el hero de Nuestros servicios. */
-                className={`text-p1-bold md:text-p1 text-blanco/80 md:max-w-3xl ${
-                  i === 0 ? "mt-6" : "mt-4"
-                } ${i === 0 ? "md:text-balance" : ""}`}
-              >
-                {parrafo}
-              </p>
-            ))
-          : null}
-      </Seccion>
+      {/*
+        El hero arranca con el bloque pintado del color de la vertical, que
+        pasa por detrás de la barra hasta el borde de arriba: lo pide la
+        anotación "Agregué este fondo de color y cambié la diagramación del
+        header". No lleva alto fijo —en el archivo mide 444 en Organizaciones
+        y 592 en Agro, que tiene un párrafo más—, así que crece con el texto y
+        lo que se respeta son los aires: el título a 157 del tope y 117 de aire
+        abajo en desktop, 158 y 54 en mobile. El margen negativo lo mete por
+        detrás de la barra, que es fija y deja 72px de aire en `MarcoPublico`.
+        El radio de 12 va solo abajo: arriba el bloque termina contra el borde
+        de la ventana y el redondeo dejaba ver dos esquinas oscuras.
+
+        La ilustración del sector ya no va acá: las maquetas nuevas la sacaron
+        del hero. Sigue viva en "Descubrí otros sectores", al pie.
+      */}
+      <section className={cn("-mt-[72px] rounded-b-xl", FONDO_ACENTO[acento])}>
+        <div className="contenedor pt-[158px] pb-[54px] md:pt-[157px] md:pb-[117px]">
+          <h1 className="text-h1">{sector.nombre}</h1>
+          {descripcion
+            ? parrafos(descripcion).map((parrafo, i) => (
+                <p
+                  key={parrafo}
+                  /* En mobile el board la escribe en `P1/Bold` —DM Mono 16—,
+                     como el hero de Nuestros servicios. El ancho de 811 es el
+                     de la caja de texto del archivo. */
+                  className={cn(
+                    "text-p1-bold md:text-p1 text-negro-oscuro/80 md:max-w-[811px]",
+                    i === 0 ? "mt-5 md:mt-8" : "mt-4",
+                  )}
+                >
+                  {parrafo}
+                </p>
+              ))
+            : null}
+        </div>
+      </section>
 
       {motivos.length ? (
         <Seccion>
