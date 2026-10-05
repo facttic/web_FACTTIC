@@ -537,11 +537,21 @@ export function CampoCasilla({
   );
 }
 
+/**
+ * Lo que entra en un envío, en bytes. Tiene que quedar por debajo del
+ * `serverActions.bodySizeLimit` de `next.config.ts`, porque el multipart suma
+ * separadores y encabezados además de los archivos. Pasado ese tope, Next
+ * rechaza el cuerpo antes de llegar a la acción y la pantalla se corta con "A
+ * server error occurred", sin decir por qué: de ahí este aviso.
+ */
+const TOPE_ENVIO = 18 * 1024 * 1024;
+
 export function CampoArchivo({
   id,
   etiqueta,
   ayuda,
   actual,
+  onChange,
   ...props
 }: {
   id: string;
@@ -556,6 +566,19 @@ export function CampoArchivo({
   const cargadas = (Array.isArray(actual) ? actual : [actual]).filter(
     (url): url is string => !!url,
   );
+  const [pesado, setPesado] = useState<string | null>(null);
+
+  const alElegir = (evento: React.ChangeEvent<HTMLInputElement>) => {
+    const elegidos = [...(evento.target.files ?? [])];
+    const total = elegidos.reduce((suma, archivo) => suma + archivo.size, 0);
+    const mb = (n: number) => `${(n / 1024 / 1024).toFixed(1)} MB`;
+    setPesado(
+      total > TOPE_ENVIO
+        ? `Lo elegido pesa ${mb(total)} y el máximo es ${mb(TOPE_ENVIO)}. Subí menos archivos por vez, o achicalos antes: si se envía así, la carga falla.`
+        : null,
+    );
+    onChange?.(evento);
+  };
 
   return (
     <div>
@@ -583,6 +606,7 @@ export function CampoArchivo({
       <input
         id={id}
         type="file"
+        onChange={alElegir}
         className={cn(
           "text-p3 w-full cursor-pointer rounded-lg border border-borde bg-negro-oscuro/60 px-4 py-2.5 text-blanco/70",
           "file:mr-3 file:cursor-pointer file:rounded file:border-0 file:bg-superficie-alta file:px-3 file:py-1 file:text-blanco",
@@ -590,6 +614,11 @@ export function CampoArchivo({
         )}
         {...props}
       />
+      {pesado ? (
+        <p role="alert" className="text-p3 mt-2 text-rojo">
+          {pesado}
+        </p>
+      ) : null}
     </div>
   );
 }
