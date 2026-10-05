@@ -7,6 +7,7 @@ import { Animacion } from "@/components/ui/animacion";
 import { FONDO_ACENTO } from "@/components/ui/acento";
 import { cn } from "@/lib/cn";
 import { CardPropuesta } from "@/components/tarjetas/servicios";
+import { CardSector } from "@/components/tarjetas/sector";
 import { BloqueDesplegable } from "@/components/secciones/desplegables";
 import { ProyectosDestacados } from "@/components/secciones/proyectos-destacados";
 import { Metodologias } from "@/components/secciones/metodologias";
@@ -76,11 +77,22 @@ export default async function VerticalPage({
   const sector = await getSectorPorSlug(vertical);
   if (!sector?.destacado) notFound();
 
-  const [proyectos, tecnologias, aliados] = await Promise.all([
+  const [proyectos, tecnologias, aliados, verticales] = await Promise.all([
     getProyectos({ sector: sector.id, porPagina: 6 }),
     getTecnologias(),
     getOrganizaciones(),
+    getSectoresDestacados(),
   ]);
+
+  /*
+   * Las otras verticales, para el bloque que cierra la pantalla. El número que
+   * muestra cada tarjeta es el puesto que ocupa en el catálogo —en el archivo
+   * son "02. Agro" y "03. Finanzas"—, así que se conserva el índice original
+   * en vez de volver a numerar las dos que quedan.
+   */
+  const otras = verticales
+    .map((vertical, indice) => ({ vertical, indice }))
+    .filter(({ vertical }) => vertical.id !== sector.id);
 
   const motivos = T.propuesta.items[vertical] ?? [];
   const acento = acentoDeSector(sector.nombre);
@@ -101,7 +113,8 @@ export default async function VerticalPage({
         de la ventana y el redondeo dejaba ver dos esquinas oscuras.
 
         La ilustración del sector ya no va acá: las maquetas nuevas la sacaron
-        del hero. Sigue viva en "Descubrí otros sectores", al pie.
+        del hero. Sigue estando en las tarjetas de "Descubrí otros sectores",
+        al pie de la pantalla.
       */}
       <section className={cn("-mt-[72px] rounded-b-xl", FONDO_ACENTO[acento])}>
         <div className="contenedor pt-[158px] pb-[54px] md:pt-[157px] md:pb-[117px]">
@@ -252,6 +265,31 @@ export default async function VerticalPage({
           />
         </div>
       </div>
+
+      {otras.length ? (
+        <Seccion className="pt-0 pb-16 md:pb-24">
+          {/* Una columna de texto y las otras verticales al lado, en la misma
+              grilla de tres que usa Nuestros servicios para los sectores. En
+              mobile van apiladas debajo del texto. */}
+          <div className="grid gap-6 md:grid-cols-3">
+            <div className="md:self-center">
+              <h2 className="text-h3 whitespace-pre-line">{T.otras.titulo}</h2>
+              <p className="text-p2 mt-4 whitespace-pre-line text-blanco/60">
+                {T.otras.descripcion}
+              </p>
+            </div>
+            {otras.map(({ vertical, indice }) => (
+              <CardSector
+                key={vertical.id}
+                sector={vertical}
+                indice={indice}
+                conCaja
+                href={`/nuestros-servicios/${vertical.slug}`}
+              />
+            ))}
+          </div>
+        </Seccion>
+      ) : null}
     </>
   );
 }

@@ -274,6 +274,17 @@ export const SERVICIOS_PAGINA = {
  * de las tarjetas en la Home. Está pedido como ítem 26.
  */
 export const VERTICALES = {
+  /*
+   * El bloque que cierra la pantalla, con las otras dos verticales. El texto
+   * es el mismo que acompaña a los sectores en Nuestros servicios: en el
+   * archivo se repite tal cual.
+   */
+  otras: {
+    titulo: "Descubrí otros sectores\ncon los que trabajamos",
+    descripcion:
+      "Cada rubro tiene sus propias reglas.\nDesarrollamos soluciones que se adaptan a ellas.",
+  },
+
   descripciones: {
     organizaciones:
       "Trabajamos con organizaciones sociales, cooperativas y organismos de derechos humanos que usan la tecnología como herramienta de transformación. Desarrollamos soluciones digitales que amplían su alcance, mejoran sus procesos y fortalecen su presencia.",
