@@ -27,6 +27,15 @@ export interface Subservicio {
   descripcion?: string;
 }
 
+/**
+ * Traducciones de los campos de texto, tal como las guarda la API: un
+ * subdocumento por idioma dentro de la misma entidad. Lo que falte se muestra
+ * en español.
+ */
+export interface Traducciones<T> {
+  en?: Partial<T>;
+}
+
 export interface Servicio {
   _id: string;
   nombre: string;
@@ -41,6 +50,7 @@ export interface Servicio {
   subservicios?: Subservicio[];
   createdAt?: string;
   updatedAt?: string;
+  traducciones?: Traducciones<{ nombre: string; descripcion: string; subservicios: Subservicio[] }>;
 }
 
 export interface Sector {
@@ -56,6 +66,7 @@ export interface Sector {
   lottieFileName?: string;
   createdAt?: string;
   updatedAt?: string;
+  traducciones?: Traducciones<{ nombre: string; descripcion: string }>;
 }
 
 export interface Tecnologia {
@@ -140,6 +151,7 @@ export interface Proyecto {
   videoFileNames?: string[];
   createdAt?: string;
   updatedAt?: string;
+  traducciones?: Traducciones<{ nombre: string; desafio: string; solucion: string; resultado: string }>;
 }
 
 /**
@@ -196,4 +208,5 @@ export interface Novedad {
   fecha?: string;
   fileName?: string;
   createdAt?: string;
+  traducciones?: Traducciones<{ titulo: string; bajada: string; cuerpo: string }>;
 }

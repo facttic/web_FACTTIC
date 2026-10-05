@@ -4,6 +4,7 @@ import { apiFetch, normalizePage } from "@/lib/api/client";
 import type * as Api from "@/lib/api/esquema";
 import { aPagina, aProyecto } from "@/lib/dominio/adaptadores";
 import type * as Dominio from "@/lib/dominio/tipos";
+import { IDIOMA_POR_DEFECTO, type Idioma } from "@/lib/idioma";
 import { TTL, cached } from "./cache";
 
 /**
@@ -42,24 +43,28 @@ function aQueryParams(filtros: Dominio.FiltrosProyectos) {
 
 async function traerProyectos(
   filtros: Dominio.FiltrosProyectos,
+  idioma: Idioma,
 ): Promise<Dominio.Pagina<Dominio.Proyecto>> {
   const raw = await apiFetch<Api.Paginated<Api.Proyecto>>("/api/proyectos", {
     params: aQueryParams(filtros),
   });
   return aPagina(
     normalizePage<Api.Proyecto>(raw, filtros.porPagina ?? POR_PAGINA),
-    aProyecto,
+    (proyecto) => aProyecto(proyecto, idioma),
   );
 }
 
 export function getProyectos(
   filtros: Dominio.FiltrosProyectos = {},
+  idioma: Idioma = IDIOMA_POR_DEFECTO,
 ): Promise<Dominio.Pagina<Dominio.Proyecto>> {
-  // Los filtros forman parte de la clave para que cada combinación se cachee aparte.
-  return cached(traerProyectos, ["proyectos", JSON.stringify(filtros)], {
-    revalidate: TTL.contenido,
-    tags: ["proyectos"],
-  })(filtros);
+  // Los filtros y el idioma forman parte de la clave: cada combinación se
+  // cachea aparte, porque devuelven textos distintos.
+  return cached(
+    traerProyectos,
+    ["proyectos", JSON.stringify(filtros), idioma],
+    { revalidate: TTL.contenido, tags: ["proyectos"] },
+  )(filtros, idioma);
 }
 
 /**
@@ -71,16 +76,17 @@ export function getProyectos(
  */
 export async function getProyectosDestacados(
   cantidad = 3,
+  idioma: Idioma = IDIOMA_POR_DEFECTO,
 ): Promise<Dominio.Pagina<Dominio.Proyecto>> {
-  const destacados = await getProyectos({
-    destacado: true,
-    porPagina: cantidad,
-  });
+  const destacados = await getProyectos(
+    { destacado: true, porPagina: cantidad },
+    idioma,
+  );
 
   if (destacados.items.length > 0) return destacados;
 
   // La API ya devuelve por fecha de creación descendente.
-  return getProyectos({ porPagina: cantidad });
+  return getProyectos({ porPagina: cantidad }, idioma);
 }
 
 /**
@@ -88,21 +94,24 @@ export async function getProyectosDestacados(
  * ObjectId; cuando la API exponga `slug`, esta función pasa a resolverlo por
  * slug sin que cambie la ruta `/proyectos/[slug]`.
  */
-export function getProyecto(slug: string): Promise<Dominio.Proyecto | null> {
+export function getProyecto(
+  slug: string,
+  idioma: Idioma = IDIOMA_POR_DEFECTO,
+): Promise<Dominio.Proyecto | null> {
   return cached(
-    async (identificador: string) => {
+    async (identificador: string, lang: Idioma) => {
       try {
         const raw = await apiFetch<Api.Proyecto>(
           `/api/proyectos/${identificador}`,
         );
-        return aProyecto(raw);
+        return aProyecto(raw, lang);
       } catch {
         return null;
       }
     },
-    ["proyecto", slug],
+    ["proyecto", slug, idioma],
     { revalidate: TTL.contenido, tags: ["proyectos", `proyecto:${slug}`] },
-  )(slug);
+  )(slug, idioma);
 }
 
 /**
@@ -112,13 +121,14 @@ export function getProyecto(slug: string): Promise<Dominio.Proyecto | null> {
 export async function getProyectosRelacionados(
   proyecto: Dominio.Proyecto,
   cantidad = 3,
+  idioma: Idioma = IDIOMA_POR_DEFECTO,
 ): Promise<Dominio.Proyecto[]> {
   if (!proyecto.sector) return [];
 
-  const { items } = await getProyectos({
-    sector: proyecto.sector.id,
-    porPagina: cantidad + 1,
-  });
+  const { items } = await getProyectos(
+    { sector: proyecto.sector.id, porPagina: cantidad + 1 },
+    idioma,
+  );
 
   return items.filter((otro) => otro.id !== proyecto.id).slice(0, cantidad);
 }

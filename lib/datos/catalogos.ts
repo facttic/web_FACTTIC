@@ -11,6 +11,7 @@ import {
   aTecnologia,
 } from "@/lib/dominio/adaptadores";
 import type * as Dominio from "@/lib/dominio/tipos";
+import { IDIOMA_POR_DEFECTO, type Idioma } from "@/lib/idioma";
 import { TTL, cached } from "./cache";
 
 /**
@@ -67,39 +68,58 @@ function porOrden<T extends { orden: number }>(a: T, b: T): number {
  * Por eso hay dos lecturas de cada uno: la completa y la del catálogo. Las
  * pantallas públicas de la Federación piden la segunda.
  */
-export const getSectores = cached(
-  async (): Promise<Dominio.Sector[]> => {
-    const sectores = await traerTodos<Api.Sector>("/api/sectores");
-    return sectores.map(aSector).sort(porOrden);
-  },
-  ["sectores"],
-  { revalidate: TTL.catalogo, tags: ["sectores"] },
-);
+/*
+ * Lo que se traduce lleva el idioma en la clave de cache: cada idioma se
+ * guarda aparte, porque lo que cambia es el texto y no la consulta.
+ */
+export function getSectores(
+  idioma: Idioma = IDIOMA_POR_DEFECTO,
+): Promise<Dominio.Sector[]> {
+  return cached(
+    async (lang: Idioma) => {
+      const sectores = await traerTodos<Api.Sector>("/api/sectores");
+      return sectores.map((sector) => aSector(sector, lang)).sort(porOrden);
+    },
+    ["sectores", idioma],
+    { revalidate: TTL.catalogo, tags: ["sectores"] },
+  )(idioma);
+}
 
 /** Las verticales de la Federación. */
-export async function getSectoresDestacados(): Promise<Dominio.Sector[]> {
-  return (await getSectores()).filter((sector) => sector.destacado);
+export async function getSectoresDestacados(
+  idioma: Idioma = IDIOMA_POR_DEFECTO,
+): Promise<Dominio.Sector[]> {
+  return (await getSectores(idioma)).filter((sector) => sector.destacado);
 }
 
 export async function getSectorPorSlug(
   slug: string,
+  idioma: Idioma = IDIOMA_POR_DEFECTO,
 ): Promise<Dominio.Sector | null> {
-  const sectores = await getSectores();
+  const sectores = await getSectores(idioma);
   return sectores.find((sector) => sector.slug === slug) ?? null;
 }
 
-export const getServicios = cached(
-  async (): Promise<Dominio.Servicio[]> => {
-    const servicios = await traerTodos<Api.Servicio>("/api/servicios");
-    return servicios.map(aServicio).sort(porOrden);
-  },
-  ["servicios"],
-  { revalidate: TTL.catalogo, tags: ["servicios"] },
-);
+export function getServicios(
+  idioma: Idioma = IDIOMA_POR_DEFECTO,
+): Promise<Dominio.Servicio[]> {
+  return cached(
+    async (lang: Idioma) => {
+      const servicios = await traerTodos<Api.Servicio>("/api/servicios");
+      return servicios
+        .map((servicio) => aServicio(servicio, lang))
+        .sort(porOrden);
+    },
+    ["servicios", idioma],
+    { revalidate: TTL.catalogo, tags: ["servicios"] },
+  )(idioma);
+}
 
 /** Los servicios del catálogo de la Federación. */
-export async function getServiciosDestacados(): Promise<Dominio.Servicio[]> {
-  return (await getServicios()).filter((servicio) => servicio.destacado);
+export async function getServiciosDestacados(
+  idioma: Idioma = IDIOMA_POR_DEFECTO,
+): Promise<Dominio.Servicio[]> {
+  return (await getServicios(idioma)).filter((servicio) => servicio.destacado);
 }
 
 export const getTecnologias = cached(

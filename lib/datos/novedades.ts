@@ -4,6 +4,7 @@ import { apiFetch, normalizePage } from "@/lib/api/client";
 import type * as Api from "@/lib/api/esquema";
 import { aNovedad } from "@/lib/dominio/adaptadores";
 import type * as Dominio from "@/lib/dominio/tipos";
+import { IDIOMA_POR_DEFECTO, type Idioma } from "@/lib/idioma";
 import { TTL, cached } from "./cache";
 
 /**
@@ -19,6 +20,7 @@ const POR_PAGINA = 6;
 
 async function traerNovedades(
   cantidad: number,
+  idioma: Idioma,
 ): Promise<Dominio.Pagina<Dominio.Novedad>> {
   const raw = await apiFetch<Api.Paginated<Api.Novedad>>("/api/novedades", {
     params: { perPage: cantidad, page: 1, sort: "fecha", order: "DESC" },
@@ -26,7 +28,7 @@ async function traerNovedades(
   const pagina = normalizePage<Api.Novedad>(raw, cantidad);
 
   return {
-    items: pagina.items.map(aNovedad),
+    items: pagina.items.map((novedad) => aNovedad(novedad, idioma)),
     total: pagina.total,
     pagina: pagina.page,
     porPagina: pagina.perPage,
@@ -36,24 +38,31 @@ async function traerNovedades(
 
 export function getNovedades(
   cantidad = POR_PAGINA,
+  idioma: Idioma = IDIOMA_POR_DEFECTO,
 ): Promise<Dominio.Pagina<Dominio.Novedad>> {
-  return cached(traerNovedades, ["novedades", String(cantidad)], {
+  return cached(traerNovedades, ["novedades", String(cantidad), idioma], {
     revalidate: TTL.contenido,
     tags: ["novedades"],
-  })(cantidad);
+  })(cantidad, idioma);
 }
 
 /** Una novedad por su identificador de URL, que hoy es el id. */
-export function getNovedad(slug: string): Promise<Dominio.Novedad | null> {
+export function getNovedad(
+  slug: string,
+  idioma: Idioma = IDIOMA_POR_DEFECTO,
+): Promise<Dominio.Novedad | null> {
   return cached(
-    async (id: string) => {
+    async (id: string, lang: Idioma) => {
       try {
-        return aNovedad(await apiFetch<Api.Novedad>(`/api/novedades/${id}`));
+        return aNovedad(
+          await apiFetch<Api.Novedad>(`/api/novedades/${id}`),
+          lang,
+        );
       } catch {
         return null;
       }
     },
-    ["novedad", slug],
+    ["novedad", slug, idioma],
     { revalidate: TTL.contenido, tags: ["novedades", `novedad:${slug}`] },
-  )(slug);
+  )(slug, idioma);
 }

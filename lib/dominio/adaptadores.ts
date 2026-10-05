@@ -2,6 +2,7 @@ import { firstMediaUrl, mediaUrl } from "@/lib/media";
 import { isPopulated, type Ref } from "@/lib/api/esquema";
 import type * as Api from "@/lib/api/esquema";
 import type * as Dominio from "./tipos";
+import { IDIOMA_POR_DEFECTO, type Idioma } from "@/lib/idioma";
 
 /**
  * Traducción de la API al modelo del sitio.
@@ -21,6 +22,28 @@ import type * as Dominio from "./tipos";
 function texto(valor: string | undefined | null): string | null {
   const limpio = valor?.trim();
   return limpio ? limpio : null;
+}
+
+/**
+ * El texto en el idioma pedido, con reserva al español.
+ *
+ * La reserva es campo por campo y no por entidad: un proyecto con el nombre
+ * traducido y el desafío sin traducir muestra lo que haya de cada uno, en vez
+ * de caerse entero al español o dejar el hueco.
+ */
+function enIdioma(
+  traducido: string | undefined | null,
+  original: string | undefined | null,
+): string | null {
+  return texto(traducido) ?? texto(original);
+}
+
+/** Las traducciones que correspondan, o ninguna si la pantalla va en español. */
+function traducciones<T>(
+  api: { traducciones?: Api.Traducciones<T> },
+  idioma: Idioma,
+): Partial<T> {
+  return idioma === IDIOMA_POR_DEFECTO ? {} : (api.traducciones?.en ?? {});
 }
 
 /** Convierte un nombre en algo usable en una URL. */
@@ -54,29 +77,42 @@ function aReferencias(
     .filter((r): r is Dominio.Referencia => r !== null);
 }
 
-export function aServicio(api: Api.Servicio): Dominio.Servicio {
+export function aServicio(
+  api: Api.Servicio,
+  idioma: Idioma = IDIOMA_POR_DEFECTO,
+): Dominio.Servicio {
+  const t = traducciones(api, idioma);
+  /* Los subservicios se traducen por posición: son la misma lista en los dos
+     idiomas y se cargan juntos. Si falta la traducción, van los de español. */
+  const subservicios = api.subservicios ?? [];
   return {
     id: api._id,
-    nombre: texto(api.nombre) ?? "Sin nombre",
-    descripcion: texto(api.descripcion),
+    nombre: enIdioma(t.nombre, api.nombre) ?? "Sin nombre",
+    descripcion: enIdioma(t.descripcion, api.descripcion),
     orden: api.orden ?? 99,
     destacado: api.esDestacado === true,
-    subservicios: (api.subservicios ?? [])
-      .map((s) => ({
-        nombre: texto(s.nombre) ?? "",
-        descripcion: texto(s.descripcion),
+    subservicios: subservicios
+      .map((s, i) => ({
+        nombre: enIdioma(t.subservicios?.[i]?.nombre, s.nombre) ?? "",
+        descripcion: enIdioma(t.subservicios?.[i]?.descripcion, s.descripcion),
       }))
       .filter((s) => s.nombre),
   };
 }
 
-export function aSector(api: Api.Sector): Dominio.Sector {
-  const nombre = texto(api.nombre) ?? "Sin nombre";
+export function aSector(
+  api: Api.Sector,
+  idioma: Idioma = IDIOMA_POR_DEFECTO,
+): Dominio.Sector {
+  const t = traducciones(api, idioma);
+  const nombre = enIdioma(t.nombre, api.nombre) ?? "Sin nombre";
   return {
     id: api._id,
     nombre,
-    slug: slugify(nombre),
-    descripcion: texto(api.descripcion),
+    /* El slug sale siempre del nombre en español: la dirección de cada
+       vertical es la misma en los dos idiomas y no se rompe al traducir. */
+    slug: slugify(texto(api.nombre) ?? nombre),
+    descripcion: enIdioma(t.descripcion, api.descripcion),
     orden: api.orden ?? 99,
     destacado: api.esDestacado === true,
     imagen: mediaUrl(api.imageFileName),
@@ -153,7 +189,11 @@ function slugDeProyecto(api: Api.Proyecto): string {
   return texto(api.slug) ?? api._id;
 }
 
-export function aProyecto(api: Api.Proyecto): Dominio.Proyecto {
+export function aProyecto(
+  api: Api.Proyecto,
+  idioma: Idioma = IDIOMA_POR_DEFECTO,
+): Dominio.Proyecto {
+  const t = traducciones(api, idioma);
   const imagenes = (api.imageFileNames ?? [])
     .map((nombre) => mediaUrl(nombre))
     .filter((url): url is string => url !== null);
@@ -161,7 +201,7 @@ export function aProyecto(api: Api.Proyecto): Dominio.Proyecto {
   return {
     id: api._id,
     slug: slugDeProyecto(api),
-    nombre: texto(api.nombre) ?? "Sin nombre",
+    nombre: enIdioma(t.nombre, api.nombre) ?? "Sin nombre",
     cliente: aReferencia(api.cliente),
     sector: aReferencia(api.sector),
     servicios: aReferencias(api.servicios),
@@ -169,9 +209,9 @@ export function aProyecto(api: Api.Proyecto): Dominio.Proyecto {
       .filter(isPopulated)
       .map((t) => aTecnologia(t as Api.Tecnologia)),
     cooperativas: aReferencias(api.cooperativas),
-    desafio: texto(api.desafio),
-    solucion: texto(api.solucion),
-    resultado: texto(api.resultado),
+    desafio: enIdioma(t.desafio, api.desafio),
+    solucion: enIdioma(t.solucion, api.solucion),
+    resultado: enIdioma(t.resultado, api.resultado),
     destacado: api.esDestacado ?? false,
     portada: firstMediaUrl(api.imageFileNames),
     imagenes,
@@ -203,7 +243,11 @@ export function aPagina<A, D>(
  * valida contra los tres que declara el backend: si llegara otro, cae en
  * "comunicado" en vez de romper la pantalla.
  */
-export function aNovedad(api: Api.Novedad): Dominio.Novedad {
+export function aNovedad(
+  api: Api.Novedad,
+  idioma: Idioma = IDIOMA_POR_DEFECTO,
+): Dominio.Novedad {
+  const t = traducciones(api, idioma);
   const tipos: Dominio.TipoNovedad[] = ["comunicado", "noticia", "actividad"];
   const tipo = tipos.includes(api.tipo as Dominio.TipoNovedad)
     ? (api.tipo as Dominio.TipoNovedad)
@@ -213,9 +257,9 @@ export function aNovedad(api: Api.Novedad): Dominio.Novedad {
     id: api._id,
     slug: api._id,
     tipo,
-    titulo: texto(api.titulo) ?? "Sin título",
-    bajada: texto(api.bajada) ?? null,
-    cuerpo: texto(api.cuerpo) ?? null,
+    titulo: enIdioma(t.titulo, api.titulo) ?? "Sin título",
+    bajada: enIdioma(t.bajada, api.bajada),
+    cuerpo: enIdioma(t.cuerpo, api.cuerpo),
     fecha: texto(api.fecha) ?? texto(api.createdAt) ?? null,
     imagen: mediaUrl(api.fileName ?? null),
   };
