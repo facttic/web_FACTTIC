@@ -1,5 +1,8 @@
+"use client";
+
 import { Enlace as Link } from "@/components/ui/enlace";
-import { COLUMNAS_PIE, REDES } from "@/lib/navegacion";
+import { columnasPie, REDES } from "@/lib/navegacion";
+import { useIdioma } from "@/lib/idioma-cliente";
 import { Logo } from "./logo";
 
 /**
@@ -23,7 +26,10 @@ const ICONOS: Record<string, string> = {
     "M23 12s0-3.2-.4-4.74a2.51 2.51 0 00-1.77-1.77C19.29 5.1 12 5.1 12 5.1s-7.29 0-8.83.39c-.85.23-1.52.9-1.75 1.77C1 8.8 1 12 1 12s0 3.2.42 4.74c.23.86.9 1.53 1.75 1.76 1.54.4 8.83.4 8.83.4s7.29 0 8.83-.4a2.51 2.51 0 001.77-1.76C23 15.2 23 12 23 12zM9.75 15.02V8.98L15.5 12z",
 };
 
+/* Va en el cliente para saber en qué idioma está la pantalla: el pie es el
+   mismo en todas y no recibe params. Es markup, no trae estado. */
 export function Footer() {
+  const COLUMNAS_PIE = columnasPie(useIdioma());
   return (
     <footer className="mt-auto">
       <div className="contenedor py-8 md:py-14">

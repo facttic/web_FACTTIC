@@ -4,7 +4,7 @@ import { Enlace as Link } from "@/components/ui/enlace";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/cn";
-import { MENU } from "@/lib/navegacion";
+import { menu } from "@/lib/navegacion";
 import { IDIOMAS, rutaEn } from "@/lib/idioma";
 import { useIdioma } from "@/lib/idioma-cliente";
 import { IconoMenu } from "@/components/ui/iconos";
@@ -32,6 +32,7 @@ export function Header() {
   const [abierto, setAbierto] = useState(false);
   const [desplazado, setDesplazado] = useState(false);
   const idioma = useIdioma();
+  const MENU = menu(idioma);
   /* La misma pantalla en el otro idioma: se le saca el prefijo y se le pone
      el que corresponde. */
   const sinIdioma = pathname.replace(/^\/en(?=\/|$)/, "") || "/";

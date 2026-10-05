@@ -7,14 +7,19 @@
  *
  * Novedades no está en el menú principal: aparece solo en el pie, bajo
  * "Sobre FACTTIC", tal como en el diseño.
+ *
+ * Las etiquetas están en los dos idiomas y las rutas no: son las mismas, y el
+ * prefijo `/en` lo pone `Enlace` al dibujar cada vínculo.
  */
+
+import type { Idioma } from "@/lib/idioma";
 
 export interface Enlace {
   etiqueta: string;
   href: string;
 }
 
-export const MENU: Enlace[] = [
+const MENU_ES: Enlace[] = [
   { etiqueta: "Nuestros servicios", href: "/nuestros-servicios" },
   { etiqueta: "Sumá tu coop", href: "/suma-tu-coop" },
   { etiqueta: "Proyectos", href: "/proyectos" },
@@ -29,7 +34,7 @@ export interface ColumnaPie {
   enlaces: Enlace[];
 }
 
-export const COLUMNAS_PIE: ColumnaPie[] = [
+const COLUMNAS_PIE_ES: ColumnaPie[] = [
   {
     titulo: "Nuestros servicios",
     href: "/nuestros-servicios",
@@ -82,3 +87,66 @@ export const REDES: Enlace[] = [
   { etiqueta: "Instagram", href: "https://www.instagram.com/facttic" },
   { etiqueta: "YouTube", href: "https://www.youtube.com/@facttic" },
 ];
+
+const MENU_EN: Enlace[] = [
+  { etiqueta: "Our services", href: "/nuestros-servicios" },
+  { etiqueta: "Join with your co-op", href: "/suma-tu-coop" },
+  { etiqueta: "Projects", href: "/proyectos" },
+  { etiqueta: "Our Network", href: "/nuestra-red" },
+  { etiqueta: "About Facttic", href: "/sobre-facttic" },
+  { etiqueta: "Contact", href: "/contacto" },
+];
+
+const COLUMNAS_PIE_EN: ColumnaPie[] = [
+  {
+    titulo: "Our services",
+    href: "/nuestros-servicios",
+    enlaces: [
+      { etiqueta: "Solutions", href: "/nuestros-servicios#soluciones" },
+      { etiqueta: "Sectors", href: "/nuestros-servicios#verticales" },
+      { etiqueta: "How we work", href: "/nuestros-servicios#metodologias" },
+      { etiqueta: "Why FACTTIC", href: "/nuestros-servicios#por-que" },
+    ],
+  },
+  {
+    titulo: "Join with your co-op",
+    href: "/suma-tu-coop",
+    enlaces: [
+      { etiqueta: "What FACTTIC is", href: "/suma-tu-coop#que-es" },
+      { etiqueta: "Opportunities", href: "/suma-tu-coop#oportunidades" },
+      { etiqueta: "Commitments and rights", href: "/suma-tu-coop#compromisos" },
+      { etiqueta: "The cooperative path", href: "/suma-tu-coop#camino" },
+    ],
+  },
+  {
+    titulo: "Projects",
+    href: "/proyectos",
+    enlaces: [
+      { etiqueta: "Featured projects", href: "/proyectos" },
+      { etiqueta: "Work with FACTTIC", href: "/contacto" },
+    ],
+  },
+  {
+    titulo: "Our network",
+    href: "/nuestra-red",
+    enlaces: [{ etiqueta: "Federal map", href: "/nuestra-red#mapa" }],
+  },
+  {
+    titulo: "About Facttic",
+    href: "/sobre-facttic",
+    enlaces: [
+      { etiqueta: "What FACTTIC is", href: "/sobre-facttic#que-es" },
+      { etiqueta: "Cooperative model", href: "/sobre-facttic#modelo" },
+      { etiqueta: "Authorities", href: "/sobre-facttic#autoridades" },
+      { etiqueta: "News", href: "/novedades" },
+    ],
+  },
+];
+
+export function menu(idioma: Idioma): Enlace[] {
+  return idioma === "en" ? MENU_EN : MENU_ES;
+}
+
+export function columnasPie(idioma: Idioma): ColumnaPie[] {
+  return idioma === "en" ? COLUMNAS_PIE_EN : COLUMNAS_PIE_ES;
+}
