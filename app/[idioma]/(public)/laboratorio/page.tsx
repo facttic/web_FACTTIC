@@ -101,7 +101,7 @@ export default async function LaboratorioPage() {
           {sectores.map((sector, i) => (
             <Resplandor
               key={sector.id}
-              color={COLOR_ACENTO[acentoDeSector(sector.nombre)]}
+              color={COLOR_ACENTO[acentoDeSector(sector.slug)]}
               className="rounded-lg"
             >
               <CardSector sector={sector} indice={i} conCaja />

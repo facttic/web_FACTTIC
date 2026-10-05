@@ -50,6 +50,20 @@ export async function guardarServicio(
      pero el formulario los arma como dos listas paralelas y hay que resolver
      cómo emparejarlas con su traducción. */
   const enIngles = traducciones(datos, ["nombre", "descripcion"]);
+  /* Los subservicios en inglés vuelven como vinieron: el formulario no los
+     edita y sin esto se perderían en el primer guardado. */
+  const subserviciosEn = texto(datos, "en.subservicios");
+  const traduccion =
+    enIngles || subserviciosEn
+      ? {
+          en: {
+            ...(enIngles?.en ?? {}),
+            ...(subserviciosEn
+              ? { subservicios: JSON.parse(subserviciosEn) }
+              : {}),
+          },
+        }
+      : undefined;
 
   // Servicios no tiene archivos, así que siempre va como JSON.
   return guardarEn(SERVICIOS, id, {
@@ -58,7 +72,7 @@ export async function guardarServicio(
     ...(orden !== undefined ? { orden } : {}),
     esDestacado: datos.get("esDestacado") === "on",
     subservicios: leerSubservicios(datos),
-    ...(enIngles ? { traducciones: enIngles } : {}),
+    ...(traduccion ? { traducciones: traduccion } : {}),
   });
 }
 

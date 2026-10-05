@@ -31,6 +31,15 @@ export function FormularioServicio({
 }) {
   return (
     <FormularioAdmin accion={accion} volverA="/admin/servicios">
+      {/* Las traducciones de los subservicios no se editan acá, pero viajan
+          para no perderse al guardar. */}
+      {servicio?.en.subservicios.length ? (
+        <input
+          type="hidden"
+          name="en.subservicios"
+          defaultValue={JSON.stringify(servicio.en.subservicios)}
+        />
+      ) : null}
       <Columnas>
         <Columna>
           <CampoTraducible

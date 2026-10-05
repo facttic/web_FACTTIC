@@ -23,7 +23,7 @@ import type { Sector } from "@/lib/dominio/tipos";
  * imagen que tenga cargada la API, y por último a un marcador.
  */
 function Ilustracion({ sector }: { sector: Sector }) {
-  const animacion = animacionDeSector(sector.nombre);
+  const animacion = animacionDeSector(sector.slug);
 
   // En el board la ilustración mide 235px y va centrada, no a todo el ancho.
   const medida = "size-[157px] md:size-[235px]";

@@ -60,20 +60,33 @@ export function slugify(valor: string): string {
 /**
  * Resuelve una relación que puede venir como ObjectId o como objeto. Cuando
  * llega solo el id no hay nombre que mostrar, así que se descarta.
+ *
+ * La API devuelve la relación entera, traducciones incluidas, así que el chip
+ * de sector y la lista de servicios de un proyecto también se leen en inglés.
+ * Lo que no tiene traducción —clientes, cooperativas— cae al español, que es su
+ * nombre propio.
  */
+type RefConNombre = Ref<{
+  _id: string;
+  nombre?: string;
+  traducciones?: Api.Traducciones<{ nombre: string }>;
+}>;
+
 function aReferencia(
-  ref: Ref<{ _id: string; nombre?: string }> | undefined | null,
+  ref: RefConNombre | undefined | null,
+  idioma: Idioma = IDIOMA_POR_DEFECTO,
 ): Dominio.Referencia | null {
   if (!isPopulated(ref)) return null;
-  const nombre = texto(ref.nombre);
+  const nombre = enIdioma(traducciones(ref, idioma).nombre, ref.nombre);
   return nombre ? { id: ref._id, nombre } : null;
 }
 
 function aReferencias(
-  refs: Ref<{ _id: string; nombre?: string }>[] | undefined,
+  refs: RefConNombre[] | undefined,
+  idioma: Idioma = IDIOMA_POR_DEFECTO,
 ): Dominio.Referencia[] {
   return (refs ?? [])
-    .map(aReferencia)
+    .map((ref) => aReferencia(ref, idioma))
     .filter((r): r is Dominio.Referencia => r !== null);
 }
 
@@ -202,9 +215,9 @@ export function aProyecto(
     id: api._id,
     slug: slugDeProyecto(api),
     nombre: enIdioma(t.nombre, api.nombre) ?? "Sin nombre",
-    cliente: aReferencia(api.cliente),
-    sector: aReferencia(api.sector),
-    servicios: aReferencias(api.servicios),
+    cliente: aReferencia(api.cliente, idioma),
+    sector: aReferencia(api.sector, idioma),
+    servicios: aReferencias(api.servicios, idioma),
     tecnologias: (api.tecnologias ?? [])
       .filter(isPopulated)
       .map((t) => aTecnologia(t as Api.Tecnologia)),

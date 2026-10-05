@@ -164,9 +164,17 @@ export interface Servicio {
   /** Del catálogo de la Federación: es lo único que sale en el sitio. */
   destacado: boolean;
   subservicios: Array<{ nombre: string; descripcion: string }>;
-  /* Los subservicios no se traducen desde el panel todavía: la API los acepta,
-     pero el formulario los arma como lista y hay que resolver esa pareja. */
-  en: { nombre: string; descripcion: string };
+  /*
+   * Los subservicios no se editan en inglés desde el panel —el formulario los
+   * arma como dos listas paralelas y hay que resolver cómo emparejarlas—, pero
+   * sí viajan de ida y vuelta: si no, guardar un servicio borraría la
+   * traducción que ya tuvieran cargada.
+   */
+  en: {
+    nombre: string;
+    descripcion: string;
+    subservicios: Array<{ nombre?: string; descripcion?: string }>;
+  };
 }
 
 function aServicio(api: Api.Servicio): Servicio {
@@ -180,7 +188,10 @@ function aServicio(api: Api.Servicio): Servicio {
       nombre: texto(sub.nombre),
       descripcion: texto(sub.descripcion),
     })),
-    en: enIngles(api.traducciones, ["nombre", "descripcion"]),
+    en: {
+      ...enIngles(api.traducciones, ["nombre", "descripcion"]),
+      subservicios: api.traducciones?.en?.subservicios ?? [],
+    },
   };
 }
 

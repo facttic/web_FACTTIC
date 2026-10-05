@@ -101,7 +101,7 @@ export default async function VerticalPage({
     .filter(({ vertical }) => vertical.id !== sector.id);
 
   const motivos = T.propuesta.items[vertical] ?? [];
-  const acento = acentoDeSector(sector.nombre);
+  const acento = acentoDeSector(sector.slug);
   const descripcion = T.descripciones[vertical] ?? sector.descripcion;
 
   return (

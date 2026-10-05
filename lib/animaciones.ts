@@ -69,8 +69,14 @@ const ACENTO_POR_SECTOR: Record<string, Acento> = {
   agro: "celeste",
 };
 
-export function acentoDeSector(nombre: string): Acento {
-  return ACENTO_POR_SECTOR[nombre.trim().toLowerCase()] ?? "lila";
+/**
+ * El color y la animación se buscan por una clave estable y no por el nombre
+ * que se muestra: con el sitio en inglés el nombre cambia —"Agriculture"— y el
+ * sector se quedaba sin su color y sin su ilustración. El slug sirve: lo
+ * genera el nombre en español y es el mismo en los dos idiomas.
+ */
+export function acentoDeSector(clave: string): Acento {
+  return ACENTO_POR_SECTOR[clave.trim().toLowerCase()] ?? "lila";
 }
 
 /** Animación de cada sector, por nombre. */
@@ -81,8 +87,8 @@ const POR_SECTOR: Record<string, string> = {
   agro: "sector-agro",
 };
 
-export function animacionDeSector(nombre: string): string | null {
-  return POR_SECTOR[nombre.trim().toLowerCase()] ?? null;
+export function animacionDeSector(clave: string): string | null {
+  return POR_SECTOR[clave.trim().toLowerCase()] ?? null;
 }
 
 /**

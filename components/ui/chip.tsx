@@ -22,12 +22,20 @@ const TONOS: Record<Tono, string> = {
   neutro: "bg-superficie-alta/70 text-blanco",
 };
 
-/** Mapa de sector a tono, según los colores que usa el diseño. */
+/**
+ * Mapa de sector a tono, según los colores que usa el diseño.
+ *
+ * Entran los nombres en los dos idiomas: el chip recibe el nombre ya
+ * traducido, y sin las dos formas el sector perdía su color en inglés.
+ */
 const TONO_POR_SECTOR: Record<string, Tono> = {
   finanzas: "rojo",
   financiero: "rojo",
+  financial: "rojo",
   organizaciones: "amarillo",
+  organizations: "amarillo",
   agro: "celeste",
+  agriculture: "celeste",
 };
 
 export function tonoDeSector(nombre: string | undefined): Tono {
