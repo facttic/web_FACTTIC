@@ -722,9 +722,10 @@ export const SOBRE_FACTTIC = {
  */
 export const NOVEDADES = {
   hero: {
-    titulo: "Nuestro\ntrabajo",
+    // El corte de renglón es el del resto de los heros: dos líneas.
+    titulo: "Lo que pasa\nnos importa",
     bajada:
-      "Ya sea que tenés un proyecto, querés sumarte a la red o simplemente querés saber más, estamos acá.",
+      "Conocé nuestros posicionamientos ante la coyuntura y las novedades de Federación.",
   },
   solapas: {
     todos: "Todos",
