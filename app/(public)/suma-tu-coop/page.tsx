@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { EncabezadoSeccion, Seccion, BandaCta } from "@/components/ui/seccion";
 import { BotonLink } from "@/components/ui/boton";
-import { Carrusel } from "@/components/ui/carrusel";
 import { CarruselConFlechas } from "@/components/ui/carrusel-con-flechas";
 import { BloqueDesplegable } from "@/components/secciones/desplegables";
 import { CardRequisito } from "@/components/tarjetas/servicios";
@@ -108,10 +107,12 @@ export default function SumaTuCoopPage() {
           tamanoTitulo="h2"
         />
         {/* Al pasar el mouse pierden el relleno gris y quedan con el borde
-            blanco: son las dos variantes del componente en el board. En desktop
-            van de a tres —son seis, y en filas de cuatro la segunda queda
-            coja—; en mobile se desplazan de costado. */}
-        <Carrusel grilla="md:grid-cols-3" gap="gap-5">
+            blanco: son las dos variantes del componente en el board.
+
+            Van en carrusel en los dos anchos, con flechas: son seis, y en
+            grilla de tres quedaban en dos filas. En desktop entran tres a la
+            vista y las otras se pasan. */}
+        <CarruselConFlechas grilla="" gap="gap-5" desdeAncho="nunca" automatico>
           {T.compromisos.items.map((titulo, i) => (
             <CardRequisito
               key={`${titulo}-${i}`}
@@ -119,10 +120,12 @@ export default function SumaTuCoopPage() {
               /* Alto mínimo y no fijo: el compromiso más largo necesita una
                  línea más en mobile, y así crece la fila entera pareja en vez
                  de recortarlo. */
-              className="min-h-[135px] w-[287px] shrink-0 snap-start md:w-auto"
+              /* Tres a la vista en desktop: 394 es lo que queda de los 1223
+                 del contenedor repartidos en tres con 20 de aire. */
+              className="min-h-[135px] w-[287px] shrink-0 snap-start md:w-[394px]"
             />
           ))}
-        </Carrusel>
+        </CarruselConFlechas>
       </Seccion>
 
       <Seccion>

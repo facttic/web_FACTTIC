@@ -24,8 +24,12 @@ export interface PropsCarrusel {
   /** Clases de grilla para desktop, por ejemplo `grid-cols-3`. */
   grilla: string;
   gap?: string;
-  /** A partir de qué ancho deja de desplazarse y pasa a grilla. */
-  desdeAncho?: "sm" | "md";
+  /**
+   * A partir de qué ancho deja de desplazarse y pasa a grilla. Con `nunca` se
+   * queda en carrusel también en desktop, que es lo que pide Obligaciones: son
+   * seis tarjetas y en grilla de tres quedaban en dos filas.
+   */
+  desdeAncho?: "sm" | "md" | "nunca";
   className?: string;
 }
 
@@ -40,9 +44,11 @@ export function clasesCarrusel({
   className,
 }: Omit<PropsCarrusel, "children">) {
   const enGrilla =
-    desdeAncho === "sm"
-      ? "sm:mx-0 sm:grid sm:overflow-visible sm:px-0"
-      : "md:mx-0 md:grid md:overflow-visible md:px-0";
+    desdeAncho === "nunca"
+      ? ""
+      : desdeAncho === "sm"
+        ? "sm:mx-0 sm:grid sm:overflow-visible sm:px-0"
+        : "md:mx-0 md:grid md:overflow-visible md:px-0";
 
   return cn(
     "scroll-limpio -mx-6 flex snap-x snap-mandatory scroll-pl-6 overflow-x-auto px-6",
