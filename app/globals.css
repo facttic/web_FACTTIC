@@ -234,6 +234,37 @@
 }
 
 /**
+ * Reflejo de vidrio que cruza una tarjeta.
+ *
+ * Reemplaza al punto de luz que recorría el borde de las bandas de conversión:
+ * en vez de un elemento dando vueltas, una banda clara inclinada cruza la
+ * tarjeta y vuelve a pasar cada tanto, como el reflejo que corre sobre un
+ * vidrio cuando uno se mueve delante.
+ *
+ * El tramo de 55% a 100% es la espera: el reflejo ya salió por el otro lado y
+ * la tarjeta queda quieta hasta la pasada siguiente. Sin esa pausa el brillo
+ * va y viene sin parar y pide la atención que tendría que llevarse el botón.
+ */
+@keyframes reflejo {
+  from {
+    transform: translateX(-150%) rotate(18deg);
+  }
+  55%,
+  to {
+    transform: translateX(420%) rotate(18deg);
+  }
+}
+
+@utility reflejo-de-vidrio {
+  animation: reflejo 7s ease-in-out infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/**
  * Detiene una marquesina mientras el puntero está encima o algo de adentro
  * tiene el foco. Las autoridades llevan nombres que hay que poder leer, y con
  * teclado hace falta que la tarjeta enfocada no se siga moviendo.
@@ -512,7 +543,9 @@
 
 .pasos-con-foco > li .numero,
 .pasos-con-foco > li .linea {
-  transition: color 0.3s ease-out, border-color 0.3s ease-out;
+  transition:
+    color 0.3s ease-out,
+    border-color 0.3s ease-out;
 }
 
 /* Los otros dos bajan a segundo plano. */

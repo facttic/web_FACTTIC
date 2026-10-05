@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
-import { HazDeBorde } from "./haz";
 
 /**
  * Piezas de estructura que se repiten en todas las pantallas: el rótulo con el
@@ -287,19 +286,20 @@ export function BandaCta({
         variante === "punteada" && "border-dashed border-borde-pleno",
         // 113px de alto en el SVG: el botón mide 53 y quedan 30 arriba y abajo.
         "md:flex-row md:items-center md:justify-between md:gap-6 md:px-10 md:py-7.5 md:text-left",
-        // Contiene el haz que recorre el borde. Sin `overflow-hidden`: el
-        // resplandor se derrama fuera del panel, que es donde se ve.
-        "relative isolate",
+        // Contiene el reflejo, que se recorta contra el radio de la tarjeta.
+        "relative isolate overflow-hidden",
         className,
       )}
     >
-      {/* Un punto de luz da vueltas por el borde punteado. Es lo único que se
+      {/* Un reflejo de vidrio cruza la tarjeta cada tanto. Es lo único que se
           mueve en la banda: el resto queda quieto, como en la maqueta.
 
-          Solo en desktop: en una banda de 347px el halo es casi tan ancho como
-          la tarjeta y se lee como una mancha, no como un punto recorriendo el
-          borde. El board mobile tampoco lo tiene. */}
-      <HazDeBorde duracion={9} className="hidden md:block" />
+          Va apenas insinuado —blanco al 10%, difuminado—: tiene que leerse
+          como un reflejo sobre el panel y no como una barra de luz. */}
+      <span
+        aria-hidden
+        className="reflejo-de-vidrio pointer-events-none absolute inset-y-[-60%] -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-blanco/18 to-transparent blur-lg"
+      />
       <p className={cn("text-h2 text-balance", claseTitulo)}>{titulo}</p>
       {/* A lo ancho de la tarjeta en mobile, como en el board; en desktop el
           botón va al lado del título y toma el ancho de su texto. */}
