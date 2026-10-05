@@ -4,6 +4,7 @@ import {
   CampoArchivo,
   CampoSelector,
   CampoTexto,
+  CampoTraducible,
   Columna,
   Columnas,
   FormularioAdmin,
@@ -29,9 +30,10 @@ export function FormularioNovedad({
     <FormularioAdmin accion={accion} volverA="/admin/novedades">
       <Columnas>
         <Columna>
-          <CampoTexto
+          <CampoTraducible
             id="titulo"
             name="titulo"
+            valorEn={novedad?.en.titulo}
             etiqueta="Título"
             defaultValue={novedad?.titulo}
             required
@@ -39,9 +41,10 @@ export function FormularioNovedad({
             maxLength={200}
             autoFocus
           />
-          <CampoTexto
+          <CampoTraducible
             id="bajada"
             name="bajada"
+            valorEn={novedad?.en.bajada}
             etiqueta="Bajada"
             ayuda="La línea que se lee en la tarjeta del listado."
             multilinea
@@ -86,9 +89,10 @@ export function FormularioNovedad({
 
         {/* El cuerpo es lo más largo de escribir: se lleva su propia columna. */}
         <Columna>
-          <CampoTexto
+          <CampoTraducible
             id="cuerpo"
             name="cuerpo"
+            valorEn={novedad?.en.cuerpo}
             etiqueta="Cuerpo"
             ayuda="El texto completo. Una línea en blanco separa párrafos."
             multilinea

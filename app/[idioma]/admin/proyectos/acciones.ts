@@ -6,7 +6,7 @@ import {
   guardarEn,
   type Destino,
 } from "@/lib/admin/acciones";
-import { archivos, lista, texto } from "@/lib/admin/campos";
+import { archivos, lista, texto, traducciones } from "@/lib/admin/campos";
 import { editar } from "@/lib/api/escritura";
 import type { EstadoForm } from "@/components/admin/piezas";
 
@@ -47,6 +47,12 @@ export async function guardarProyecto(
     return { error: "El nombre tiene que tener al menos 3 caracteres" };
   }
 
+  const enIngles = traducciones(datos, [
+    "nombre",
+    "desafio",
+    "solucion",
+    "resultado",
+  ]);
   const sector = texto(datos, "sector");
   const cliente = texto(datos, "cliente");
 
@@ -62,6 +68,9 @@ export async function guardarProyecto(
     solucion: texto(datos, "solucion"),
     resultado: texto(datos, "resultado"),
     esDestacado: datos.get("esDestacado") === "on",
+    /* Las traducciones van en el mismo cuerpo JSON: las imágenes viajan en un
+       PUT aparte y ahí no hace falta repetirlas. */
+    ...(enIngles ? { traducciones: enIngles } : {}),
   };
 
   /*

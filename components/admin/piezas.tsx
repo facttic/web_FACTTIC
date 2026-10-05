@@ -227,6 +227,58 @@ export function CampoTexto({
   );
 }
 
+/**
+ * Un campo y su traducción al inglés, uno debajo del otro.
+ *
+ * Se traduce mirando el original: por eso van juntos y no en una solapa
+ * aparte. El inglés nunca es obligatorio —si queda vacío, el sitio muestra el
+ * español— así que no hereda `required` ni el mínimo de caracteres.
+ *
+ * El nombre del campo en inglés lleva el prefijo `en.`, que es lo que lee
+ * `traducciones()` al armar el cuerpo que se manda a la API.
+ */
+export function CampoTraducible({
+  id,
+  etiqueta,
+  ayuda,
+  valorEn,
+  multilinea = false,
+  rows,
+  maxLength,
+  ...props
+}: {
+  id: string;
+  etiqueta: string;
+  ayuda?: string;
+  /** Lo que ya está cargado en inglés. */
+  valorEn?: string;
+  multilinea?: boolean;
+} & React.ComponentProps<"input"> &
+  React.ComponentProps<"textarea">) {
+  return (
+    <div className="space-y-2">
+      <CampoTexto
+        id={id}
+        etiqueta={etiqueta}
+        ayuda={ayuda}
+        multilinea={multilinea}
+        rows={rows}
+        maxLength={maxLength}
+        {...props}
+      />
+      <CampoTexto
+        id={`en-${id}`}
+        name={`en.${id}`}
+        etiqueta={`${etiqueta} · English`}
+        defaultValue={valorEn}
+        multilinea={multilinea}
+        rows={rows}
+        maxLength={maxLength}
+      />
+    </div>
+  );
+}
+
 export function CampoSelector({
   id,
   etiqueta,

@@ -1,7 +1,7 @@
 "use server";
 
 import { borrarDe, guardarEn, type Destino } from "@/lib/admin/acciones";
-import { archivo, numero, texto } from "@/lib/admin/campos";
+import { archivo, numero, texto, traducciones } from "@/lib/admin/campos";
 import type { EstadoForm } from "@/components/admin/piezas";
 
 const SECTORES: Destino = {
@@ -25,6 +25,7 @@ export async function guardarSector(
   const esDestacado = datos.get("esDestacado") === "on";
   const imagen = archivo(datos, "imageFile");
   const animacion = archivo(datos, "lottieFile");
+  const enIngles = traducciones(datos, ["nombre", "descripcion"]);
 
   /*
    * Con archivos va como multipart y sin archivos como JSON: un multipart sin
@@ -41,6 +42,8 @@ export async function guardarSector(
     form.set("esDestacado", String(esDestacado));
     if (imagen) form.set("imageFile", imagen);
     if (animacion) form.set("lottieFile", animacion);
+    // Por multipart los objetos no viajan: la API acepta el JSON serializado.
+    if (enIngles) form.set("traducciones", JSON.stringify(enIngles));
     cuerpo = form;
   } else {
     cuerpo = {
@@ -48,6 +51,7 @@ export async function guardarSector(
       descripcion,
       ...(orden !== undefined ? { orden } : {}),
       esDestacado,
+      ...(enIngles ? { traducciones: enIngles } : {}),
     };
   }
 

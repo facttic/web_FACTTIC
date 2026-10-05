@@ -7,6 +7,7 @@ import {
   CampoSelector,
   CampoSelectorConAlta,
   CampoTexto,
+  CampoTraducible,
   Columna,
   Columnas,
   FormularioAdmin,
@@ -55,9 +56,10 @@ export function FormularioProyecto({
 
       <Columnas>
         <Columna>
-          <CampoTexto
+          <CampoTraducible
             id="nombre"
             name="nombre"
+            valorEn={proyecto?.en.nombre}
             etiqueta="Nombre"
             ayuda={
               proyecto
@@ -109,9 +111,10 @@ export function FormularioProyecto({
         </Columna>
 
         <Columna>
-          <CampoTexto
+          <CampoTraducible
             id="desafio"
             name="desafio"
+            valorEn={proyecto?.en.desafio}
             etiqueta="Desafío"
             ayuda="Qué problema había."
             multilinea
@@ -119,9 +122,10 @@ export function FormularioProyecto({
             maxLength={2000}
             defaultValue={proyecto?.desafio}
           />
-          <CampoTexto
+          <CampoTraducible
             id="solucion"
             name="solucion"
+            valorEn={proyecto?.en.solucion}
             etiqueta="Solución"
             ayuda="Qué se hizo."
             multilinea
@@ -129,9 +133,10 @@ export function FormularioProyecto({
             maxLength={2000}
             defaultValue={proyecto?.solucion}
           />
-          <CampoTexto
+          <CampoTraducible
             id="resultado"
             name="resultado"
+            valorEn={proyecto?.en.resultado}
             etiqueta="Resultado"
             ayuda="Qué cambió después."
             multilinea

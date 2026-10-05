@@ -4,6 +4,7 @@ import {
   CampoArchivo,
   CampoCasilla,
   CampoTexto,
+  CampoTraducible,
   Columna,
   Columnas,
   FormularioAdmin,
@@ -29,17 +30,18 @@ export function FormularioSector({
     <FormularioAdmin accion={accion} volverA="/admin/sectores">
       <Columnas>
         <Columna>
-          <CampoTexto
+          <CampoTraducible
             id="nombre"
             name="nombre"
             etiqueta="Nombre"
             defaultValue={sector?.nombre}
+            valorEn={sector?.en.nombre}
             required
             minLength={3}
             maxLength={100}
             autoFocus
           />
-          <CampoTexto
+          <CampoTraducible
             id="descripcion"
             name="descripcion"
             etiqueta="Descripción"
@@ -48,6 +50,7 @@ export function FormularioSector({
             rows={5}
             maxLength={1000}
             defaultValue={sector?.descripcion}
+            valorEn={sector?.en.descripcion}
           />
           <CampoTexto
             id="orden"

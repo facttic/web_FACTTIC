@@ -1,7 +1,7 @@
 "use server";
 
 import { borrarDe, guardarEn, type Destino } from "@/lib/admin/acciones";
-import { archivo, texto } from "@/lib/admin/campos";
+import { archivo, texto, traducciones } from "@/lib/admin/campos";
 import type { EstadoForm } from "@/components/admin/piezas";
 
 const NOVEDADES: Destino = {
@@ -48,6 +48,7 @@ export async function guardarNovedad(
   if (!dia) return { error: "Poné la fecha de la novedad" };
 
   const campos = { tipo, titulo, bajada, cuerpo, fecha: aIso(dia) };
+  const enIngles = traducciones(datos, ["titulo", "bajada", "cuerpo"]);
   const portada = archivo(datos, "file");
 
   // Sin portada va como JSON: un multipart sin archivo borra la que ya estaba.
@@ -56,9 +57,11 @@ export async function guardarNovedad(
     const form = new FormData();
     for (const [campo, valor] of Object.entries(campos)) form.set(campo, valor);
     form.set("file", portada);
+    // Por multipart los objetos no viajan: la API acepta el JSON serializado.
+    if (enIngles) form.set("traducciones", JSON.stringify(enIngles));
     contenido = form;
   } else {
-    contenido = campos;
+    contenido = { ...campos, ...(enIngles ? { traducciones: enIngles } : {}) };
   }
 
   return guardarEn(NOVEDADES, id, contenido);

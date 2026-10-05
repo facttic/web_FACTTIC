@@ -7,6 +7,7 @@ import {
   BotonAdmin,
   CampoCasilla,
   CampoTexto,
+  CampoTraducible,
   Columna,
   Columnas,
   CONTROL,
@@ -32,9 +33,10 @@ export function FormularioServicio({
     <FormularioAdmin accion={accion} volverA="/admin/servicios">
       <Columnas>
         <Columna>
-          <CampoTexto
+          <CampoTraducible
             id="nombre"
             name="nombre"
+            valorEn={servicio?.en.nombre}
             etiqueta="Nombre"
             defaultValue={servicio?.nombre}
             required
@@ -42,9 +44,10 @@ export function FormularioServicio({
             maxLength={100}
             autoFocus
           />
-          <CampoTexto
+          <CampoTraducible
             id="descripcion"
             name="descripcion"
+            valorEn={servicio?.en.descripcion}
             etiqueta="Descripción"
             ayuda="El párrafo que acompaña al servicio en la solapa de Servicios."
             multilinea

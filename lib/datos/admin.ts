@@ -15,6 +15,10 @@ import type { Opcion } from "@/components/admin/piezas";
  * en la lista.
  *
  * Tampoco reusa el modelo de `lib/dominio`, y no es por descuido: los
+ * Las traducciones viajan tal cual, en `en`: el formulario las muestra al lado
+ * de cada campo en español y las devuelve igual.
+ *
+ * Tampoco reusa el modelo de `lib/dominio`, y no es por descuido: los
  * adaptadores del sitio descartan las relaciones que llegan sin popular,
  * porque a una vista no le sirve un id sin nombre. Al formulario le sirve
  * justamente eso —el id es lo que hay que dejar marcado y lo que se manda de
@@ -23,6 +27,17 @@ import type { Opcion } from "@/components/admin/piezas";
  */
 
 const TODOS = 200;
+
+/** Lo cargado en inglés, con los campos vacíos como cadena, que es lo que
+ *  esperan los `defaultValue` del formulario. */
+function enIngles<T extends string>(
+  traducciones: { en?: Partial<Record<T, unknown>> } | undefined,
+  campos: readonly T[],
+): Record<T, string> {
+  return Object.fromEntries(
+    campos.map((campo) => [campo, texto(traducciones?.en?.[campo] as string)]),
+  ) as Record<T, string>;
+}
 
 /** Trae una colección entera, en la forma cruda de la API. */
 async function traerTodos<T>(recurso: string): Promise<T[]> {
@@ -111,6 +126,7 @@ export interface Sector {
   destacado: boolean;
   imagen: string | null;
   animacion: string | null;
+  en: { nombre: string; descripcion: string };
 }
 
 function aSector(api: Api.Sector): Sector {
@@ -122,6 +138,7 @@ function aSector(api: Api.Sector): Sector {
     destacado: api.esDestacado === true,
     imagen: mediaUrl(api.imageFileName),
     animacion: mediaUrl(api.lottieFileName),
+    en: enIngles(api.traducciones, ["nombre", "descripcion"]),
   };
 }
 
@@ -147,6 +164,9 @@ export interface Servicio {
   /** Del catálogo de la Federación: es lo único que sale en el sitio. */
   destacado: boolean;
   subservicios: Array<{ nombre: string; descripcion: string }>;
+  /* Los subservicios no se traducen desde el panel todavía: la API los acepta,
+     pero el formulario los arma como lista y hay que resolver esa pareja. */
+  en: { nombre: string; descripcion: string };
 }
 
 function aServicio(api: Api.Servicio): Servicio {
@@ -160,6 +180,7 @@ function aServicio(api: Api.Servicio): Servicio {
       nombre: texto(sub.nombre),
       descripcion: texto(sub.descripcion),
     })),
+    en: enIngles(api.traducciones, ["nombre", "descripcion"]),
   };
 }
 
@@ -216,6 +237,7 @@ export interface Novedad {
   /** ISO completo, como lo guarda la API. */
   fecha: string;
   imagen: string | null;
+  en: { titulo: string; bajada: string; cuerpo: string };
 }
 
 function aNovedad(api: Api.Novedad): Novedad {
@@ -227,6 +249,7 @@ function aNovedad(api: Api.Novedad): Novedad {
     cuerpo: texto(api.cuerpo),
     fecha: texto(api.fecha) || texto(api.createdAt),
     imagen: mediaUrl(api.fileName),
+    en: enIngles(api.traducciones, ["titulo", "bajada", "cuerpo"]),
   };
 }
 
@@ -299,6 +322,7 @@ export interface Proyecto {
   destacado: boolean;
   /** URLs listas para mostrar. */
   imagenes: string[];
+  en: { nombre: string; desafio: string; solucion: string; resultado: string };
 }
 
 function aProyecto(api: Api.Proyecto): Proyecto {
@@ -317,6 +341,12 @@ function aProyecto(api: Api.Proyecto): Proyecto {
     imagenes: (api.imageFileNames ?? [])
       .map((nombre) => mediaUrl(nombre))
       .filter((url): url is string => url !== null),
+    en: enIngles(api.traducciones, [
+      "nombre",
+      "desafio",
+      "solucion",
+      "resultado",
+    ]),
   };
 }
 

@@ -1,7 +1,7 @@
 "use server";
 
 import { borrarDe, guardarEn, type Destino } from "@/lib/admin/acciones";
-import { numero, texto } from "@/lib/admin/campos";
+import { numero, texto, traducciones } from "@/lib/admin/campos";
 import type { EstadoForm } from "@/components/admin/piezas";
 
 const SERVICIOS: Destino = {
@@ -46,6 +46,10 @@ export async function guardarServicio(
   }
 
   const orden = numero(datos, "orden");
+  /* Los subservicios no se traducen todavía desde el panel: la API los acepta,
+     pero el formulario los arma como dos listas paralelas y hay que resolver
+     cómo emparejarlas con su traducción. */
+  const enIngles = traducciones(datos, ["nombre", "descripcion"]);
 
   // Servicios no tiene archivos, así que siempre va como JSON.
   return guardarEn(SERVICIOS, id, {
@@ -54,6 +58,7 @@ export async function guardarServicio(
     ...(orden !== undefined ? { orden } : {}),
     esDestacado: datos.get("esDestacado") === "on",
     subservicios: leerSubservicios(datos),
+    ...(enIngles ? { traducciones: enIngles } : {}),
   });
 }
 

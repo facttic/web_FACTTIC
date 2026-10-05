@@ -52,3 +52,26 @@ export function archivos(datos: FormData, campo: string): File[] {
     .getAll(campo)
     .filter((valor): valor is File => valor instanceof File && valor.size > 0);
 }
+
+/**
+ * Las traducciones que viajan en el formulario, listas para la API.
+ *
+ * Los campos en inglés van con el prefijo `en.` —los dibuja `CampoTraducible`—
+ * y lo que quedó vacío no se manda: un texto vacío en la API taparía al
+ * español, que es justamente la reserva que hace el sitio cuando falta la
+ * traducción.
+ *
+ * Sin nada traducido devuelve `undefined`, así la entidad no guarda un
+ * subdocumento vacío.
+ */
+export function traducciones(
+  datos: FormData,
+  campos: readonly string[],
+): { en: Record<string, string> } | undefined {
+  const en: Record<string, string> = {};
+  for (const campo of campos) {
+    const valor = texto(datos, `en.${campo}`);
+    if (valor) en[campo] = valor;
+  }
+  return Object.keys(en).length ? { en } : undefined;
+}
