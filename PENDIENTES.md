@@ -132,6 +132,13 @@ llegue.
       edita desde el backoffice, y la ficha de cooperativa muestra todo lo que
       tenga asignado, destacado o no.
 
+- [ ] **38. `sinSector` en `GET /api/proyectos`.** Lo pide la opción "Otros"
+      del filtro de sectores de Proyectos, que lista los proyectos sin sector.
+      Está hecho en el MR !1 del backend (rama `proyectos-sin-sector`, contra
+      `dev`). **El front no se puede publicar antes de que eso llegue a
+      producción:** la API actual ignora el parámetro y "Otros" muestra todos
+      los proyectos.
+
 - [ ] **19. Borrar las imágenes de sector cargadas en el backoffice.** Son fotos
       de stock ajenas a la identidad (una de "RISK", otra de un diagrama de red
       genérico). Ahora quedan tapadas por las animaciones de diseño, pero

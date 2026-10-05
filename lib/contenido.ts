@@ -398,6 +398,7 @@ export const PROYECTOS_PAGINA = {
   },
   filtros: {
     sector: "Sectores",
+    sectorOtros: "Otros",
     servicio: "Servicios",
     tecnologia: "Tecnologías",
     cooperativa: "Por cooperativa",

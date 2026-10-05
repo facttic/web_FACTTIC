@@ -163,6 +163,8 @@ export interface ProyectoFilters {
   order?: "ASC" | "DESC";
   nombre?: string;
   sector?: string;
+  /** Solo los proyectos sin sector asignado. */
+  sinSector?: boolean;
   cooperativa?: string;
   cliente?: string;
   servicio?: string;

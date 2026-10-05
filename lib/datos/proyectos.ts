@@ -17,13 +17,22 @@ import { TTL, cached } from "./cache";
 
 const POR_PAGINA = 12;
 
+/**
+ * Valor del filtro de sector para los proyectos que no tienen ninguno: la
+ * opción "Otros" de la grilla, junto a los sectores del catálogo. La API lo
+ * recibe como `sinSector=true`.
+ */
+export const SECTOR_OTROS = "otros";
+
 /** Traduce los filtros del sitio a los query params de la API. */
 function aQueryParams(filtros: Dominio.FiltrosProyectos) {
+  const sinSector = filtros.sector === SECTOR_OTROS;
   return {
     page: filtros.pagina,
     limit: filtros.porPagina ?? POR_PAGINA,
     nombre: filtros.busqueda,
-    sector: filtros.sector,
+    sector: sinSector ? undefined : filtros.sector,
+    sinSector: sinSector || undefined,
     servicio: filtros.servicio,
     tecnologia: filtros.tecnologia,
     cooperativa: filtros.cooperativa,

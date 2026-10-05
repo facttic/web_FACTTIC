@@ -12,7 +12,7 @@ import {
   getServicios,
   getTecnologias,
 } from "@/lib/datos/catalogos";
-import { getProyectos } from "@/lib/datos/proyectos";
+import { SECTOR_OTROS, getProyectos } from "@/lib/datos/proyectos";
 import { cn } from "@/lib/cn";
 
 export const metadata: Metadata = {
@@ -76,7 +76,10 @@ export default async function ProyectosPage({
 
         <Suspense>
           <FiltrosProyectos
-            sectores={sectores}
+            sectores={[
+              ...sectores,
+              { id: SECTOR_OTROS, nombre: T.filtros.sectorOtros },
+            ]}
             servicios={servicios}
             tecnologias={tecnologias}
             cooperativas={cooperativas}
