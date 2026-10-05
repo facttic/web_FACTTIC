@@ -160,6 +160,7 @@ export default async function SobreFactticPage() {
           relieve={0.15}
           ancho={0.09}
           duracion={9}
+          intensidad={0.25}
           className="h-56 w-full rounded-xl md:h-[355px]"
         />
       </div>

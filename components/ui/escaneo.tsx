@@ -48,6 +48,7 @@ uniform float relieve;     // cuánto desvía la profundidad a la línea
 uniform vec3 tono;
 uniform vec2 encuadre;     // recorta igual que object-fit: cover
 uniform float apertura;    // 1: dos frentes que salen del centro; 0: uno que cruza
+uniform float intensidad;  // cuánto tiñe la banda: 1 es el efecto a pleno
 
 void main() {
   // Sin esto la textura se estira hasta llenar el canvas y la foto queda
@@ -81,8 +82,8 @@ void main() {
   // El frente de la línea marca más que la cola.
   float frente = 1.0 - smoothstep(0.0, ancho * 0.22, abs(distancia));
 
-  vec3 mezcla = mix(base, tono, brillo * 0.75);
-  mezcla += tono * frente * 0.35;
+  vec3 mezcla = mix(base, tono, brillo * 0.75 * intensidad);
+  mezcla += tono * frente * 0.35 * intensidad;
 
   color = vec4(mezcla, 1.0);
 }`;
@@ -113,6 +114,11 @@ export function Escaneo({
   /** Dos frentes que salen del centro y se abren, en vez de uno que cruza. */
   desdeElCentro = true,
   /**
+   * Cuánto tiñe la banda, de 0 a 1. En 1 el barrido pinta a pleno; por debajo
+   * se insinúa sobre la foto, que es como va en Sobre Facttic.
+   */
+  intensidad = 1,
+  /**
    * `cover` llena la caja recortando lo que sobra —con una panorámica se come
    * los costados—; `contain` muestra la foto entera y deja aire.
    */
@@ -126,6 +132,7 @@ export function Escaneo({
   ancho?: number;
   relieve?: number;
   desdeElCentro?: boolean;
+  intensidad?: number;
   ajuste?: "cover" | "contain";
   tono?: [number, number, number];
 }) {
@@ -175,12 +182,14 @@ export function Escaneo({
       imagen: gl.getUniformLocation(programa, "imagen"),
       encuadre: gl.getUniformLocation(programa, "encuadre"),
       apertura: gl.getUniformLocation(programa, "apertura"),
+      intensidad: gl.getUniformLocation(programa, "intensidad"),
     };
     gl.uniform1f(u.ancho, ancho);
     gl.uniform1f(u.relieve, relieve);
     gl.uniform3fv(u.tono, tono);
     gl.uniform1i(u.imagen, 0);
     gl.uniform1f(u.apertura, desdeElCentro ? 1 : 0);
+    gl.uniform1f(u.intensidad, intensidad);
 
     const textura = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, textura);
@@ -293,7 +302,7 @@ export function Escaneo({
       gl.deleteTexture(textura);
       gl.deleteBuffer(buffer);
     };
-  }, [src, duracion, ancho, relieve, desdeElCentro, ajuste, tono]);
+  }, [src, duracion, ancho, relieve, desdeElCentro, intensidad, ajuste, tono]);
 
   return (
     <div className={cn("relative overflow-hidden", className)}>
