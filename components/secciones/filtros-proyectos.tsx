@@ -4,7 +4,8 @@ import { useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { Boton, FOCO } from "@/components/ui/boton";
-import { PROYECTOS_PAGINA as T } from "@/lib/contenido";
+import { contenido } from "@/lib/contenido";
+import { useIdioma } from "@/lib/idioma-cliente";
 import type { Referencia } from "@/lib/dominio/tipos";
 
 /**
@@ -31,6 +32,7 @@ export function FiltrosProyectos({
   cooperativas: Referencia[];
   className?: string;
 }) {
+  const T = contenido(useIdioma()).PROYECTOS_PAGINA;
   const router = useRouter();
   const params = useSearchParams();
   const formulario = useRef<HTMLFormElement>(null);

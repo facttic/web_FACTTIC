@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Enlace as Link } from "@/components/ui/enlace";
 import { cn } from "@/lib/cn";
 import { FOCO } from "@/components/ui/boton";
 import type { Referencia } from "@/lib/dominio/tipos";

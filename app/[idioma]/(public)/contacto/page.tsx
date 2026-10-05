@@ -1,0 +1,78 @@
+import type { Metadata } from "next";
+import { Seccion } from "@/components/ui/seccion";
+import { Animacion } from "@/components/ui/animacion";
+import { FormularioContacto } from "@/components/secciones/formulario-contacto";
+import { FONDOS } from "@/lib/animaciones";
+import { contenido } from "@/lib/contenido";
+import type { Idioma } from "@/lib/idioma";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ idioma: Idioma }>;
+}): Promise<Metadata> {
+  const T = contenido((await params).idioma).CONTACTO;
+  return {
+    title: T.hero.titulo,
+    description: T.hero.bajada,
+  };
+}
+
+/**
+ * Contacto.
+ *
+ * La esfera con el resplandor naranja es la animación que entregó diseño, con
+ * el acercamiento que piden sus tres anotaciones ("Animación: Zoom in en la
+ * img"). Va detrás de la tarjeta y asomando por la derecha, como en la
+ * maqueta —por eso la sección recorta: la esfera se sale a propósito—.
+ *
+ * El título se centra en desktop y se alinea a la izquierda en mobile, que es
+ * lo que hace cada maqueta.
+ */
+export default async function ContactoPage({
+  params,
+}: {
+  params: Promise<{ idioma: Idioma }>;
+}) {
+  const T = contenido((await params).idioma).CONTACTO;
+
+  return (
+    <section className="relative isolate overflow-hidden">
+      {/*
+        El envoltorio lleva la clase del contenedor para que la esfera se ate
+        al borde derecho del contenido y no al de la ventana, que en pantallas
+        anchas la deja lejos de la tarjeta.
+      */}
+      <div className="contenedor pointer-events-none absolute inset-x-0 top-0 -z-10">
+        {/*
+          `will-change: transform` porque la esfera ya se anima con `transform`,
+          así que le corresponde igual que al halo de la grilla. De paso es la
+          única palanca de costo cero contra el corte que Firefox le hace al
+          vidrio de la tarjeta —ver PENDIENTES—: con el fondo en su propia capa,
+          el `backdrop-filter` lo toma ya rasterizado. No está confirmado que
+          alcance; el defecto no se reproduce a pedido.
+        */}
+        <Animacion
+          nombre={FONDOS.contacto}
+          className="absolute top-0 -right-44 aspect-square w-[560px] animate-acercar will-change-transform md:-right-16 md:top-24 md:w-[620px]"
+        />
+      </div>
+
+      <Seccion className="pt-24 md:pt-32">
+        <h1 className="text-h1 whitespace-pre-line md:text-center">
+          {T.hero.titulo}
+        </h1>
+        {/* La bajada cambia de tipografía entre maquetas: Inter en mobile,
+            DM Mono en desktop. */}
+        <p className="text-p1 mt-6 max-w-2xl text-blanco/80 md:mx-auto md:text-center">
+          {T.hero.bajada}
+        </p>
+
+        {/* La tarjeta de vidrio con el formulario, centrada bajo el título. */}
+        <div className="borde-degradado textura-ruido relative mt-12 rounded-2xl bg-superficie/60 p-6 py-10 backdrop-blur-xl md:mx-auto md:mt-16 md:w-[640px] md:p-12">
+          <FormularioContacto />
+        </div>
+      </Seccion>
+    </section>
+  );
+}

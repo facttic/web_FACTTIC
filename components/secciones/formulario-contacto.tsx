@@ -4,7 +4,8 @@ import { useId, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { Boton, FOCO } from "@/components/ui/boton";
 import { Aviso } from "@/components/ui/aviso";
-import { CONTACTO as T } from "@/lib/contenido";
+import { contenido } from "@/lib/contenido";
+import { useIdioma } from "@/lib/idioma-cliente";
 
 /**
  * Formulario de contacto.
@@ -25,6 +26,7 @@ import { CONTACTO as T } from "@/lib/contenido";
 type Estado = "editando" | "enviando" | "enviado" | "falló";
 
 export function FormularioContacto({ className }: { className?: string }) {
+  const T = contenido(useIdioma()).CONTACTO;
   const idBase = useId();
   const [estado, setEstado] = useState<Estado>("editando");
   const [errores, setErrores] = useState<Record<string, string>>({});

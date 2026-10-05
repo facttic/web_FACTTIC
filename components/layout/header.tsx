@@ -1,10 +1,12 @@
 "use client";
 
-import Link from "next/link";
+import { Enlace as Link } from "@/components/ui/enlace";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/cn";
 import { MENU } from "@/lib/navegacion";
+import { IDIOMAS, rutaEn } from "@/lib/idioma";
+import { useIdioma } from "@/lib/idioma-cliente";
 import { IconoMenu } from "@/components/ui/iconos";
 import { BotonIdioma, FOCO } from "@/components/ui/boton";
 import { Logo } from "./logo";
@@ -21,14 +23,18 @@ import { Logo } from "./logo";
  * de la barra, así que ahí el menú se lee en negro hasta que se desplaza. Es
  * lo que pide la anotación "cambié la diagramación del header" del archivo.
  *
- * El selector EN/ES sí está en el diseño, así que se muestra, pero el botón de
- * inglés va deshabilitado: la v1 sale solo en español porque el contenido de la
- * API no tiene campos por idioma.
+ * El selector EN/ES cambia de idioma sin moverse de pantalla: cada botón es un
+ * enlace a la misma ruta en el otro idioma. Lo que todavía no esté traducido se
+ * muestra en español.
  */
 export function Header() {
   const pathname = usePathname();
   const [abierto, setAbierto] = useState(false);
   const [desplazado, setDesplazado] = useState(false);
+  const idioma = useIdioma();
+  /* La misma pantalla en el otro idioma: se le saca el prefijo y se le pone
+     el que corresponde. */
+  const sinIdioma = pathname.replace(/^\/en(?=\/|$)/, "") || "/";
 
   // Cierra el menú al navegar, para que no quede tapando la página nueva.
   useEffect(() => {
@@ -123,14 +129,15 @@ export function Header() {
             </nav>
 
             <div className="flex items-center gap-1">
-              <BotonIdioma
-                idioma="en"
-                activo={false}
-                disabled
-                title="Próximamente"
-                sobreColor={sobreColor}
-              />
-              <BotonIdioma idioma="es" activo sobreColor={sobreColor} />
+              {IDIOMAS.map((cual) => (
+                <BotonIdioma
+                  key={cual}
+                  idioma={cual}
+                  activo={cual === idioma}
+                  href={rutaEn(cual, sinIdioma)}
+                  sobreColor={sobreColor}
+                />
+              ))}
             </div>
           </div>
 
@@ -191,13 +198,14 @@ export function Header() {
                 a la derecha. Va en el mismo estado que en desktop: el inglés
                 todavía no existe porque la API no tiene campos por idioma. */}
             <div className="mt-8 flex items-center justify-end gap-1">
-              <BotonIdioma
-                idioma="en"
-                activo={false}
-                disabled
-                title="Próximamente"
-              />
-              <BotonIdioma idioma="es" activo />
+              {IDIOMAS.map((cual) => (
+                <BotonIdioma
+                  key={cual}
+                  idioma={cual}
+                  activo={cual === idioma}
+                  href={rutaEn(cual, sinIdioma)}
+                />
+              ))}
             </div>
           </nav>
         </div>

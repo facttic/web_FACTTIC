@@ -1,4 +1,5 @@
-import Link from "next/link";
+import LinkCrudo from "next/link";
+import { Enlace as Link } from "@/components/ui/enlace";
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { IconoFlecha } from "./iconos";
@@ -117,6 +118,8 @@ export function BotonTexto({
 export function BotonIdioma({
   idioma,
   activo,
+  /** La misma pantalla en ese idioma. */
+  href,
   /** Sobre el bloque de color de las verticales se invierte, para que se lea. */
   sobreColor = false,
   className,
@@ -124,12 +127,20 @@ export function BotonIdioma({
 }: {
   idioma: string;
   activo: boolean;
+  href: string;
   sobreColor?: boolean;
-} & ComponentProps<"button">) {
+} & Omit<ComponentProps<typeof LinkCrudo>, "href">) {
   return (
-    <button
-      type="button"
-      aria-pressed={activo}
+    /* Es un enlace y no un botón: cambia de pantalla, así que tiene que poder
+       abrirse en otra pestaña y entenderse como navegación.
+
+       Va con el `Link` crudo y no con `Enlace`: la ruta ya viene con el idioma
+       de destino puesto, y `Enlace` le pondría encima el de la pantalla
+       actual, que es justamente el que se quiere dejar. */
+    <LinkCrudo
+      href={href}
+      hrefLang={idioma}
+      aria-current={activo ? "true" : undefined}
       className={cn(
         "text-p3 size-10 cursor-pointer rounded-lg font-mono uppercase transition-colors",
         FOCO,
@@ -145,7 +156,7 @@ export function BotonIdioma({
       {...props}
     >
       {idioma}
-    </button>
+    </LinkCrudo>
   );
 }
 

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Enlace as Link } from "@/components/ui/enlace";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { Tarjeta } from "@/components/ui/seccion";

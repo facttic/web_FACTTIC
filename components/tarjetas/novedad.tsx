@@ -1,7 +1,8 @@
-import Link from "next/link";
+import { Enlace as Link } from "@/components/ui/enlace";
 import { cn } from "@/lib/cn";
 import { FOCO } from "@/components/ui/boton";
-import { NOVEDADES } from "@/lib/contenido";
+import { contenido } from "@/lib/contenido";
+import { IDIOMA_POR_DEFECTO, type Idioma } from "@/lib/idioma";
 import type { Novedad } from "@/lib/dominio/tipos";
 
 /**
@@ -13,8 +14,11 @@ import type { Novedad } from "@/lib/dominio/tipos";
  */
 export function CardNovedad({
   novedad,
+  idioma = IDIOMA_POR_DEFECTO,
   className,
 }: {
+  /** Para el rótulo del tipo, que es copy fijo. */
+  idioma?: Idioma;
   novedad: Novedad;
   className?: string;
 }) {
@@ -48,7 +52,7 @@ export function CardNovedad({
       <div className="flex flex-1 flex-col gap-2 p-5">
         <h3 className="text-h4 text-balance">{novedad.titulo}</h3>
         <p className="text-eyebrow mt-auto text-blanco/40">
-          {NOVEDADES.solapas[novedad.tipo]}
+          {contenido(idioma).NOVEDADES.solapas[novedad.tipo]}
         </p>
       </div>
     </Link>

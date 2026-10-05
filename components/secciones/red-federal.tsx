@@ -5,7 +5,8 @@ import { cn } from "@/lib/cn";
 import { BotonFlecha, FOCO } from "@/components/ui/boton";
 import { ChipSector } from "@/components/ui/chip";
 import { MapaFederal, PROPORCION_MAPA, centroDe } from "./mapa-federal";
-import { NUESTRA_RED as T } from "@/lib/contenido";
+import { contenido } from "@/lib/contenido";
+import { useIdioma } from "@/lib/idioma-cliente";
 import type { CooperativaEnRed, ProvinciaConRed } from "@/lib/datos/red";
 
 /**
@@ -23,6 +24,7 @@ export function RedFederal({
   provincias: ProvinciaConRed[];
   className?: string;
 }) {
+  const T = contenido(useIdioma()).NUESTRA_RED;
   /*
    * Dos estados y no uno: la provincia elegida manda en el mapa, las solapas y
    * las tarjetas de abajo, y el panel es una ventanita que se abre sobre ella.
@@ -226,6 +228,7 @@ function PanelProvincia({
   className?: string;
   style?: React.CSSProperties;
 }) {
+  const T = contenido(useIdioma()).NUESTRA_RED;
   return (
     <div
       style={style}
@@ -302,6 +305,7 @@ function CardCooperativaRed({
   cooperativa: CooperativaEnRed;
   className?: string;
 }) {
+  const T = contenido(useIdioma()).NUESTRA_RED;
   return (
     <div
       className={cn(
