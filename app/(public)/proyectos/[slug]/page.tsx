@@ -70,68 +70,87 @@ export default async function ProyectoPage({
 
   return (
     <>
-      {/* La portada cruza la pantalla de punta a punta, como en la maqueta.
-          El `viewTransitionName` la enlaza con la imagen de la tarjeta que
-          trajo hasta acá: al abrir el proyecto, una se transforma en la otra. */}
-      {portada ? (
-        <ViewTransition name={`proyecto-${proyecto.slug}`} share="morph">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          {/* En mobile arranca pegada al borde de arriba —por detrás de la
-              barra, que es transparente— y cierra con las esquinas
-              redondeadas: así la dibuja el board. */}
-          <img
-            src={portada}
-            alt=""
-            className="-mt-[72px] h-[488px] w-full rounded-b-3xl object-cover md:mt-0 md:h-[470px] md:rounded-none"
-          />
-        </ViewTransition>
-      ) : null}
-
-      <Seccion className={portada ? "pt-8 md:pt-16" : "pt-24 md:pt-40"}>
-        {/* En mobile la ficha se resuelve con dos etiquetas arriba del título y
-            la lista de servicios debajo, sin los rótulos "Sector" y
-            "Servicios" de la columna de desktop. */}
-        <div className="mb-5 flex flex-wrap items-center gap-2 md:hidden">
-          {proyecto.cliente ? (
-            <ChipCliente>{proyecto.cliente.nombre}</ChipCliente>
-          ) : null}
-          {proyecto.sector ? (
-            <ChipSector nombre={proyecto.sector.nombre} />
-          ) : null}
-        </div>
-
-        <h1 className="text-h1 max-w-4xl text-balance">{proyecto.nombre}</h1>
-
-        {servicios ? (
-          <p className="text-p3 mt-4 text-blanco/60 md:hidden">{servicios}</p>
+      {/*
+        Las dos maquetas ordenan esto distinto, así que el orden lo decide el
+        ancho y no el HTML: en mobile la portada abre la pantalla de punta a
+        punta y el título va debajo; en desktop, desde la anotación "se ajustó
+        el tamaño de la IMG principal", la portada pasa a ir **después** del
+        título y de la ficha, metida en el contenedor —1223x438 con radio 21—
+        en vez de cruzar la pantalla.
+      */}
+      <div className="flex flex-col">
+        {portada ? (
+          /* El `viewTransitionName` la enlaza con la imagen de la tarjeta que
+             trajo hasta acá: al abrir el proyecto, una se transforma en la
+             otra. Es la misma imagen en los dos lados, como pide la
+             anotación. */
+          <ViewTransition name={`proyecto-${proyecto.slug}`} share="morph">
+            {/* En mobile arranca pegada al borde de arriba —por detrás de la
+                barra, que es transparente— y cierra con las esquinas
+                redondeadas: así la dibuja el board. */}
+            <div className="md:contenedor md:order-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={portada}
+                alt=""
+                className="-mt-[72px] h-[488px] w-full rounded-b-3xl object-cover md:mt-0 md:h-[438px] md:rounded-[21px]"
+              />
+            </div>
+          </ViewTransition>
         ) : null}
 
-        {/* Ficha: sector y servicios, separados por una línea punteada. */}
-        <div className="mt-10 hidden flex-col gap-6 md:flex md:flex-row md:items-start md:gap-10">
-          {proyecto.sector ? (
-            <div className="border-l border-dotted border-punteado pl-4">
-              <p className="text-eyebrow text-blanco/40">Sector</p>
-              <div className="mt-2">
-                <ChipSector nombre={proyecto.sector.nombre} />
-              </div>
-            </div>
-          ) : null}
+        <Seccion
+          className={
+            portada
+              ? "pt-8 md:order-1 md:pt-[93px] md:pb-[75px]"
+              : "pt-24 md:pt-40"
+          }
+        >
+          {/* En mobile la ficha se resuelve con dos etiquetas arriba del título y
+            la lista de servicios debajo, sin los rótulos "Sector" y
+            "Servicios" de la columna de desktop. */}
+          <div className="mb-5 flex flex-wrap items-center gap-2 md:hidden">
+            {proyecto.cliente ? (
+              <ChipCliente>{proyecto.cliente.nombre}</ChipCliente>
+            ) : null}
+            {proyecto.sector ? (
+              <ChipSector nombre={proyecto.sector.nombre} />
+            ) : null}
+          </div>
+
+          <h1 className="text-h1 max-w-4xl text-balance">{proyecto.nombre}</h1>
+
           {servicios ? (
-            <div className="border-l border-dotted border-punteado pl-4">
-              <p className="text-eyebrow text-blanco/40">Servicios</p>
-              <p className="text-p2 mt-2 text-blanco/80">{servicios}</p>
-            </div>
+            <p className="text-p3 mt-4 text-blanco/60 md:hidden">{servicios}</p>
           ) : null}
-          {proyecto.cliente ? (
-            <div className="border-l border-dotted border-punteado pl-4">
-              <p className="text-eyebrow text-blanco/40">Cliente</p>
-              <p className="text-p2 mt-2 text-blanco/80">
-                {proyecto.cliente.nombre}
-              </p>
-            </div>
-          ) : null}
-        </div>
-      </Seccion>
+
+          {/* Ficha: sector y servicios, separados por una línea punteada. */}
+          <div className="mt-10 hidden flex-col gap-6 md:flex md:flex-row md:items-start md:gap-10">
+            {proyecto.sector ? (
+              <div className="border-l border-dotted border-punteado pl-4">
+                <p className="text-eyebrow text-blanco/40">Sector</p>
+                <div className="mt-2">
+                  <ChipSector nombre={proyecto.sector.nombre} />
+                </div>
+              </div>
+            ) : null}
+            {servicios ? (
+              <div className="border-l border-dotted border-punteado pl-4">
+                <p className="text-eyebrow text-blanco/40">Servicios</p>
+                <p className="text-p2 mt-2 text-blanco/80">{servicios}</p>
+              </div>
+            ) : null}
+            {proyecto.cliente ? (
+              <div className="border-l border-dotted border-punteado pl-4">
+                <p className="text-eyebrow text-blanco/40">Cliente</p>
+                <p className="text-p2 mt-2 text-blanco/80">
+                  {proyecto.cliente.nombre}
+                </p>
+              </div>
+            ) : null}
+          </div>
+        </Seccion>
+      </div>
 
       {resena.length ? (
         <Seccion>
