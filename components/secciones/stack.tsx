@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/lib/cn";
 import { Cinta } from "@/components/ui/cinta";
 import { LogoRemoto } from "@/components/ui/logo-remoto";
@@ -15,6 +17,9 @@ const ENTRAN = 4;
  *
  * Las tecnologías no entran en la columna, así que la fila se desplaza sola.
  * En mobile el título se va arriba y la cinta sigue corriendo igual.
+ *
+ * Va en el cliente porque le pasa a `Cinta` una función para dibujar cada
+ * tarjeta, y una función no cruza la frontera de servidor a cliente.
  */
 export function Stack({
   titulo,

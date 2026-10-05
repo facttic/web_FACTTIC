@@ -17,7 +17,8 @@ import type { Autoridad } from "@/lib/dominio/tipos";
  * reparto se reemplaza por una lectura directa.
  *
  * El Consejo no entra en una pantalla —son siete— así que su cinta se desplaza
- * sola, recortada al ancho de la columna; la Sindicatura son dos y van quietas.
+ * sola al llegar a la sección, con flechas para pasarlas a mano, recortada al
+ * ancho de la columna; la Sindicatura son dos y van quietas.
  * De eso se encarga `Cinta`, que es la misma del stack de las verticales. Si un
  * órgano queda vacío no se muestra su solapa, y si no hay nadie cargado la
  * sección entera desaparece en vez de dejar el hueco.
@@ -126,6 +127,7 @@ export function Autoridades({
         separacion={SEPARACION}
         minimoParaMover={ENTRAN_EN_PANTALLA}
         etiqueta={visible.etiqueta}
+        conFlechas
         className="mt-8"
       >
         {(autoridad) => (
