@@ -139,6 +139,17 @@ llegue.
       producción:** la API actual ignora el parámetro y "Otros" muestra todos
       los proyectos.
 
+- [ ] **39. Traducciones del contenido al inglés.** La API ya acepta
+      `traducciones.en` en proyectos, sectores, servicios y novedades (MR !2,
+      mergeado), y el backoffice muestra cada campo con su par en inglés. Falta
+      **escribir los textos**: hasta que se carguen, el sitio en inglés muestra
+      el español campo por campo.
+
+      Dos cosas quedaron fuera a propósito: los **subservicios** —la API los
+      acepta, pero el formulario los arma como dos listas paralelas y hay que
+      resolver cómo emparejarlas— y los **slugs**, que siguen en español en los
+      dos idiomas para no romper las direcciones que ya circulan.
+
 - [ ] **19. Borrar las imágenes de sector cargadas en el backoffice.** Son fotos
       de stock ajenas a la identidad (una de "RISK", otra de un diagrama de red
       genérico). Ahora quedan tapadas por las animaciones de diseño, pero

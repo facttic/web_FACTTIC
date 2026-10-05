@@ -57,6 +57,21 @@ esto: dice que redimensiona pero no cambia el viewport.
 - **El token de la API dura 15 minutos.** Un `curl` sin `-i` devuelve 401 sin que
   se note y parece que la escritura funcionó.
 
+## Dos idiomas
+
+El sitio sale en español e inglés. El español va sin prefijo —ninguna URL
+cambió— y el inglés bajo `/en`; de traducir la URL pública a la ruta interna se
+encarga `proxy.ts`, y por eso todas las pantallas viven en `app/[idioma]/`.
+
+- **Copy fijo**: `lib/contenido/es.ts` y `en.ts`, con la misma forma. Si falta
+  una clave no compila.
+- **Contenido de la API**: se traduce en `lib/dominio/adaptadores.ts`, que lee
+  `traducciones.en` con reserva al español **campo por campo**. Lo carga el
+  backoffice, que muestra cada campo con su par en inglés debajo.
+- **Enlaces**: se escriben sin prefijo y `components/ui/enlace.tsx` les agrega
+  el del idioma actual. El selector EN/ES es la excepción: ahí la ruta ya viene
+  con el idioma de destino, así que usa el `Link` crudo.
+
 ## Cómo está organizado
 
 - `lib/api/` transporte, `lib/dominio/` traducción, `lib/datos/` lo único que
