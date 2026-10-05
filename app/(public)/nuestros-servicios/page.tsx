@@ -56,8 +56,8 @@ export default async function NuestrosServiciosPage() {
           className="pointer-events-none absolute -top-[39rem] left-1/2 -z-10 size-[64rem] -translate-x-1/2 blur-[2px] md:hidden"
         />
         {/* El hero respira más abajo que el resto de las secciones: en el
-            board hay 121px entre la última línea de la bajada y el rótulo
-            "INDUSTRIAS". */}
+            board hay 121px entre la última línea de la bajada y el rótulo de
+            la sección que sigue. */}
         <Seccion className="pt-24 pb-20 md:pt-40 md:pb-16">
           <h1 className="text-h1 whitespace-pre-line">{T.hero.titulo}</h1>
           {/* En mobile el archivo la escribe en `P1/Bold` —DM Mono 16— y sin
@@ -67,6 +67,21 @@ export default async function NuestrosServiciosPage() {
           </p>
         </Seccion>
       </section>
+
+      {servicios.length ? (
+        <Seccion id="soluciones">
+          <BloqueDesplegable
+            rotulo={T.soluciones.rotulo}
+            titulo={T.soluciones.titulo}
+            items={servicios.map((s) => ({
+              id: s.id,
+              titulo: s.nombre,
+              descripcion: s.descripcion,
+              detalle: s.subservicios.map((sub) => sub.nombre).join(" · "),
+            }))}
+          />
+        </Seccion>
+      ) : null}
 
       {sectores.length ? (
         <Seccion id="verticales">
@@ -98,21 +113,6 @@ export default async function NuestrosServiciosPage() {
               />
             ))}
           </div>
-        </Seccion>
-      ) : null}
-
-      {servicios.length ? (
-        <Seccion id="soluciones">
-          <BloqueDesplegable
-            rotulo={T.soluciones.rotulo}
-            titulo={T.soluciones.titulo}
-            items={servicios.map((s) => ({
-              id: s.id,
-              titulo: s.nombre,
-              descripcion: s.descripcion,
-              detalle: s.subservicios.map((sub) => sub.nombre).join(" · "),
-            }))}
-          />
         </Seccion>
       ) : null}
 
