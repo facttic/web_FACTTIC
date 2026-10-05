@@ -150,8 +150,8 @@ export const HOME = {
  *
  * Los servicios y los sectores salen de la API; acá va lo fijo de la pantalla.
  * Igual que en la Home, hay copy que cambia entre las dos maquetas: el rótulo
- * de la sección de sectores dice "Verticales" en desktop e "Industrias" en
- * mobile.
+ * de la sección de sectores dice "Sectores" en desktop —decía "Verticales"
+ * hasta que contenido lo cambió— e "Industrias" en mobile.
  */
 export const SERVICIOS_PAGINA = {
   hero: {
@@ -161,7 +161,7 @@ export const SERVICIOS_PAGINA = {
   },
 
   sectores: {
-    rotulo: "Verticales",
+    rotulo: "Sectores",
     rotuloMobile: "Industrias",
     titulo: "Sectores con\nlos que trabajamos",
     // El corte cae en otro lado en cada maqueta.

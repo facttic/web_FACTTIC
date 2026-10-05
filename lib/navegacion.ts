@@ -35,7 +35,9 @@ export const COLUMNAS_PIE: ColumnaPie[] = [
     href: "/nuestros-servicios",
     enlaces: [
       { etiqueta: "Soluciones", href: "/nuestros-servicios#soluciones" },
-      { etiqueta: "Verticales", href: "/nuestros-servicios#verticales" },
+      /* El anclaje sigue siendo `#verticales`: es el que circula en los
+         enlaces ya compartidos, y lo que cambió es la etiqueta. */
+      { etiqueta: "Sectores", href: "/nuestros-servicios#verticales" },
       { etiqueta: "Cómo trabajamos", href: "/nuestros-servicios#metodologias" },
       { etiqueta: "Por qué FACTTIC", href: "/nuestros-servicios#por-que" },
     ],
