@@ -6,7 +6,13 @@ import {
   guardarEn,
   type Destino,
 } from "@/lib/admin/acciones";
-import { archivo, lista, numero, texto } from "@/lib/admin/campos";
+import {
+  archivo,
+  lista,
+  numero,
+  texto,
+  traducciones,
+} from "@/lib/admin/campos";
 import { escribirEn } from "@/lib/api/escritura";
 import type { EstadoForm } from "@/components/admin/piezas";
 
@@ -48,6 +54,18 @@ export async function guardarCooperativa(
   if ((lat === undefined) !== (lng === undefined)) {
     return { error: "La ubicación necesita latitud y longitud" };
   }
+  /*
+   * Sin ubicación la cooperativa no aparece en ninguna parte del sitio: Nuestra
+   * Red agrupa por provincia y la provincia se calcula con las coordenadas. Una
+   * ficha completa que no se muestra en ningún lado es peor que no tenerla, así
+   * que acá se pide.
+   */
+  if (lat === undefined || lng === undefined) {
+    return {
+      error:
+        "Falta la ubicación: buscá la ciudad en el mapa. Sin ella la cooperativa no se muestra en el sitio.",
+    };
+  }
   if (lat !== undefined && (lat < -90 || lat > 90)) {
     return { error: "La latitud va entre -90 y 90" };
   }
@@ -57,6 +75,26 @@ export async function guardarCooperativa(
 
   const servicios = lista(datos, "servicios");
   const sectores = lista(datos, "sectores");
+
+  /*
+   * Lo que cuenta quién es la cooperativa. Va siempre, también vacío: así se
+   * puede borrar un sitio o un teléfono que ya no corresponde. Si se omitiera,
+   * la API dejaría el valor viejo.
+   */
+  const fundacion = numero(datos, "fundacion");
+  const presentacion = {
+    descripcion: texto(datos, "descripcion"),
+    sitio: texto(datos, "sitio"),
+    email: texto(datos, "email"),
+    telefono: texto(datos, "telefono"),
+    redes: {
+      linkedin: texto(datos, "linkedin"),
+      instagram: texto(datos, "instagram"),
+      github: texto(datos, "github"),
+    },
+    ...(fundacion !== undefined ? { fundacion } : {}),
+  };
+  const enIngles = traducciones(datos, ["descripcion"]);
   const ubicacion =
     lat !== undefined && lng !== undefined ? { lat, lng } : null;
   const logo = archivo(datos, "file");
@@ -74,6 +112,13 @@ export async function guardarCooperativa(
     if (ubicacion) form.set("ubicacion", JSON.stringify(ubicacion));
     form.set("servicios", JSON.stringify(servicios));
     form.set("sectores", JSON.stringify(sectores));
+    form.set("descripcion", presentacion.descripcion);
+    form.set("sitio", presentacion.sitio);
+    form.set("email", presentacion.email);
+    form.set("telefono", presentacion.telefono);
+    form.set("redes", JSON.stringify(presentacion.redes));
+    if (fundacion !== undefined) form.set("fundacion", String(fundacion));
+    if (enIngles) form.set("traducciones", JSON.stringify(enIngles));
     form.set("file", logo);
     cuerpo = form;
   } else {
@@ -83,6 +128,8 @@ export async function guardarCooperativa(
       ...(ubicacion ? { ubicacion } : {}),
       servicios,
       sectores,
+      ...presentacion,
+      ...(enIngles ? { traducciones: enIngles } : {}),
     };
   }
 

@@ -615,7 +615,7 @@ export const NUESTRA_RED = {
     servicios: "Specialized services",
     sinDatos: "We haven't added the detail for this province yet.",
   },
-  tarjeta: { sitio: "Visit site" },
+  tarjeta: { sitio: "Visit site", proyectos: "See their projects" },
   vacio: {
     titulo: "Pick a province",
     sugerencia: "Tap the map to see the co-ops in each province.",

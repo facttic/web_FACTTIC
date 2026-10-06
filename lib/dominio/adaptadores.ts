@@ -66,10 +66,15 @@ export function slugify(valor: string): string {
  * Lo que no tiene traducción —clientes, cooperativas— cae al español, que es su
  * nombre propio.
  */
+/*
+ * De una referencia solo se lee el nombre. Las traducciones van sueltas porque
+ * cada entidad traduce lo suyo —una cooperativa traduce su descripción, no su
+ * nombre— y acá no interesa cuáles son, solo si hay un `nombre` adentro.
+ */
 type RefConNombre = Ref<{
   _id: string;
   nombre?: string;
-  traducciones?: Api.Traducciones<{ nombre: string }>;
+  traducciones?: Api.Traducciones<Record<string, unknown>>;
 }>;
 
 function aReferencia(
@@ -77,7 +82,12 @@ function aReferencia(
   idioma: Idioma = IDIOMA_POR_DEFECTO,
 ): Dominio.Referencia | null {
   if (!isPopulated(ref)) return null;
-  const nombre = enIdioma(traducciones(ref, idioma).nombre, ref.nombre);
+  // Lo traducido llega sin tipar porque cada entidad traduce campos distintos.
+  const traducido = traducciones(ref, idioma).nombre;
+  const nombre = enIdioma(
+    typeof traducido === "string" ? traducido : null,
+    ref.nombre,
+  );
   return nombre ? { id: ref._id, nombre } : null;
 }
 
@@ -153,9 +163,14 @@ function provinciaDe(_api: Api.Cooperativa): string | null {
   return null;
 }
 
-export function aCooperativa(api: Api.Cooperativa): Dominio.Cooperativa {
+export function aCooperativa(
+  api: Api.Cooperativa,
+  idioma: Idioma = IDIOMA_POR_DEFECTO,
+): Dominio.Cooperativa {
+  const t = traducciones(api, idioma);
   return {
     id: api._id,
+    // El nombre no se traduce: es un nombre propio.
     nombre: texto(api.nombre) ?? "Sin nombre",
     asociados: api.asociados ?? 0,
     ubicacion:
@@ -168,6 +183,16 @@ export function aCooperativa(api: Api.Cooperativa): Dominio.Cooperativa {
     logo: mediaUrl(api.fileName),
     servicios: aReferencias(api.servicios),
     sectores: aReferencias(api.sectores),
+    descripcion: enIdioma(t.descripcion, api.descripcion) ?? "",
+    sitio: texto(api.sitio),
+    email: texto(api.email),
+    telefono: texto(api.telefono),
+    fundacion: api.fundacion ?? null,
+    redes: {
+      linkedin: texto(api.redes?.linkedin),
+      instagram: texto(api.redes?.instagram),
+      github: texto(api.redes?.github),
+    },
   };
 }
 

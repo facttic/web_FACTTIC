@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { Enlace as Link } from "@/components/ui/enlace";
 import { cn } from "@/lib/cn";
 import { BotonFlecha, FOCO } from "@/components/ui/boton";
 import { ChipSector } from "@/components/ui/chip";
@@ -297,7 +298,13 @@ function PanelProvincia({
   );
 }
 
-/** Tarjeta de cooperativa: logo, nombre, servicios y el enlace a su sitio. */
+/**
+ * Tarjeta de cooperativa: quién es, qué hace y por dónde seguir.
+ *
+ * Es lo más parecido a una ficha que tiene el sitio —no hay pantalla propia por
+ * cooperativa—, así que es acá donde tiene que verse lo que cada una carga: su
+ * descripción, sus servicios, sus redes y el camino a sus proyectos.
+ */
 function CardCooperativaRed({
   cooperativa,
   className,
@@ -343,34 +350,95 @@ function CardCooperativaRed({
           <h4 className="text-p1-bold">{cooperativa.nombre}</h4>
         ) : null}
 
+        {cooperativa.descripcion ? (
+          <p className="text-p2 mt-4 text-blanco/80">
+            {cooperativa.descripcion}
+          </p>
+        ) : null}
+
         {cooperativa.servicios.length ? (
-          <p className="text-p2 mt-6 text-blanco/60">
+          <p className="text-p2 mt-4 text-blanco/60">
             {cooperativa.servicios.map((s) => s.nombre).join("  ·  ")}
           </p>
         ) : null}
 
+        <Redes cooperativa={cooperativa} />
+
         {/* El pie va abajo de todo: con tarjetas de distinto largo en la misma
             fila, la línea punteada queda a la misma altura en todas. */}
-        <div className="mt-auto flex items-center justify-between gap-4 border-t border-dotted border-punteado pt-4">
+        {/* En columna y no en una sola línea: la tarjeta mide unos 290px y
+            con la provincia más los dos enlaces al lado el último se cortaba. */}
+        <div className="mt-auto flex flex-col gap-2 border-t border-dotted border-punteado pt-4">
           <span className="text-p3 flex items-center gap-2 text-blanco/70">
             <span aria-hidden className="size-1.5 rounded-full bg-blanco/70" />
             {cooperativa.provincia ?? "—"}
           </span>
-          {cooperativa.sitio ? (
-            <a
-              href={cooperativa.sitio}
-              target="_blank"
-              rel="noreferrer noopener"
-              className={cn(
-                "text-p3 shrink-0 underline-offset-4 hover:underline",
-                FOCO,
-              )}
+          <span className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            {/* Los proyectos de la cooperativa son el filtro que ya existe en
+                Proyectos: no hace falta una pantalla nueva para llegar. */}
+            <Link
+              href={`/proyectos?cooperativa=${cooperativa.id}`}
+              className={cn("text-p3 underline-offset-4 hover:underline", FOCO)}
             >
-              {T.tarjeta.sitio}
-            </a>
-          ) : null}
+              {T.tarjeta.proyectos}
+            </Link>
+            {cooperativa.sitio ? (
+              <a
+                href={cooperativa.sitio}
+                target="_blank"
+                rel="noreferrer noopener"
+                className={cn(
+                  "text-p3 underline-offset-4 hover:underline",
+                  FOCO,
+                )}
+              >
+                {T.tarjeta.sitio}
+              </a>
+            ) : null}
+          </span>
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * Las redes y el contacto de la cooperativa, si cargó alguno.
+ *
+ * Van como texto y no como íconos: son tres o cuatro enlaces que aparecen de a
+ * ratos, y un juego de íconos para eso pesa más de lo que aclara.
+ */
+function Redes({ cooperativa }: { cooperativa: CooperativaEnRed }) {
+  const enlaces = [
+    { texto: "LinkedIn", href: cooperativa.redes.linkedin },
+    { texto: "Instagram", href: cooperativa.redes.instagram },
+    { texto: "GitHub", href: cooperativa.redes.github },
+    {
+      texto: cooperativa.email,
+      href: cooperativa.email ? `mailto:${cooperativa.email}` : null,
+    },
+  ].filter((enlace): enlace is { texto: string; href: string } =>
+    Boolean(enlace.href && enlace.texto),
+  );
+
+  if (!enlaces.length) return null;
+
+  return (
+    <p className="text-p3 mt-4 flex flex-wrap gap-x-4 gap-y-1 text-blanco/50">
+      {enlaces.map((enlace) => (
+        <a
+          key={enlace.href}
+          href={enlace.href}
+          target="_blank"
+          rel="noreferrer noopener"
+          className={cn(
+            "underline-offset-4 hover:text-blanco hover:underline",
+            FOCO,
+          )}
+        >
+          {enlace.texto}
+        </a>
+      ))}
+    </p>
   );
 }

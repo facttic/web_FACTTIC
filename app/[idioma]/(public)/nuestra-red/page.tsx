@@ -27,7 +27,7 @@ export default async function NuestraRedPage({
 }) {
   const { idioma } = await params;
   const T = contenido(idioma).NUESTRA_RED;
-  const { provincias } = await getRedFederal();
+  const { provincias } = await getRedFederal(idioma);
 
   return (
     <>

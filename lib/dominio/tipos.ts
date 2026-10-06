@@ -53,6 +53,13 @@ export interface Cooperativa extends Referencia {
   logo: string | null;
   servicios: Referencia[];
   sectores: Referencia[];
+  /** Quiénes son, en una o dos frases. */
+  descripcion: string;
+  sitio: string | null;
+  email: string | null;
+  telefono: string | null;
+  fundacion: number | null;
+  redes: { linkedin: string | null; instagram: string | null; github: string | null };
 }
 
 export interface Autoridad extends Referencia {

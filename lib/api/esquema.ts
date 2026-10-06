@@ -105,6 +105,14 @@ export interface Cooperativa {
   fileName?: string;
   servicios?: Ref<Servicio>[];
   sectores?: Ref<Sector>[];
+  /** Quiénes son y cómo llegar a ellas; todo opcional. */
+  descripcion?: string;
+  sitio?: string;
+  email?: string;
+  telefono?: string;
+  fundacion?: number;
+  redes?: { linkedin?: string; instagram?: string; github?: string };
+  traducciones?: Traducciones<{ descripcion: string }>;
   /** No documentado en el spec, pero presente en los datos. */
   verticales?: string[];
   createdAt?: string;

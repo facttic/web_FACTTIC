@@ -9,6 +9,7 @@ import {
 } from "@/components/admin/piezas";
 import { Bloque, Bloques, Par } from "@/components/admin/bloque";
 import { CampoBuscador } from "@/components/admin/campo-buscador";
+import { SolapasIdioma } from "@/components/admin/solapas-idioma";
 import { CampoUbicacion } from "@/components/admin/mapa-ubicacion";
 import type { Cooperativa } from "@/lib/datos/admin";
 import { crearSector, crearServicio } from "./acciones";
@@ -16,15 +17,13 @@ import { crearSector, crearServicio } from "./acciones";
 /**
  * Alta y edición de una cooperativa.
  *
- * Los cuatro datos que se cargan acá son los que hoy tiene el sitio a medias:
- * sin ubicación la cooperativa no aparece en el mapa federal, sin asociadxs no
- * suma a la métrica de la Home, y sin servicios ni sectores el panel de
- * provincia de Nuestra Red queda vacío.
+ * Es la ficha de la que vive Nuestra Red: sin ubicación la cooperativa no
+ * aparece en el mapa federal —ni en ninguna otra parte del sitio—, sin
+ * asociadxs no suma a la métrica de la Home, y sin servicios ni sectores el
+ * panel de provincia queda vacío.
  *
- * Va en dos columnas porque es la ficha más larga del panel y se completa de
- * corrido: a la izquierda lo que se escribe, a la derecha lo que se elige. Así
- * las dos listas de casillas —que son largas— quedan a la vista sin tener que
- * bajar hasta el final para ver si falta algo.
+ * Por eso la ubicación es obligatoria: una ficha completa que no se muestra en
+ * ningún lado es peor que no haberla cargado.
  */
 export function FormularioCooperativa({
   accion,
@@ -99,10 +98,119 @@ export function FormularioCooperativa({
         </Bloque>
 
         <Bloque
+          titulo="Quiénes son"
+          ayuda="El párrafo que acompaña a la cooperativa en Nuestra Red."
+        >
+          <SolapasIdioma
+            traducidos={{
+              cargados: cooperativa?.en.descripcion ? 1 : 0,
+              total: 1,
+            }}
+            espanol={
+              <CampoTexto
+                id="descripcion"
+                name="descripcion"
+                etiqueta="Descripción"
+                ayuda="Una o dos frases: a qué se dedican y qué las distingue."
+                multilinea
+                rows={4}
+                maxLength={1000}
+                defaultValue={cooperativa?.descripcion}
+              />
+            }
+            ingles={
+              <CampoTexto
+                id="en-descripcion"
+                name="en.descripcion"
+                etiqueta="Description"
+                ayuda="Sin traducción, el sitio en inglés muestra el español."
+                multilinea
+                rows={4}
+                maxLength={1000}
+                defaultValue={cooperativa?.en.descripcion}
+              />
+            }
+          />
+        </Bloque>
+
+        <Bloque
+          titulo="Cómo contactarlas"
+          ayuda="Lo que la tarjeta de Nuestra Red ofrece para seguir: el sitio, el contacto y las redes."
+        >
+          <Par>
+            <CampoTexto
+              id="sitio"
+              name="sitio"
+              etiqueta="Sitio web"
+              ayuda="Con https:// adelante."
+              type="url"
+              placeholder="https://micoope.coop"
+              maxLength={300}
+              defaultValue={cooperativa?.sitio}
+            />
+            <CampoTexto
+              id="fundacion"
+              name="fundacion"
+              etiqueta="Año de fundación"
+              type="number"
+              min={1900}
+              max={2200}
+              placeholder="2011"
+              defaultValue={cooperativa?.fundacion ?? ""}
+            />
+          </Par>
+          <Par>
+            <CampoTexto
+              id="email"
+              name="email"
+              etiqueta="Correo"
+              type="email"
+              placeholder="hola@micoope.coop"
+              defaultValue={cooperativa?.email}
+            />
+            <CampoTexto
+              id="telefono"
+              name="telefono"
+              etiqueta="Teléfono"
+              maxLength={50}
+              placeholder="+54 11 1234 5678"
+              defaultValue={cooperativa?.telefono}
+            />
+          </Par>
+          <Par>
+            <CampoTexto
+              id="linkedin"
+              name="linkedin"
+              etiqueta="LinkedIn"
+              type="url"
+              placeholder="https://linkedin.com/company/micoope"
+              defaultValue={cooperativa?.redes.linkedin}
+            />
+            <CampoTexto
+              id="instagram"
+              name="instagram"
+              etiqueta="Instagram"
+              type="url"
+              placeholder="https://instagram.com/micoope"
+              defaultValue={cooperativa?.redes.instagram}
+            />
+          </Par>
+          <CampoTexto
+            id="github"
+            name="github"
+            etiqueta="GitHub o GitLab"
+            type="url"
+            placeholder="https://github.com/micoope"
+            defaultValue={cooperativa?.redes.github}
+          />
+        </Bloque>
+
+        <Bloque
           titulo="Dónde está"
-          ayuda="Sin ubicación no aparece en el mapa federal. Alcanza con la ciudad: el mapa agrupa por provincia."
+          ayuda="Es obligatoria: sin ella la cooperativa no aparece en Nuestra Red. Alcanza con la ciudad, que el mapa agrupa por provincia."
         >
           <CampoUbicacion
+            requerida
             lat={cooperativa?.ubicacion?.lat}
             lng={cooperativa?.ubicacion?.lng}
           />

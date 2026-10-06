@@ -64,7 +64,7 @@ export default async function ProyectosPage({
       getSectores(idioma),
       getServicios(idioma),
       getTecnologias(),
-      getCooperativas(),
+      getCooperativas(idioma),
     ]);
 
   const hayMas = proyectos.items.length < proyectos.total;

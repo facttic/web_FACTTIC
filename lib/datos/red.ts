@@ -3,6 +3,7 @@ import "server-only";
 import { getCooperativas } from "./catalogos";
 import { sitioDe } from "./sitios-cooperativas";
 import { provinciaDe } from "@/lib/mapa/provincias";
+import { IDIOMA_POR_DEFECTO, type Idioma } from "@/lib/idioma";
 import type * as Dominio from "@/lib/dominio/tipos";
 
 /**
@@ -39,12 +40,14 @@ function porFrecuencia(nombres: string[]): string[] {
     .map(([nombre]) => nombre);
 }
 
-export async function getRedFederal(): Promise<{
+export async function getRedFederal(
+  idioma: Idioma = IDIOMA_POR_DEFECTO,
+): Promise<{
   provincias: ProvinciaConRed[];
   cooperativas: CooperativaEnRed[];
   totales: { cooperativas: number; asociados: number; provincias: number };
 }> {
-  const cooperativas: CooperativaEnRed[] = (await getCooperativas())
+  const cooperativas: CooperativaEnRed[] = (await getCooperativas(idioma))
     // Las de prueba que quedaron en la base no son parte de la red.
     .filter((coop) => !/^Cooperativa [A-C]$/.test(coop.nombre))
     .map((coop) => ({
@@ -52,7 +55,12 @@ export async function getRedFederal(): Promise<{
       provincia: coop.ubicacion
         ? provinciaDe(coop.ubicacion.lat, coop.ubicacion.lng)
         : null,
-      sitio: sitioDe(coop.nombre),
+      /*
+       * El sitio ya es un campo de la cooperativa. La tabla a mano queda como
+       * reserva mientras las cooperativas no lo completen: se armó con lo que
+       * publicaba el sitio anterior y se borra cuando ya no haga falta.
+       */
+      sitio: coop.sitio ?? sitioDe(coop.nombre),
     }));
 
   const porProvincia = new Map<string, CooperativaEnRed[]>();

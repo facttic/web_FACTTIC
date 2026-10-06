@@ -772,7 +772,7 @@ export const NUESTRA_RED = {
     servicios: "Servicios especializados",
     sinDatos: "Todavía no cargamos el detalle de esta provincia.",
   },
-  tarjeta: { sitio: "Ir al sitio" },
+  tarjeta: { sitio: "Ir al sitio", proyectos: "Ver sus proyectos" },
   vacio: {
     titulo: "Elegí una provincia",
     sugerencia: "Tocá el mapa para ver las cooperativas de cada provincia.",

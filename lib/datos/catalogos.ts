@@ -131,16 +131,21 @@ export const getTecnologias = cached(
   { revalidate: TTL.catalogo, tags: ["tecnologias"] },
 );
 
-export const getCooperativas = cached(
-  async (): Promise<Dominio.Cooperativa[]> => {
-    const cooperativas = await traerTodos<Api.Cooperativa>("/api/cooperativas");
-    return cooperativas
-      .map(aCooperativa)
-      .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
-  },
-  ["cooperativas"],
-  { revalidate: TTL.contenido, tags: ["cooperativas"] },
-);
+export function getCooperativas(
+  idioma: Idioma = IDIOMA_POR_DEFECTO,
+): Promise<Dominio.Cooperativa[]> {
+  return cached(
+    async (lang: Idioma) => {
+      const cooperativas =
+        await traerTodos<Api.Cooperativa>("/api/cooperativas");
+      return cooperativas
+        .map((coop) => aCooperativa(coop, lang))
+        .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
+    },
+    ["cooperativas", idioma],
+    { revalidate: TTL.contenido, tags: ["cooperativas"] },
+  )(idioma);
+}
 
 export const getAutoridades = cached(
   async (): Promise<Dominio.Autoridad[]> => {

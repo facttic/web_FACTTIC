@@ -295,6 +295,13 @@ export interface Cooperativa {
   servicios: string[];
   sectores: string[];
   logo: string | null;
+  descripcion: string;
+  sitio: string;
+  email: string;
+  telefono: string;
+  fundacion: number | null;
+  redes: { linkedin: string; instagram: string; github: string };
+  en: { descripcion: string };
 }
 
 function aCooperativa(api: Api.Cooperativa): Cooperativa {
@@ -310,6 +317,17 @@ function aCooperativa(api: Api.Cooperativa): Cooperativa {
     servicios: ids(api.servicios),
     sectores: ids(api.sectores),
     logo: mediaUrl(api.fileName),
+    descripcion: texto(api.descripcion),
+    sitio: texto(api.sitio),
+    email: texto(api.email),
+    telefono: texto(api.telefono),
+    fundacion: api.fundacion ?? null,
+    redes: {
+      linkedin: texto(api.redes?.linkedin),
+      instagram: texto(api.redes?.instagram),
+      github: texto(api.redes?.github),
+    },
+    en: enIngles(api.traducciones, ["descripcion"]),
   };
 }
 

@@ -40,9 +40,16 @@ function redondear({ lat, lng }: { lat: number; lng: number }) {
 export function CampoUbicacion({
   lat,
   lng,
+  requerida = false,
 }: {
   lat?: number | null;
   lng?: number | null;
+  /**
+   * Avisa que sin ella la ficha no se publica. Quien rechaza el envío es la
+   * acción, no el browser: un campo `required` escondido bloquea el formulario
+   * sin poder mostrar dónde está el problema.
+   */
+  requerida?: boolean;
 }) {
   const inicial =
     lat != null && lng != null && Number.isFinite(lat) && Number.isFinite(lng)
@@ -196,10 +203,17 @@ export function CampoUbicacion({
       />
 
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
-        <p className="text-p3 text-blanco/55">
+        <p
+          className={cn(
+            "text-p3",
+            !punto && requerida ? "text-rojo" : "text-blanco/55",
+          )}
+        >
           {punto
             ? `${punto.lat.toFixed(4)}, ${punto.lng.toFixed(4)}`
-            : "Sin ubicación: no va a aparecer en el mapa federal."}
+            : requerida
+              ? "Falta la ubicación: sin ella la cooperativa no se muestra en el sitio."
+              : "Sin ubicación: no va a aparecer en el mapa federal."}
         </p>
         {punto ? (
           <button

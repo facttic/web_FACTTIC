@@ -223,11 +223,16 @@ llegue.
          inventados** para poder ver la pantalla: el panel de provincia muestra
          cuántas cooperativas y asociadxs hay, y qué industrias y servicios
          concentra. Hay que reemplazarlos por los reales.
-      2. **Falta el campo del sitio web en el modelo de cooperativa.** Las
-         tarjetas muestran "Ir al sitio". Mientras tanto las direcciones viven
-         en `lib/datos/sitios-cooperativas.ts`, tomadas de las fichas que
-         FACTTIC publicaba en su sitio anterior: hay 18 de 37, el resto queda
-         sin enlace.
+      2. **El sitio web ya es un campo de la cooperativa** (MR !4 de la API), y
+         con él descripción, correo, teléfono, año de fundación y redes. Falta
+         que cada cooperativa los cargue: hasta entonces el enlace sale de la
+         tabla de reserva `lib/datos/sitios-cooperativas.ts`, armada con lo que
+         FACTTIC publicaba en su sitio anterior —18 de 37—. Cuando estén
+         cargados, esa tabla se borra.
+      4. **Sin ubicación una cooperativa no aparece en ninguna parte**: Nuestra
+         Red agrupa por provincia y la provincia se calcula con las
+         coordenadas. El panel ya la exige al guardar, pero las que están
+         cargadas sin ella siguen invisibles hasta que alguien las complete.
       3. **Ninguna cooperativa tiene logo cargado.** La tarjeta lo muestra
          arriba; sin él va el nombre. Ya está todo el camino hecho: la API lo
          guarda en `fileName`, el sitio lo lee de ahí y el backoffice lo sube.

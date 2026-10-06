@@ -49,7 +49,7 @@ export default async function SobreFactticPage({
   const [autoridades, organizaciones, cooperativas] = await Promise.all([
     getAutoridades(),
     getOrganizaciones(),
-    getCooperativas(),
+    getCooperativas(idioma),
   ]);
 
   return (
