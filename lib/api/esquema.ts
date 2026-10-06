@@ -99,9 +99,9 @@ export interface Cooperativa {
   _id: string;
   nombre: string;
   asociados?: number;
-  /** Hoy ninguna cooperativa la tiene cargada; sin esto no hay mapa federal. */
+  /** Sin esto la cooperativa no entra en el mapa federal ni en Nuestra Red. */
   ubicacion?: Ubicacion;
-  /** Logo, subido por multipart. Ninguna lo tiene cargado todavía. */
+  /** Logo, subido por multipart. */
   fileName?: string;
   servicios?: Ref<Servicio>[];
   sectores?: Ref<Sector>[];

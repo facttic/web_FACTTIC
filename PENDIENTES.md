@@ -231,12 +231,10 @@ llegue.
          cargados, esa tabla se borra.
       4. **Sin ubicación una cooperativa no aparece en ninguna parte**: Nuestra
          Red agrupa por provincia y la provincia se calcula con las
-         coordenadas. El panel ya la exige al guardar, pero las que están
-         cargadas sin ella siguen invisibles hasta que alguien las complete.
-      3. **Ninguna cooperativa tiene logo cargado.** La tarjeta lo muestra
-         arriba; sin él va el nombre. Ya está todo el camino hecho: la API lo
-         guarda en `fileName`, el sitio lo lee de ahí y el backoffice lo sube.
-         Falta juntar los archivos.
+         coordenadas. Hoy las 33 la tienen; el panel además la exige al
+         guardar, para que una ficha nueva no quede invisible.
+      3. ~~**Ninguna cooperativa tiene logo cargado.**~~ Ya están las 33, igual
+         que la ubicación: Nuestra Red se dibuja completa.
 
 ---
 
