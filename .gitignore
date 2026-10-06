@@ -46,3 +46,6 @@ next-env.d.ts
 
 # Builds de comparación (temporales)
 /.next-*/
+
+# Caché de los scripts de herramientas/
+__pycache__/
