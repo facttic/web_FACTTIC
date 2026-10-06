@@ -18,7 +18,7 @@ import { acentoDeSector } from "@/lib/animaciones";
 import { contenido } from "@/lib/contenido";
 import { IDIOMAS, type Idioma } from "@/lib/idioma";
 import {
-  getOrganizaciones,
+  getClientesConLogo,
   getSectoresDestacados,
   getSectorPorSlug,
   getTecnologias,
@@ -83,12 +83,29 @@ export default async function VerticalPage({
   const sector = await getSectorPorSlug(vertical, idioma);
   if (!sector?.destacado) notFound();
 
-  const [proyectos, tecnologias, aliados, verticales] = await Promise.all([
-    getProyectos({ sector: sector.id, porPagina: 6 }, idioma),
-    getTecnologias(),
-    getOrganizaciones(),
-    getSectoresDestacados(idioma),
-  ]);
+  const [proyectos, tecnologias, clientes, verticales, deLaVertical] =
+    await Promise.all([
+      getProyectos({ sector: sector.id, porPagina: 6 }, idioma),
+      getTecnologias(),
+      getClientesConLogo(),
+      getSectoresDestacados(idioma),
+      /*
+       * Todos los proyectos de la vertical, no los seis que se muestran: la
+       * banda de clientes se arma con quiénes contrataron en este sector, y
+       * recortarla a los seis destacados dejaría afuera a la mayoría.
+       */
+      getProyectos({ sector: sector.id, porPagina: 100 }, idioma),
+    ]);
+
+  /*
+   * Los clientes de esta vertical y no todos: en la pantalla de Servicios la
+   * banda es el conjunto, pero acá el sector es el tema de la página y un
+   * cliente de otro rubro no dice nada.
+   */
+  const deEsteSector = new Set(
+    deLaVertical.items.map((proyecto) => proyecto.cliente?.id).filter(Boolean),
+  );
+  const aliados = clientes.filter((cliente) => deEsteSector.has(cliente.id));
 
   /*
    * Las otras verticales, para el bloque que cierra la pantalla. El número que

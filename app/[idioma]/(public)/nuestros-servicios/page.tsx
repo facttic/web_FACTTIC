@@ -16,7 +16,7 @@ import { FONDOS } from "@/lib/animaciones";
 import { contenido } from "@/lib/contenido";
 import type { Idioma } from "@/lib/idioma";
 import {
-  getOrganizaciones,
+  getClientesConLogo,
   getSectoresDestacados,
   getServiciosDestacados,
 } from "@/lib/datos/catalogos";
@@ -34,7 +34,8 @@ export async function generateMetadata({
  * Nuestros servicios.
  *
  * Los sectores, los servicios —con su descripción y sus subservicios— y los
- * logos de aliados salen de la API; lo fijo está en `lib/contenido.ts`.
+ * logos de "Eligen soluciones cooperativas" son los clientes de los proyectos,
+ * que es lo que dice el título; lo fijo está en `lib/contenido.ts`.
  *
  * Dos bloques cambian de forma entre las maquetas, como pasa en la Home:
  * la metodología es tres bloques de color en desktop y un carrusel con
@@ -52,7 +53,7 @@ export default async function NuestrosServiciosPage({
   const [sectores, servicios, aliados] = await Promise.all([
     getSectoresDestacados(idioma),
     getServiciosDestacados(idioma),
-    getOrganizaciones(),
+    getClientesConLogo(),
   ]);
 
   return (

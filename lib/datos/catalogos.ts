@@ -156,6 +156,22 @@ export const getAutoridades = cached(
   { revalidate: TTL.contenido, tags: ["consejo"] },
 );
 
+/**
+ * Los clientes con logo, que son los que puede mostrar la banda.
+ *
+ * Reusa la forma de `Organizacion` —un nombre y un logo— porque es lo único
+ * que la banda necesita. Los que no tienen logo quedan afuera: en una tira de
+ * logos un nombre suelto se lee como un hueco.
+ */
+export const getClientesConLogo = cached(
+  async (): Promise<Dominio.Organizacion[]> => {
+    const clientes = await traerTodos<Api.Cliente>("/api/clientes");
+    return clientes.map(aOrganizacion).filter((cliente) => cliente.logo);
+  },
+  ["clientes-con-logo"],
+  { revalidate: TTL.catalogo, tags: ["clientes"] },
+);
+
 export const getOrganizaciones = cached(
   async (): Promise<Dominio.Organizacion[]> => {
     const organizaciones = await traerTodos<Api.Organizacion>(
