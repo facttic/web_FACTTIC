@@ -6,14 +6,19 @@ import { SolapasIdioma } from "@/components/admin/solapas-idioma";
 import {
   CampoArchivo,
   CampoCasilla,
-  CampoSelector,
   CampoSelectorConAlta,
+  GRUPO_OTROS,
   CampoTexto,
   FormularioAdmin,
   type EstadoForm,
 } from "@/components/admin/piezas";
 import type { Opcion, Proyecto } from "@/lib/datos/admin";
-import { crearCliente, crearServicio, crearTecnologia } from "./acciones";
+import {
+  crearCliente,
+  crearSector,
+  crearServicio,
+  crearTecnologia,
+} from "./acciones";
 
 export interface OpcionesProyecto {
   sectores: Opcion[];
@@ -93,20 +98,18 @@ export function FormularioProyecto({
           ayuda="De esto salen los filtros de Proyectos y los proyectos relacionados."
         >
           <Par>
-            <CampoSelector
+            <CampoSelectorConAlta
               id="sector"
-              name="sector"
+              nombre="sector"
               etiqueta="Sector"
-              ayuda="La vertical en la que se lista."
-              defaultValue={proyecto?.sector?.id ?? ""}
-            >
-              <option value="">Sin sector</option>
-              {opciones.sectores.map((sector) => (
-                <option key={sector.id} value={sector.id}>
-                  {sector.nombre}
-                </option>
-              ))}
-            </CampoSelector>
+              ayuda="Los de FACTTIC son las verticales del sitio. Si lo que hace este proyecto no entra en ninguno, se crea uno acá: sirve para clasificarlo y para los filtros, pero no arma una vertical."
+              opciones={opciones.sectores}
+              elegida={proyecto?.sector?.id}
+              vacio="Sin sector"
+              crear={crearSector}
+              queEs="sector"
+              grupoNuevo={GRUPO_OTROS}
+            />
 
             <CampoSelectorConAlta
               id="cliente"

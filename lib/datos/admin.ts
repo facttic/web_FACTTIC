@@ -5,7 +5,11 @@ import type * as Api from "@/lib/api/esquema";
 import { isPopulated, type Ref } from "@/lib/api/esquema";
 import { mediaUrl } from "@/lib/media";
 import type { RegistroSimple } from "@/components/admin/abm-simple";
-import type { Opcion } from "@/components/admin/piezas";
+import {
+  GRUPO_FEDERACION,
+  GRUPO_OTROS,
+  type Opcion,
+} from "@/components/admin/piezas";
 
 /**
  * Lectura para el panel, sin cache.
@@ -400,7 +404,7 @@ export async function traerOpciones(): Promise<{
 }> {
   const [sectores, servicios, tecnologias, clientes, cooperativas] =
     await Promise.all([
-      traerSimples("sectores"),
+      traerSectores(),
       traerSimples("servicios"),
       traerSimples("tecnologias"),
       traerSimples("clientes"),
@@ -412,8 +416,24 @@ export async function traerOpciones(): Promise<{
       .map((registro) => ({ id: registro.id, nombre: registro.nombre }))
       .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
 
+  /*
+   * Los sectores van en dos juegos: arriba los de la Federación, que son las
+   * verticales con pantalla propia, y abajo los que fue cargando cada
+   * cooperativa para clasificar lo suyo. Así se ve de entrada cuál es el
+   * catálogo oficial sin tener que saberlo de memoria.
+   */
+  const porGrupo = (destacado: boolean) =>
+    sectores
+      .filter((sector) => sector.destacado === destacado)
+      .map((sector) => ({
+        id: sector.id,
+        nombre: sector.nombre,
+        grupo: destacado ? GRUPO_FEDERACION : GRUPO_OTROS,
+      }))
+      .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
+
   return {
-    sectores: aOpciones(sectores),
+    sectores: [...porGrupo(true), ...porGrupo(false)],
     servicios: aOpciones(servicios),
     tecnologias: aOpciones(tecnologias),
     clientes: aOpciones(clientes),

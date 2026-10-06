@@ -22,9 +22,8 @@ const PROYECTOS: Destino = {
  * uno y el cliente casi siempre es nuevo, y los tres son catálogos de un solo
  * campo, así que crearlos desde acá no deja nada a medias.
  *
- * Cooperativas y sectores no: una cooperativa creada con solo el nombre queda
- * como una ficha vacía en Nuestra Red, y un sector es una vertical entera del
- * sitio, con su imagen y su animación. Esos se cargan en su propia pantalla.
+ * Cooperativas no: una creada con solo el nombre queda como una ficha vacía en
+ * Nuestra Red. Esas se cargan en su propia pantalla.
  */
 export async function crearTecnologia(nombre: string) {
   return crearOpcion("tecnologias", nombre);
@@ -36,6 +35,16 @@ export async function crearCliente(nombre: string, logo?: File) {
 
 export async function crearServicio(nombre: string) {
   return crearOpcion("servicios", nombre);
+}
+
+/*
+ * Un sector creado desde acá queda fuera del catálogo de la Federación: sirve
+ * para clasificar el proyecto y para que lo encuentren los filtros, pero no
+ * arma una vertical del sitio —eso lleva imagen, animación y una pantalla
+ * entera, y se carga en Sectores—.
+ */
+export async function crearSector(nombre: string) {
+  return crearOpcion("sectores", nombre);
 }
 
 export async function guardarProyecto(

@@ -251,9 +251,56 @@ export function CampoSelector({
   );
 }
 
+/**
+ * Los dos juegos de sectores.
+ *
+ * Viven acá y no en `lib/datos/` porque los usa el formulario, que corre en el
+ * browser: todo `lib/datos/` es `server-only` y traérselo revienta el build.
+ */
+export const GRUPO_FEDERACION = "Sectores de FACTTIC";
+export const GRUPO_OTROS = "Cargados por cooperativas";
+
 export interface Opcion {
   id: string;
   nombre: string;
+  /**
+   * De qué juego es, cuando la lista tiene dos: los sectores de la Federación
+   * son los que arman el sitio y van primero, y abajo los que fue cargando
+   * cada cooperativa.
+   */
+  grupo?: string;
+}
+
+/** Arma los `<option>` de una lista, agrupados si las opciones traen grupo. */
+function Opciones({ opciones }: { opciones: Opcion[] }) {
+  const grupos = [...new Set(opciones.map((o) => o.grupo))];
+  if (grupos.length === 1 && grupos[0] === undefined) {
+    return (
+      <>
+        {opciones.map((opcion) => (
+          <option key={opcion.id} value={opcion.id}>
+            {opcion.nombre}
+          </option>
+        ))}
+      </>
+    );
+  }
+
+  return (
+    <>
+      {grupos.map((grupo) => (
+        <optgroup key={grupo ?? "sueltas"} label={grupo ?? "Otros"}>
+          {opciones
+            .filter((opcion) => opcion.grupo === grupo)
+            .map((opcion) => (
+              <option key={opcion.id} value={opcion.id}>
+                {opcion.nombre}
+              </option>
+            ))}
+        </optgroup>
+      ))}
+    </>
+  );
 }
 
 /**
@@ -275,6 +322,7 @@ export function CampoSelectorConAlta({
   crear,
   queEs,
   conLogo,
+  grupoNuevo,
 }: {
   id: string;
   nombre: string;
@@ -291,6 +339,8 @@ export function CampoSelectorConAlta({
   queEs: string;
   /** Si el catálogo tiene logo, el alta al vuelo también lo sube. */
   conLogo?: boolean;
+  /** En qué grupo cae lo que se crea desde acá. */
+  grupoNuevo?: string;
 }) {
   const [sumadas, setSumadas] = useState<Opcion[]>([]);
   const [valor, setValor] = useState(elegida ?? "");
@@ -307,11 +357,7 @@ export function CampoSelectorConAlta({
         className={cn(CONTROL, "cursor-pointer", FOCO)}
       >
         <option value="">{vacio}</option>
-        {todas.map((opcion) => (
-          <option key={opcion.id} value={opcion.id}>
-            {opcion.nombre}
-          </option>
-        ))}
+        <Opciones opciones={todas} />
       </select>
       <Ayuda>{ayuda}</Ayuda>
       <AltaAlVuelo
@@ -320,8 +366,9 @@ export function CampoSelectorConAlta({
         crear={crear}
         conLogo={conLogo}
         alCrear={(opcion) => {
-          setSumadas((previas) => [...previas, opcion]);
-          setValor(opcion.id);
+          const nueva = grupoNuevo ? { ...opcion, grupo: grupoNuevo } : opcion;
+          setSumadas((previas) => [...previas, nueva]);
+          setValor(nueva.id);
         }}
       />
     </div>
@@ -392,7 +439,7 @@ function AltaAlVuelo({
         type="button"
         onClick={() => setAbierto(true)}
         className={cn(
-          "text-p3 mt-3 cursor-pointer rounded-lg px-2 py-1 text-blanco/65 underline-offset-4 transition-colors hover:text-blanco hover:underline",
+          "text-p3 mt-2 cursor-pointer rounded text-blanco/65 underline-offset-4 transition-colors hover:text-blanco hover:underline",
           FOCO,
         )}
       >
