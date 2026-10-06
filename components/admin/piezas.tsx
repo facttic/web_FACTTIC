@@ -162,20 +162,28 @@ export function Celda({
 export function Etiqueta({
   htmlFor,
   children,
-  ayuda,
 }: {
   htmlFor: string;
   children: React.ReactNode;
-  ayuda?: string;
 }) {
   return (
-    <div className="mb-2">
-      <label htmlFor={htmlFor} className="text-p3 block text-blanco/90">
-        {children}
-      </label>
-      {ayuda ? <p className="text-p3 mt-1 text-blanco/55">{ayuda}</p> : null}
-    </div>
+    <label htmlFor={htmlFor} className="text-p3 mb-2 block text-blanco/90">
+      {children}
+    </label>
   );
+}
+
+/**
+ * La aclaración de un campo, debajo del control.
+ *
+ * Va abajo y no entre la etiqueta y el campo porque no todos los campos
+ * tienen una: cuando se mete en el medio, dos campos de la misma fila arrancan
+ * a alturas distintas y la fila queda torcida. Abajo, la etiqueta y el control
+ * siempre quedan a la misma altura y lo que sobra cuelga sin desalinear nada.
+ */
+export function Ayuda({ children }: { children?: React.ReactNode }) {
+  if (!children) return null;
+  return <p className="text-p3 mt-2 text-blanco/55">{children}</p>;
 }
 
 /** El aspecto de todo control de texto del panel; se exporta para los campos
@@ -205,14 +213,13 @@ export function CampoTexto({
   React.ComponentProps<"textarea">) {
   return (
     <div>
-      <Etiqueta htmlFor={id} ayuda={ayuda}>
-        {etiqueta}
-      </Etiqueta>
+      <Etiqueta htmlFor={id}>{etiqueta}</Etiqueta>
       {multilinea ? (
         <textarea id={id} rows={6} className={cn(CONTROL, FOCO)} {...props} />
       ) : (
         <input id={id} className={cn(CONTROL, FOCO)} {...props} />
       )}
+      <Ayuda>{ayuda}</Ayuda>
     </div>
   );
 }
@@ -231,9 +238,7 @@ export function CampoSelector({
 } & React.ComponentProps<"select">) {
   return (
     <div>
-      <Etiqueta htmlFor={id} ayuda={ayuda}>
-        {etiqueta}
-      </Etiqueta>
+      <Etiqueta htmlFor={id}>{etiqueta}</Etiqueta>
       <select
         id={id}
         className={cn(CONTROL, "cursor-pointer", FOCO)}
@@ -241,6 +246,7 @@ export function CampoSelector({
       >
         {children}
       </select>
+      <Ayuda>{ayuda}</Ayuda>
     </div>
   );
 }
@@ -288,9 +294,7 @@ export function CampoSelectorConAlta({
 
   return (
     <div>
-      <Etiqueta htmlFor={id} ayuda={ayuda}>
-        {etiqueta}
-      </Etiqueta>
+      <Etiqueta htmlFor={id}>{etiqueta}</Etiqueta>
       <select
         id={id}
         name={nombre}
@@ -305,6 +309,7 @@ export function CampoSelectorConAlta({
           </option>
         ))}
       </select>
+      <Ayuda>{ayuda}</Ayuda>
       <AltaAlVuelo
         queEs={queEs}
         yaEstan={todas}
@@ -457,7 +462,7 @@ export function CampoCasilla({
         />
         {etiqueta}
       </label>
-      {ayuda ? <p className="text-p3 mt-1 text-blanco/55">{ayuda}</p> : null}
+      <Ayuda>{ayuda}</Ayuda>
     </div>
   );
 }
@@ -507,9 +512,7 @@ export function CampoArchivo({
 
   return (
     <div>
-      <Etiqueta htmlFor={id} ayuda={ayuda}>
-        {etiqueta}
-      </Etiqueta>
+      <Etiqueta htmlFor={id}>{etiqueta}</Etiqueta>
       {cargadas.length > 0 ? (
         <div className="mb-3 flex flex-wrap items-center gap-3">
           {cargadas.map((url) => (
@@ -539,6 +542,7 @@ export function CampoArchivo({
         )}
         {...props}
       />
+      <Ayuda>{ayuda}</Ayuda>
       {pesado ? (
         <p role="alert" className="text-p3 mt-2 text-rojo">
           {pesado}

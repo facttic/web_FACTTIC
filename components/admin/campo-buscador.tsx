@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { FOCO } from "@/components/ui/boton";
-import { BotonAdmin, CONTROL, type Opcion } from "./piezas";
+import { Ayuda, BotonAdmin, CONTROL, type Opcion } from "./piezas";
 
 /**
  * Elegir varios de una lista larga, buscando.
@@ -90,7 +90,6 @@ export function CampoBuscador({
   return (
     <fieldset>
       <legend className="text-p3 mb-2 text-blanco/90">{etiqueta}</legend>
-      {ayuda ? <p className="text-p3 mb-3 text-blanco/55">{ayuda}</p> : null}
 
       {puestas.length ? (
         <ul className="mb-3 flex flex-wrap gap-2">
@@ -185,6 +184,8 @@ export function CampoBuscador({
           ) : null}
         </>
       )}
+
+      <Ayuda>{ayuda}</Ayuda>
 
       {error ? (
         <p role="alert" className="text-p3 mt-2 text-rojo">
