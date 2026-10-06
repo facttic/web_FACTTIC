@@ -99,11 +99,25 @@ export function Mazo<T>({
       const r = nodo.getBoundingClientRect();
       const pantalla = window.innerHeight;
       /*
-       * 0 cuando el mazo entra por abajo y 1 cuando termina de salir por
-       * arriba. El recorrido se reparte en tantos tramos como cartas, así cada
-       * una pasa al frente en su turno.
+       * Las cartas pasan mientras el mazo está a la vista, no antes ni después.
+       *
+       * El recorrido iba de "asoma por abajo" a "termina de salir por arriba",
+       * y así casi ninguna carta se podía leer: las primeras pasaban con el
+       * mazo todavía debajo del pliegue y la última recién al frente cuando ya
+       * se había ido 277px por encima del borde. De cinco cartas, una sola se
+       * abría con el mazo entero en pantalla.
+       *
+       * Ahora el tramo arranca cuando el mazo **terminó de entrar** —su pie
+       * toca el pie de la pantalla, `top = pantalla - alto`— y se agota cuando
+       * su cabeza llega al borde de arriba. Entre esos dos puntos el mazo está
+       * entero a la vista, así que toda carta que pase al frente se puede leer.
+       *
+       * El piso del 40% es para los mazos que no entran en pantallas chicas: sin
+       * él el recorrido se achica a nada —o se da vuelta— y las cartas pasarían
+       * todas juntas con el primer movimiento del dedo.
        */
-      const t = (pantalla - r.top) / (pantalla + r.height);
+      const recorrido = Math.max(pantalla - r.height, pantalla * 0.4);
+      const t = (recorrido - r.top) / recorrido;
       const i = Math.floor(Math.min(0.999, Math.max(0, t)) * items.length);
       setAbierto(i);
     };
