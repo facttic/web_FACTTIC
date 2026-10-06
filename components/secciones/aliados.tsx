@@ -54,10 +54,16 @@ export function Aliados({
                 ALTO,
               )}
             >
+              {/*
+                En gris y no a todo color: son marcas de terceros, cada una con
+                su paleta, y juntas en una tira pelean entre sí y con la del
+                sitio. En gris la banda se lee como un conjunto, que es lo que
+                cuenta acá.
+              */}
               <LogoRemoto
                 src={logo.logo}
                 nombre={logo.nombre}
-                className="max-h-12"
+                className="max-h-12 grayscale"
               />
             </li>
           )),

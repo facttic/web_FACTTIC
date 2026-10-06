@@ -145,7 +145,14 @@ function encuadre(
   );
   const cx = caja.x + caja.ancho / 2;
   const cy = caja.y + caja.alto / 2;
-  return { escala, x: objetivoX - cx * escala, y: objetivoY - cy * escala };
+  return {
+    escala,
+    x: objetivoX - cx * escala,
+    y: objetivoY - cy * escala,
+    // Dónde queda el centro de la provincia en pantalla: ahí va el marcador.
+    objetivoX,
+    objetivoY,
+  };
 }
 
 /**
@@ -159,8 +166,12 @@ function encuadre(
 const ENCUADRE_CHICO = {
   objetivoX: 50,
   tope: 1.9,
-  /** Dónde arranca la provincia, debajo de la ficha. */
-  arranque: 48,
+  /**
+   * Dónde queda el centro de la provincia: en el medio del hueco que deja la
+   * ficha, no apenas debajo de ella. Apoyada contra la ficha, una provincia
+   * chica como CABA quedaba con el marcador tocándole el borde.
+   */
+  objetivoY: 68,
 } as const;
 
 /** El encuadre del teléfono para una caja ya medida. */
@@ -175,12 +186,13 @@ function encuadreChico(caja: {
     ENCUADRE_CHICO.objetivoX,
     ENCUADRE_CHICO.tope,
   );
+  // Las grandes suben lo necesario para no salirse por abajo.
   const mitad = (caja.alto * escala) / 2;
   return encuadre(
     caja,
     ENCUADRE_CHICO.objetivoX,
     ENCUADRE_CHICO.tope,
-    Math.min(78, ENCUADRE_CHICO.arranque + mitad),
+    Math.min(ENCUADRE_CHICO.objetivoY, 96 - mitad),
   );
 }
 
@@ -211,6 +223,7 @@ export function MapaFederal({
   seleccionada,
   alElegir,
   acercar = false,
+  cambiando = false,
   className,
 }: {
   cantidadPorProvincia: Record<string, number>;
@@ -218,6 +231,8 @@ export function MapaFederal({
   alElegir: (provincia: string) => void;
   /** Acerca el dibujo a la provincia elegida y lo inclina. */
   acercar?: boolean;
+  /** Mientras la ficha se va: el marcador se apaga y vuelve con la nueva. */
+  cambiando?: boolean;
   className?: string;
 }) {
   const caja = acercar && seleccionada ? cajaDe(seleccionada) : null;
@@ -274,199 +289,229 @@ export function MapaFederal({
   const formaElegida = formas.find((f) => f.nombre === seleccionada)?.d ?? null;
 
   return (
+    /* Las variables del marcador van acá y no en el `svg`: el marcador es su
+       hermano, y una variable se hereda hacia abajo, no de costado. */
     <div
-      className={cn(
-        /* Sin recortar: al acercarse el dibujo se sale de su caja y sigue por
-           detrás de lo que viene abajo, en vez de cortarse contra un borde. */
-        "transition-transform duration-700 ease-out",
-        acercar && "vista-drone",
-        className,
-      )}
+      className={cn("relative", className)}
+      style={
+        vista && vistaChica
+          ? ({
+              "--pin-x": `${vistaChica.objetivoX}%`,
+              "--pin-y": `${vistaChica.objetivoY.toFixed(1)}%`,
+              "--pin-x-grande": `${vista.objetivoX}%`,
+              "--pin-y-grande": `${vista.objetivoY}%`,
+            } as React.CSSProperties)
+          : undefined
+      }
     >
-      <svg
-        viewBox={`0 0 ${ANCHO} ${ALTO}`}
-        /*
-         * El acercamiento va por variables y se aplica solo de `md` para
-         * arriba: en el teléfono el panel se apoya encima del mapa y no al
-         * lado, así que acercarse deja la provincia justo debajo del panel y
-         * manda el resto del dibujo fuera de la pantalla.
-         */
+      <div
         className={cn(
-          /* El alto del teléfono es cosa del mapa y va en el `svg`: puesto en
+          /* Sin recortar: al acercarse el dibujo se sale de su caja y sigue por
+             detrás de lo que viene abajo, en vez de cortarse contra un borde. */
+          "transition-transform duration-700 ease-out",
+          acercar && "vista-drone",
+        )}
+      >
+        <svg
+          viewBox={`0 0 ${ANCHO} ${ALTO}`}
+          /*
+           * El acercamiento va por variables y se aplica solo de `md` para
+           * arriba: en el teléfono el panel se apoya encima del mapa y no al
+           * lado, así que acercarse deja la provincia justo debajo del panel y
+           * manda el resto del dibujo fuera de la pantalla.
+           */
+          className={cn(
+            /* El alto del teléfono es cosa del mapa y va en el `svg`: puesto en
              el contenedor, el dibujo se estiraba al ancho disponible y salía
              mucho más alto que su caja. */
-          "mx-auto h-[560px] w-auto origin-top-left transition-transform duration-700 ease-out md:h-auto md:w-full motion-reduce:transition-none",
-          vista &&
-            "[transform:translate(var(--mapa-x-chico),var(--mapa-y-chico))_scale(var(--mapa-k-chico))] md:[transform:translate(var(--mapa-x),var(--mapa-y))_scale(var(--mapa-k))]",
-        )}
-        style={
-          vista && vistaChica
-            ? ({
-                "--mapa-x": `${vista.x.toFixed(2)}%`,
-                "--mapa-y": `${vista.y.toFixed(2)}%`,
-                "--mapa-k": vista.escala.toFixed(3),
-                "--mapa-x-chico": `${vistaChica.x.toFixed(2)}%`,
-                "--mapa-y-chico": `${vistaChica.y.toFixed(2)}%`,
-                "--mapa-k-chico": vistaChica.escala.toFixed(3),
-              } as React.CSSProperties)
-            : undefined
-        }
-        role="group"
-        aria-label="Mapa de las provincias argentinas con cooperativas de la red"
-      >
-        {/*
+            "mx-auto h-[560px] w-auto origin-top-left transition-transform duration-700 ease-out md:h-auto md:w-full motion-reduce:transition-none",
+            vista &&
+              "[transform:translate(var(--mapa-x-chico),var(--mapa-y-chico))_scale(var(--mapa-k-chico))] md:[transform:translate(var(--mapa-x),var(--mapa-y))_scale(var(--mapa-k))]",
+          )}
+          style={
+            vista && vistaChica
+              ? ({
+                  "--mapa-x": `${vista.x.toFixed(2)}%`,
+                  "--mapa-y": `${vista.y.toFixed(2)}%`,
+                  "--mapa-k": vista.escala.toFixed(3),
+                  "--mapa-x-chico": `${vistaChica.x.toFixed(2)}%`,
+                  "--mapa-y-chico": `${vistaChica.y.toFixed(2)}%`,
+                  "--mapa-k-chico": vistaChica.escala.toFixed(3),
+                } as React.CSSProperties)
+              : undefined
+          }
+          role="group"
+          aria-label="Mapa de las provincias argentinas con cooperativas de la red"
+        >
+          {/*
           El canto del mapa: el mismo contorno repetido hacia abajo, cada copia
           un poco más oscura. De frente no se ve —las caras lo tapan—, pero al
           inclinarse aparece como el costado de una pieza, que es lo que lo saca
           de parecer una calcomanía.
         */}
-        {acercar ? (
-          <g
-            className="pointer-events-none"
-            style={{ "--prov": color } as React.CSSProperties}
-          >
-            {/* Opacas y todas del mismo color: con una rampa de opacidad el
+          {acercar ? (
+            <g
+              className="pointer-events-none"
+              style={{ "--prov": color } as React.CSSProperties}
+            >
+              {/* Opacas y todas del mismo color: con una rampa de opacidad el
                 canto se leía como una sombra desenfocada y no como el costado
                 de algo sólido. */}
-            {ESPESOR.map((dy) => (
-              <path
-                key={`pais-${dy}`}
-                d={silueta}
-                transform={`translate(0 ${dy})`}
-                fill="var(--color-gris-oscuro)"
-              />
-            ))}
-            {/* La provincia elegida sobresale: su costado va de su propio color
+              {ESPESOR.map((dy) => (
+                <path
+                  key={`pais-${dy}`}
+                  d={silueta}
+                  transform={`translate(0 ${dy})`}
+                  fill="var(--color-gris-oscuro)"
+                />
+              ))}
+              {/* La provincia elegida sobresale: su costado va de su propio color
                 apagado, así se ve como una pieza levantada del resto. */}
-            {formaElegida
-              ? ESPESOR.map((dy) => (
-                  <path
-                    key={`prov-${dy}`}
-                    d={formaElegida}
-                    transform={`translate(0 ${dy})`}
-                    fill="color-mix(in srgb, var(--prov) 42%, black)"
-                  />
-                ))
-              : null}
-          </g>
-        ) : null}
+              {formaElegida
+                ? ESPESOR.map((dy) => (
+                    <path
+                      key={`prov-${dy}`}
+                      d={formaElegida}
+                      transform={`translate(0 ${dy})`}
+                      fill="color-mix(in srgb, var(--prov) 42%, black)"
+                    />
+                  ))
+                : null}
+            </g>
+          ) : null}
 
-        {formas.map((provincia) => {
-          const hay = provincia.cantidad > 0;
-          const elegida = provincia.nombre === seleccionada;
-          return (
-            <g key={provincia.nombre}>
-              <path
-                d={provincia.d}
-                role={hay ? "button" : undefined}
-                tabIndex={hay ? 0 : undefined}
-                aria-label={
-                  hay
-                    ? `${provincia.nombre}: ${provincia.cantidad} cooperativas`
-                    : undefined
-                }
-                aria-pressed={hay ? elegida : undefined}
-                onClick={hay ? () => alElegir(provincia.nombre) : undefined}
-                onKeyDown={
-                  hay
-                    ? (e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          alElegir(provincia.nombre);
+          {formas.map((provincia) => {
+            const hay = provincia.cantidad > 0;
+            const elegida = provincia.nombre === seleccionada;
+            return (
+              <g key={provincia.nombre}>
+                <path
+                  d={provincia.d}
+                  role={hay ? "button" : undefined}
+                  tabIndex={hay ? 0 : undefined}
+                  aria-label={
+                    hay
+                      ? `${provincia.nombre}: ${provincia.cantidad} cooperativas`
+                      : undefined
+                  }
+                  aria-pressed={hay ? elegida : undefined}
+                  onClick={hay ? () => alElegir(provincia.nombre) : undefined}
+                  onKeyDown={
+                    hay
+                      ? (e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            alElegir(provincia.nombre);
+                          }
                         }
-                      }
-                    : undefined
-                }
-                style={{ "--prov": provincia.color } as React.CSSProperties}
-                stroke="var(--color-blanco)"
-                strokeOpacity={hay ? 0.35 : 0.12}
-                strokeWidth="0.7"
-                className={cn(
-                  "transition-[fill,fill-opacity] duration-300",
-                  hay
-                    ? `cursor-pointer fill-blanco/25 hover:fill-[var(--prov)] ${FOCO}`
-                    : "fill-gris-oscuro/55",
-                  elegida && "fill-[var(--prov)]",
-                )}
-              />
-              {provincia.disco ? (
-                <circle
-                  cx={provincia.disco[0]}
-                  cy={provincia.disco[1]}
-                  r={elegida ? 7 : 5.5}
+                      : undefined
+                  }
                   style={{ "--prov": provincia.color } as React.CSSProperties}
                   stroke="var(--color-blanco)"
-                  strokeOpacity="0.6"
-                  strokeWidth="0.8"
-                  onClick={hay ? () => alElegir(provincia.nombre) : undefined}
+                  strokeOpacity={hay ? 0.35 : 0.12}
+                  strokeWidth="0.7"
                   className={cn(
-                    "transition-all duration-300",
+                    "transition-[fill,fill-opacity] duration-300",
                     hay
-                      ? "cursor-pointer fill-blanco/50 hover:fill-[var(--prov)]"
+                      ? `cursor-pointer fill-blanco/25 hover:fill-[var(--prov)] ${FOCO}`
                       : "fill-gris-oscuro/55",
                     elegida && "fill-[var(--prov)]",
                   )}
                 />
-              ) : null}
-              {provincia.puntos.map(([x, y], i) => (
-                <circle
-                  key={i}
-                  cx={x}
-                  cy={y}
-                  r="1.6"
-                  fill="var(--color-blanco)"
-                  fillOpacity={elegida ? 0.85 : 0.4}
-                  className="pointer-events-none transition-[fill-opacity] duration-300"
-                />
-              ))}
-            </g>
-          );
-        })}
+                {provincia.disco ? (
+                  <circle
+                    cx={provincia.disco[0]}
+                    cy={provincia.disco[1]}
+                    r={elegida ? 7 : 5.5}
+                    style={{ "--prov": provincia.color } as React.CSSProperties}
+                    stroke="var(--color-blanco)"
+                    strokeOpacity="0.6"
+                    strokeWidth="0.8"
+                    onClick={hay ? () => alElegir(provincia.nombre) : undefined}
+                    className={cn(
+                      "transition-all duration-300",
+                      hay
+                        ? "cursor-pointer fill-blanco/50 hover:fill-[var(--prov)]"
+                        : "fill-gris-oscuro/55",
+                      elegida && "fill-[var(--prov)]",
+                    )}
+                  />
+                ) : null}
+                {provincia.puntos.map(([x, y], i) => (
+                  <circle
+                    key={i}
+                    cx={x}
+                    cy={y}
+                    r="1.6"
+                    fill="var(--color-blanco)"
+                    fillOpacity={elegida ? 0.85 : 0.4}
+                    className="pointer-events-none transition-[fill-opacity] duration-300"
+                  />
+                ))}
+              </g>
+            );
+          })}
+        </svg>
+      </div>
 
-        {marcador ? (
-          <g
-            transform={`translate(${((marcador.x / 100) * ANCHO).toFixed(1)} ${((marcador.y / 100) * ALTO).toFixed(1)})`}
-            className="pointer-events-none"
-            style={{ "--prov": color } as React.CSSProperties}
-          >
-            {/* La sombra se achica cuando el marcador sube: es lo que hace
-              leer la altura. El desenfoque la despega del dibujo. */}
-            <ellipse
-              rx="6"
-              ry="2.2"
-              fill="var(--color-negro-oscuro)"
-              filter="url(#desenfoque-marcador)"
-              className="sombra-que-salta"
-            />
-            {/* La punta del pin apoya en el 0,0 del grupo, que es el centro de
-              la provincia: así el salto se lee como que despega de ahí. */}
-            <g className="marcador-que-salta">
-              {/* Oscuro con el punto del color: la provincia elegida siempre
-                está pintada de un color claro, así que tanto un pin blanco
-                como uno del mismo color se perdían en el relleno. */}
-              <path
-                d={PIN}
-                fill="var(--color-negro-oscuro)"
-                stroke="var(--color-blanco)"
-                strokeOpacity="0.85"
-                strokeWidth="1.2"
-                strokeLinejoin="round"
-              />
-              <circle cy="-16.5" r="4.2" fill="var(--prov)" />
-            </g>
-          </g>
-        ) : null}
+      {/*
+        El marcador va afuera del dibujo y sin escalar.
 
-        <filter
-          id="desenfoque-marcador"
-          x="-50%"
-          y="-50%"
-          width="200%"
-          height="200%"
+        Adentro se pixelaba: la inclinación es un transform 3D, así que el
+        navegador rasteriza el SVG una sola vez y después lo agranda como si
+        fuera una imagen —con el acercamiento al 3,4 de CABA se notaba de
+        lejos—. Acá se dibuja a tamaño real, siempre nítido y siempre del mismo
+        tamaño, y de paso queda derecho en vez de recostarse con el mapa, que es
+        como se comportan los marcadores en los mapas inclinados.
+
+        La posición no hay que calcularla: el encuadre deja el centro de la
+        provincia justo en el punto al que apunta.
+      */}
+      {acercar && seleccionada ? (
+        <svg
+          /* Una por provincia: al cambiar la clave vuelve a montarse y la
+             espera arranca de nuevo, junto con el viaje del mapa. */
+          key={seleccionada}
+          aria-hidden
+          viewBox="-16 -42 32 48"
+          className={cn(
+            "pin-en-su-lugar pointer-events-none absolute z-10 size-10 -translate-x-1/2 -translate-y-full md:size-14",
+            // Al irse se apaga de una; al llegar espera a que el mapa pare.
+            cambiando
+              ? "opacity-0 transition-opacity duration-150"
+              : "aparece-al-llegar",
+          )}
+          style={{ "--prov": color } as React.CSSProperties}
         >
-          <feGaussianBlur stdDeviation="2" />
-        </filter>
-      </svg>
+          <ellipse
+            rx="6"
+            ry="2.2"
+            fill="var(--color-negro-oscuro)"
+            filter="url(#desenfoque-marcador)"
+            className="sombra-que-salta"
+          />
+          <g className="marcador-que-salta">
+            <path
+              d={PIN}
+              fill="var(--color-negro-oscuro)"
+              stroke="var(--color-blanco)"
+              strokeOpacity="0.85"
+              strokeWidth="1.2"
+              strokeLinejoin="round"
+            />
+            <circle cy="-16.5" r="4.2" fill="var(--prov)" />
+          </g>
+          <filter
+            id="desenfoque-marcador"
+            x="-50%"
+            y="-50%"
+            width="200%"
+            height="200%"
+          >
+            <feGaussianBlur stdDeviation="2" />
+          </filter>
+        </svg>
+      ) : null}
     </div>
   );
 }

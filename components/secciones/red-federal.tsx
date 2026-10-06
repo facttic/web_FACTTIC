@@ -154,6 +154,7 @@ export function RedFederal({
           /* Solo mientras el panel está abierto: al cerrarlo vuelve el país
              entero, que es el estado en el que se elige. */
           acercar={panelAbierto}
+          cambiando={saliendo}
           className="mx-auto md:size-full"
         />
 

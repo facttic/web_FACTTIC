@@ -936,3 +936,46 @@ body {
     animation: none;
   }
 }
+
+/**
+ * Dónde se para el marcador del mapa federal.
+ *
+ * Va por utilidad y no por clases sueltas porque son dos posiciones distintas
+ * —el teléfono acomoda la provincia más abajo, en el hueco que deja la ficha—
+ * y las variables tienen que cambiar con el ancho de la pantalla.
+ */
+@utility pin-en-su-lugar {
+  left: var(--pin-x);
+  top: var(--pin-y);
+
+  @media (width >= 48rem) {
+    left: var(--pin-x-grande);
+    top: var(--pin-y-grande);
+  }
+}
+
+/**
+ * El marcador aparece recién cuando el mapa terminó de acomodarse.
+ *
+ * El viaje del dibujo dura 700ms; con el marcador encendido desde el principio
+ * se lo veía resbalar por la pantalla hasta llegar. La espera es parte de la
+ * animación: `both` lo mantiene invisible durante el viaje.
+ */
+@keyframes aparecer-al-llegar {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility aparece-al-llegar {
+  animation: aparecer-al-llegar 0.3s ease-out 0.7s both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
