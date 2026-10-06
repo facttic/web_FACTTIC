@@ -21,9 +21,17 @@ import type { Sector } from "@/lib/datos/admin";
 export function FormularioSector({
   accion,
   sector,
+  esAdmin,
 }: {
   accion: (estado: EstadoForm, datos: FormData) => Promise<EstadoForm>;
   sector?: Sector;
+  /**
+   * Una cooperativa carga sectores para describir en qué rubros trabaja, pero
+   * no decide las verticales del sitio. Lo que es de la Federación —destacar, y
+   * la imagen y la animación de la pantalla propia— no se le muestra. La API lo
+   * descarta igual: esto es para no ofrecer campos que no van a guardarse.
+   */
+  esAdmin: boolean;
 }) {
   return (
     <FormularioAdmin accion={accion} volverA="/admin/sectores">
@@ -98,38 +106,42 @@ export function FormularioSector({
               defaultValue={sector?.orden ?? ""}
             />
           </Par>
-          <CampoCasilla
-            id="esDestacado"
-            name="esDestacado"
-            etiqueta="Destacado"
-            ayuda="Los destacados son el catálogo de la Federación: los únicos que muestran la Home y Nuestros servicios, y los únicos con pantalla propia. Los demás son los que carga cada cooperativa para su ficha."
-            defaultChecked={sector?.destacado}
-          />
+          {esAdmin ? (
+            <CampoCasilla
+              id="esDestacado"
+              name="esDestacado"
+              etiqueta="Destacado"
+              ayuda="Los destacados son el catálogo de la Federación: los únicos que muestran la Home y Nuestros servicios, y los únicos con pantalla propia. Los demás son los que carga cada cooperativa para su ficha."
+              defaultChecked={sector?.destacado}
+            />
+          ) : null}
         </Bloque>
 
-        <Bloque titulo="Imagen y animación">
-          <Par>
-            <CampoArchivo
-              id="imageFile"
-              name="imageFile"
-              etiqueta="Imagen"
-              ayuda="La foto de fondo de la vertical. Hoy queda tapada por la animación."
-              accept="image/*"
-              actual={sector?.imagen}
-            />
-            <CampoArchivo
-              id="lottieFile"
-              name="lottieFile"
-              etiqueta="Animación"
-              ayuda={
-                sector?.animacion
-                  ? "Ya tiene una cargada; si elegís otra, la reemplaza."
-                  : "El Lottie del sector, en JSON. Mientras no haya uno cargado, el sitio usa el que vive en el repositorio."
-              }
-              accept="application/json,.json"
-            />
-          </Par>
-        </Bloque>
+        {esAdmin ? (
+          <Bloque titulo="Imagen y animación">
+            <Par>
+              <CampoArchivo
+                id="imageFile"
+                name="imageFile"
+                etiqueta="Imagen"
+                ayuda="La foto de fondo de la vertical. Hoy queda tapada por la animación."
+                accept="image/*"
+                actual={sector?.imagen}
+              />
+              <CampoArchivo
+                id="lottieFile"
+                name="lottieFile"
+                etiqueta="Animación"
+                ayuda={
+                  sector?.animacion
+                    ? "Ya tiene una cargada; si elegís otra, la reemplaza."
+                    : "El Lottie del sector, en JSON. Mientras no haya uno cargado, el sitio usa el que vive en el repositorio."
+                }
+                accept="application/json,.json"
+              />
+            </Par>
+          </Bloque>
+        ) : null}
       </Bloques>
     </FormularioAdmin>
   );

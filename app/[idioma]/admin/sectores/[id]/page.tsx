@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { requerirFederacion } from "@/lib/api/guardia";
+import { requerirSesion } from "@/lib/api/guardia";
 import { traerSector } from "@/lib/datos/admin";
 import { Encabezado } from "@/components/admin/piezas";
 import { FormularioSector } from "../formulario";
@@ -12,7 +12,7 @@ export default async function Page({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await requerirFederacion();
+  const sesion = await requerirSesion();
   const sector = await traerSector((await params).id);
   if (!sector) notFound();
 
@@ -22,6 +22,7 @@ export default async function Page({
       <FormularioSector
         accion={guardarSector.bind(null, sector.id)}
         sector={sector}
+        esAdmin={sesion.esAdmin}
       />
     </div>
   );

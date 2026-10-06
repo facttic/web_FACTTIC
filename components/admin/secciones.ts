@@ -19,12 +19,18 @@ export interface ItemAdmin {
 }
 
 /**
- * Lo que puede editar una cooperativa: su ficha, sus proyectos y los servicios
- * que ella misma dé de alta. El resto es de la Federación.
+ * Lo que puede editar una cooperativa: su ficha, sus proyectos, y los sectores
+ * y servicios que ella misma dé de alta. El resto es de la Federación.
+ *
+ * Clientes y tecnologías quedan afuera a propósito: puede crearlos al vuelo
+ * desde el formulario de un proyecto, pero la API solo deja **editarlos** a la
+ * Federación, así que un listado propio sería una pantalla donde cada "Editar"
+ * termina en 403.
  */
 const DE_LAS_COOPERATIVAS = [
   "/admin/cooperativas",
   "/admin/proyectos",
+  "/admin/sectores",
   "/admin/servicios",
 ];
 

@@ -70,6 +70,8 @@ export interface Sector {
   imageFileName?: string;
   /** Animación Lottie (JSON), también en /api/files. */
   lottieFileName?: string;
+  /** Como en `Servicio`: la cooperativa que lo creó, si no fue la Federación. */
+  cooperativa?: string;
   createdAt?: string;
   updatedAt?: string;
   traducciones?: Traducciones<{ nombre: string; descripcion: string }>;

@@ -130,6 +130,8 @@ export interface Sector {
   destacado: boolean;
   imagen: string | null;
   animacion: string | null;
+  /** La cooperativa que lo creó; vacío si es del catálogo de la Federación. */
+  cooperativa: string;
   en: { nombre: string; descripcion: string };
 }
 
@@ -142,6 +144,7 @@ function aSector(api: Api.Sector): Sector {
     destacado: api.esDestacado === true,
     imagen: mediaUrl(api.imageFileName),
     animacion: mediaUrl(api.lottieFileName),
+    cooperativa: texto(api.cooperativa),
     en: enIngles(api.traducciones, ["nombre", "descripcion"]),
   };
 }

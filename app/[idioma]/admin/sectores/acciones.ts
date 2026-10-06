@@ -2,6 +2,7 @@
 
 import { borrarDe, guardarEn, type Destino } from "@/lib/admin/acciones";
 import { archivo, numero, texto, traducciones } from "@/lib/admin/campos";
+import { requerirSesion } from "@/lib/api/guardia";
 import type { EstadoForm } from "@/components/admin/piezas";
 
 const SECTORES: Destino = {
@@ -22,9 +23,14 @@ export async function guardarSector(
 
   const descripcion = texto(datos, "descripcion");
   const orden = numero(datos, "orden");
-  const esDestacado = datos.get("esDestacado") === "on";
-  const imagen = archivo(datos, "imageFile");
-  const animacion = archivo(datos, "lottieFile");
+  /* Las verticales del sitio son de la Federación: una cooperativa carga
+     sectores para su ficha, pero no decide cuáles tienen pantalla propia, ni
+     les pone la imagen y la animación de esa pantalla. Sin los campos, lo que
+     ya estuviera marcado o cargado queda como está. La API lo verifica igual. */
+  const { esAdmin } = await requerirSesion();
+  const esDestacado = esAdmin && datos.get("esDestacado") === "on";
+  const imagen = esAdmin ? archivo(datos, "imageFile") : undefined;
+  const animacion = esAdmin ? archivo(datos, "lottieFile") : undefined;
   const enIngles = traducciones(datos, ["nombre", "descripcion"]);
 
   /*
@@ -39,7 +45,7 @@ export async function guardarSector(
     form.set("nombre", nombre);
     if (descripcion) form.set("descripcion", descripcion);
     if (orden !== undefined) form.set("orden", String(orden));
-    form.set("esDestacado", String(esDestacado));
+    if (esAdmin) form.set("esDestacado", String(esDestacado));
     if (imagen) form.set("imageFile", imagen);
     if (animacion) form.set("lottieFile", animacion);
     // Por multipart los objetos no viajan: la API acepta el JSON serializado.
@@ -50,7 +56,7 @@ export async function guardarSector(
       nombre,
       descripcion,
       ...(orden !== undefined ? { orden } : {}),
-      esDestacado,
+      ...(esAdmin ? { esDestacado } : {}),
       ...(enIngles ? { traducciones: enIngles } : {}),
     };
   }

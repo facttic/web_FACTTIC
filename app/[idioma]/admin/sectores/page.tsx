@@ -1,4 +1,4 @@
-import { requerirFederacion } from "@/lib/api/guardia";
+import { requerirSesion } from "@/lib/api/guardia";
 import { traerSectores } from "@/lib/datos/admin";
 import {
   BotonBorrar,
@@ -17,8 +17,15 @@ export const metadata = { title: "Sectores" };
  * orden es el motivo principal por el que se entra acá.
  */
 export default async function SectoresPage() {
-  await requerirFederacion();
-  const sectores = await traerSectores();
+  const sesion = await requerirSesion();
+  const todos = await traerSectores();
+  /* Los que creó su cooperativa. Las tres verticales de la Federación se
+     eligen al completar la ficha, pero no se editan desde acá. */
+  const sectores = sesion.esAdmin
+    ? todos
+    : todos.filter((sector) =>
+        sesion.cooperativas.some((suya) => suya.id === sector.cooperativa),
+      );
 
   return (
     <div>
