@@ -5,6 +5,7 @@ import { EncabezadoSeccion, Seccion, BandaCta } from "@/components/ui/seccion";
 import { BotonLink } from "@/components/ui/boton";
 import { Acordeon, type ItemAcordeon } from "@/components/ui/acordeon";
 import { Chip, ChipCliente, ChipSector } from "@/components/ui/chip";
+import { PortadaGenerica } from "@/components/ui/portada-generica";
 import { LogoRemoto } from "@/components/ui/logo-remoto";
 import { CarruselConFlechas } from "@/components/ui/carrusel-con-flechas";
 import { CardProyecto, FilaProyecto } from "@/components/tarjetas/proyecto";
@@ -99,15 +100,21 @@ export default async function ProyectoPage({
               />
             </div>
           </ViewTransition>
-        ) : null}
+        ) : (
+          /* Sin foto cargada, la misma portada que mostró la tarjeta: el
+             proyecto se ve igual antes y después de abrirlo. Antes acá no iba
+             nada y el detalle arrancaba en seco con el título. */
+          <ViewTransition name={`proyecto-${proyecto.slug}`} share="morph">
+            <div className="md:contenedor md:order-2">
+              <PortadaGenerica
+                nombre={proyecto.slug}
+                className="-mt-[72px] h-[488px] w-full rounded-b-3xl md:mt-0 md:h-[438px] md:rounded-[21px]"
+              />
+            </div>
+          </ViewTransition>
+        )}
 
-        <Seccion
-          className={
-            portada
-              ? "pt-8 md:order-1 md:pt-[93px] md:pb-[75px]"
-              : "pt-24 md:pt-40"
-          }
-        >
+        <Seccion className={"pt-8 md:order-1 md:pt-[93px] md:pb-[75px]"}>
           {/* En mobile la ficha se resuelve con dos etiquetas arriba del título y
             la lista de servicios debajo, sin los rótulos "Sector" y
             "Servicios" de la columna de desktop. */}

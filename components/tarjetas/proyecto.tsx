@@ -7,6 +7,7 @@ import { Tarjeta } from "@/components/ui/seccion";
 import { IconoFlecha } from "@/components/ui/iconos";
 import { FOCO } from "@/components/ui/boton";
 import { Inclinar } from "@/components/ui/inclinar";
+import { PortadaGenerica } from "@/components/ui/portada-generica";
 
 /**
  * Tarjetas y filas de proyecto.
@@ -42,15 +43,6 @@ const ALTO_TARJETA = "h-[366px] md:h-[406px]";
 */
 const ALTO_IMAGEN =
   "h-[204px] md:h-[310px] md:group-hover:h-[129px] md:group-focus-visible:h-[129px]";
-/** Recortes de la textura, para que las tarjetas sin portada no se repitan. */
-const ENCUADRE = [
-  "object-left-top",
-  "object-right-bottom",
-  "object-center",
-  "object-left-bottom",
-  "object-right-top",
-];
-
 const PIEL_TARJETA =
   "transition-colors duration-300 group-hover:border-borde-pleno group-hover:bg-transparent " +
   "group-focus-visible:border-borde-pleno group-focus-visible:bg-transparent";
@@ -65,38 +57,9 @@ function Portada({
   indice?: number;
   className?: string;
 }) {
-  /*
-   * Nueve de los once proyectos cargados no tienen imagen, así que el caso sin
-   * portada no es la excepción sino lo habitual. Va una textura gris —de
-   * Unsplash, licencia libre para uso comercial y sin atribución obligatoria—
-   * en vez de un rectángulo vacío: es neutra a propósito, porque una foto de
-   * archivo de gente trabajando diría algo del proyecto que no sabemos, y al
-   * lado de las portadas reales se leería como relleno.
-   *
-   * Encima va la estrella de la identidad, apenas insinuada y corrida según la
-   * posición, para que nueve tarjetas seguidas no sean nueve veces la misma
-   * imagen. Se reemplaza sola en cuanto FACTTIC cargue las portadas.
-   */
+  // Sin foto cargada va la portada de la casa, distinta para cada proyecto.
   if (!proyecto.portada) {
-    return (
-      <div
-        className={cn("relative overflow-hidden bg-superficie-alta", className)}
-        aria-hidden
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/marca/proyecto-sin-portada.jpg"
-          alt=""
-          className={cn(
-            "size-full object-cover opacity-60 grayscale",
-            // El encuadre cambia con la posición: es la misma textura, pero
-            // nueve tarjetas seguidas no muestran el mismo recorte.
-            ENCUADRE[indice % ENCUADRE.length],
-          )}
-          loading="lazy"
-        />
-      </div>
-    );
+    return <PortadaGenerica nombre={proyecto.slug} className={className} />;
   }
 
   return (
