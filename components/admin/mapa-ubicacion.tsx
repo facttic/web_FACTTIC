@@ -159,8 +159,8 @@ export function CampoUbicacion({
 
   return (
     <fieldset>
-      <legend className="text-p3 mb-2 text-blanco/70">Ubicación</legend>
-      <p className="text-p3 mb-3 text-blanco/35">
+      <legend className="text-p3 mb-2 text-blanco/90">Ubicación</legend>
+      <p className="text-p3 mb-3 text-blanco/55">
         Buscá la ciudad y elegila de la lista, o hacé clic en el mapa. El punto
         se puede arrastrar. Alcanza con la ciudad: el mapa del sitio agrupa por
         provincia, no dibuja la dirección exacta.
@@ -170,14 +170,17 @@ export function CampoUbicacion({
 
       <div
         ref={contenedor}
-        className="mt-3 h-72 w-full overflow-hidden rounded-lg border border-borde"
+        /* `isolate`: Leaflet pinta sus capas con z-index de hasta 800 y, sin
+           un contexto propio, el mapa se trepaba por encima de la barra de
+           Guardar, que queda fija al pie. */
+        className="mt-3 h-72 w-full isolate overflow-hidden rounded-lg border border-borde"
         // Leaflet dibuja su propio fondo; sin esto se ve el negro del panel
         // mientras cargan los mosaicos.
         style={{ background: "#1a1a1a" }}
       />
 
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
-        <p className="text-p3 text-blanco/40">
+        <p className="text-p3 text-blanco/55">
           {punto
             ? `${punto.lat.toFixed(4)}, ${punto.lng.toFixed(4)}`
             : "Sin ubicación: no va a aparecer en el mapa federal."}
@@ -267,7 +270,7 @@ function Buscador({ alElegir }: { alElegir: (lugar: Lugar) => void }) {
       ) : null}
 
       {buscado && lugares.length === 0 && !error ? (
-        <p className="text-p3 mt-2 text-blanco/40">
+        <p className="text-p3 mt-2 text-blanco/55">
           No encontramos ese lugar en Argentina.
         </p>
       ) : null}

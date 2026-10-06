@@ -25,9 +25,12 @@ import type { Servicio } from "@/lib/datos/admin";
 export function FormularioServicio({
   accion,
   servicio,
+  esAdmin,
 }: {
   accion: (estado: EstadoForm, datos: FormData) => Promise<EstadoForm>;
   servicio?: Servicio;
+  /** Solo la Federación arma el catálogo que muestra el sitio. */
+  esAdmin: boolean;
 }) {
   return (
     <FormularioAdmin accion={accion} volverA="/admin/servicios">
@@ -107,13 +110,15 @@ export function FormularioServicio({
               defaultValue={servicio?.orden ?? ""}
             />
           </Par>
-          <CampoCasilla
-            id="esDestacado"
-            name="esDestacado"
-            etiqueta="Destacado"
-            ayuda="Los destacados son el catálogo de la Federación: los únicos que muestran la Home y Nuestros servicios. Los demás son los que carga cada cooperativa para su ficha."
-            defaultChecked={servicio?.destacado}
-          />
+          {esAdmin ? (
+            <CampoCasilla
+              id="esDestacado"
+              name="esDestacado"
+              etiqueta="Destacado"
+              ayuda="Los destacados son el catálogo de la Federación: los únicos que muestran la Home y Nuestros servicios. Los demás son los que carga cada cooperativa para su ficha."
+              defaultChecked={servicio?.destacado}
+            />
+          ) : null}
         </Bloque>
       </Bloques>
     </FormularioAdmin>

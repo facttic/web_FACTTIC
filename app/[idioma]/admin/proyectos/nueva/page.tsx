@@ -33,6 +33,7 @@ export default async function Page({
         accion={guardarProyecto.bind(null, null)}
         opciones={opciones}
         cooperativa={cooperativa ?? sesion.cooperativas[0]?.id}
+        esAdmin={sesion.esAdmin}
         volverA={volver}
       />
     </div>

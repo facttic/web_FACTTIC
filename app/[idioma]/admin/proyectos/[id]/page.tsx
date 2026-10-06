@@ -15,7 +15,7 @@ export default async function Page({
   /** `volver` llega cuando se entró desde la ficha de una cooperativa. */
   searchParams: Promise<{ volver?: string }>;
 }) {
-  await requerirSesion();
+  const sesion = await requerirSesion();
   const { id } = await params;
   const [proyecto, opciones, { volver }] = await Promise.all([
     traerProyecto(id),
@@ -31,6 +31,7 @@ export default async function Page({
         accion={guardarProyecto.bind(null, proyecto.id)}
         proyecto={proyecto}
         opciones={opciones}
+        esAdmin={sesion.esAdmin}
         volverA={volver}
       />
     </div>

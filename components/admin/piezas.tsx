@@ -274,6 +274,7 @@ export function CampoSelectorConAlta({
   vacio,
   crear,
   queEs,
+  conLogo,
 }: {
   id: string;
   nombre: string;
@@ -285,8 +286,11 @@ export function CampoSelectorConAlta({
   vacio: string;
   crear: (
     nombre: string,
+    logo?: File,
   ) => Promise<{ ok: true; opcion: Opcion } | { ok: false; error: string }>;
   queEs: string;
+  /** Si el catálogo tiene logo, el alta al vuelo también lo sube. */
+  conLogo?: boolean;
 }) {
   const [sumadas, setSumadas] = useState<Opcion[]>([]);
   const [valor, setValor] = useState(elegida ?? "");
@@ -314,6 +318,7 @@ export function CampoSelectorConAlta({
         queEs={queEs}
         yaEstan={todas}
         crear={crear}
+        conLogo={conLogo}
         alCrear={(opcion) => {
           setSumadas((previas) => [...previas, opcion]);
           setValor(opcion.id);
@@ -334,16 +339,20 @@ function AltaAlVuelo({
   yaEstan,
   crear,
   alCrear,
+  conLogo,
 }: {
   queEs: string;
   yaEstan: Opcion[];
   crear: (
     nombre: string,
+    logo?: File,
   ) => Promise<{ ok: true; opcion: Opcion } | { ok: false; error: string }>;
   alCrear: (opcion: Opcion) => void;
+  conLogo?: boolean;
 }) {
   const [abierto, setAbierto] = useState(false);
   const [valor, setValor] = useState("");
+  const [logo, setLogo] = useState<File | undefined>();
   const [error, setError] = useState<string | null>(null);
   const [creando, setCreando] = useState(false);
 
@@ -364,7 +373,7 @@ function AltaAlVuelo({
 
     setCreando(true);
     setError(null);
-    const resultado = await crear(limpio);
+    const resultado = await crear(limpio, logo);
     setCreando(false);
 
     if (!resultado.ok) {
@@ -373,6 +382,7 @@ function AltaAlVuelo({
     }
     alCrear(resultado.opcion);
     setValor("");
+    setLogo(undefined);
     setAbierto(false);
   }
 
@@ -428,6 +438,25 @@ function AltaAlVuelo({
           Cancelar
         </BotonAdmin>
       </div>
+      {conLogo ? (
+        <div className="mt-2">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setLogo(e.target.files?.[0])}
+            aria-label={`Logo del ${queEs}`}
+            className={cn(
+              "text-p3 w-full cursor-pointer rounded-md border border-borde bg-negro-oscuro/60 px-3 py-2 text-blanco/70",
+              "file:mr-3 file:cursor-pointer file:rounded file:border-0 file:bg-superficie-alta file:px-3 file:py-1 file:text-blanco",
+              FOCO,
+            )}
+          />
+          <Ayuda>
+            El logo, si lo tenés a mano. Después solo lo puede cambiar la
+            Federación, desde Clientes.
+          </Ayuda>
+        </div>
+      ) : null}
       {error ? (
         <p role="alert" className="text-p3 mt-2 text-rojo">
           {error}
@@ -597,7 +626,7 @@ export function FormularioAdmin({
       ) : null}
 
       {/* Arranca donde termina la barra lateral, para no taparla. */}
-      <div className="fixed inset-x-0 bottom-0 z-20 flex items-center gap-3 border-t border-borde bg-negro-oscuro/95 p-4 backdrop-blur md:left-64 md:px-8">
+      <div className="fixed inset-x-0 bottom-0 z-50 flex items-center gap-3 border-t border-borde bg-negro-oscuro/95 p-4 backdrop-blur md:left-64 md:px-8">
         <BotonAdmin type="submit" disabled={enviando}>
           {enviando ? "Guardando…" : textoGuardar}
         </BotonAdmin>

@@ -40,6 +40,7 @@ export function FormularioProyecto({
   proyecto,
   opciones,
   cooperativa,
+  esAdmin,
   volverA,
 }: {
   accion: (estado: EstadoForm, datos: FormData) => Promise<EstadoForm>;
@@ -47,6 +48,8 @@ export function FormularioProyecto({
   opciones: OpcionesProyecto;
   /** Viene marcada de entrada cuando se llega desde la ficha de una cooperativa. */
   cooperativa?: string;
+  /** Solo la Federación decide qué proyectos muestra la Home. */
+  esAdmin: boolean;
   /** A dónde vuelve al guardar o al cancelar. Por defecto, al listado. */
   volverA?: string;
 }) {
@@ -114,6 +117,7 @@ export function FormularioProyecto({
               vacio="Sin cliente"
               crear={crearCliente}
               queEs="cliente"
+              conLogo
             />
           </Par>
 
@@ -226,15 +230,17 @@ export function FormularioProyecto({
           />
         </Bloque>
 
-        <Bloque titulo="Imágenes y publicación">
+        <Bloque titulo={esAdmin ? "Imágenes y publicación" : "Imágenes"}>
           <Imagenes cargadas={proyecto?.imagenes ?? []} />
-          <CampoCasilla
-            id="esDestacado"
-            name="esDestacado"
-            etiqueta="Destacado"
-            ayuda="Los destacados son los que muestra la Home. Si no hay ninguno, muestra los últimos cargados."
-            defaultChecked={proyecto?.destacado}
-          />
+          {esAdmin ? (
+            <CampoCasilla
+              id="esDestacado"
+              name="esDestacado"
+              etiqueta="Destacado"
+              ayuda="Los destacados son los que muestra la Home. Si no hay ninguno, muestra los últimos cargados."
+              defaultChecked={proyecto?.destacado}
+            />
+          ) : null}
         </Bloque>
       </Bloques>
     </FormularioAdmin>

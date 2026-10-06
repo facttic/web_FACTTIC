@@ -8,6 +8,7 @@ import {
 } from "@/lib/admin/acciones";
 import { archivos, lista, texto, traducciones } from "@/lib/admin/campos";
 import { editar } from "@/lib/api/escritura";
+import { requerirSesion } from "@/lib/api/guardia";
 import type { EstadoForm } from "@/components/admin/piezas";
 
 const PROYECTOS: Destino = {
@@ -29,8 +30,8 @@ export async function crearTecnologia(nombre: string) {
   return crearOpcion("tecnologias", nombre);
 }
 
-export async function crearCliente(nombre: string) {
-  return crearOpcion("clientes", nombre);
+export async function crearCliente(nombre: string, logo?: File) {
+  return crearOpcion("clientes", nombre, logo);
 }
 
 export async function crearServicio(nombre: string) {
@@ -56,6 +57,15 @@ export async function guardarProyecto(
   const sector = texto(datos, "sector");
   const cliente = texto(datos, "cliente");
 
+  /*
+   * Destacar es cosa de la Federación: decide qué proyectos muestra la Home,
+   * y una cooperativa no elige eso para el sitio entero. Si no es admin el
+   * campo ni viaja, así que lo que ya estaba marcado queda como estaba: la
+   * API solo pisa los campos que recibe. La comprobación de verdad es la
+   * suya; esto es para que el panel no mande lo que no corresponde.
+   */
+  const { esAdmin } = await requerirSesion();
+
   const cuerpo = {
     nombre,
     // Los ObjectId vacíos no se mandan: la API los rechaza por formato.
@@ -67,7 +77,7 @@ export async function guardarProyecto(
     desafio: texto(datos, "desafio"),
     solucion: texto(datos, "solucion"),
     resultado: texto(datos, "resultado"),
-    esDestacado: datos.get("esDestacado") === "on",
+    ...(esAdmin ? { esDestacado: datos.get("esDestacado") === "on" } : {}),
     /* Las traducciones van en el mismo cuerpo JSON: las imágenes viajan en un
        PUT aparte y ahí no hace falta repetirlas. */
     ...(enIngles ? { traducciones: enIngles } : {}),

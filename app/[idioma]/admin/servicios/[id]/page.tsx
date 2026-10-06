@@ -12,7 +12,7 @@ export default async function Page({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await requerirSesion();
+  const sesion = await requerirSesion();
   const servicio = await traerServicio((await params).id);
   if (!servicio) notFound();
 
@@ -22,6 +22,7 @@ export default async function Page({
       <FormularioServicio
         accion={guardarServicio.bind(null, servicio.id)}
         servicio={servicio}
+        esAdmin={sesion.esAdmin}
       />
     </div>
   );

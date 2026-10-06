@@ -102,6 +102,8 @@ export async function guardarEn(
 export async function crearOpcion(
   recurso: "servicios" | "sectores" | "tecnologias" | "clientes",
   nombre: string,
+  /** El logo, cuando el catálogo lo admite y se eligió uno al crearlo. */
+  logo?: File,
 ): Promise<{ ok: true; opcion: Opcion } | { ok: false; error: string }> {
   await requerirSesion();
 
@@ -113,7 +115,20 @@ export async function crearOpcion(
     };
   }
 
-  const resultado = await crear(recurso, { nombre: limpio }, recurso);
+  /*
+   * El logo se sube en el mismo alta y no después: editar un cliente es cosa
+   * de la Federación, así que si no va acá, quien carga un proyecto desde su
+   * cooperativa no tiene manera de ponérselo nunca.
+   */
+  let cuerpo: FormData | { nombre: string } = { nombre: limpio };
+  if (logo && logo.size > 0) {
+    const form = new FormData();
+    form.append("nombre", limpio);
+    form.append("file", logo);
+    cuerpo = form;
+  }
+
+  const resultado = await crear(recurso, cuerpo, recurso);
   if (!resultado.ok) return { ok: false, error: resultado.error };
   if (!resultado.id) {
     return {
