@@ -581,8 +581,18 @@ export const CONTACTO = {
   },
   formulario: {
     titulo: "Envíanos un mensaje",
-    nombre: { etiqueta: "Nombre completo", ejemplo: "Ej: Paula Calgaro" },
-    email: { etiqueta: "Correo electrónico", ejemplo: "paula@facttic.coop" },
+    /* El ejemplo no lleva un correo @facttic.coop: en un formulario de
+       contacto *a* FACTTIC, un placeholder con su propio dominio se lee como
+       si hubiera que escribir ahí la dirección de la Federación.
+
+       Va el proveedor más corriente que hay, aunque no sea el que
+       recomendaríamos: un ejemplo tiene que leerse de un vistazo como "acá va
+       tu correo", y para eso tiene que ser uno que todo el mundo reconozca. */
+    nombre: { etiqueta: "Nombre completo", ejemplo: "Ej: Ada Lovelace" },
+    email: {
+      etiqueta: "Correo electrónico",
+      ejemplo: "ada.lovelace@gmail.com",
+    },
     mensaje: { etiqueta: "Tu mensaje", ejemplo: "Dejanos tu mensaje..." },
     motivo: {
       etiqueta: "Seleccionar motivo",

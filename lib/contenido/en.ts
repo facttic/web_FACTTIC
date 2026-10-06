@@ -461,8 +461,8 @@ export const CONTACTO = {
   },
   formulario: {
     titulo: "Send us a message",
-    nombre: { etiqueta: "Full name", ejemplo: "E.g. Paula Calgaro" },
-    email: { etiqueta: "Email address", ejemplo: "paula@facttic.coop" },
+    nombre: { etiqueta: "Full name", ejemplo: "E.g. Ada Lovelace" },
+    email: { etiqueta: "Email address", ejemplo: "ada.lovelace@gmail.com" },
     mensaje: { etiqueta: "Your message", ejemplo: "Leave us your message..." },
     motivo: {
       etiqueta: "Select a reason",

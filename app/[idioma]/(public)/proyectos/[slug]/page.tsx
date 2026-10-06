@@ -239,7 +239,7 @@ export default async function ProyectoPage({
               <CardProyecto
                 key={otro.id}
                 proyecto={otro}
-                alto="h-[366px] md:h-[310px]"
+                alto="min-h-[366px] md:h-[310px]"
                 className="w-full shrink-0 snap-start md:w-auto"
               />
             ))}

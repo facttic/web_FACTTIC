@@ -35,7 +35,14 @@ import { PortadaGenerica } from "@/components/ui/portada-generica";
  * La cara pintada además cambia de piel: pierde el relleno al 3% y su borde
  * pasa de 10% a blanco pleno.
  */
-const ALTO_TARJETA = "h-[366px] md:h-[406px]";
+/*
+  En mobile es un alto **mínimo** y no fijo. Con alto fijo, un título de dos
+  líneas junto a una etiqueta que también ocupa dos —pasa con los clientes de
+  nombre largo— empujaba la segunda etiqueta fuera de la caja, y el
+  `overflow-hidden` se la comía. En desktop sigue fijo: ahí la tarjeta cambia
+  de cara al pasar el mouse y el alto no puede moverse, o la grilla salta.
+*/
+const ALTO_TARJETA = "min-h-[366px] md:h-[406px]";
 /*
   En mobile no hay cara de hover: el board dibuja la tarjeta con la imagen a
   204 y las etiquetas siempre a la vista. Con los 310 de desktop no entraba ni
@@ -195,7 +202,7 @@ export function CardProyecto({
             "flex flex-col overflow-hidden",
             PIEL_TARJETA,
             alto ?? ALTO_TARJETA,
-            listado && "h-[374px] md:h-[406px]",
+            listado && "min-h-[374px] md:h-[406px]",
           )}
         >
           <Portada
