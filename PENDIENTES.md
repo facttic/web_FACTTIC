@@ -120,6 +120,12 @@ llegue.
 
 ### Nuevos (sin enviar)
 
+- [ ] **40. Rotar la clave del correo.** Las credenciales de Gmail estaban
+      escritas en `resources/auth/helpers/send-email.js`, versionadas en claro.
+      El MR !3 las pasa a `SMTP_USER` y `SMTP_PASS`, pero **la clave vieja sigue
+      en el historial del repositorio**: hay que rotarla desde la cuenta y
+      cargar las variables en el servidor, o las invitaciones no se envían.
+
 - [ ] **36. Usuarios por cooperativa.** El plan es que cada coop pueda darse de
       alta sus propios sectores y servicios —los que no son del catálogo de la
       Federación— y asignárselos. Hoy no se puede: el usuario de la API tiene
@@ -128,9 +134,13 @@ llegue.
       falta que el backend agregue el vínculo y los permisos; recién ahí se
       puede armar la pantalla en `/admin`.
 
-      El resto ya está listo de este lado: `esDestacado` se lee, se filtra y se
-      edita desde el backoffice, y la ficha de cooperativa muestra todo lo que
-      tenga asignado, destacado o no.
+      **Resuelto por el MR !3** (`editores-por-cooperativa`): el permiso sale
+      de la lista de mails de cada cooperativa y se consulta en cada pedido. El
+      panel ya filtra lo que ve cada quien y la Federación invita por correo
+      desde la ficha. Queda pendiente solo que las cooperativas puedan dar de
+      alta sus propios **sectores**: hoy pueden crear servicios —que no entran
+      al catálogo de la Federación— pero los sectores siguen siendo de la
+      Federación.
 
 - [ ] **38. `sinSector` en `GET /api/proyectos`.** Lo pide la opción "Otros"
       del filtro de sectores de Proyectos, que lista los proyectos sin sector.

@@ -18,18 +18,18 @@ que se saltó una capa.
 
 ## Dónde tocar cuando cambie la API
 
-| Cambio en el backend | Se toca |
-|---|---|
-| Se abren los GET públicos | `lib/api/tokens.ts` (dejar de pedir token) |
-| Cambia el login o la vida del token | `lib/api/tokens.ts` |
-| Se renombra o agrega un campo | `lib/dominio/adaptadores.ts` |
-| Se unifica la paginación | `lib/api/client.ts` → `normalizePage` |
-| Aparece `slug` en proyectos | `adaptadores.ts` → `slugDeProyecto()` |
-| Aparece `provincia` en cooperativas | `adaptadores.ts` → `provinciaDe()` |
-| Aparece `logo` en cooperativas | `adaptadores.ts` → `aCooperativa()` |
-| Cambian los nombres de los query params | `lib/datos/proyectos.ts` → `aQueryParams()` |
-| Aparece un endpoint de estadísticas | `lib/datos/catalogos.ts` → `getMetricasRed()` |
-| Aparecen novedades y contacto | recursos nuevos en `lib/datos/` |
+| Cambio en el backend                    | Se toca                                       |
+| --------------------------------------- | --------------------------------------------- |
+| Se abren los GET públicos               | `lib/api/tokens.ts` (dejar de pedir token)    |
+| Cambia el login o la vida del token     | `lib/api/tokens.ts`                           |
+| Se renombra o agrega un campo           | `lib/dominio/adaptadores.ts`                  |
+| Se unifica la paginación                | `lib/api/client.ts` → `normalizePage`         |
+| Aparece `slug` en proyectos             | `adaptadores.ts` → `slugDeProyecto()`         |
+| Aparece `provincia` en cooperativas     | `adaptadores.ts` → `provinciaDe()`            |
+| Aparece `logo` en cooperativas          | `adaptadores.ts` → `aCooperativa()`           |
+| Cambian los nombres de los query params | `lib/datos/proyectos.ts` → `aQueryParams()`   |
+| Aparece un endpoint de estadísticas     | `lib/datos/catalogos.ts` → `getMetricasRed()` |
+| Aparecen novedades y contacto           | recursos nuevos en `lib/datos/`               |
 
 En todos esos casos el modelo de `lib/dominio/tipos.ts` no cambia, así que las
 páginas y los componentes quedan igual.

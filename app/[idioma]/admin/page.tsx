@@ -1,4 +1,5 @@
-import { requerirSesion } from "@/lib/api/guardia";
+import { redirect } from "next/navigation";
+import { destinoDe, requerirSesion } from "@/lib/api/guardia";
 import { getCooperativas, getAutoridades } from "@/lib/datos/catalogos";
 import { getProyectos } from "@/lib/datos/proyectos";
 import { getNovedades } from "@/lib/datos/novedades";
@@ -15,6 +16,11 @@ export const metadata = { title: "Inicio" };
  */
 export default async function AdminPage() {
   const sesion = await requerirSesion();
+  /*
+   * El tablero cuenta lo que hay en todo el sitio, que no es asunto de una
+   * cooperativa: a ella le interesa su ficha, así que entra directo ahí.
+   */
+  if (!sesion.esAdmin) redirect(destinoDe(sesion));
 
   const [cooperativas, autoridades, proyectos, novedades] = await Promise.all([
     getCooperativas(),

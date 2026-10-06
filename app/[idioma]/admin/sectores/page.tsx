@@ -1,4 +1,4 @@
-import { requerirSesion } from "@/lib/api/guardia";
+import { requerirFederacion } from "@/lib/api/guardia";
 import { traerSectores } from "@/lib/datos/admin";
 import {
   BotonBorrar,
@@ -17,7 +17,7 @@ export const metadata = { title: "Sectores" };
  * orden es el motivo principal por el que se entra acá.
  */
 export default async function SectoresPage() {
-  await requerirSesion();
+  await requerirFederacion();
   const sectores = await traerSectores();
 
   return (

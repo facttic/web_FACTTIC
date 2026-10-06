@@ -37,6 +37,8 @@ export interface Traducciones<T> {
 }
 
 export interface Servicio {
+  /** La cooperativa que lo creó, si no es del catálogo de la Federación. */
+  cooperativa?: string;
   _id: string;
   nombre: string;
   descripcion?: string;
@@ -50,7 +52,11 @@ export interface Servicio {
   subservicios?: Subservicio[];
   createdAt?: string;
   updatedAt?: string;
-  traducciones?: Traducciones<{ nombre: string; descripcion: string; subservicios: Subservicio[] }>;
+  traducciones?: Traducciones<{
+    nombre: string;
+    descripcion: string;
+    subservicios: Subservicio[];
+  }>;
 }
 
 export interface Sector {
@@ -88,6 +94,8 @@ export interface Ubicacion {
 }
 
 export interface Cooperativa {
+  /** Los mails que pueden editarla desde el panel. */
+  editores?: string[];
   _id: string;
   nombre: string;
   asociados?: number;
@@ -151,7 +159,12 @@ export interface Proyecto {
   videoFileNames?: string[];
   createdAt?: string;
   updatedAt?: string;
-  traducciones?: Traducciones<{ nombre: string; desafio: string; solucion: string; resultado: string }>;
+  traducciones?: Traducciones<{
+    nombre: string;
+    desafio: string;
+    solucion: string;
+    resultado: string;
+  }>;
 }
 
 /**
@@ -208,5 +221,9 @@ export interface Novedad {
   fecha?: string;
   fileName?: string;
   createdAt?: string;
-  traducciones?: Traducciones<{ titulo: string; bajada: string; cuerpo: string }>;
+  traducciones?: Traducciones<{
+    titulo: string;
+    bajada: string;
+    cuerpo: string;
+  }>;
 }

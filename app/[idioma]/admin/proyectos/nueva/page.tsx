@@ -20,7 +20,7 @@ export default async function Page({
 }: {
   searchParams: Promise<{ cooperativa?: string; volver?: string }>;
 }) {
-  await requerirSesion();
+  const sesion = await requerirSesion();
   const [opciones, { cooperativa, volver }] = await Promise.all([
     traerOpciones(),
     searchParams,
@@ -32,7 +32,7 @@ export default async function Page({
       <FormularioProyecto
         accion={guardarProyecto.bind(null, null)}
         opciones={opciones}
-        cooperativa={cooperativa}
+        cooperativa={cooperativa ?? sesion.cooperativas[0]?.id}
         volverA={volver}
       />
     </div>

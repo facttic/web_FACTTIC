@@ -18,6 +18,32 @@ export interface ItemAdmin {
   listo: boolean;
 }
 
+/**
+ * Lo que puede editar una cooperativa: su ficha, sus proyectos y los servicios
+ * que ella misma dé de alta. El resto es de la Federación.
+ */
+const DE_LAS_COOPERATIVAS = [
+  "/admin/cooperativas",
+  "/admin/proyectos",
+  "/admin/servicios",
+];
+
+/**
+ * El menú que corresponde a quien entró.
+ *
+ * Esconder no es proteger: la API rechaza igual lo que no corresponda. Esto
+ * es para no ofrecer pantallas que al guardar van a dar 403.
+ */
+export function seccionesPara(esAdmin: boolean) {
+  if (esAdmin) return SECCIONES;
+  return SECCIONES.map((seccion) => ({
+    ...seccion,
+    items: seccion.items.filter((item) =>
+      DE_LAS_COOPERATIVAS.includes(item.href),
+    ),
+  })).filter((seccion) => seccion.items.length);
+}
+
 export const SECCIONES: Array<{ titulo: string; items: ItemAdmin[] }> = [
   {
     titulo: "Contenido",

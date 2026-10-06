@@ -1,4 +1,4 @@
-import { requerirSesion } from "@/lib/api/guardia";
+import { requerirFederacion } from "@/lib/api/guardia";
 import { Encabezado } from "@/components/admin/piezas";
 import { FormularioSector } from "../formulario";
 import { guardarSector } from "../acciones";
@@ -6,7 +6,7 @@ import { guardarSector } from "../acciones";
 export const metadata = { title: "Agregar sector" };
 
 export default async function Page() {
-  await requerirSesion();
+  await requerirFederacion();
   return (
     <div>
       <Encabezado titulo="Agregar sector" />

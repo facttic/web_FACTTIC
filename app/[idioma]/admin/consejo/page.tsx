@@ -1,4 +1,4 @@
-import { requerirSesion } from "@/lib/api/guardia";
+import { requerirFederacion } from "@/lib/api/guardia";
 import { traerConsejo } from "@/lib/datos/admin";
 import {
   BotonBorrar,
@@ -13,7 +13,7 @@ import { borrarAutoridad } from "./acciones";
 export const metadata = { title: "Consejo" };
 
 export default async function ConsejoPage() {
-  await requerirSesion();
+  await requerirFederacion();
   const consejo = await traerConsejo();
 
   return (

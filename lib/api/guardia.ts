@@ -29,6 +29,30 @@ export async function requerirSesion(): Promise<Sesion> {
 }
 
 /**
+ * Las pantallas que son solo de la Federación.
+ *
+ * Una cooperativa entra al panel para su ficha, sus proyectos y sus servicios;
+ * el resto —sectores, novedades, consejo, aliados— es de la Federación. Si
+ * alguien escribe la URL a mano, vuelve a su cooperativa en vez de ver una
+ * pantalla que igual no podría guardar.
+ *
+ * Es comodidad, no seguridad: quien manda es la API, que rechaza la escritura
+ * con 403 aunque el panel se haya equivocado y mostrado el formulario.
+ */
+export async function requerirFederacion(): Promise<Sesion> {
+  const sesion = await requerirSesion();
+  if (!sesion.esAdmin) redirect(destinoDe(sesion));
+  return sesion;
+}
+
+/** A dónde mandar a alguien según lo que puede editar. */
+export function destinoDe(sesion: Sesion): string {
+  if (sesion.esAdmin) return "/admin";
+  const suya = sesion.cooperativas[0];
+  return suya ? `/admin/cooperativas/${suya.id}` : "/admin/sin-acceso";
+}
+
+/**
  * Lo mismo para las acciones de formulario, pero devolviendo un error en vez
  * de redirigir: así el formulario puede mostrar qué pasó en vez de perder lo
  * que la persona estaba escribiendo.

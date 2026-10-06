@@ -14,9 +14,12 @@ import { NavegacionAdmin } from "./navegacion";
  */
 export async function MarcoAdmin({
   usuario,
+  esAdmin,
   children,
 }: {
   usuario: string;
+  /** Una cooperativa ve solo sus secciones. */
+  esAdmin: boolean;
   children: React.ReactNode;
 }) {
   async function salir() {
@@ -33,7 +36,10 @@ export async function MarcoAdmin({
           <p className="text-eyebrow mt-2 text-blanco/40">Panel de contenido</p>
         </div>
 
-        <NavegacionAdmin className="flex-1 overflow-y-auto p-4" />
+        <NavegacionAdmin
+          esAdmin={esAdmin}
+          className="flex-1 overflow-y-auto p-4"
+        />
 
         <div className="border-t border-borde p-4">
           <p className="text-p3 truncate text-blanco/50">{usuario}</p>
@@ -73,7 +79,11 @@ export async function MarcoAdmin({
               </button>
             </form>
           </div>
-          <NavegacionAdmin variante="tira" className="px-4 pb-3" />
+          <NavegacionAdmin
+            variante="tira"
+            esAdmin={esAdmin}
+            className="px-4 pb-3"
+          />
         </header>
 
         {/* El espacio de abajo es para la barra de acciones de los

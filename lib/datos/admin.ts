@@ -164,6 +164,8 @@ export interface Servicio {
   /** Del catálogo de la Federación: es lo único que sale en el sitio. */
   destacado: boolean;
   subservicios: Array<{ nombre: string; descripcion: string }>;
+  /** La cooperativa que lo creó; vacío si es del catálogo de la Federación. */
+  cooperativa: string;
   /*
    * Los subservicios no se editan en inglés desde el panel —el formulario los
    * arma como dos listas paralelas y hay que resolver cómo emparejarlas—, pero
@@ -188,6 +190,7 @@ function aServicio(api: Api.Servicio): Servicio {
       nombre: texto(sub.nombre),
       descripcion: texto(sub.descripcion),
     })),
+    cooperativa: texto(api.cooperativa),
     en: {
       ...enIngles(api.traducciones, ["nombre", "descripcion"]),
       subservicios: api.traducciones?.en?.subservicios ?? [],
@@ -279,6 +282,8 @@ export async function traerNovedad(id: string): Promise<Novedad | null> {
 /* ---------- Cooperativas ---------- */
 
 export interface Cooperativa {
+  /** Los mails habilitados a editarla. Lo administra solo la Federación. */
+  editores: string[];
   id: string;
   nombre: string;
   asociados: number | null;
@@ -290,6 +295,7 @@ export interface Cooperativa {
 
 function aCooperativa(api: Api.Cooperativa): Cooperativa {
   return {
+    editores: api.editores ?? [],
     id: api._id,
     nombre: texto(api.nombre),
     asociados: api.asociados ?? null,

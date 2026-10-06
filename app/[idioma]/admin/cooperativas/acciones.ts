@@ -7,6 +7,7 @@ import {
   type Destino,
 } from "@/lib/admin/acciones";
 import { archivo, lista, numero, texto } from "@/lib/admin/campos";
+import { escribirEn } from "@/lib/api/escritura";
 import type { EstadoForm } from "@/components/admin/piezas";
 
 const COOPERATIVAS: Destino = {
@@ -93,4 +94,44 @@ export async function borrarCooperativa(
   datos: FormData,
 ): Promise<EstadoForm> {
   return borrarDe(COOPERATIVAS, datos);
+}
+
+/**
+ * Suma a alguien como editor de una cooperativa y le manda la invitación.
+ *
+ * Solo la Federación. La API lo verifica igual; acá se corta antes para no
+ * mostrar un error inútil. El mail queda habilitado en el momento en que se
+ * agrega: el link es para que pueda crear su cuenta.
+ */
+export async function invitarEditor(
+  id: string,
+  _estado: EstadoForm,
+  datos: FormData,
+): Promise<EstadoForm> {
+  const email = texto(datos, "email");
+  if (!email.includes("@")) return { error: "Escribí un correo válido" };
+
+  const res = await escribirEn(
+    `/api/cooperativas/${id}/editores`,
+    "POST",
+    { email },
+    "cooperativas",
+  );
+  return res.ok ? undefined : { error: res.error };
+}
+
+/** Le quita el acceso a alguien y revoca su invitación pendiente. */
+export async function quitarEditor(
+  id: string,
+  _estado: EstadoForm,
+  datos: FormData,
+): Promise<EstadoForm> {
+  const email = texto(datos, "email");
+  const res = await escribirEn(
+    `/api/cooperativas/${id}/editores/${encodeURIComponent(email)}`,
+    "DELETE",
+    undefined,
+    "cooperativas",
+  );
+  return res.ok ? undefined : { error: res.error };
 }

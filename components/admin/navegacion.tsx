@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { FOCO } from "@/components/ui/boton";
-import { SECCIONES } from "./secciones";
+import { seccionesPara } from "./secciones";
 
 /** Navegación del panel, en la lateral o como tira arriba en pantallas chicas. */
 
@@ -16,11 +16,15 @@ import { SECCIONES } from "./secciones";
 
 export function NavegacionAdmin({
   variante = "lateral",
+  esAdmin = true,
   className,
 }: {
   variante?: "lateral" | "tira";
+  /** Una cooperativa ve solo lo suyo; la Federación, todo. */
+  esAdmin?: boolean;
   className?: string;
 }) {
+  const SECCIONES = seccionesPara(esAdmin);
   const ruta = usePathname();
   const activo = (href: string) => ruta === href || ruta.startsWith(`${href}/`);
 

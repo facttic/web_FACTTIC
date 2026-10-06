@@ -22,18 +22,28 @@ export const metadata = { title: "Cooperativas" };
  * provincia queda flojo.
  */
 export default async function CooperativasPage() {
-  await requerirSesion();
-  const cooperativas = await traerCooperativas();
+  const sesion = await requerirSesion();
+  const todas = await traerCooperativas();
+  /* Una cooperativa ve la suya; la Federación, todas. */
+  const cooperativas = sesion.esAdmin
+    ? todas
+    : todas.filter((coop) =>
+        sesion.cooperativas.some((suya) => suya.id === coop.id),
+      );
 
   return (
     <div>
       <Encabezado
         titulo="Cooperativas"
         cantidad={cooperativas.length}
+        /* Dar de alta una cooperativa es de la Federación: a una cooperativa
+           el botón solo le daría un 403 al guardar. */
         accion={
-          <EnlaceAdmin href="/admin/cooperativas/nueva">
-            Agregar cooperativa
-          </EnlaceAdmin>
+          sesion.esAdmin ? (
+            <EnlaceAdmin href="/admin/cooperativas/nueva">
+              Agregar cooperativa
+            </EnlaceAdmin>
+          ) : null
         }
       />
 
@@ -75,11 +85,13 @@ export default async function CooperativasPage() {
                   >
                     Editar
                   </EnlaceAdmin>
-                  <BotonBorrar
-                    accion={borrarCooperativa}
-                    id={cooperativa.id}
-                    que={cooperativa.nombre}
-                  />
+                  {sesion.esAdmin ? (
+                    <BotonBorrar
+                      accion={borrarCooperativa}
+                      id={cooperativa.id}
+                      que={cooperativa.nombre}
+                    />
+                  ) : null}
                 </span>
               </Celda>
             </Fila>

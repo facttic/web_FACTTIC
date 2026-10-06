@@ -30,5 +30,9 @@ export default async function AdminLayout({
   if (!sesion) return <>{children}</>;
 
   // Del usuario solo viaja el nombre; el token se queda en el servidor.
-  return <MarcoAdmin usuario={sesion.usuario}>{children}</MarcoAdmin>;
+  return (
+    <MarcoAdmin usuario={sesion.usuario} esAdmin={sesion.esAdmin}>
+      {children}
+    </MarcoAdmin>
+  );
 }

@@ -1,4 +1,4 @@
-import { requerirSesion } from "@/lib/api/guardia";
+import { requerirFederacion } from "@/lib/api/guardia";
 import { traerOpciones } from "@/lib/datos/admin";
 import { Encabezado } from "@/components/admin/piezas";
 import { FormularioAutoridad } from "../formulario";
@@ -7,7 +7,7 @@ import { guardarAutoridad } from "../acciones";
 export const metadata = { title: "Agregar autoridad" };
 
 export default async function Page() {
-  await requerirSesion();
+  await requerirFederacion();
   const { cooperativas } = await traerOpciones();
 
   return (

@@ -21,6 +21,13 @@ import { IDIOMA_POR_DEFECTO, IDIOMAS, rutaEn, rutaInterna } from "@/lib/idioma";
 function guardiaDelPanel(request: NextRequest, ruta: string) {
   const tieneSesion = request.cookies.has("facttic_sesion");
   const esLogin = ruta === "/admin/ingresar";
+  /*
+   * La invitación se abre sin sesión: es la pantalla donde se crea la cuenta.
+   * Lo que autoriza ahí es el token del link, que verifica la API.
+   */
+  const esInvitacion = ruta.startsWith("/admin/invitacion/");
+
+  if (esInvitacion) return null;
 
   if (!tieneSesion && !esLogin) {
     const destino = new URL("/admin/ingresar", request.url);

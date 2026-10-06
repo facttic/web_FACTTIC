@@ -13,8 +13,16 @@ import { borrarProyecto } from "./acciones";
 export const metadata = { title: "Proyectos" };
 
 export default async function ProyectosPage() {
-  await requerirSesion();
-  const proyectos = await traerProyectos();
+  const sesion = await requerirSesion();
+  const todos = await traerProyectos();
+  /* Los proyectos donde figura su cooperativa: son los que puede editar. */
+  const proyectos = sesion.esAdmin
+    ? todos
+    : todos.filter((proyecto) =>
+        proyecto.cooperativas.some((id) =>
+          sesion.cooperativas.some((suya) => suya.id === id),
+        ),
+      );
 
   return (
     <div>

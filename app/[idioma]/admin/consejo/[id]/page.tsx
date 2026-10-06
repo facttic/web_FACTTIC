@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { requerirSesion } from "@/lib/api/guardia";
+import { requerirFederacion } from "@/lib/api/guardia";
 import { traerAutoridad, traerOpciones } from "@/lib/datos/admin";
 import { Encabezado } from "@/components/admin/piezas";
 import { FormularioAutoridad } from "../formulario";
@@ -12,7 +12,7 @@ export default async function Page({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await requerirSesion();
+  await requerirFederacion();
   const [autoridad, { cooperativas }] = await Promise.all([
     traerAutoridad((await params).id),
     traerOpciones(),

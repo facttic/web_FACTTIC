@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { requerirSesion } from "@/lib/api/guardia";
+import { requerirFederacion } from "@/lib/api/guardia";
 import { traerSimple } from "@/lib/datos/admin";
 import { EdicionSimple } from "@/components/admin/abm-simple";
 import { CONFIG } from "../config";
@@ -11,7 +11,7 @@ export default async function Page({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await requerirSesion();
+  await requerirFederacion();
   const registro = await traerSimple(CONFIG.recurso, (await params).id);
   if (!registro) notFound();
   return <EdicionSimple config={CONFIG} registro={registro} />;

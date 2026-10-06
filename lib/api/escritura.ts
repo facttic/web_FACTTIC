@@ -81,6 +81,20 @@ async function pedir(
   }
 }
 
+/**
+ * Una llamada a una ruta propia, con la misma sesión y el mismo manejo de
+ * errores que el resto. La usan los editores de cada cooperativa, que cuelgan
+ * de `/cooperativas/:id/editores` y no de un recurso con su ABM.
+ */
+export function escribirEn(
+  ruta: string,
+  metodo: "POST" | "PUT" | "DELETE",
+  cuerpo: object | undefined,
+  etiqueta: string,
+): Promise<Resultado> {
+  return pedir(ruta, metodo, cuerpo, etiqueta);
+}
+
 export function crear(
   recurso: string,
   cuerpo: FormData | object,

@@ -13,8 +13,15 @@ import { borrarServicio } from "./acciones";
 export const metadata = { title: "Servicios" };
 
 export default async function ServiciosPage() {
-  await requerirSesion();
-  const servicios = await traerServicios();
+  const sesion = await requerirSesion();
+  const todos = await traerServicios();
+  /* Los que creó su cooperativa. Los cinco de la Federación se eligen al
+     completar la ficha, pero no se editan desde acá. */
+  const servicios = sesion.esAdmin
+    ? todos
+    : todos.filter((servicio) =>
+        sesion.cooperativas.some((suya) => suya.id === servicio.cooperativa),
+      );
 
   return (
     <div>

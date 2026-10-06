@@ -1,4 +1,4 @@
-import { requerirSesion } from "@/lib/api/guardia";
+import { requerirFederacion } from "@/lib/api/guardia";
 import { traerNovedades } from "@/lib/datos/admin";
 import {
   BotonBorrar,
@@ -22,7 +22,7 @@ function comoDia(iso: string): string {
 }
 
 export default async function NovedadesPage() {
-  await requerirSesion();
+  await requerirFederacion();
   const novedades = await traerNovedades();
 
   return (

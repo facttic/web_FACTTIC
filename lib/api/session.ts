@@ -24,6 +24,17 @@ const DURACION = 14 * 60;
 export interface Sesion {
   token: string;
   usuario: string;
+  /**
+   * Quién es y qué puede editar, tal como lo responde `GET /api/me` al entrar.
+   *
+   * Es para que el panel sepa qué mostrar: la Federación ve todo y una
+   * cooperativa, lo suyo. **No es el permiso**: cada escritura la autoriza la
+   * API por su cuenta, así que si esto quedara desactualizado —por ejemplo
+   * porque le quitaron el acceso— lo peor que pasa es que vea un formulario
+   * que al guardar devuelve 403.
+   */
+  esAdmin: boolean;
+  cooperativas: Array<{ id: string; nombre: string }>;
 }
 
 export async function iniciarSesion(
@@ -57,16 +68,60 @@ export async function iniciarSesion(
   };
   if (!token) return { ok: false, error: "La API no devolvió un token" };
 
+  const quien = await traerPerfil(token);
+
   const almacen = await cookies();
-  almacen.set(COOKIE, JSON.stringify({ token, usuario } satisfies Sesion), {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: DURACION,
-  });
+  almacen.set(
+    COOKIE,
+    JSON.stringify({ token, usuario, ...quien } satisfies Sesion),
+    {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: DURACION,
+    },
+  );
 
   return { ok: true };
+}
+
+/**
+ * Lo que la API dice de quien entró.
+ *
+ * Contra una API vieja —sin `/me`— la sesión queda como administradora, que es
+ * lo que esa versión hace de todos modos: ahí **todos** los endpoints de
+ * escritura exigen `admin:all`, así que nadie más podía entrar al panel. Dar
+ * por administrador a quien ya lo era no abre ninguna puerta, y evita que
+ * publicar el sitio antes que la API deje a la Federación sin su panel.
+ *
+ * Si la respuesta falla por otro motivo, la sesión queda sin permisos: ahí sí
+ * conviene ver de menos.
+ */
+async function traerPerfil(
+  token: string,
+): Promise<Pick<Sesion, "esAdmin" | "cooperativas">> {
+  try {
+    const res = await fetch(`${API_URL}/api/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    });
+    if (res.status === 404) return { esAdmin: true, cooperativas: [] };
+    if (!res.ok) return { esAdmin: false, cooperativas: [] };
+    const datos = (await res.json()) as {
+      esAdmin?: boolean;
+      cooperativas?: Array<{ _id: string; nombre: string }>;
+    };
+    return {
+      esAdmin: datos.esAdmin === true,
+      cooperativas: (datos.cooperativas ?? []).map((c) => ({
+        id: c._id,
+        nombre: c.nombre,
+      })),
+    };
+  } catch {
+    return { esAdmin: false, cooperativas: [] };
+  }
 }
 
 export async function cerrarSesion(): Promise<void> {
