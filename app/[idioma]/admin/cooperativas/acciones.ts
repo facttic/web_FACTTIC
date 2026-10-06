@@ -13,8 +13,28 @@ import {
   texto,
   traducciones,
 } from "@/lib/admin/campos";
+import { revalidatePath } from "next/cache";
 import { escribirEn } from "@/lib/api/escritura";
 import type { EstadoForm } from "@/components/admin/piezas";
+
+/**
+ * Volver a dibujar la ficha después de tocar sus editores.
+ *
+ * Sin esto la lista se quedaba con lo de antes y parecía que el botón no
+ * hacía nada: se sumaba o se quitaba a alguien, la API respondía bien y en
+ * pantalla no cambiaba nada hasta recargar a mano.
+ *
+ * `escribirEn` invalida la etiqueta del recurso, pero eso es para el sitio
+ * público: el panel lee con `cache: "no-store"` —el token entra en la clave de
+ * cache y se renueva cada quince minutos—, así que esta ruta no tiene ninguna
+ * entrada etiquetada y nunca quedaba marcada como sucia. Hay que nombrarla.
+ *
+ * Va el patrón de la ruta y no la dirección concreta porque el segmento de
+ * idioma es interno: la URL pública en español no lo lleva.
+ */
+function redibujarLaFicha() {
+  revalidatePath("/[idioma]/admin/cooperativas/[id]", "page");
+}
 
 const COOPERATIVAS: Destino = {
   recurso: "cooperativas",
@@ -164,7 +184,9 @@ export async function invitarEditor(
     { email },
     "cooperativas",
   );
-  return res.ok ? undefined : { error: res.error };
+  if (!res.ok) return { error: res.error };
+  redibujarLaFicha();
+  return undefined;
 }
 
 /** Le quita el acceso a alguien y revoca su invitación pendiente. */
@@ -180,5 +202,7 @@ export async function quitarEditor(
     undefined,
     "cooperativas",
   );
-  return res.ok ? undefined : { error: res.error };
+  if (!res.ok) return { error: res.error };
+  redibujarLaFicha();
+  return undefined;
 }
