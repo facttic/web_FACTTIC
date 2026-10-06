@@ -997,27 +997,23 @@ body {
 }
 
 /**
- * El panel de un juego de solapas, al cambiar de solapa.
+ * La fila de tarjetas de Servicios, al cambiar de solapa.
  *
- * Sin esto el contenido aparecía con otro texto de golpe y costaba ver que
- * había cambiado. Entra desde abajo, corto: es un cambio de contenido, no una
- * transición de pantalla.
+ * Antes el panel se volvía a montar y entraba con un fundido desde abajo: el
+ * texto cambiaba en el mismo lugar y costaba ver qué había pasado. Ahora las
+ * tarjetas están todas en fila y se corre la fila, así que el cambio se lee
+ * como un desplazamiento sobre una lista y no como un reemplazo.
+ *
+ * La curva frena largo al final: saltar tres solapas de una recorre tres
+ * tarjetas, y con un `ease-out` corto eso se ve como un tirón.
+ *
+ * Solo anima la transformación, que no toca el layout.
  */
-@keyframes entrar-el-panel {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@utility entra-el-panel {
-  animation: entrar-el-panel 0.32s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+@utility pista-de-servicios {
+  transition: transform 0.55s cubic-bezier(0.22, 0.8, 0.26, 1);
+  will-change: transform;
 
   @media (prefers-reduced-motion: reduce) {
-    animation: none;
+    transition: none;
   }
 }

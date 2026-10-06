@@ -13,10 +13,20 @@ import type { Servicio } from "@/lib/dominio/tipos";
  * Bloque "Solucionamos con tecnología e innovación".
  *
  * En el prototipo no es un juego de solapas común: además de la lista con la
- * solapa activa subrayada, hay flechas que recorren los servicios, y se
- * muestran dos tarjetas: la del servicio activo, pintada y con su descripción,
- * y la del siguiente, apagada y solo con el título. Al avanzar, la segunda pasa
- * a ser la primera.
+ * solapa activa subrayada, hay flechas que recorren los servicios, y debajo se
+ * ven dos tarjetas —la del servicio activo y la del siguiente—. Al avanzar, la
+ * segunda pasa a ser la primera. Las tres variantes de la hoja de componentes
+ * lo confirman: las dos tarjetas son servicios, nunca subservicios, y ninguna
+ * se pinta por estar activa; el color es el hover.
+ *
+ * **Por eso las tarjetas son una pista y no un par que se reemplaza.** Están
+ * las cinco puestas en fila y lo que se mueve es la fila entera: al cambiar de
+ * solapa, las tarjetas se deslizan hasta la que corresponde en vez de aparecer
+ * con otro texto en el mismo lugar. Así se entiende que son un recorrido sobre
+ * una misma lista —que es lo que dicen las flechas— y el cambio se nota.
+ *
+ * De yapa, al estar las cinco en la misma fila todas miden lo mismo, así que el
+ * bloque ya no cambia de alto al pasar de una solapa a otra.
  *
  * El encabezado se arma acá adentro y no en la página porque las flechas van
  * junto al título de sección —así están en el SVG— y necesitan el estado de
@@ -63,7 +73,13 @@ export function Servicios({
   if (!servicios.length) return null;
 
   const servicioActivo = servicios[activo];
-  const siguiente = servicios[(activo + 1) % servicios.length];
+  /*
+   * Hasta dónde se corre la fila. No es `activo` directo: la pista se frena una
+   * tarjeta antes del final, porque si no en la última solapa quedaría medio
+   * bloque vacío. Así la última elegida se ve a la derecha en vez de a la
+   * izquierda, que es lo que hace cualquier carrusel al llegar al tope.
+   */
+  const paso = Math.max(0, Math.min(activo, servicios.length - 2));
 
   return (
     <div className={className}>
@@ -125,38 +141,60 @@ export function Servicios({
       <div className="border-t border-dashed border-gris-oscuro" />
 
       {/*
-        El `key` es el servicio activo: al cambiar de solapa el panel se monta
-        de nuevo y la entrada vuelve a correr, así el cambio se ve en vez de
-        aparecer con otro texto de golpe.
+        La pista. Son tres cajas y cada una tiene su razón:
 
-        `items-stretch` explícito: las dos tarjetas de la fila miden lo mismo
-        aunque una tenga descripción y la otra no.
+        1. la de afuera declara el `container-type`, y así `cqw` mide el ancho
+           útil del bloque: el paso de una tarjeta a la otra sale exacto sin
+           medir nada en JavaScript ni escuchar el `resize`;
+        2. la del medio recorta lo que sobra, con el recorte corrido 16px para
+           afuera —`-mx-4 px-4`— para que el borde no le coma el anillo de foco
+           a la primera tarjeta. Tiene que ser **menos** que el gap de 24: con
+           los dos iguales, el canto de la tarjeta de al lado caía justo sobre
+           el corte y quedaba un hilo de medio píxel a la izquierda;
+        3. la de adentro es la fila, que es lo único que se mueve.
       */}
       <div
-        key={servicioActivo.id}
         id={`${baseId}-panel`}
         role="tabpanel"
         aria-labelledby={`${baseId}-tab-${servicioActivo.id}`}
-        className="entra-el-panel mt-8 grid items-stretch gap-6 md:grid-cols-2"
+        className="mt-8"
+        style={{ containerType: "inline-size" }}
       >
-        {[servicioActivo, siguiente].map((servicio, i) => (
-          <CardServicioSiguiente
-            key={`${servicio.id}-${i}`}
-            className="h-full"
-            titulo={servicio.nombre}
-            acento={
-              acentoDeServicio(servicio.nombre) ??
-              acentoPorIndice(servicios.indexOf(servicio))
-            }
-            descripcion={
-              servicio.descripcion ??
-              servicio.subservicios.map((sub) => sub.nombre).join(" · ")
-            }
-            onClick={() =>
-              setActivo(i === 0 ? activo : (activo + 1) % servicios.length)
-            }
-          />
-        ))}
+        <div className="-mx-4 -my-2 overflow-hidden px-4 py-2">
+          <div
+            className="pista-de-servicios flex gap-6"
+            style={{
+              transform: `translateX(calc(${paso} * (-50cqw - 0.75rem)))`,
+            }}
+          >
+            {servicios.map((servicio, i) => {
+              /* Solo se llega con el tabulador a las dos que están en pantalla;
+                 si no, el foco pasearía por tarjetas que nadie ve. */
+              const aLaVista = i === paso || i === paso + 1;
+              return (
+                <div
+                  key={servicio.id}
+                  inert={aLaVista ? undefined : true}
+                  className="flex shrink-0"
+                  style={{ flexBasis: "calc(50cqw - 0.75rem)" }}
+                >
+                  <CardServicioSiguiente
+                    className="w-full"
+                    titulo={servicio.nombre}
+                    acento={
+                      acentoDeServicio(servicio.nombre) ?? acentoPorIndice(i)
+                    }
+                    descripcion={
+                      servicio.descripcion ??
+                      servicio.subservicios.map((sub) => sub.nombre).join(" · ")
+                    }
+                    onClick={() => setActivo(i)}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );
