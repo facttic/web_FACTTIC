@@ -184,11 +184,12 @@ export function CardProyecto({
           cambia a blanco pleno, y una línea de 1px con ese contraste, rotada en
           3D, se rasteriza a tramos claros y oscuros. Con seis grados el
           bandeado desaparece; con diez se veía. */}
-      {/* `contain-content`: al pasar el mouse cambian el alto de la portada y
-          las filas de la grilla interna, que son cálculos de layout. Sin esto
-          el navegador los rehacía para la página entera; contenido en la
-          tarjeta, se queda adentro. */}
-      <Inclinar grados={6} className="contain-content">
+      {/* `contain-layout` y no `contain-content`: al pasar el mouse cambian el
+          alto de la portada y las filas de la grilla interna, que son cálculos
+          de layout, y contenerlos evita que el navegador los rehaga para la
+          página entera. `content` además recorta lo que se sale de la caja, y
+          la tarjeta inclinada se sale: le comía los bordes. */}
+      <Inclinar grados={6} className="contain-layout">
         <Tarjeta
           className={cn(
             "flex flex-col overflow-hidden",
