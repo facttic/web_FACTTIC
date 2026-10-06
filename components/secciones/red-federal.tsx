@@ -250,9 +250,11 @@ export function RedFederal({
             ref={pista}
             role="tablist"
             aria-label="Provincias con cooperativas"
-            // Aire a la derecha para que la última solapa no quede debajo de las
-            // flechas, que van encima de la línea.
-            className="scroll-limpio flex gap-8 overflow-x-auto border-b border-borde pr-28 md:pr-0"
+            /* Aire a la derecha para que la última solapa no quede debajo de
+               las flechas, que van encima de la línea. Y a la izquierda para
+               que la primera no arranque pegada al borde del vidrio, donde el
+               nombre toca el canto de la tarjeta y se lee apretado. */
+            className="scroll-limpio flex gap-8 overflow-x-auto border-b border-borde pl-3 pr-28 md:pl-5 md:pr-0"
           >
             {provincias.map((p) => {
               const activa = p.nombre === elegida;
