@@ -126,6 +126,20 @@ totalCount}` y proyectos `{items, total, page, limit, pages}`, con
       Los **sectores** siguen la misma regla: `getSectoresDestacados()` en la
       Home, en Nuestros servicios y en el filtro de Proyectos.
 
+- [ ] **44. Clientes y tecnologías por cooperativa** → **MR !7**
+      (`clientes-y-tecnologias-por-cooperativa`), sin mergear. Una cooperativa
+      ya podía crearlos al vuelo desde el formulario de un proyecto, pero no
+      corregirlos: el PUT pedía `admin:all`, así que un nombre mal escrito había
+      que pedírselo a la Federación. El MR les pone la misma regla que a
+      sectores y servicios: quedan a nombre de quien los crea, cada cooperativa
+      edita los suyos, y lo que no tiene dueño es del catálogo común.
+
+      **Cuando se mergee y despliegue**, del lado del sitio es sumar
+      `/admin/clientes` y `/admin/tecnologias` a `DE_LAS_COOPERATIVAS` en
+      `components/admin/secciones.ts` y filtrar los dos listados por
+      `cooperativa`, igual que hacen hoy sectores y servicios. Antes de eso no,
+      o cada "Editar" termina en 403.
+
 - [ ] **43. Optimizar las imágenes del contenido.** Las portadas se sirven
       crudas, como las sube el backoffice. Medido el 6/10/2026 sobre lo que
       publica Proyectos: tres miniaturas que se dibujan a ~391px de ancho pesan
