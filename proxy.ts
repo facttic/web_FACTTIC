@@ -1,5 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { IDIOMA_POR_DEFECTO, IDIOMAS, rutaEn, rutaInterna } from "@/lib/idioma";
+import {
+  IDIOMA_POR_DEFECTO,
+  IDIOMAS,
+  rutaEn,
+  rutaInterna,
+  type Idioma,
+} from "@/lib/idioma";
 
 /**
  * Reescritura de idioma y guardia del panel.
@@ -16,6 +22,76 @@ import { IDIOMA_POR_DEFECTO, IDIOMAS, rutaEn, rutaInterna } from "@/lib/idioma";
  * Se llama `proxy` y no `middleware` porque es el nombre que usa esta versión
  * de Next; el archivo anterior quedaba deprecado.
  */
+
+/**
+ * Que la primera visita caiga en su idioma.
+ *
+ * El sitio es en español y esa es la dirección sin prefijo, pero a quien llega
+ * con el navegador en otro idioma le sirve más el inglés. Así que la **primera
+ * vez** se mira `Accept-Language` y, si no pide español, se lo manda a `/en`.
+ *
+ * Tres decisiones que vale la pena dejar escritas:
+ *
+ * - **Pasa una sola vez.** Al decidir se deja la cookie, y mientras esté el
+ *   proxy no vuelve a mirar la cabecera. Si después alguien toca EN/ES, su
+ *   elección queda: no hay nada que lo rebote al idioma del navegador. Por eso
+ *   el selector sigue siendo un par de enlaces comunes y no hubo que tocarlo.
+ * - **Sin cabecera no se redirige.** Si no sabemos qué idioma quiere, se queda
+ *   en español, que es el del sitio. Esto además es lo que mantiene indexada la
+ *   versión en español: los rastreadores suelen no mandar `Accept-Language`, y
+ *   si los mandáramos a `/en` dejarían de ver el sitio en castellano.
+ * - **El panel no entra.** `/admin` se trabaja en español y sus rutas no se
+ *   traducen.
+ */
+const COOKIE_IDIOMA = "facttic_idioma";
+
+/** Un año: es una preferencia, no una sesión. */
+const DURACION_COOKIE = 60 * 60 * 24 * 365;
+
+/**
+ * Qué idioma pide el navegador, del `Accept-Language`.
+ *
+ * Devuelve `null` si no hay con qué decidir. Español es español; cualquier otra
+ * cosa cae en inglés, que es el otro idioma que tenemos.
+ */
+function idiomaDelNavegador(cabecera: string | null): Idioma | null {
+  if (!cabecera) return null;
+
+  const preferencias = cabecera
+    .split(",")
+    .map((parte) => {
+      const [etiqueta = "", ...resto] = parte.split(";");
+      const calidad = resto
+        .map((p) => p.trim())
+        .find((p) => p.startsWith("q="));
+      return {
+        // `es-AR` y `es` son lo mismo para nosotros: alcanza con la raíz.
+        base: etiqueta.trim().toLowerCase().split("-")[0],
+        peso: calidad ? Number(calidad.slice(2)) : 1,
+      };
+    })
+    /* `q=0` es "este no lo quiero", y `*` no dice nada. */
+    .filter((p) => p.base && p.base !== "*" && Number.isFinite(p.peso))
+    .filter((p) => p.peso > 0)
+    .sort((a, b) => b.peso - a.peso);
+
+  const elegida = preferencias[0];
+  if (!elegida) return null;
+  return elegida.base === IDIOMA_POR_DEFECTO ? IDIOMA_POR_DEFECTO : "en";
+}
+
+/** Deja asentado el idioma para no volver a mirar la cabecera. */
+function recordar(respuesta: NextResponse, idioma: Idioma): NextResponse {
+  respuesta.cookies.set(COOKIE_IDIOMA, idioma, {
+    maxAge: DURACION_COOKIE,
+    path: "/",
+    sameSite: "lax",
+  });
+  /* La respuesta depende de la cabecera: sin esto, un intermediario podría
+     guardar la redirección y servírsela a quien pide español. */
+  respuesta.headers.set("Vary", "Accept-Language");
+  return respuesta;
+}
 
 /** El panel no es público: sin sesión, al ingreso. */
 function guardiaDelPanel(request: NextRequest, ruta: string) {
@@ -77,16 +153,44 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  if (ruta === "/admin" || ruta.startsWith("/admin/")) {
+  const esPanel = ruta === "/admin" || ruta.startsWith("/admin/");
+
+  if (esPanel) {
     const respuesta = guardiaDelPanel(request, ruta);
     if (respuesta) return respuesta;
+  }
+
+  /*
+   * Primera visita a una pantalla pública: se decide el idioma y se recuerda.
+   * De acá en más manda la cookie y la cabecera no se vuelve a mirar.
+   */
+  const sinDecidir = !esPanel && !request.cookies.has(COOKIE_IDIOMA);
+
+  if (sinDecidir && !conPrefijo) {
+    const delNavegador = idiomaDelNavegador(
+      request.headers.get("accept-language"),
+    );
+    if (delNavegador === "en") {
+      const aIngles = request.nextUrl.clone();
+      aIngles.pathname = rutaEn("en", pathname);
+      return recordar(NextResponse.redirect(aIngles, 307), "en");
+    }
   }
 
   const destino = request.nextUrl.clone();
   destino.pathname = conPrefijo
     ? `/en${ruta === "/" ? "" : ruta}`
     : `/${IDIOMA_POR_DEFECTO}${pathname}`;
-  return NextResponse.rewrite(destino);
+  const respuesta = NextResponse.rewrite(destino);
+
+  /*
+   * Quien entra directo a `/en` también queda anotado: si no, al tocar ES
+   * volvería a una dirección sin prefijo, sin cookie, y el navegador en inglés
+   * lo rebotaría a `/en` otra vez. El selector dejaría de funcionar.
+   */
+  return sinDecidir
+    ? recordar(respuesta, conPrefijo ? "en" : IDIOMA_POR_DEFECTO)
+    : respuesta;
 }
 
 export const config = {
