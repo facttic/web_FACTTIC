@@ -86,6 +86,7 @@ export function FormularioProyecto({
             />
             <CampoTexto
               id="en-nombre"
+              traducirDesde="nombre"
               name="en.nombre"
               etiqueta="Nombre · English"
               ayuda="Opcional. Sin traducción, el sitio en inglés muestra el nombre en español."
@@ -207,6 +208,7 @@ export function FormularioProyecto({
               <>
                 <CampoTexto
                   id="en-desafio"
+                  traducirDesde="desafio"
                   name="en.desafio"
                   etiqueta="Challenge"
                   multilinea
@@ -216,6 +218,7 @@ export function FormularioProyecto({
                 />
                 <CampoTexto
                   id="en-solucion"
+                  traducirDesde="solucion"
                   name="en.solucion"
                   etiqueta="Solution"
                   multilinea
@@ -225,6 +228,7 @@ export function FormularioProyecto({
                 />
                 <CampoTexto
                   id="en-resultado"
+                  traducirDesde="resultado"
                   name="en.resultado"
                   etiqueta="Outcome"
                   multilinea

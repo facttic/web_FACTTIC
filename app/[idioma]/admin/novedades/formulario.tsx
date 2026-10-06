@@ -117,6 +117,7 @@ export function FormularioNovedad({
               <>
                 <CampoTexto
                   id="en-titulo"
+                  traducirDesde="titulo"
                   name="en.titulo"
                   etiqueta="Title"
                   ayuda="Sin traducción, el sitio en inglés muestra el español."
@@ -125,6 +126,7 @@ export function FormularioNovedad({
                 />
                 <CampoTexto
                   id="en-bajada"
+                  traducirDesde="bajada"
                   name="en.bajada"
                   etiqueta="Summary"
                   multilinea
@@ -134,6 +136,7 @@ export function FormularioNovedad({
                 />
                 <CampoTexto
                   id="en-cuerpo"
+                  traducirDesde="cuerpo"
                   name="en.cuerpo"
                   etiqueta="Body"
                   multilinea

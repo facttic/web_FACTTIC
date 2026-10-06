@@ -64,6 +64,7 @@ export function FormularioSector({
               <>
                 <CampoTexto
                   id="en-nombre"
+                  traducirDesde="nombre"
                   name="en.nombre"
                   etiqueta="Name"
                   ayuda="Sin traducción, el sitio en inglés muestra el español."
@@ -72,6 +73,7 @@ export function FormularioSector({
                 />
                 <CampoTexto
                   id="en-descripcion"
+                  traducirDesde="descripcion"
                   name="en.descripcion"
                   etiqueta="Description"
                   multilinea

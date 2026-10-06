@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useActionState, useState } from "react";
+import { traducirAlIngles } from "@/lib/admin/traducir";
 import { cn } from "@/lib/cn";
 import { FOCO } from "@/components/ui/boton";
 
@@ -130,8 +131,22 @@ export function Tabla({
   );
 }
 
-export function Fila({ children }: { children: React.ReactNode }) {
-  return <tr className="transition-colors hover:bg-superficie">{children}</tr>;
+export function Fila({
+  children,
+  busca,
+}: {
+  children: React.ReactNode;
+  /** Contra qué se compara al buscar; lo arma quien dibuja la fila. */
+  busca?: string;
+}) {
+  return (
+    <tr
+      data-busca={busca?.toLowerCase()}
+      className="transition-colors hover:bg-superficie"
+    >
+      {children}
+    </tr>
+  );
 }
 
 export function Celda({
@@ -174,6 +189,89 @@ export function Etiqueta({
 }
 
 /**
+ * Trae el borrador en inglés del campo en español de al lado.
+ *
+ * Es un borrador y queda editable: la máquina propone, no decide qué se
+ * publica. Traduce con LibreTranslate, que es software libre; el detalle de
+ * qué instancia se usa vive en `lib/admin/traducir.ts`.
+ *
+ * Escribe en el campo con el `setter` nativo y dispara un `input`: los campos
+ * del panel no están controlados por React, pero así se enteran igual los que
+ * sí lo estén y cualquier validación del navegador.
+ */
+function BotonTraducir({ desde, hacia }: { desde: string; hacia: string }) {
+  const [estado, setEstado] = useState<"quieto" | "yendo" | "listo">("quieto");
+  const [error, setError] = useState<string | null>(null);
+
+  async function traducir() {
+    const origen = document.getElementById(desde) as
+      HTMLInputElement | HTMLTextAreaElement | null;
+    const destino = document.getElementById(hacia) as
+      HTMLInputElement | HTMLTextAreaElement | null;
+    if (!origen || !destino) return;
+
+    setEstado("yendo");
+    setError(null);
+    const resultado = await traducirAlIngles(origen.value);
+    if (!resultado.ok) {
+      setEstado("quieto");
+      setError(resultado.error);
+      return;
+    }
+
+    const prototipo =
+      destino instanceof HTMLTextAreaElement
+        ? HTMLTextAreaElement.prototype
+        : HTMLInputElement.prototype;
+    Object.getOwnPropertyDescriptor(prototipo, "value")?.set?.call(
+      destino,
+      resultado.texto,
+    );
+    destino.dispatchEvent(new Event("input", { bubbles: true }));
+    setEstado("listo");
+    setTimeout(() => setEstado("quieto"), 2000);
+  }
+
+  return (
+    <span className="flex items-center gap-2">
+      {error ? (
+        <span role="alert" className="text-p3 text-rojo">
+          {error}
+        </span>
+      ) : null}
+      <button
+        type="button"
+        onClick={() => void traducir()}
+        disabled={estado === "yendo"}
+        title="Traer un borrador en inglés de lo que está en español"
+        className={cn(
+          "text-p3 flex cursor-pointer items-center gap-1.5 rounded px-1.5 py-0.5 text-blanco/55",
+          "transition-colors hover:text-lila disabled:cursor-wait disabled:opacity-60",
+          FOCO,
+        )}
+      >
+        <svg viewBox="0 0 16 16" aria-hidden className="size-3.5">
+          {/* Un destello: dos chispas, la grande y una chica al costado. */}
+          <path
+            d="M6.5 1.5 7.7 4.8 11 6l-3.3 1.2L6.5 10.5 5.3 7.2 2 6l3.3-1.2Z"
+            fill="currentColor"
+          />
+          <path
+            d="M12 9.5l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6Z"
+            fill="currentColor"
+          />
+        </svg>
+        {estado === "yendo"
+          ? "Traduciendo…"
+          : estado === "listo"
+            ? "Listo, revisalo"
+            : "Traducir"}
+      </button>
+    </span>
+  );
+}
+
+/**
  * La aclaración de un campo, debajo del control.
  *
  * Va abajo y no entre la etiqueta y el campo porque no todos los campos
@@ -203,17 +301,25 @@ export function CampoTexto({
   etiqueta,
   ayuda,
   multilinea = false,
+  traducirDesde,
   ...props
 }: {
   id: string;
   etiqueta: string;
   ayuda?: string;
   multilinea?: boolean;
+  /** Id del campo en español del que sale el borrador en inglés. */
+  traducirDesde?: string;
 } & React.ComponentProps<"input"> &
   React.ComponentProps<"textarea">) {
   return (
     <div>
-      <Etiqueta htmlFor={id}>{etiqueta}</Etiqueta>
+      <div className="flex items-baseline justify-between gap-3">
+        <Etiqueta htmlFor={id}>{etiqueta}</Etiqueta>
+        {traducirDesde ? (
+          <BotonTraducir desde={traducirDesde} hacia={id} />
+        ) : null}
+      </div>
       {multilinea ? (
         <textarea id={id} rows={6} className={cn(CONTROL, FOCO)} {...props} />
       ) : (

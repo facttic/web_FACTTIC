@@ -121,6 +121,7 @@ export function FormularioCooperativa({
             ingles={
               <CampoTexto
                 id="en-descripcion"
+                traducirDesde="descripcion"
                 name="en.descripcion"
                 etiqueta="Description"
                 ayuda="Sin traducción, el sitio en inglés muestra el español."
