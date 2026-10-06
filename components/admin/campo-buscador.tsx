@@ -3,7 +3,7 @@
 import { useId, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { FOCO } from "@/components/ui/boton";
-import { Ayuda, Etiqueta, type Opcion } from "./piezas";
+import { Ayuda, BotonAdmin, CONTROL, Etiqueta, type Opcion } from "./piezas";
 
 /**
  * Elegir varios de una lista larga, buscando.
@@ -25,6 +25,12 @@ import { Ayuda, Etiqueta, type Opcion } from "./piezas";
  * Lo elegido viaja en campos ocultos con el mismo nombre repetido, que es como
  * lo lee la acción —igual que las casillas de antes—.
  */
+/** Qué está haciendo el panel: dando de alta uno nuevo o corrigiendo el elegido. */
+type Panel =
+  | null
+  | { modo: "alta"; nombre: string }
+  | { modo: "edicion"; id: string; nombre: string };
+
 export function CampoBuscador({
   nombre,
   etiqueta,
@@ -32,6 +38,9 @@ export function CampoBuscador({
   opciones,
   elegidas,
   crear,
+  editar,
+  unico = false,
+  conLogo = false,
   queEs = "uno",
   vacio = "Todavía no hay ninguno cargado.",
 }: {
@@ -43,7 +52,18 @@ export function CampoBuscador({
   /** Da de alta uno nuevo y lo devuelve ya con su id. */
   crear?: (
     nombre: string,
+    logo?: File,
   ) => Promise<{ ok: true; opcion: Opcion } | { ok: false; error: string }>;
+  /** Corrige uno ya cargado, cuando la API deja. */
+  editar?: (
+    id: string,
+    nombre: string,
+    logo?: File,
+  ) => Promise<{ ok: true; opcion: Opcion } | { ok: false; error: string }>;
+  /** Un solo valor, como el cliente de un proyecto. */
+  unico?: boolean;
+  /** El catálogo tiene logo, así que el alta y la corrección lo piden. */
+  conLogo?: boolean;
   /** Cómo se llama de a uno, para los textos del alta. */
   queEs?: string;
   /** Qué decir cuando no hay nada para elegir. */
@@ -55,7 +75,7 @@ export function CampoBuscador({
   const [busqueda, setBusqueda] = useState("");
   const [abierto, setAbierto] = useState(false);
   const [resaltada, setResaltada] = useState(0);
-  const [creando, setCreando] = useState(false);
+  const [panel, setPanel] = useState<Panel>(null);
   const [error, setError] = useState<string | null>(null);
   const campo = useRef<HTMLInputElement>(null);
 
@@ -74,34 +94,54 @@ export function CampoBuscador({
 
   const poner = (idOpcion: string) => {
     setPuestas((previas) =>
-      previas.includes(idOpcion) ? previas : [...previas, idOpcion],
+      unico
+        ? [idOpcion]
+        : previas.includes(idOpcion)
+          ? previas
+          : [...previas, idOpcion],
     );
     setBusqueda("");
     setResaltada(0);
+    setAbierto(false);
     campo.current?.focus();
   };
 
   const sacar = (idOpcion: string) =>
     setPuestas((previas) => previas.filter((otro) => otro !== idOpcion));
 
-  async function crearYPoner() {
+  /**
+   * Con logo el alta abre su panel, que es donde se elige el archivo; sin él
+   * alcanza con el nombre que ya está escrito y se crea de una.
+   */
+  function empezarAlta() {
     if (!crear || !busqueda.trim()) return;
-    setCreando(true);
     setError(null);
-    const resultado = await crear(busqueda.trim());
-    setCreando(false);
-    if (!resultado.ok) {
-      setError(resultado.error);
-      return;
-    }
-    setSumadas((previas) => [...previas, resultado.opcion]);
-    poner(resultado.opcion.id);
+    setAbierto(false);
+    setPanel({ modo: "alta", nombre: busqueda.trim() });
+  }
+
+  async function guardarDelPanel(nombre: string, logo?: File) {
+    if (!panel) return { ok: false as const, error: "No hay nada que guardar" };
+    const resultado =
+      panel.modo === "alta"
+        ? await crear!(nombre, logo)
+        : await editar!(panel.id, nombre, logo);
+    if (!resultado.ok) return resultado;
+
+    setSumadas((previas) => [
+      ...previas.filter((o) => o.id !== resultado.opcion.id),
+      resultado.opcion,
+    ]);
+    if (panel.modo === "alta") poner(resultado.opcion.id);
+    setPanel(null);
+    setBusqueda("");
+    return resultado;
   }
 
   /** Elige lo que esté resaltado: la última fila es el alta, si se ofrece. */
   const elegirResaltada = () => {
     if (ofreceCrear && resaltada === candidatas.length) {
-      void crearYPoner();
+      empezarAlta();
       return;
     }
     const opcion = candidatas[resaltada];
@@ -178,6 +218,26 @@ export function CampoBuscador({
                 className="text-p3 flex items-center gap-1.5 rounded border border-lila/40 bg-lila/15 py-0.5 pr-1 pl-2 text-blanco"
               >
                 {porId.get(idOpcion)?.nombre ?? idOpcion}
+                {editar ? (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setPanel({
+                        modo: "edicion",
+                        id: idOpcion,
+                        nombre: porId.get(idOpcion)?.nombre ?? "",
+                      })
+                    }
+                    aria-label={`Corregir ${porId.get(idOpcion)?.nombre ?? queEs}`}
+                    title="Corregir"
+                    className={cn(
+                      "cursor-pointer rounded px-1 text-blanco/60 hover:text-blanco",
+                      FOCO,
+                    )}
+                  >
+                    ✎
+                  </button>
+                ) : null}
                 <button
                   type="button"
                   onClick={() => sacar(idOpcion)}
@@ -210,7 +270,9 @@ export function CampoBuscador({
               onKeyDown={alTeclear}
               placeholder={
                 puestas.length
-                  ? "Agregar…"
+                  ? unico
+                    ? "Cambiar…"
+                    : "Agregar…"
                   : `Buscar${crear ? " o escribir uno nuevo" : ""}…`
               }
               className="text-p2 min-w-40 flex-1 bg-transparent px-1 py-1 text-blanco placeholder:text-blanco/40 focus:outline-none"
@@ -250,17 +312,14 @@ export function CampoBuscador({
                 >
                   <button
                     type="button"
-                    disabled={creando}
-                    onClick={crearYPoner}
+                    onClick={empezarAlta}
                     onMouseEnter={() => setResaltada(candidatas.length)}
                     className={cn(
-                      "text-p2 block w-full cursor-pointer px-3 py-1.5 text-left text-lila disabled:opacity-50",
+                      "text-p2 block w-full cursor-pointer px-3 py-1.5 text-left text-lila",
                       resaltada === candidatas.length && "bg-superficie-alta",
                     )}
                   >
-                    {creando
-                      ? "Creando…"
-                      : `Crear ${queEs} «${busqueda.trim()}»`}
+                    {`Crear ${queEs} «${busqueda.trim()}»`}
                   </button>
                 </li>
               ) : null}
@@ -277,6 +336,17 @@ export function CampoBuscador({
         </div>
       )}
 
+      {panel ? (
+        <PanelOpcion
+          key={panel.modo === "edicion" ? panel.id : "alta"}
+          panel={panel}
+          queEs={queEs}
+          conLogo={conLogo}
+          guardar={guardarDelPanel}
+          cerrar={() => setPanel(null)}
+        />
+      ) : null}
+
       <Ayuda>{ayuda}</Ayuda>
 
       {error ? (
@@ -285,5 +355,121 @@ export function CampoBuscador({
         </p>
       ) : null}
     </fieldset>
+  );
+}
+
+/**
+ * El recuadro que da de alta una opción o corrige la elegida.
+ *
+ * Es el mismo para las dos cosas porque es el mismo formulario —un nombre y,
+ * si el catálogo lo tiene, un logo— y porque así la corrección queda donde se
+ * necesita: al lado del proyecto que se está cargando, sin ir hasta el
+ * catálogo y volver perdiendo lo escrito.
+ */
+function PanelOpcion({
+  panel,
+  queEs,
+  conLogo,
+  guardar,
+  cerrar,
+}: {
+  panel: Exclude<Panel, null>;
+  queEs: string;
+  conLogo: boolean;
+  guardar: (
+    nombre: string,
+    logo?: File,
+  ) => Promise<{ ok: true; opcion: Opcion } | { ok: false; error: string }>;
+  cerrar: () => void;
+}) {
+  const [nombre, setNombre] = useState(panel.nombre);
+  const [logo, setLogo] = useState<File | undefined>();
+  const [guardando, setGuardando] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function confirmar() {
+    const limpio = nombre.trim();
+    if (limpio.length < 3) {
+      setError("El nombre tiene que tener al menos 3 caracteres");
+      return;
+    }
+    setGuardando(true);
+    setError(null);
+    const resultado = await guardar(limpio, logo);
+    setGuardando(false);
+    if (!resultado.ok) setError(resultado.error);
+  }
+
+  return (
+    <div className="mt-2 rounded-md border border-borde bg-superficie/40 p-3">
+      <p className="text-p3 mb-2 text-blanco/90">
+        {panel.modo === "alta" ? `Nuevo ${queEs}` : `Corregir ${queEs}`}
+      </p>
+
+      <div className="flex flex-col gap-2">
+        <input
+          type="text"
+          autoFocus
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          // Enter dentro de un formulario lo enviaría entero; acá solo guarda.
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              void confirmar();
+            }
+            if (e.key === "Escape") cerrar();
+          }}
+          placeholder="Nombre"
+          aria-label={`Nombre ${queEs}`}
+          className={cn(CONTROL, FOCO)}
+        />
+
+        {conLogo ? (
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setLogo(e.target.files?.[0])}
+            aria-label={`Logo del ${queEs}`}
+            className={cn(
+              "text-p3 w-full cursor-pointer rounded-md border border-borde bg-negro-oscuro/60 px-3 py-2 text-blanco/70",
+              "file:mr-3 file:cursor-pointer file:rounded file:border-0 file:bg-superficie-alta file:px-3 file:py-1 file:text-blanco",
+              FOCO,
+            )}
+          />
+        ) : null}
+      </div>
+
+      {conLogo ? (
+        <Ayuda>
+          {panel.modo === "alta"
+            ? "El logo es opcional."
+            : "Si elegís otro logo, reemplaza al que tenga."}
+        </Ayuda>
+      ) : null}
+
+      <div className="mt-3 flex gap-2">
+        <BotonAdmin
+          type="button"
+          onClick={() => void confirmar()}
+          disabled={guardando}
+        >
+          {guardando
+            ? "Guardando…"
+            : panel.modo === "alta"
+              ? "Crear"
+              : "Guardar"}
+        </BotonAdmin>
+        <BotonAdmin type="button" variante="secundario" onClick={cerrar}>
+          Cancelar
+        </BotonAdmin>
+      </div>
+
+      {error ? (
+        <p role="alert" className="text-p3 mt-2 text-rojo">
+          {error}
+        </p>
+      ) : null}
+    </div>
   );
 }

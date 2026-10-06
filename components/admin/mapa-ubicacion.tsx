@@ -150,7 +150,12 @@ export function CampoUbicacion({
         marcador.current.setLatLng(punto);
       }
 
-      // Si el punto quedó fuera de la vista, se acompaña; si no, no se mueve.
+      /*
+       * Si el punto quedó fuera de la vista, se acompaña; si no, no se mueve.
+       * Con el mapa en todo el país esto nunca se cumple —cualquier punto de
+       * Argentina entra en el encuadre—, por eso elegir de la lista acerca
+       * desde el buscador y no desde acá.
+       */
       if (!m.getBounds().contains(punto)) {
         m.setView(punto, Math.max(m.getZoom(), ZOOM_CIUDAD));
       }
@@ -166,7 +171,18 @@ export function CampoUbicacion({
         provincia, no dibuja la dirección exacta.
       </p>
 
-      <Buscador alElegir={(lugar) => setPunto(redondear(lugar))} />
+      <Buscador
+        alElegir={(lugar) => {
+          const donde = redondear(lugar);
+          setPunto(donde);
+          /*
+           * Elegir de la lista sí acerca, siempre. Mover el marcador a mano
+           * no: ahí el encuadre lo eligió la persona y no hay por qué
+           * cambiárselo.
+           */
+          mapa?.setView(donde, ZOOM_CIUDAD);
+        }}
+      />
 
       <div
         ref={contenedor}

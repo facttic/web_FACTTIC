@@ -3,6 +3,7 @@
 import {
   borrarDe,
   crearOpcion,
+  editarOpcion,
   guardarEn,
   type Destino,
 } from "@/lib/admin/acciones";
@@ -31,6 +32,19 @@ export async function crearTecnologia(nombre: string) {
 
 export async function crearCliente(nombre: string, logo?: File) {
   return crearOpcion("clientes", nombre, logo);
+}
+
+/*
+ * Corregir sin salir del proyecto: si el nombre quedó mal escrito, la única
+ * salida era crear otro cliente y dejar el error en el catálogo. La API lo
+ * deja a quien lo creó, y a la Federación con cualquiera.
+ */
+export async function editarCliente(id: string, nombre: string, logo?: File) {
+  return editarOpcion("clientes", id, nombre, logo);
+}
+
+export async function editarTecnologia(id: string, nombre: string) {
+  return editarOpcion("tecnologias", id, nombre);
 }
 
 export async function crearServicio(nombre: string) {

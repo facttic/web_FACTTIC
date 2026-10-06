@@ -18,6 +18,8 @@ import {
   crearSector,
   crearServicio,
   crearTecnologia,
+  editarCliente,
+  editarTecnologia,
 } from "./acciones";
 
 export interface OpcionesProyecto {
@@ -111,16 +113,17 @@ export function FormularioProyecto({
               grupoNuevo={GRUPO_OTROS}
             />
 
-            <CampoSelectorConAlta
-              id="cliente"
+            <CampoBuscador
               nombre="cliente"
               etiqueta="Cliente"
+              ayuda="Para quién se hizo. Si está mal escrito, el lápiz lo corrige sin salir de acá."
               opciones={opciones.clientes}
-              elegida={proyecto?.cliente?.id}
-              vacio="Sin cliente"
+              elegidas={proyecto?.cliente ? [proyecto.cliente.id] : []}
               crear={crearCliente}
-              queEs="cliente"
+              editar={editarCliente}
+              unico
               conLogo
+              queEs="cliente"
             />
           </Par>
 
@@ -148,6 +151,7 @@ export function FormularioProyecto({
             opciones={opciones.tecnologias}
             elegidas={proyecto?.tecnologias ?? []}
             crear={crearTecnologia}
+            editar={editarTecnologia}
             queEs="tecnología"
           />
         </Bloque>

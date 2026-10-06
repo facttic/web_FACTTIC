@@ -116,9 +116,8 @@ export async function crearOpcion(
   }
 
   /*
-   * El logo se sube en el mismo alta y no después: editar un cliente es cosa
-   * de la Federación, así que si no va acá, quien carga un proyecto desde su
-   * cooperativa no tiene manera de ponérselo nunca.
+   * El logo se sube en el mismo alta: así queda cargado de una, sin tener que
+   * volver después a buscarlo en el catálogo.
    */
   let cuerpo: FormData | { nombre: string } = { nombre: limpio };
   if (logo && logo.size > 0) {
@@ -138,6 +137,42 @@ export async function crearOpcion(
   }
 
   return { ok: true, opcion: { id: resultado.id, nombre: limpio } };
+}
+
+/**
+ * Corregir una opción que se creó al vuelo.
+ *
+ * La API deja hacerlo a quien la creó —y a la Federación con cualquiera—: un
+ * nombre mal escrito no tiene por qué quedar dando vueltas en el catálogo
+ * solo porque se cargó desde un proyecto.
+ */
+export async function editarOpcion(
+  recurso: "tecnologias" | "clientes",
+  id: string,
+  nombre: string,
+  logo?: File,
+): Promise<{ ok: true; opcion: Opcion } | { ok: false; error: string }> {
+  await requerirSesion();
+
+  const limpio = nombre.trim();
+  if (limpio.length < 3) {
+    return {
+      ok: false,
+      error: "El nombre tiene que tener al menos 3 caracteres",
+    };
+  }
+
+  let cuerpo: FormData | { nombre: string } = { nombre: limpio };
+  if (logo && logo.size > 0) {
+    const form = new FormData();
+    form.append("nombre", limpio);
+    form.append("file", logo);
+    cuerpo = form;
+  }
+
+  const resultado = await editar(recurso, id, cuerpo, recurso);
+  if (!resultado.ok) return { ok: false, error: resultado.error };
+  return { ok: true, opcion: { id, nombre: limpio } };
 }
 
 /** Borra la fila cuyo id viaja en el formulario del botón. */
