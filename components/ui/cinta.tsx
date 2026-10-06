@@ -89,6 +89,24 @@ export function Cinta<T>({
     let anterior = 0;
     let aLaVista = false;
 
+    /*
+     * La posición se lleva acá y no se lee del DOM en cada cuadro.
+     *
+     * El navegador redondea `scrollLeft` a píxeles enteros: a 40 px/s cada
+     * cuadro avanza 0,67 y, si se vuelve a leer lo redondeado, el resto se
+     * pierde. En una pantalla de 120Hz son 0,33 por cuadro, que redondea a
+     * cero: la cinta arrancaba y se quedaba clavada. Guardando el valor con
+     * decimales avanza siempre a la misma velocidad, sin importar a cuántos
+     * cuadros por segundo vaya la pantalla.
+     */
+    let posicion = nodo.scrollLeft;
+    let mitad = nodo.scrollWidth / 2;
+    const medir = () => {
+      mitad = nodo.scrollWidth / 2;
+    };
+    const alRedimensionar = new ResizeObserver(medir);
+    alRedimensionar.observe(nodo);
+
     const paso = (ahora: number) => {
       cuadro = requestAnimationFrame(paso);
       const transcurrido = anterior ? (ahora - anterior) / 1000 : 0;
@@ -96,13 +114,22 @@ export function Cinta<T>({
 
       // Al volver a la vista no recupera lo que no avanzó mientras no estaba.
       if (transcurrido > 0.5) return;
-      if (quieto || ahora < esperaHasta.current) return;
+      if (quieto || ahora < esperaHasta.current) {
+        posicion = nodo.scrollLeft;
+        return;
+      }
       // Leerlo del DOM evita escuchar cuatro eventos para saber lo mismo.
-      if (nodo.matches(":hover") || nodo.matches(":focus-within")) return;
+      if (nodo.matches(":hover") || nodo.matches(":focus-within")) {
+        posicion = nodo.scrollLeft;
+        return;
+      }
 
-      nodo.scrollLeft += velocidad * transcurrido;
-      const mitad = nodo.scrollWidth / 2;
-      if (nodo.scrollLeft >= mitad) nodo.scrollLeft -= mitad;
+      // Si la movieron con el dedo o con las flechas, se sigue desde ahí.
+      if (Math.abs(nodo.scrollLeft - posicion) > 2) posicion = nodo.scrollLeft;
+
+      posicion += velocidad * transcurrido;
+      if (posicion >= mitad) posicion -= mitad;
+      nodo.scrollLeft = posicion;
     };
 
     const enPantalla = new IntersectionObserver(
@@ -128,6 +155,7 @@ export function Cinta<T>({
 
     return () => {
       enPantalla.disconnect();
+      alRedimensionar.disconnect();
       if (cuadro) cancelAnimationFrame(cuadro);
     };
   }, [mueve, velocidad]);
