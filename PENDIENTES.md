@@ -40,6 +40,7 @@ llegue.
       y las relaciones por JSON, y las imágenes en un PUT multipart aparte, que
       deja lo demás intacto. Si esto se arregla, se puede volver a un solo
       envío.
+
 - [x] ~~**6. `slug` en proyectos**~~ → se genera del nombre al crear;
       verificado creando uno de prueba. **Falta migrar los que ya estaban**:
       los cuatro cargados antes del campo no lo tienen y, como es inmutable,
@@ -70,12 +71,13 @@ llegue.
 
       Las coordenadas son las de la ciudad, no la dirección exacta: alcanzan
       para agrupar por provincia, que es lo que hace el mapa.
+
 - [x] ~~**10. Imagen de cooperativa**~~ → la guarda en `fileName`, igual que
       el resto de los recursos con archivo.
 - [x] ~~**11. Usuario de solo lectura**~~ → ya no hace falta: con los GET
       públicos el sitio lee sin credencial.
 - [ ] **12. Higiene de datos.** ~~Espacio inicial en `" Capacitación y
-      consultoría"`~~ → corregido. ~~Tres formas de guardar la imagen en
+    consultoría"`~~ → corregido. ~~Tres formas de guardar la imagen en
       `tecnologias`~~ → unificadas en `fileName`. ~~`javaja` y las tecnologías
       con logo de marcador~~ → borradas al cargar el stack real. **Queda**
       limpiar los datos de prueba (`Cooperativa A/B/C`, `Proyecto1`), que
@@ -91,7 +93,7 @@ llegue.
 - [ ] **14. Unificar la paginación.** ~~El tamaño de página no se podía
       elegir~~ → `perPage` ya se respeta en los catálogos. **Queda** que la
       forma sea la misma: los catálogos y novedades devuelven `{items,
-      totalCount}` y proyectos `{items, total, page, limit, pages}`, con
+    totalCount}` y proyectos `{items, total, page, limit, pages}`, con
       `limit` en vez de `perPage`.
 - [ ] **15. Token de 15 minutos**: extenderlo o permitir `refresh-token` sin cookie.
 - [ ] **16. `cache-control`** en las respuestas, para cachear en CDN.
@@ -113,10 +115,13 @@ llegue.
       Red. Conviene que solo la federación pueda marcarlo: si lo marca quien
       crea el servicio, el filtro no sirve de nada.
 
-      Cuando el campo exista hay que: marcar los cinco actuales, filtrar en
-      `getServicios()` —o agregar un `getServiciosDestacados()`— y mostrar el
-      estado en el ABM de servicios. Hasta entonces el alta rápida funciona sin
-      filtro y lo que se cree aparece en el sitio.
+      **El campo ya existe y está en producción** (`esDestacado`, verificado el
+      6/10/2026): `GET /api/servicios` lo devuelve y los cinco del catálogo
+      vienen en `true`. **Falta todo lo del front**: filtrar en `getServicios()`
+      —o agregar un `getServiciosDestacados()`— y mostrar el estado en el ABM de
+      servicios. Mientras tanto, cualquier servicio que dé de alta una
+      cooperativa entra igual a las solapas de la Home, al bloque "Soluciones"
+      de Nuestros servicios y al filtro de Proyectos.
 
 ### Nuevos (sin enviar)
 
@@ -134,20 +139,18 @@ llegue.
       falta que el backend agregue el vínculo y los permisos; recién ahí se
       puede armar la pantalla en `/admin`.
 
-      **Resuelto por el MR !3** (`editores-por-cooperativa`): el permiso sale
-      de la lista de mails de cada cooperativa y se consulta en cada pedido. El
-      panel ya filtra lo que ve cada quien y la Federación invita por correo
-      desde la ficha. Queda pendiente solo que las cooperativas puedan dar de
-      alta sus propios **sectores**: hoy pueden crear servicios —que no entran
-      al catálogo de la Federación— pero los sectores siguen siendo de la
+      **Resuelto por el MR !3** (`editores-por-cooperativa`), mergeado a `dev` y
+      en producción: el permiso sale de la lista de mails de cada cooperativa y
+      se consulta en cada pedido. El panel ya filtra lo que ve cada quien y la
+      Federación invita por correo desde la ficha. Queda pendiente solo que las
+      cooperativas puedan dar de alta sus propios **sectores**: `POST /sectores`
+      sigue pidiendo `admin:all`, así que hoy pueden crear servicios —que no
+      entran al catálogo de la Federación— pero los sectores siguen siendo de la
       Federación.
 
-- [ ] **38. `sinSector` en `GET /api/proyectos`.** Lo pide la opción "Otros"
-      del filtro de sectores de Proyectos, que lista los proyectos sin sector.
-      Está hecho en el MR !1 del backend (rama `proyectos-sin-sector`, contra
-      `dev`). **El front no se puede publicar antes de que eso llegue a
-      producción:** la API actual ignora el parámetro y "Otros" muestra todos
-      los proyectos.
+- [x] ~~**38. `sinSector` en `GET /api/proyectos`.**~~ → mergeado y en
+      producción. Verificado el 6/10/2026 contra la API: sin el parámetro
+      devuelve 10 proyectos y con `?sinSector=true`, 7.
 
 - [ ] **39. Traducciones del contenido al inglés.** La API ya acepta
       `traducciones.en` en proyectos, sectores, servicios y novedades (MR !2,
@@ -178,18 +181,18 @@ llegue.
       | Optimización de Control de Calidad en Manufactura | `6a6d09d2dbeffa345bccfbe2` |
 
       No tienen imagen cargada, así que se ven con el marcador gris.
+
 - [ ] **22. Corregir el `orden` de los sectores.** El prototipo los muestra como
       Organizaciones, Agro, Finanzas; la API los tiene cargados como Financiero
       (1), Agro (2), Organizaciones (3). El sitio respeta el `orden` de la API,
       así que se arregla desde el backoffice.
 - [ ] **24. Textos de Servicios: queda un renglón.** El documento de contenido
       del 27/8 trajo los de metodologías y los dos motivos que faltaban, así que
-      ya no son nuestros. Sigue sin validar:
-      - **Subservicios de cuatro servicios** (Datos e IA, Diseño, Capacitación,
-        Ingeniería), cargados en la API. Los de "Desarrollo de software" sí
-        salen de la maqueta. El documento los lista con diferencias: dice `ML`
-        donde la API guarda "Modelos de lenguaje" —que además está mal, ML es
-        machine learning— y "Diseño UI/UX" donde la API tiene "UX/UI".
+      ya no son nuestros. Sigue sin validar: - **Subservicios de cuatro servicios** (Datos e IA, Diseño, Capacitación,
+      Ingeniería), cargados en la API. Los de "Desarrollo de software" sí
+      salen de la maqueta. El documento los lista con diferencias: dice `ML`
+      donde la API guarda "Modelos de lenguaje" —que además está mal, ML es
+      machine learning— y "Diseño UI/UX" donde la API tiene "UX/UI".
 - [ ] **25. Logos de aliados: los cargados son provisorios.** Se dieron de alta
       las tres organizaciones de la maqueta —Cooperativa Obrera, Banco Credicoop
       y Abuelas de Plaza de Mayo— con logos bajados de fuentes públicas
@@ -203,38 +206,32 @@ llegue.
       usan el nombre completo. La API solo tiene el completo, así que hoy se usa
       ese en los dos lugares y las solapas quedan largas.
 
-- [ ] **36. Novedades: contenido y filtro.**
-      1. Las cuatro cargadas son **de ejemplo**, redactadas a partir de los
-         títulos de la maqueta para poder ver la pantalla. Hay que reemplazarlas
-         por las reales.
-      2. Las portadas son provisorias. El archivo solo dibuja dos imágenes —la
-         foto del plenario y el arte de "Crónicas del porvenir"—, así que esas
-         dos se recortaron de la maqueta mobile (van a 346px de ancho y se ven
-         blandas a tamaño completo) y las otras dos se generaron con la paleta
-         de la identidad para que la grilla no quedara repetida. Hacen falta
-         las reales.
-      3. `GET /api/novedades` **no filtra por `tipo`**: el sitio trae de más y
-         filtra en el front. Con un `?tipo=` se resolvería en la consulta.
-      4. `fecha` exige un ISO completo con hora: `2025-11-04` responde 400
-         (`invalidString`). Conviene aceptar la fecha sola o documentarlo.
+- [ ] **36. Novedades: contenido y filtro.** 1. Las cuatro cargadas son **de ejemplo**, redactadas a partir de los
+      títulos de la maqueta para poder ver la pantalla. Hay que reemplazarlas
+      por las reales. 2. Las portadas son provisorias. El archivo solo dibuja dos imágenes —la
+      foto del plenario y el arte de "Crónicas del porvenir"—, así que esas
+      dos se recortaron de la maqueta mobile (van a 346px de ancho y se ven
+      blandas a tamaño completo) y las otras dos se generaron con la paleta
+      de la identidad para que la grilla no quedara repetida. Hacen falta
+      las reales. 3. `GET /api/novedades` **no filtra por `tipo`**: el sitio trae de más y
+      filtra en el front. Con un `?tipo=` se resolvería en la consulta. 4. `fecha` exige un ISO completo con hora: `2025-11-04` responde 400
+      (`invalidString`). Conviene aceptar la fecha sola o documentarlo.
 
-- [ ] **37. Datos de las cooperativas para Nuestra Red.**
-      1. **`asociados`, `servicios` y `sectores` están cargados con datos
-         inventados** para poder ver la pantalla: el panel de provincia muestra
-         cuántas cooperativas y asociadxs hay, y qué industrias y servicios
-         concentra. Hay que reemplazarlos por los reales.
-      2. **El sitio web ya es un campo de la cooperativa** (MR !4 de la API), y
-         con él descripción, correo, teléfono, año de fundación y redes. Falta
-         que cada cooperativa los cargue: hasta entonces el enlace sale de la
-         tabla de reserva `lib/datos/sitios-cooperativas.ts`, armada con lo que
-         FACTTIC publicaba en su sitio anterior —18 de 37—. Cuando estén
-         cargados, esa tabla se borra.
-      4. **Sin ubicación una cooperativa no aparece en ninguna parte**: Nuestra
-         Red agrupa por provincia y la provincia se calcula con las
-         coordenadas. Hoy las 33 la tienen; el panel además la exige al
-         guardar, para que una ficha nueva no quede invisible.
-      3. ~~**Ninguna cooperativa tiene logo cargado.**~~ Ya están las 33, igual
-         que la ubicación: Nuestra Red se dibuja completa.
+- [ ] **37. Datos de las cooperativas para Nuestra Red.** 1. **`asociados`, `servicios` y `sectores` están cargados con datos
+      inventados** para poder ver la pantalla: el panel de provincia muestra
+      cuántas cooperativas y asociadxs hay, y qué industrias y servicios
+      concentra. Hay que reemplazarlos por los reales. 2. **El sitio web ya es un campo de la cooperativa** (MR !4 de la API,
+      mergeado a `dev` y en producción desde el 6/10/2026), y con él
+      descripción, correo, teléfono, año de fundación y redes. El formulario
+      del panel ya los manda con esos nombres, así que lo que se guarde
+      ahora persiste. Falta que cada cooperativa los cargue: hasta entonces
+      el enlace sale de la tabla de reserva `lib/datos/sitios-cooperativas.ts`,
+      armada con lo que FACTTIC publicaba en su sitio anterior —18 de 37—.
+      Cuando estén cargados, esa tabla se borra. 4. **Sin ubicación una cooperativa no aparece en ninguna parte**: Nuestra
+      Red agrupa por provincia y la provincia se calcula con las
+      coordenadas. Hoy las 33 la tienen; el panel además la exige al
+      guardar, para que una ficha nueva no quede invisible. 3. ~~**Ninguna cooperativa tiene logo cargado.**~~ Ya están las 33, igual
+      que la ubicación: Nuestra Red se dibuja completa.
 
 ---
 
@@ -407,7 +404,7 @@ Abierto, para preguntar:
 - [ ] **El copy del cierre de Nuestros servicios.** El board dice "¿Tenés algún
       proyecto en mente?" y el sitio "¿Tenés un proyecto?". Va con lo de la
       banda de la Home, que tiene la misma diferencia.
-- [ ] **Los proyectos de la vertical.** El board mobile tiene *dos* bloques
+- [ ] **Los proyectos de la vertical.** El board mobile tiene _dos_ bloques
       —"Nuestra experiencia en el sector" con tres tarjetas con foto y, más
       abajo, "Últimos proyectos" como lista— y el sitio tiene uno solo, en
       lista. Además las tres tarjetas aparecen superpuestas entre sí, con el
@@ -457,6 +454,7 @@ llevan indicaciones de implementación. Estado de las encontradas:
       Spotlight Card en las tarjetas de sector (`ui/foco-puntero`) y animación
       de superposición en los dos mazos —servicios y beneficios— con el
       `porScroll` de `ui/mazo`.
+
 - [ ] **"Ver si va ese texto en el botón, o qué va mejor"** (anotación de
       Contenido, Home, 10/8). Es el botón nuevo del bloque de Sectores, que hoy
       dice "Conocé nuestros servicios" —el texto que está puesto en el
@@ -493,10 +491,9 @@ llevan indicaciones de implementación. Estado de las encontradas:
 - [ ] **31. Sumá tu coop: queda una URL.**
       El documento de contenido del 27/8 cerró los otros cuatro puntos: los seis
       compromisos, las URLs de Semillero y del Club, el título de las tarjetas
-      numeradas y la primera pregunta, que quedó "¿Querés sumarte a una coope?".
-      1. Falta la URL del código de conducta: "Ver Código" apunta todavía al
-         sitio actual de FACTTIC. El documento nombra el botón pero no da
-         dirección.
+      numeradas y la primera pregunta, que quedó "¿Querés sumarte a una coope?". 1. Falta la URL del código de conducta: "Ver Código" apunta todavía al
+      sitio actual de FACTTIC. El documento nombra el botón pero no da
+      dirección.
 
 - [ ] **31 bis. Firefox le corta el vidrio a la tarjeta de Contacto.**
       Aparece una línea horizontal que interrumpe el difuminado a media tarjeta,
@@ -536,43 +533,35 @@ llevan indicaciones de implementación. Estado de las encontradas:
       animación. Si diseño quiere que el reposo coincida con la maqueta, hay que
       reexportarla.
 
-- [ ] **33. Contacto: color de la animación y copy de un motivo.**
-      1. `fondo-contacto.json` no tiene ninguna capa naranja —su círculo grande
-         es violeta— pero las dos maquetas dibujan un resplandor naranja. Se usa
-         la animación tal como vino.
-      2. ~~El tercer motivo difiere entre las maquetas.~~ → el documento de
-         contenido lo cerró en "Quiero armar una coope".
-      3. Falta una dirección de correo de contacto para ofrecer como
-         alternativa cuando el envío falla.
+- [ ] **33. Contacto: color de la animación y copy de un motivo.** 1. `fondo-contacto.json` no tiene ninguna capa naranja —su círculo grande
+      es violeta— pero las dos maquetas dibujan un resplandor naranja. Se usa
+      la animación tal como vino. 2. ~~El tercer motivo difiere entre las maquetas.~~ → el documento de
+      contenido lo cerró en "Quiero armar una coope". 3. Falta una dirección de correo de contacto para ofrecer como
+      alternativa cuando el envío falla.
 
-- [ ] **34. Sobre Facttic.**
-      1. **Las tres cooperativas de prueba** ("Cooperativa A/B/C") ahora se
-         listan en público, mezcladas con las 37 reales que se cargaron desde
-         la maqueta. Conviene borrarlas —es parte del ítem 12—.
-      2. **Autoridades**: hoy hay cuatro cargadas —Manuel Leiva, Cecilia Muñoz
-         Cancela, María Cecilia Beccaria y Laura Arcuri—, todas del Consejo.
-         Falta toda la Sindicatura, cuya solapa no se muestra hasta que haya
-         alguien: **QA lo marcó el 10/8** ("falta la sindicatura"). Se resuelve
-         cargándola por el backoffice, con el cargo escrito "Síndica titular" /
-         "Síndico suplente", que es de donde el sitio deduce el órgano.
-      3. **¿A dónde linkea cada cooperativa?** La anotación pide que la lista
-         "linkee a la página de cada coop", pero en el prototipo esos nombres
-         no tienen enlace —al hacer clic no pasa nada y no se resalta ninguna
-         zona activa— y en el archivo no hay ninguna pantalla de cooperativa.
-         Por cómo está redactada parece ser el sitio propio de cada una, que
-         sería un enlace externo; el modelo no tiene ese campo. Hoy llevan a
-         Nuestra Red. Hace falta definir el destino y, si es el sitio propio,
-         agregar el campo y cargarlo.
-      4. ~~**La foto del plenario en alta**~~ → llegó la original. Va a 2880 de
-         ancho, el doble de los 1440 a los que se muestra, guardada como JPEG
-         de 380 KB; el PNG original pesaba 2 MB y no tenía transparencia.
-      5. **Los logos de "Somos parte de otros espacios cooperativos"**: la
-         maqueta muestra Cooperar, patio, un centro cultural y mut_, pero el
-         recurso `organizaciones` hoy tiene los aliados de la Home. **QA lo
-         confirmó el 10/8: van los cuatro del archivo**, así que son dos listas
-         distintas. Hacen falta los logos y un recurso propio —o un campo que
-         separe aliados de espacios— porque hoy las dos secciones leen
-         `/api/organizaciones`.
+- [ ] **34. Sobre Facttic.** 1. **Las tres cooperativas de prueba** ("Cooperativa A/B/C") ahora se
+      listan en público, mezcladas con las 37 reales que se cargaron desde
+      la maqueta. Conviene borrarlas —es parte del ítem 12—. 2. **Autoridades**: hoy hay cuatro cargadas —Manuel Leiva, Cecilia Muñoz
+      Cancela, María Cecilia Beccaria y Laura Arcuri—, todas del Consejo.
+      Falta toda la Sindicatura, cuya solapa no se muestra hasta que haya
+      alguien: **QA lo marcó el 10/8** ("falta la sindicatura"). Se resuelve
+      cargándola por el backoffice, con el cargo escrito "Síndica titular" /
+      "Síndico suplente", que es de donde el sitio deduce el órgano. 3. **¿A dónde linkea cada cooperativa?** La anotación pide que la lista
+      "linkee a la página de cada coop", pero en el prototipo esos nombres
+      no tienen enlace —al hacer clic no pasa nada y no se resalta ninguna
+      zona activa— y en el archivo no hay ninguna pantalla de cooperativa.
+      Por cómo está redactada parece ser el sitio propio de cada una, que
+      sería un enlace externo; el modelo no tiene ese campo. Hoy llevan a
+      Nuestra Red. Hace falta definir el destino y, si es el sitio propio,
+      agregar el campo y cargarlo. 4. ~~**La foto del plenario en alta**~~ → llegó la original. Va a 2880 de
+      ancho, el doble de los 1440 a los que se muestra, guardada como JPEG
+      de 380 KB; el PNG original pesaba 2 MB y no tenía transparencia. 5. **Los logos de "Somos parte de otros espacios cooperativos"**: la
+      maqueta muestra Cooperar, patio, un centro cultural y mut_, pero el
+      recurso `organizaciones` hoy tiene los aliados de la Home. **QA lo
+      confirmó el 10/8: van los cuatro del archivo**, así que son dos listas
+      distintas. Hacen falta los logos y un recurso propio —o un campo que
+      separe aliados de espacios— porque hoy las dos secciones leen
+      `/api/organizaciones`.
 
 - [x] ~~**35. La API era demasiado lenta para compilar**~~ → resuelto con los
       GET públicos: sin el login de por medio las lecturas tardan ~0,2s y
@@ -602,45 +591,37 @@ llevan indicaciones de implementación. Estado de las encontradas:
       toca la navegación, las URLs y el footer.
 
 - [ ] **Lo que dejó abierto el documento de contenido (27/8).** Se aplicó todo lo
-      que era copy; queda esto:
-      1. **Las oportunidades, ¿un texto o dos?** Hoy la Home y Sumá tu coop
-         comparten los cuatro textos (`HOME.beneficios.items`). El documento
-         lista en Inicio solo los títulos y pone las descripciones largas —hasta
-         200— únicamente en Para cooperativas. Con las largas, en la Home tres de
-         las cuatro tarjetas se comen el padding inferior en mobile: la cara de
-         hover pide 237px y la caja da 214. Entran en desktop.
-      2. **La MIT no tiene dónde ir.** El documento le da texto ("la mutual de
-         quienes trabajan en informática y conocimiento: una organización amiga
-         de FACTTIC") y enlace a `https://mit.org.ar/`, pero la sección de
-         espacios cooperativos es una fila de logos que salen de la API. Hace
-         falta una definición de diseño, no de copy.
-      3. **Un párrafo sin sección.** El documento cierra con un texto de 336
-         caracteres —"Más de 30 cooperativas de 10 provincias forman parte de
-         nuestra Federación…"— sin decir dónde va. Por el contenido parece de
-         Nuestra Red.
-      4. **Los títulos con barra siguen sin resolver** en las tres verticales:
-         "Nuestros proyectos destacados / Nuestros casos de éxito" y "Ver
-         proyectos destacados / ¿Tenés un proyecto?".
-      5. **Financiero está marcado "completar"** en el propio documento, aunque
-         trae los cuatro motivos, que ya se cargaron.
-      6. **Nombres de servicios y sectores, que salen de la API.** El documento
-         dice "Inteligencia artificial y Datos" y "Diseño y comunicación
-         digital"; la API tiene "Datos e inteligencia artificial" y "Diseño y
-         comunicación". En las etiquetas, el documento dice `ML` y la API guarda
-         "Modelos de lenguaje", que además es un error: ML es machine learning y
-         "LLMs" ya está al lado. La frase del sector Agro mide 83 caracteres
-         contra el límite de 70 que el documento fija para ese lugar.
-      7. **Faltan cuatro proyectos destacados**, que son carga por API: Coopcycle
-         y Humanitarian OpenStreetMap en Organizaciones, Skyloop en Agro y
-         BuenBit en Financiero. Sin proyectos la sección no se renderiza, que es
-         lo que hoy les pasa a Agro y Financiero.
-      8. **Límites que el documento incumple**: "¿Qué es FACTTIC?" mide 355 sobre
-         300; dos de las cuatro oportunidades pasan los 200 (205 y 208); tres de
-         los seis compromisos pasan los 40 (48, 58 y 82); el bloque de tres
-         párrafos del modelo cooperativo mide 626 sobre 600; y "Equipos sin
-         rotación" mide 164 sobre los 160 de esa pantalla. Ninguno rompe el
-         diseño: se midió el DOM a 1440 y 393. Es material para devolverle a
-         quien escribió el documento.
+      que era copy; queda esto: 1. **Las oportunidades, ¿un texto o dos?** Hoy la Home y Sumá tu coop
+      comparten los cuatro textos (`HOME.beneficios.items`). El documento
+      lista en Inicio solo los títulos y pone las descripciones largas —hasta
+      200— únicamente en Para cooperativas. Con las largas, en la Home tres de
+      las cuatro tarjetas se comen el padding inferior en mobile: la cara de
+      hover pide 237px y la caja da 214. Entran en desktop. 2. **La MIT no tiene dónde ir.** El documento le da texto ("la mutual de
+      quienes trabajan en informática y conocimiento: una organización amiga
+      de FACTTIC") y enlace a `https://mit.org.ar/`, pero la sección de
+      espacios cooperativos es una fila de logos que salen de la API. Hace
+      falta una definición de diseño, no de copy. 3. **Un párrafo sin sección.** El documento cierra con un texto de 336
+      caracteres —"Más de 30 cooperativas de 10 provincias forman parte de
+      nuestra Federación…"— sin decir dónde va. Por el contenido parece de
+      Nuestra Red. 4. **Los títulos con barra siguen sin resolver** en las tres verticales:
+      "Nuestros proyectos destacados / Nuestros casos de éxito" y "Ver
+      proyectos destacados / ¿Tenés un proyecto?". 5. **Financiero está marcado "completar"** en el propio documento, aunque
+      trae los cuatro motivos, que ya se cargaron. 6. **Nombres de servicios y sectores, que salen de la API.** El documento
+      dice "Inteligencia artificial y Datos" y "Diseño y comunicación
+      digital"; la API tiene "Datos e inteligencia artificial" y "Diseño y
+      comunicación". En las etiquetas, el documento dice `ML` y la API guarda
+      "Modelos de lenguaje", que además es un error: ML es machine learning y
+      "LLMs" ya está al lado. La frase del sector Agro mide 83 caracteres
+      contra el límite de 70 que el documento fija para ese lugar. 7. **Faltan cuatro proyectos destacados**, que son carga por API: Coopcycle
+      y Humanitarian OpenStreetMap en Organizaciones, Skyloop en Agro y
+      BuenBit en Financiero. Sin proyectos la sección no se renderiza, que es
+      lo que hoy les pasa a Agro y Financiero. 8. **Límites que el documento incumple**: "¿Qué es FACTTIC?" mide 355 sobre
+      300; dos de las cuatro oportunidades pasan los 200 (205 y 208); tres de
+      los seis compromisos pasan los 40 (48, 58 y 82); el bloque de tres
+      párrafos del modelo cooperativo mide 626 sobre 600; y "Equipos sin
+      rotación" mide 164 sobre los 160 de esa pantalla. Ninguno rompe el
+      diseño: se midió el DOM a 1440 y 393. Es material para devolverle a
+      quien escribió el documento.
 - [ ] **Copys definitivos** de las páginas que todavía no se construyeron.
 
 ### Ideas probadas y dejadas para después
