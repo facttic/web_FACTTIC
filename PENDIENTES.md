@@ -149,6 +149,14 @@ totalCount}` y proyectos `{items, total, page, limit, pages}`, con
       invitación llega**, mandando una desde la ficha de una cooperativa a una
       casilla propia. Hasta que eso se verifique, nadie sabe si el correo sale.
 
+      El **aspecto** del correo está en el **MR !6** (`correo-de-invitacion`,
+      contra `dev`), sin mergear: le da la identidad del sitio a la invitación
+      —era la plantilla genérica del scaffold— y arregla dos cosas rotas. El
+      logo se pedía a `/api/public/logo.webp`, que da 404 en los dos dominios,
+      así que **los tres correos llegaban con la imagen rota**; y la invitación
+      mostraba una caja vacía rotulada "Código de verificación", heredada de
+      los correos de registro, cuando acá el token viaja en el enlace.
+
 - [ ] **36. Usuarios por cooperativa.** El plan es que cada coop pueda darse de
       alta sus propios sectores y servicios —los que no son del catálogo de la
       Federación— y asignárselos. Hoy no se puede: el usuario de la API tiene
