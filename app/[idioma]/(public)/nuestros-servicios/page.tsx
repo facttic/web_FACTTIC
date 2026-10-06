@@ -9,7 +9,6 @@ import {
   CardPropuesta,
 } from "@/components/tarjetas/servicios";
 import { BloqueDesplegable } from "@/components/secciones/desplegables";
-import { SectoresMobile } from "@/components/secciones/sectores-mobile";
 import { Metodologias } from "@/components/secciones/metodologias";
 import { Aliados } from "@/components/secciones/aliados";
 import { FONDOS } from "@/lib/animaciones";
@@ -119,14 +118,16 @@ export default async function NuestrosServiciosPage({
             descripcion={T.sectores.descripcion}
             descripcionAlLado
           />
-          {/* En mobile los sectores son un mazo de cartas con "Ver más"; en
-              desktop, tres tarjetas en fila. */}
-          <SectoresMobile
-            sectores={sectores}
-            hrefBase="/nuestros-servicios"
-            className="md:hidden"
-          />
-          <div className="hidden gap-6 md:grid md:grid-cols-3">
+          {/*
+            Una tarjeta abajo de la otra en mobile —como en la Home— y tres en
+            fila en desktop.
+
+            Antes en mobile eran un mazo apilado: de las tapadas asomaba un
+            canto de 37px sin texto y no se entendía que hubiera más de una
+            industria. La caja va en los dos anchos, que es lo que separa una
+            tarjeta de la siguiente.
+          */}
+          <div className="grid gap-5 md:grid-cols-3 md:gap-6">
             {sectores.map((sector, i) => (
               <CardSector
                 key={sector.id}
