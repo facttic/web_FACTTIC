@@ -5,17 +5,21 @@ import { FormularioContacto } from "@/components/secciones/formulario-contacto";
 import { FONDOS } from "@/lib/animaciones";
 import { contenido } from "@/lib/contenido";
 import type { Idioma } from "@/lib/idioma";
+import { metadatosDe } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ idioma: Idioma }>;
 }): Promise<Metadata> {
-  const T = contenido((await params).idioma).CONTACTO;
-  return {
-    title: T.hero.titulo,
-    description: T.hero.bajada,
-  };
+  const { idioma } = await params;
+  const T = contenido(idioma).CONTACTO;
+  return metadatosDe({
+    idioma,
+    ruta: "/contacto",
+    titulo: T.hero.titulo,
+    descripcion: T.hero.bajada,
+  });
 }
 
 /**

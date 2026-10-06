@@ -5,12 +5,24 @@ import { RedFederal } from "@/components/secciones/red-federal";
 import { contenido } from "@/lib/contenido";
 import type { Idioma } from "@/lib/idioma";
 import { getRedFederal } from "@/lib/datos/red";
+import { metadatosDe } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Nuestra Red",
-  description:
-    "Las cooperativas de FACTTIC en todo el país: dónde están, cuántas son y a qué se dedican.",
-};
+/* Antes era un objeto fijo y en español: la versión en inglés se publicaba con
+   el título "Nuestra Red · FACTTIC". */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ idioma: Idioma }>;
+}): Promise<Metadata> {
+  const { idioma } = await params;
+  const T = contenido(idioma).NUESTRA_RED;
+  return metadatosDe({
+    idioma,
+    ruta: "/nuestra-red",
+    titulo: T.seo.titulo,
+    descripcion: T.seo.descripcion,
+  });
+}
 
 /**
  * Nuestra Red: el mapa federal.

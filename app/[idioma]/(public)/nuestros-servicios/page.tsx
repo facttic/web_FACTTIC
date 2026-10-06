@@ -19,14 +19,21 @@ import {
   getSectoresDestacados,
   getServiciosDestacados,
 } from "@/lib/datos/catalogos";
+import { metadatosDe } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ idioma: Idioma }>;
 }): Promise<Metadata> {
-  const T = contenido((await params).idioma).SERVICIOS_PAGINA;
-  return { title: T.hero.titulo, description: T.hero.bajada };
+  const { idioma } = await params;
+  const T = contenido(idioma).SERVICIOS_PAGINA;
+  return metadatosDe({
+    idioma,
+    ruta: "/nuestros-servicios",
+    titulo: T.hero.titulo,
+    descripcion: T.hero.bajada,
+  });
 }
 
 /**

@@ -7,6 +7,7 @@ import { CardNovedad } from "@/components/tarjetas/novedad";
 import { contenido } from "@/lib/contenido";
 import type { Idioma } from "@/lib/idioma";
 import { getNovedad, getNovedades } from "@/lib/datos/novedades";
+import { metadatosDe } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -16,7 +17,14 @@ export async function generateMetadata({
   const { slug, idioma } = await params;
   const novedad = await getNovedad(slug, idioma);
   if (!novedad) return {};
-  return { title: novedad.titulo, description: novedad.bajada ?? undefined };
+  return metadatosDe({
+    idioma,
+    ruta: `/novedades/${slug}`,
+    titulo: novedad.titulo,
+    descripcion: novedad.bajada ?? "",
+    imagen: novedad.imagen,
+    tipo: "article",
+  });
 }
 
 /** Fecha como la escribe la maqueta: "4 nov, 2025". */
@@ -61,6 +69,7 @@ export default async function NovedadPage({
             <img
               src={novedad.imagen}
               alt=""
+              loading="eager"
               className="absolute inset-0 -z-10 size-full scale-110 object-cover opacity-40 blur-xl"
             />
           ) : null}

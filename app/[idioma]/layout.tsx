@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, DM_Mono } from "next/font/google";
 import "../globals.css";
 import { contenido } from "@/lib/contenido";
+import { recortar } from "@/lib/seo";
 import {
   IDIOMAS,
   IDIOMA_POR_DEFECTO,
@@ -66,11 +67,21 @@ export async function generateMetadata({
           : "FACTTIC — Federación Argentina de Cooperativas de Trabajo de Tecnología",
       template: "%s · FACTTIC",
     },
-    description: T.HOME.hero.bajada,
-    alternates: {
-      canonical: lang === "en" ? "/en" : "/",
-      languages: { es: "/", en: "/en" },
+    description: recortar(T.HOME.hero.bajada),
+    /*
+     * Acá **no** va `alternates`. La metadata del layout se mezcla con la de
+     * cada página, así que una canónica fija —`/` o `/en`— se heredaba en todas
+     * las que no declaraban la suya: ciento treinta páginas diciéndole a Google
+     * que eran copias de la portada. Cada pantalla arma la suya con
+     * `metadatosDe`, a partir de su propia ruta.
+     */
+    openGraph: {
+      type: "website",
+      siteName: "FACTTIC",
+      locale: lang === "en" ? "en_US" : "es_AR",
+      alternateLocale: lang === "en" ? "es_AR" : "en_US",
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 

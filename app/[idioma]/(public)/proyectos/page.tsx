@@ -15,14 +15,40 @@ import {
 } from "@/lib/datos/catalogos";
 import { SECTOR_OTROS, getProyectos } from "@/lib/datos/proyectos";
 import { cn } from "@/lib/cn";
+import { metadatosDe } from "@/lib/seo";
 
+/** El primer valor de un parámetro de la URL, ignorando los repetidos. */
+const uno = (v: string | string[] | undefined) =>
+  typeof v === "string" && v ? v : undefined;
+
+/*
+ * El número de página entra en el título y en la canónica: sin eso, las seis
+ * páginas del listado se publican con el mismo `<title>` y la misma dirección
+ * canónica, y Google las lee como una sola repetida.
+ *
+ * Los filtros, en cambio, **no** entran: cada combinación de sector, servicio,
+ * tecnología y cooperativa sería una canónica distinta y son cientos. Las
+ * vistas filtradas apuntan al listado, que es lo que corresponde indexar.
+ */
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ idioma: Idioma }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }): Promise<Metadata> {
-  const T = contenido((await params).idioma).PROYECTOS_PAGINA;
-  return { title: T.hero.titulo, description: T.hero.bajada };
+  const { idioma } = await params;
+  const T = contenido(idioma).PROYECTOS_PAGINA;
+  const pagina = Math.max(1, Number(uno((await searchParams).pagina)) || 1);
+  const sufijo =
+    pagina > 1 ? ` — ${idioma === "en" ? "page" : "página"} ${pagina}` : "";
+
+  return metadatosDe({
+    idioma,
+    ruta: pagina > 1 ? `/proyectos?pagina=${pagina}` : "/proyectos",
+    titulo: `${T.hero.titulo}${sufijo}`,
+    descripcion: T.hero.bajada,
+  });
 }
 
 const POR_PAGINA = 6;
@@ -45,8 +71,6 @@ export default async function ProyectosPage({
   const { idioma } = await rutaParams;
   const T = contenido(idioma).PROYECTOS_PAGINA;
   const params = await searchParams;
-  const uno = (v: string | string[] | undefined) =>
-    typeof v === "string" && v ? v : undefined;
 
   const filtros = {
     sector: uno(params.sector),

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Hero } from "@/components/secciones/hero";
 import { Marquesina } from "@/components/secciones/marquesina";
 import { Pasos } from "@/components/secciones/pasos";
@@ -22,6 +23,29 @@ import {
 } from "@/lib/datos/catalogos";
 import { getProyectosDestacados } from "@/lib/datos/proyectos";
 import { getMetricasRed } from "@/lib/datos/red";
+import { metadatosDe } from "@/lib/seo";
+
+/*
+ * La Home también declara la suya: hasta ahora heredaba la del layout, que era
+ * la única que estaba bien. Ahora que el layout no fija ninguna, le toca.
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ idioma: Idioma }>;
+}): Promise<Metadata> {
+  const { idioma } = await params;
+  const T = contenido(idioma).HOME;
+  return metadatosDe({
+    idioma,
+    ruta: "/",
+    titulo:
+      idioma === "en"
+        ? "Argentine Federation of Technology Worker Co-operatives"
+        : "Federación Argentina de Cooperativas de Trabajo de Tecnología",
+    descripcion: T.hero.bajada,
+  });
+}
 
 /**
  * Home.

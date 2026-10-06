@@ -52,6 +52,7 @@ export default async function NovedadesPage() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={novedad.imagen}
+                  loading="lazy"
                   alt=""
                   className="h-8 w-14 rounded object-cover"
                 />

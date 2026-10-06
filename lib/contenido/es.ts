@@ -767,6 +767,13 @@ export const NOVEDADES = {
  * salen de la API y del cálculo de provincia por coordenada. Acá va el texto.
  */
 export const NUESTRA_RED = {
+  /* Para la pestaña y los buscadores: el título del hero son seis renglones
+     cortados a mano y no entra en un resultado de búsqueda. */
+  seo: {
+    titulo: "Nuestra Red",
+    descripcion:
+      "Las cooperativas de FACTTIC en todo el país: dónde están, cuántas son y a qué se dedican.",
+  },
   hero: {
     titulo:
       "Somos\nuna red federal\nde cooperativas\nde tecnología,\ninnovación y\nconocimiento",

@@ -23,34 +23,34 @@ las imágenes ya resueltas a URL y las relaciones ya expandidas.
 
 ## Cobertura del board de Figma
 
-| Componente en Figma | Implementación |
-|---|---|
-| Boton | `ui/boton.tsx` → `Boton`, `BotonLink` |
-| Botón texto | `ui/boton.tsx` → `BotonTexto` |
-| Botón Idioma | `ui/boton.tsx` → `BotonIdioma` * |
-| Botón flecha | `ui/boton.tsx` → `BotonFlecha` |
-| _Badge base · Tag cliente / coope | `ui/chip.tsx` → `Chip` |
-| Tags Industrias | `ui/chip.tsx` → `ChipSector` |
-| Tags Novedades | `ui/chip.tsx` → `Chip tono="lila"` |
-| Tag ubicación | `ui/chip.tsx` → `ChipUbicacion` |
-| Selector servicios | `ui/tabs.tsx` + `tarjetas/servicios.tsx` |
-| Card servicio DS / Diseño / IA | `tarjetas/servicios.tsx` → `CardServicio` |
-| Card por qué elegirnos 01-03 | `tarjetas/servicios.tsx` → `CardServicio` |
-| Card metodologías | `tarjetas/servicios.tsx` → `CardMetodologia` |
-| Card obligaciones | `tarjetas/servicios.tsx` → `CardRequisito` |
+| Componente en Figma                             | Implementación                                            |
+| ----------------------------------------------- | --------------------------------------------------------- |
+| Boton                                           | `ui/boton.tsx` → `Boton`, `BotonLink`                     |
+| Botón texto                                     | `ui/boton.tsx` → `BotonTexto`                             |
+| Botón Idioma                                    | `ui/boton.tsx` → `BotonIdioma` *                          |
+| Botón flecha                                    | `ui/boton.tsx` → `BotonFlecha`                            |
+| _Badge base · Tag cliente / coope               | `ui/chip.tsx` → `Chip`                                    |
+| Tags Industrias                                 | `ui/chip.tsx` → `ChipSector`                              |
+| Tags Novedades                                  | `ui/chip.tsx` → `Chip tono="lila"`                        |
+| Tag ubicación                                   | `ui/chip.tsx` → `ChipUbicacion`                           |
+| Selector servicios                              | `ui/tabs.tsx` + `tarjetas/servicios.tsx`                  |
+| Card servicio DS / Diseño / IA                  | `tarjetas/servicios.tsx` → `CardServicio`                 |
+| Card por qué elegirnos 01-03                    | `tarjetas/servicios.tsx` → `CardServicio`                 |
+| Card metodologías                               | `tarjetas/servicios.tsx` → `CardMetodologia`              |
+| Card obligaciones                               | `tarjetas/servicios.tsx` → `CardRequisito`                |
 | Carg organizaciones · Card Agro · Card Finanzas | `tarjetas/sector.tsx` → `CardSector`, `CardSectorDetalle` |
-| Card proyecto | `tarjetas/proyecto.tsx` → `CardProyecto` |
-| Card proyecto destacado | `tarjetas/proyecto.tsx` → `CardProyectoDetalle` |
-| Últimos proyectos | `tarjetas/proyecto.tsx` → `FilaProyecto` |
-| Card sumada 1-3 | `tarjetas/bloques.tsx` → `CardOportunidad` |
-| Component 2/3/7/8 (beneficios) | `tarjetas/bloques.tsx` → `CardBeneficio` |
-| Red contador 1-3 | `tarjetas/bloques.tsx` → `CardMetrica` |
-| Card autoridades | `tarjetas/red.tsx` → `CardAutoridad` |
-| Card logo | `tarjetas/red.tsx` → `CardLogo`, `GrillaLogos` |
-| Call to action | `ui/seccion.tsx` → `BandaCta` |
-| Nav bar/Predeterminada | `layout/header.tsx` |
-| Footer | `layout/footer.tsx` |
-| Card logo (wordmark) | `layout/logo.tsx` * |
+| Card proyecto                                   | `tarjetas/proyecto.tsx` → `CardProyecto`                  |
+| Card proyecto destacado                         | `tarjetas/proyecto.tsx` → `CardProyectoDetalle`           |
+| Últimos proyectos                               | `tarjetas/proyecto.tsx` → `FilaProyecto`                  |
+| Card sumada 1-3                                 | `tarjetas/bloques.tsx` → `CardOportunidad`                |
+| Component 2/3/7/8 (beneficios)                  | `tarjetas/bloques.tsx` → `CardBeneficio`                  |
+| Red contador 1-3                                | `tarjetas/bloques.tsx` → `CardMetrica`                    |
+| Card autoridades                                | `tarjetas/red.tsx` → `CardAutoridad`                      |
+| Card logo                                       | `tarjetas/red.tsx` → `CardLogo`, `GrillaLogos`            |
+| Call to action                                  | `ui/seccion.tsx` → `BandaCta`                             |
+| Nav bar/Predeterminada                          | `layout/header.tsx`                                       |
+| Footer                                          | `layout/footer.tsx`                                       |
+| Card logo (wordmark)                            | `layout/logo.tsx` *                                       |
 
 \* `BotonIdioma` está hecho pero sin usar: la v1 sale solo en español.
 El wordmark está compuesto tipográficamente hasta que se exporte el SVG.

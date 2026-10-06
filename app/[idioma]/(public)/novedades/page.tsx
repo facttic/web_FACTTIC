@@ -10,14 +10,39 @@ import { getNovedades } from "@/lib/datos/novedades";
 import type { TipoNovedad } from "@/lib/dominio/tipos";
 import { cn } from "@/lib/cn";
 import { FOCO } from "@/components/ui/boton";
+import { metadatosDe } from "@/lib/seo";
 
+/** El primer valor de un parámetro de la URL, ignorando los repetidos. */
+const uno = (v: string | string[] | undefined) =>
+  typeof v === "string" && v ? v : undefined;
+
+/*
+ * El número de página entra en el título y en la canónica: sin eso, las seis
+ * páginas del listado se publican con el mismo `<title>` y la misma dirección
+ * canónica, y Google las lee como una sola repetida.
+ *
+ * La solapa de tipo, en cambio, **no** entra: comunicados, noticias y
+ * actividades son recortes del mismo listado y apuntan a él.
+ */
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ idioma: Idioma }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }): Promise<Metadata> {
-  const T = contenido((await params).idioma).NOVEDADES;
-  return { title: T.hero.titulo, description: T.hero.bajada };
+  const { idioma } = await params;
+  const T = contenido(idioma).NOVEDADES;
+  const pagina = Math.max(1, Number(uno((await searchParams).pagina)) || 1);
+  const sufijo =
+    pagina > 1 ? ` — ${idioma === "en" ? "page" : "página"} ${pagina}` : "";
+
+  return metadatosDe({
+    idioma,
+    ruta: pagina > 1 ? `/novedades?pagina=${pagina}` : "/novedades",
+    titulo: `${T.hero.titulo}${sufijo}`,
+    descripcion: T.hero.bajada,
+  });
 }
 
 const POR_PAGINA = 6;
@@ -40,8 +65,6 @@ export default async function NovedadesPage({
   const { idioma } = await rutaParams;
   const T = contenido(idioma).NOVEDADES;
   const params = await searchParams;
-  const uno = (v: string | string[] | undefined) =>
-    typeof v === "string" ? v : undefined;
 
   const tipoPedido = uno(params.tipo);
   const tipo = TIPOS.includes(tipoPedido as TipoNovedad)

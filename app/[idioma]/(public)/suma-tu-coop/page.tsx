@@ -10,14 +10,21 @@ import { Animacion } from "@/components/ui/animacion";
 import { FONDOS } from "@/lib/animaciones";
 import { contenido } from "@/lib/contenido";
 import type { Idioma } from "@/lib/idioma";
+import { metadatosDe } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ idioma: Idioma }>;
 }): Promise<Metadata> {
-  const T = contenido((await params).idioma).SUMA_TU_COOP;
-  return { title: T.hero.titulo, description: T.hero.bajada };
+  const { idioma } = await params;
+  const T = contenido(idioma).SUMA_TU_COOP;
+  return metadatosDe({
+    idioma,
+    ruta: "/suma-tu-coop",
+    titulo: T.hero.titulo,
+    descripcion: T.hero.bajada,
+  });
 }
 
 /**

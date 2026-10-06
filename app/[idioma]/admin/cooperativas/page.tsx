@@ -70,6 +70,7 @@ export default async function CooperativasPage() {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={cooperativa.logo}
+                    loading="lazy"
                     alt=""
                     className="h-8 w-auto object-contain"
                   />

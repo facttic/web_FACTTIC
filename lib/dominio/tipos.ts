@@ -59,7 +59,11 @@ export interface Cooperativa extends Referencia {
   email: string | null;
   telefono: string | null;
   fundacion: number | null;
-  redes: { linkedin: string | null; instagram: string | null; github: string | null };
+  redes: {
+    linkedin: string | null;
+    instagram: string | null;
+    github: string | null;
+  };
 }
 
 export interface Autoridad extends Referencia {

@@ -602,6 +602,11 @@ export const NOVEDADES = {
 } as const;
 
 export const NUESTRA_RED = {
+  seo: {
+    titulo: "Our Network",
+    descripcion:
+      "FACTTIC co-operatives across Argentina: where they are, how many they are and what they do.",
+  },
   hero: {
     titulo:
       "We are\na federal network\nof technology,\ninnovation and\nknowledge\nco-ops",

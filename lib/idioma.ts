@@ -57,9 +57,20 @@ function partir(ruta: string): [string, string] {
   return [primero, (resto.length ? `/${resto.join("/")}` : "") + cola];
 }
 
-/** Saca el prefijo de idioma, si lo tiene. */
+/**
+ * Saca el prefijo de idioma, si lo tiene. **Los dos**, no solo el inglés.
+ *
+ * El español no se escribe en la URL pública, pero sí existe puertas adentro:
+ * el proxy reescribe `/nuestra-red` a `/es/nuestra-red`, y eso es lo que ve
+ * `usePathname()` mientras la página se arma en el servidor. Con solo `/en` en
+ * la expresión, el selector de idioma salía publicado apuntando a
+ * `/es/nuestra-red` y a `/en/es/nuestra-red`: el segundo es un 404.
+ *
+ * En el navegador se corregía solo al hidratar, así que nadie lo veía. Los
+ * rastreadores no hidratan: seguían el enlace del HTML y se comían el 404.
+ */
 function sinPrefijo(ruta: string): string {
-  return ruta.replace(/^\/en(?=\/|$|[?#])/, "") || "/";
+  return ruta.replace(/^\/(?:en|es)(?=\/|$|[?#])/, "") || "/";
 }
 
 /**

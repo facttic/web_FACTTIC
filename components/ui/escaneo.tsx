@@ -145,7 +145,9 @@ export function Escaneo({
     const gl = canvas.getContext("webgl2", { antialias: false });
     if (!gl) return;
 
-    const quieto = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const quieto = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
 
     const vs = compilar(gl, gl.VERTEX_SHADER, VERTICE);
     const fs = compilar(gl, gl.FRAGMENT_SHADER, FRAGMENTO);
@@ -309,9 +311,12 @@ export function Escaneo({
       {/* Debajo va la imagen de siempre: es lo que se ve mientras la textura
           carga y lo único que queda si no hay WebGL2. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
+      {/* Va diferida: el bloque que la usa está muy abajo en Sobre FACTTIC. La
+          textura de WebGL se pide por su cuenta, así que esto no la retrasa. */}
       <img
         src={src}
         alt={alt}
+        loading="lazy"
         className={cn(
           "size-full",
           ajuste === "cover" ? "object-cover" : "object-contain",

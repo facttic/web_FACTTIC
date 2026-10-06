@@ -88,6 +88,7 @@ export function ListadoSimple({
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={registro.logo}
+                    loading="lazy"
                     alt=""
                     className="h-8 w-auto object-contain"
                   />

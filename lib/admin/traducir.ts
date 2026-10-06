@@ -101,7 +101,8 @@ export async function traducirAlIngles(
     /* En serie y no en paralelo: son instancias comunitarias y conviene no
        dispararles cinco pedidos juntos por un solo campo. */
     const traducidas: string[] = [];
-    for (const parte of enPartes(limpio)) traducidas.push(await unaParte(parte));
+    for (const parte of enPartes(limpio))
+      traducidas.push(await unaParte(parte));
     return { ok: true, texto: traducidas.join(" ").replace(/\s+\n/g, "\n") };
   } catch (error) {
     return {

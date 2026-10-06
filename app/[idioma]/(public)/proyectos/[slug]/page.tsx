@@ -17,6 +17,7 @@ import {
   getProyectos,
   getProyectosRelacionados,
 } from "@/lib/datos/proyectos";
+import { metadatosDe } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -26,7 +27,15 @@ export async function generateMetadata({
   const { slug, idioma } = await params;
   const proyecto = await getProyecto(slug, idioma);
   if (!proyecto) return {};
-  return { title: proyecto.nombre, description: proyecto.desafio ?? undefined };
+  return metadatosDe({
+    idioma,
+    ruta: `/proyectos/${slug}`,
+    titulo: proyecto.nombre,
+    descripcion: proyecto.desafio ?? "",
+    /* La portada del proyecto es la imagen de la tarjeta al compartirlo. */
+    imagen: proyecto.portada,
+    tipo: "article",
+  });
 }
 
 /**
@@ -103,9 +112,15 @@ export default async function ProyectoPage({
                 redondeadas: así la dibuja el board. */}
             <div className="md:contenedor md:order-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
+              {/* Arriba de todo y es la imagen más grande de la pantalla: va
+                  con prioridad y sin `lazy`, que la retrasaría. El `alt`
+                  describe de qué es la foto —antes iba vacío, y una portada
+                  con nombre propio no es decorativa—. */}
               <img
                 src={portada}
-                alt=""
+                alt={`Portada del proyecto ${proyecto.nombre}`}
+                loading="eager"
+                fetchPriority="high"
                 className="-mt-[72px] h-[488px] w-full rounded-b-3xl object-cover md:mt-0 md:h-[438px] md:rounded-[21px]"
               />
             </div>

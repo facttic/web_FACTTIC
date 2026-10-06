@@ -34,8 +34,14 @@ export function Header() {
   const idioma = useIdioma();
   const MENU = menu(idioma);
   /* La misma pantalla en el otro idioma: se le saca el prefijo y se le pone
-     el que corresponde. */
-  const sinIdioma = pathname.replace(/^\/en(?=\/|$)/, "") || "/";
+     el que corresponde.
+
+     Se sacan los dos prefijos y no solo `/en`: mientras la página se arma en el
+     servidor, `usePathname()` devuelve la ruta **interna**, que para el español
+     sí lo lleva. Con solo `/en` acá, el selector salía publicado apuntando a
+     `/en/es/nuestra-red`, que es un 404 —en el navegador se corregía al
+     hidratar, pero los rastreadores no hidratan—. */
+  const sinIdioma = pathname.replace(/^\/(?:en|es)(?=\/|$)/, "") || "/";
 
   // Cierra el menú al navegar, para que no quede tapando la página nueva.
   useEffect(() => {

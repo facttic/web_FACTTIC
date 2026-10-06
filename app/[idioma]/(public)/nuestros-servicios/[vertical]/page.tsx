@@ -24,6 +24,7 @@ import {
   getTecnologias,
 } from "@/lib/datos/catalogos";
 import { getProyectos } from "@/lib/datos/proyectos";
+import { metadatosDe } from "@/lib/seo";
 
 /**
  * Vertical: Organizaciones, Agro o Financiero.
@@ -62,10 +63,13 @@ export async function generateMetadata({
    * primero, que es el que resume la vertical.
    */
   const descripcion = T.descripciones[vertical] ?? sector.descripcion;
-  return {
-    title: sector.nombre,
-    description: descripcion ? parrafos(descripcion)[0] : undefined,
-  };
+  return metadatosDe({
+    idioma,
+    ruta: `/nuestros-servicios/${vertical}`,
+    titulo: sector.nombre,
+    descripcion: descripcion ? parrafos(descripcion)[0] : "",
+    imagen: sector.imagen,
+  });
 }
 
 /** Una descripción puede venir en varios párrafos, separados por una línea. */

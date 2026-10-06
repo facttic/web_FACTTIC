@@ -84,6 +84,8 @@ export function Hero({
         <img
           src={imagen}
           alt=""
+          loading="eager"
+          fetchPriority="high"
           className="paralaje-fondo absolute inset-0 -z-10 size-full object-cover"
         />
       ) : (

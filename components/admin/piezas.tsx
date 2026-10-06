@@ -715,6 +715,7 @@ export function CampoArchivo({
             <img
               key={url}
               src={url}
+              loading="lazy"
               alt=""
               className="h-12 w-auto rounded border border-borde object-contain"
             />
