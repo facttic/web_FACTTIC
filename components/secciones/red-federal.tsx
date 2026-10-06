@@ -10,6 +10,9 @@ import { contenido } from "@/lib/contenido";
 import { useIdioma } from "@/lib/idioma-cliente";
 import type { CooperativaEnRed, ProvinciaConRed } from "@/lib/datos/red";
 
+/** Lo que tarda la ficha en replegarse; tiene que coincidir con el CSS. */
+const SALIDA = 200;
+
 /**
  * El bloque interactivo de Nuestra Red: el mapa, el panel de la provincia
  * elegida y sus cooperativas.
@@ -42,14 +45,37 @@ export function RedFederal({
    * mapa, pero ahí ya se está leyendo, no mirando.
    */
   const [fichaAmpliada, setFichaAmpliada] = useState(false);
+  /*
+   * Al cambiar de provincia la ficha se repliega y vuelve a salir, en vez de
+   * cambiarle el contenido por abajo: así se entiende que es otra, y el mapa
+   * aprovecha ese momento para viajar hasta ella sin que la ficha se arrastre
+   * por el medio.
+   */
+  const [saliendo, setSaliendo] = useState(false);
+  const relevo = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => clearTimeout(relevo.current ?? undefined), []);
   const indice = provincias.findIndex((p) => p.nombre === elegida);
   const provincia = provincias[indice] ?? null;
 
   const elegir = (nombre: string) => {
-    setElegida(nombre);
-    setPanelAbierto(true);
     // Cada provincia abre en chico: lo ampliado valía para la anterior.
     setFichaAmpliada(false);
+
+    const cambiaConLaFichaAbierta =
+      panelAbierto && elegida !== null && nombre !== elegida;
+    if (!cambiaConLaFichaAbierta) {
+      setElegida(nombre);
+      setPanelAbierto(true);
+      return;
+    }
+
+    // Primero se guarda, y recién cuando terminó de irse entra la nueva.
+    setSaliendo(true);
+    clearTimeout(relevo.current ?? undefined);
+    relevo.current = setTimeout(() => {
+      setElegida(nombre);
+      setSaliendo(false);
+    }, SALIDA);
   };
 
   const cantidades = Object.fromEntries(
@@ -144,6 +170,10 @@ export function RedFederal({
 
         {provincia && panelAbierto ? (
           <PanelProvincia
+            /* Una ficha por provincia: al cambiar la clave, React la monta de
+               nuevo y la animación de entrada vuelve a correr. */
+            key={provincia.nombre}
+            saliendo={saliendo}
             provincia={provincia}
             alCerrar={() => setPanelAbierto(false)}
             ampliada={fichaAmpliada}
@@ -163,7 +193,8 @@ export function RedFederal({
               caja del mapa, a su derecha, donde sobra lugar.
             */
             className={cn(
-              "se-despliega-al-costado absolute top-4 right-3 left-[-2rem] z-20 rounded-l-none",
+              saliendo ? "se-repliega-al-costado" : "se-despliega-al-costado",
+              "absolute top-4 right-3 left-[-2rem] z-20 rounded-l-none",
               /* El relleno de la izquierda compensa lo que queda fuera de la
                  pantalla: sin esto el texto arrancaba cortado. */
               "pl-12",
@@ -269,6 +300,7 @@ export function RedFederal({
 function PanelProvincia({
   provincia,
   alCerrar,
+  saliendo = false,
   ampliada = false,
   alAmpliar,
   className,
@@ -276,6 +308,8 @@ function PanelProvincia({
 }: {
   provincia: ProvinciaConRed;
   alCerrar: () => void;
+  /** Yéndose, mientras entra la de otra provincia. */
+  saliendo?: boolean;
   /** En el teléfono la ficha arranca angosta y se puede abrir a todo el ancho. */
   ampliada?: boolean;
   alAmpliar?: () => void;
@@ -373,7 +407,7 @@ function PanelProvincia({
       ) : null}
 
       {/* Solo en el teléfono: en escritorio la ficha ya entra entera. */}
-      {hayDeSobra && alAmpliar ? (
+      {hayDeSobra && alAmpliar && !saliendo ? (
         <button
           type="button"
           onClick={alAmpliar}

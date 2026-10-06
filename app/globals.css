@@ -907,6 +907,27 @@ body {
   }
 }
 
+@keyframes replegarse-al-costado {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateX(var(--desde, -16px)) scaleX(0.94);
+  }
+}
+
+@utility se-repliega-al-costado {
+  transform-origin: var(--origen, left) center;
+  animation: replegarse-al-costado 0.2s ease-in both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 0;
+  }
+}
+
 @utility se-despliega-al-costado {
   transform-origin: var(--origen, left) center;
   animation: desplegarse-al-costado 0.45s cubic-bezier(0.2, 0.7, 0.3, 1) both;
