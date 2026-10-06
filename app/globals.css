@@ -234,6 +234,41 @@
 }
 
 /**
+ * Tipografía del panel.
+ *
+ * El sitio público usa DM Mono para el cuerpo y eso le da su carácter, pero en
+ * el backoffice jugaba en contra: la mono es más ancha, entra menos texto por
+ * renglón y una tabla de cuarenta cooperativas se vuelve ilegible. Acá manda
+ * la sans, en cuerpos chicos y con interlineado corto, que es lo que hace que
+ * una herramienta se lea como herramienta.
+ *
+ * Va por `.panel` y no sobre `body` para no tocar el sitio público, que
+ * comparte las mismas utilidades tipográficas.
+ */
+.panel {
+  --texto-panel: 13px;
+}
+
+.panel .text-p2,
+.panel .text-p3,
+.panel .text-p1-bold,
+.panel input,
+.panel textarea,
+.panel select,
+.panel button,
+.panel label,
+.panel td,
+.panel th {
+  font-family: var(--font-sans);
+}
+
+.panel .text-p2,
+.panel .text-p3 {
+  font-size: var(--texto-panel);
+  line-height: 1.45;
+}
+
+/**
  * Reflejo de vidrio que cruza una tarjeta.
  *
  * Reemplaza al punto de luz que recorría el borde de las bandas de conversión:

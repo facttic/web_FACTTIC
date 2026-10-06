@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { requerirSesion } from "@/lib/api/guardia";
 import { traerCooperativa, traerOpciones } from "@/lib/datos/admin";
+import { Bloques } from "@/components/admin/bloque";
 import { Encabezado } from "@/components/admin/piezas";
 import { FormularioCooperativa } from "../formulario";
 import { guardarCooperativa, invitarEditor, quitarEditor } from "../acciones";
@@ -32,30 +33,38 @@ export default async function Page({
         servicios={servicios}
         sectores={sectores}
       />
-      {/* Designar editores es cosa de la Federación: una cooperativa no elige
-          quién más entra a su ficha. La API lo verifica igual. */}
-      {sesion.esAdmin ? (
-        <Editores
-          cooperativaId={cooperativa.id}
-          editores={cooperativa.editores}
-          invitar={invitarEditor.bind(null, cooperativa.id)}
-          quitar={quitarEditor.bind(null, cooperativa.id)}
-        />
-      ) : null}
 
-      {/* Los proyectos son otra consulta: que no demoren el formulario. */}
-      <Suspense
-        fallback={
-          <p className="text-p3 mt-8 rounded-xl border border-borde p-6 text-blanco/40">
-            Buscando sus proyectos…
-          </p>
-        }
-      >
-        <ProyectosDeLaCooperativa
-          id={cooperativa.id}
-          nombre={cooperativa.nombre}
-        />
-      </Suspense>
+      {/* Lo que no es la ficha va aparte del formulario —un formulario no
+          contiene otro— pero con el mismo ancho, para que la columna de
+          títulos siga la misma línea de arriba abajo. */}
+      <div className="mt-5">
+        <Bloques>
+          {/* Designar editores es cosa de la Federación: una cooperativa no
+              elige quién más entra a su ficha. La API lo verifica igual. */}
+          {sesion.esAdmin ? (
+            <Editores
+              cooperativaId={cooperativa.id}
+              editores={cooperativa.editores}
+              invitar={invitarEditor.bind(null, cooperativa.id)}
+              quitar={quitarEditor.bind(null, cooperativa.id)}
+            />
+          ) : null}
+
+          {/* Los proyectos son otra consulta: que no demoren el formulario. */}
+          <Suspense
+            fallback={
+              <p className="text-p3 rounded-xl border border-borde p-6 text-blanco/40">
+                Buscando sus proyectos…
+              </p>
+            }
+          >
+            <ProyectosDeLaCooperativa
+              id={cooperativa.id}
+              nombre={cooperativa.nombre}
+            />
+          </Suspense>
+        </Bloques>
+      </div>
     </div>
   );
 }

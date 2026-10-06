@@ -1,11 +1,10 @@
 "use client";
 
+import { Bloque, Bloques, Par } from "@/components/admin/bloque";
 import {
   CampoArchivo,
   CampoSelector,
   CampoTexto,
-  Columna,
-  Columnas,
   FormularioAdmin,
   type EstadoForm,
 } from "@/components/admin/piezas";
@@ -29,55 +28,56 @@ export function FormularioAutoridad({
 }) {
   return (
     <FormularioAdmin accion={accion} volverA="/admin/consejo">
-      <Columnas>
-        <Columna>
-          <CampoTexto
-            id="nombre"
-            name="nombre"
-            etiqueta="Nombre"
-            defaultValue={autoridad?.nombre}
-            required
-            minLength={2}
-            maxLength={150}
-            autoFocus
-          />
-          <CampoTexto
-            id="cargo"
-            name="cargo"
-            etiqueta="Cargo"
-            ayuda="Como figura en el acta: Presidenta, Tesorero, Vocal titular, Síndico suplente."
-            defaultValue={autoridad?.cargo}
-            required
-            minLength={2}
-            maxLength={100}
-          />
-        </Columna>
-
-        <Columna>
-          <CampoSelector
-            id="cooperativa"
-            name="cooperativa"
-            etiqueta="Cooperativa"
-            defaultValue={autoridad?.cooperativa?.id ?? ""}
-            required
-          >
-            <option value="">Elegí una</option>
-            {cooperativas.map((cooperativa) => (
-              <option key={cooperativa.id} value={cooperativa.id}>
-                {cooperativa.nombre}
-              </option>
-            ))}
-          </CampoSelector>
-          <CampoArchivo
-            id="file"
-            name="file"
-            etiqueta="Foto"
-            ayuda="La API la guarda, pero la maqueta de Autoridades todavía no la muestra."
-            accept="image/*"
-            actual={autoridad?.foto}
-          />
-        </Columna>
-      </Columnas>
+      <Bloques>
+        <Bloque titulo="Quién es">
+          <Par>
+            <CampoTexto
+              id="nombre"
+              name="nombre"
+              etiqueta="Nombre"
+              defaultValue={autoridad?.nombre}
+              required
+              minLength={2}
+              maxLength={150}
+              autoFocus
+            />
+            <CampoTexto
+              id="cargo"
+              name="cargo"
+              etiqueta="Cargo"
+              ayuda="Como figura en el acta: Presidenta, Tesorero, Vocal titular, Síndico suplente."
+              defaultValue={autoridad?.cargo}
+              required
+              minLength={2}
+              maxLength={100}
+            />
+          </Par>
+          <Par>
+            <CampoSelector
+              id="cooperativa"
+              name="cooperativa"
+              etiqueta="Cooperativa"
+              defaultValue={autoridad?.cooperativa?.id ?? ""}
+              required
+            >
+              <option value="">Elegí una</option>
+              {cooperativas.map((cooperativa) => (
+                <option key={cooperativa.id} value={cooperativa.id}>
+                  {cooperativa.nombre}
+                </option>
+              ))}
+            </CampoSelector>
+            <CampoArchivo
+              id="file"
+              name="file"
+              etiqueta="Foto"
+              ayuda="La API la guarda, pero la maqueta de Autoridades todavía no la muestra."
+              accept="image/*"
+              actual={autoridad?.foto}
+            />
+          </Par>
+        </Bloque>
+      </Bloques>
     </FormularioAdmin>
   );
 }

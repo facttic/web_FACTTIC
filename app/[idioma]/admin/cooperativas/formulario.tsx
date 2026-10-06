@@ -2,14 +2,13 @@
 
 import {
   CampoArchivo,
-  CampoMultiple,
   CampoTexto,
-  Columna,
-  Columnas,
   FormularioAdmin,
   type EstadoForm,
   type Opcion,
 } from "@/components/admin/piezas";
+import { Bloque, Bloques, Par } from "@/components/admin/bloque";
+import { CampoBuscador } from "@/components/admin/campo-buscador";
 import { CampoUbicacion } from "@/components/admin/mapa-ubicacion";
 import type { Cooperativa } from "@/lib/datos/admin";
 import { crearSector, crearServicio } from "./acciones";
@@ -40,33 +39,29 @@ export function FormularioCooperativa({
 }) {
   return (
     <FormularioAdmin accion={accion} volverA="/admin/cooperativas">
-      <Columnas>
-        <Columna>
-          <CampoTexto
-            id="nombre"
-            name="nombre"
-            etiqueta="Nombre"
-            defaultValue={cooperativa?.nombre}
-            required
-            minLength={3}
-            maxLength={150}
-            autoFocus
-          />
-          <CampoTexto
-            id="asociados"
-            name="asociados"
-            etiqueta="Asociadxs"
-            ayuda="Cuántas personas la integran. La Home suma este número para la métrica de profesionales."
-            type="number"
-            min={0}
-            defaultValue={cooperativa?.asociados ?? ""}
-          />
-
-          <CampoUbicacion
-            lat={cooperativa?.ubicacion?.lat}
-            lng={cooperativa?.ubicacion?.lng}
-          />
-
+      <Bloques>
+        <Bloque titulo="Datos de la cooperativa">
+          <Par>
+            <CampoTexto
+              id="nombre"
+              name="nombre"
+              etiqueta="Nombre"
+              defaultValue={cooperativa?.nombre}
+              required
+              minLength={3}
+              maxLength={150}
+              autoFocus
+            />
+            <CampoTexto
+              id="asociados"
+              name="asociados"
+              etiqueta="Asociadxs"
+              ayuda="Cuántas personas la integran. La Home suma este número."
+              type="number"
+              min={0}
+              defaultValue={cooperativa?.asociados ?? ""}
+            />
+          </Par>
           <CampoArchivo
             id="file"
             name="file"
@@ -75,19 +70,23 @@ export function FormularioCooperativa({
             accept="image/*"
             actual={cooperativa?.logo}
           />
-        </Columna>
+        </Bloque>
 
-        <Columna>
-          <CampoMultiple
+        <Bloque
+          titulo="Qué hace"
+          ayuda="Es lo que muestra el panel de provincia en Nuestra Red. Si falta alguno, se crea desde acá."
+        >
+          <CampoBuscador
             nombre="servicios"
             etiqueta="Servicios"
-            ayuda="Los que ofrece. El panel de provincia los muestra como los servicios que concentra la zona."
+            ayuda="Los que ofrece esta cooperativa."
             opciones={servicios}
             elegidas={cooperativa?.servicios ?? []}
             crear={crearServicio}
             queEs="servicio"
+            vacio="Todavía no hay servicios cargados."
           />
-          <CampoMultiple
+          <CampoBuscador
             nombre="sectores"
             etiqueta="Sectores"
             ayuda="Las industrias en las que trabaja."
@@ -95,9 +94,20 @@ export function FormularioCooperativa({
             elegidas={cooperativa?.sectores ?? []}
             crear={crearSector}
             queEs="sector"
+            vacio="Todavía no hay sectores cargados."
           />
-        </Columna>
-      </Columnas>
+        </Bloque>
+
+        <Bloque
+          titulo="Dónde está"
+          ayuda="Sin ubicación no aparece en el mapa federal. Alcanza con la ciudad: el mapa agrupa por provincia."
+        >
+          <CampoUbicacion
+            lat={cooperativa?.ubicacion?.lat}
+            lng={cooperativa?.ubicacion?.lng}
+          />
+        </Bloque>
+      </Bloques>
     </FormularioAdmin>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { Bloque } from "@/components/admin/bloque";
 import {
   BotonAdmin,
   CampoTexto,
@@ -36,16 +37,12 @@ export function Editores({
   const [estadoBaja, enviarBaja] = useActionState(quitar, undefined);
 
   return (
-    <section className="mt-8 rounded-xl border border-borde p-6">
-      <h2 className="text-p1-bold">Quiénes pueden editarla</h2>
-      <p className="text-p3 mt-2 text-blanco/50">
-        Cada persona recibe un enlace para crear su cuenta y queda habilitada
-        para editar esta ficha, sus proyectos y sus servicios. Quitarla le corta
-        el acceso en el momento.
-      </p>
-
+    <Bloque
+      titulo="Quiénes pueden editarla"
+      ayuda="Cada persona recibe un enlace para crear su cuenta y queda habilitada para editar esta ficha, sus proyectos y sus servicios. Quitarla le corta el acceso en el momento."
+    >
       {editores.length ? (
-        <ul className="mt-5 flex flex-col gap-2">
+        <ul className="flex flex-col gap-2">
           {editores.map((email) => (
             <li
               key={email}
@@ -63,12 +60,10 @@ export function Editores({
           ))}
         </ul>
       ) : (
-        <p className="text-p3 mt-5 text-blanco/40">
-          Todavía no designaron a nadie.
-        </p>
+        <p className="text-p3 text-blanco/40">Todavía no designaron a nadie.</p>
       )}
 
-      <form action={enviarAlta} className="mt-5 flex items-end gap-3">
+      <form action={enviarAlta} className="flex items-end gap-3">
         <CampoTexto
           id="email-editor"
           name="email"
@@ -84,10 +79,10 @@ export function Editores({
       </form>
 
       {estadoAlta?.error || estadoBaja?.error ? (
-        <p role="alert" className="text-p3 mt-3 text-rojo">
+        <p role="alert" className="text-p3 text-rojo">
           {estadoAlta?.error ?? estadoBaja?.error}
         </p>
       ) : null}
-    </section>
+    </Bloque>
   );
 }

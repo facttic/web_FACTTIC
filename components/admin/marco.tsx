@@ -29,7 +29,8 @@ export async function MarcoAdmin({
   }
 
   return (
-    <div className="flex min-h-svh">
+    /* `panel`: la tipografía de herramienta, que no toca al sitio público. */
+    <div className="panel flex min-h-svh">
       <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-borde bg-negro-oscuro md:flex">
         <div className="border-b border-borde px-6 py-5">
           <Logo href="/admin" />

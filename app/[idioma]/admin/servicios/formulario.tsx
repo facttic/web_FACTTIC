@@ -3,13 +3,12 @@
 import { useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { FOCO } from "@/components/ui/boton";
+import { Bloque, Bloques, Par } from "@/components/admin/bloque";
+import { SolapasIdioma } from "@/components/admin/solapas-idioma";
 import {
   BotonAdmin,
   CampoCasilla,
   CampoTexto,
-  CampoTraducible,
-  Columna,
-  Columnas,
   CONTROL,
   FormularioAdmin,
   type EstadoForm,
@@ -19,8 +18,9 @@ import type { Servicio } from "@/lib/datos/admin";
 /**
  * Alta y edición de un servicio.
  *
- * A la izquierda lo que describe al servicio y a la derecha su lista de
- * subservicios, que es la que crece: así se ve entera sin bajar.
+ * Tres bloques: qué es el servicio, qué se lista adentro y cómo aparece en el
+ * sitio. Los subservicios se llevan su propio bloque porque es la parte que
+ * crece y necesita todo el ancho.
  */
 export function FormularioServicio({
   accion,
@@ -31,39 +31,82 @@ export function FormularioServicio({
 }) {
   return (
     <FormularioAdmin accion={accion} volverA="/admin/servicios">
-      <Columnas>
-        <Columna>
-          <CampoTraducible
-            id="nombre"
-            name="nombre"
-            valorEn={servicio?.en.nombre}
-            etiqueta="Nombre"
-            defaultValue={servicio?.nombre}
-            required
-            minLength={3}
-            maxLength={100}
-            autoFocus
+      <Bloques>
+        <Bloque titulo="Qué servicio es">
+          <SolapasIdioma
+            traducidos={{
+              cargados: [servicio?.en.nombre, servicio?.en.descripcion].filter(
+                Boolean,
+              ).length,
+              total: 2,
+            }}
+            espanol={
+              <>
+                <CampoTexto
+                  id="nombre"
+                  name="nombre"
+                  etiqueta="Nombre"
+                  defaultValue={servicio?.nombre}
+                  required
+                  minLength={3}
+                  maxLength={100}
+                  autoFocus
+                />
+                <CampoTexto
+                  id="descripcion"
+                  name="descripcion"
+                  etiqueta="Descripción"
+                  ayuda="El párrafo que acompaña al servicio en la solapa de Servicios."
+                  multilinea
+                  rows={6}
+                  maxLength={1000}
+                  defaultValue={servicio?.descripcion}
+                />
+              </>
+            }
+            ingles={
+              <>
+                <CampoTexto
+                  id="en-nombre"
+                  name="en.nombre"
+                  etiqueta="Name"
+                  ayuda="Sin traducción, el sitio en inglés muestra el español."
+                  defaultValue={servicio?.en.nombre}
+                  maxLength={100}
+                />
+                <CampoTexto
+                  id="en-descripcion"
+                  name="en.descripcion"
+                  etiqueta="Description"
+                  multilinea
+                  rows={6}
+                  maxLength={1000}
+                  defaultValue={servicio?.en.descripcion}
+                />
+              </>
+            }
           />
-          <CampoTraducible
-            id="descripcion"
-            name="descripcion"
-            valorEn={servicio?.en.descripcion}
-            etiqueta="Descripción"
-            ayuda="El párrafo que acompaña al servicio en la solapa de Servicios."
-            multilinea
-            rows={6}
-            maxLength={1000}
-            defaultValue={servicio?.descripcion}
+        </Bloque>
+
+        <Bloque titulo="Subservicios">
+          <Subservicios
+            iniciales={servicio?.subservicios ?? []}
+            enIngles={servicio?.en.subservicios ?? []}
           />
-          <CampoTexto
-            id="orden"
-            name="orden"
-            etiqueta="Orden"
-            ayuda="En qué posición se lista. Menor número, más arriba."
-            type="number"
-            min={0}
-            defaultValue={servicio?.orden ?? ""}
-          />
+        </Bloque>
+
+        <Bloque titulo="Cómo se lista">
+          <Par>
+            <CampoTexto
+              id="orden"
+              name="orden"
+              etiqueta="Orden"
+              ayuda="En qué posición se lista. Menor número, más arriba."
+              type="number"
+              min={0}
+              defaultValue={servicio?.orden ?? ""}
+            />
+          </Par>
           <CampoCasilla
             id="esDestacado"
             name="esDestacado"
@@ -71,15 +114,8 @@ export function FormularioServicio({
             ayuda="Los destacados son el catálogo de la Federación: los únicos que muestran la Home y Nuestros servicios. Los demás son los que carga cada cooperativa para su ficha."
             defaultChecked={servicio?.destacado}
           />
-        </Columna>
-
-        <Columna>
-          <Subservicios
-            iniciales={servicio?.subservicios ?? []}
-            enIngles={servicio?.en.subservicios ?? []}
-          />
-        </Columna>
-      </Columnas>
+        </Bloque>
+      </Bloques>
     </FormularioAdmin>
   );
 }
@@ -132,7 +168,6 @@ function Subservicios({
 
   return (
     <fieldset>
-      <legend className="text-p3 mb-2 text-blanco/70">Subservicios</legend>
       <p className="text-p3 mb-3 text-blanco/35">
         Lo que se lista dentro del servicio, con su nombre en inglés al lado.
         Las filas sin nombre en español se descartan.

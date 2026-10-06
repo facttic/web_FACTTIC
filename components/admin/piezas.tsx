@@ -23,9 +23,9 @@ export function Encabezado({
   accion?: React.ReactNode;
 }) {
   return (
-    <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+    <div className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-borde pb-4">
       <div>
-        <h1 className="text-h2">{titulo}</h1>
+        <h1 className="text-h3">{titulo}</h1>
         {cantidad !== undefined ? (
           <p className="text-p3 mt-1 text-blanco/50">
             {cantidad} {cantidad === 1 ? "registro" : "registros"}
@@ -159,22 +159,6 @@ export function Celda({
 
 /* ---------- Formularios ---------- */
 
-/**
- * Reparte una ficha en dos columnas.
- *
- * El panel se usa en pantalla grande y de corrido: una sola columna angosta
- * deja media pantalla vacía y obliga a bajar para ver si falta algo. La regla
- * al repartir es siempre la misma: de un lado lo que se escribe, del otro lo
- * que se elige o se sube.
- */
-export function Columnas({ children }: { children: React.ReactNode }) {
-  return <div className="grid gap-x-10 gap-y-6 lg:grid-cols-2">{children}</div>;
-}
-
-export function Columna({ children }: { children: React.ReactNode }) {
-  return <div className="flex flex-col gap-6">{children}</div>;
-}
-
 export function Etiqueta({
   htmlFor,
   children,
@@ -196,9 +180,15 @@ export function Etiqueta({
 
 /** El aspecto de todo control de texto del panel; se exporta para los campos
  * que se arman a mano, como las filas de subservicios. */
+/**
+ * El control de formulario del panel: más chico y más denso que el del sitio
+ * público. Acá se cargan fichas largas y lo que importa es ver muchos campos
+ * juntos, no que cada uno respire.
+ */
 export const CONTROL =
-  "text-p2 w-full rounded-lg border border-borde bg-negro-oscuro/60 px-4 py-2.5 " +
-  "text-blanco placeholder:text-blanco/25 transition-colors focus:border-blanco/40";
+  "text-p2 w-full rounded-md border border-borde bg-negro-oscuro/60 px-3 py-2 " +
+  "text-blanco placeholder:text-blanco/25 transition-colors " +
+  "hover:border-blanco/25 focus:border-lila focus:bg-negro-oscuro";
 
 export function CampoTexto({
   id,
@@ -223,58 +213,6 @@ export function CampoTexto({
       ) : (
         <input id={id} className={cn(CONTROL, FOCO)} {...props} />
       )}
-    </div>
-  );
-}
-
-/**
- * Un campo y su traducción al inglés, uno debajo del otro.
- *
- * Se traduce mirando el original: por eso van juntos y no en una solapa
- * aparte. El inglés nunca es obligatorio —si queda vacío, el sitio muestra el
- * español— así que no hereda `required` ni el mínimo de caracteres.
- *
- * El nombre del campo en inglés lleva el prefijo `en.`, que es lo que lee
- * `traducciones()` al armar el cuerpo que se manda a la API.
- */
-export function CampoTraducible({
-  id,
-  etiqueta,
-  ayuda,
-  valorEn,
-  multilinea = false,
-  rows,
-  maxLength,
-  ...props
-}: {
-  id: string;
-  etiqueta: string;
-  ayuda?: string;
-  /** Lo que ya está cargado en inglés. */
-  valorEn?: string;
-  multilinea?: boolean;
-} & React.ComponentProps<"input"> &
-  React.ComponentProps<"textarea">) {
-  return (
-    <div className="space-y-2">
-      <CampoTexto
-        id={id}
-        etiqueta={etiqueta}
-        ayuda={ayuda}
-        multilinea={multilinea}
-        rows={rows}
-        maxLength={maxLength}
-        {...props}
-      />
-      <CampoTexto
-        id={`en-${id}`}
-        name={`en.${id}`}
-        etiqueta={`${etiqueta} · English`}
-        defaultValue={valorEn}
-        multilinea={multilinea}
-        rows={rows}
-        maxLength={maxLength}
-      />
     </div>
   );
 }
@@ -381,76 +319,11 @@ export function CampoSelectorConAlta({
 }
 
 /**
- * Varias opciones a la vez, como los servicios de una cooperativa.
+ * El campito para dar de alta la opción que falta, al pie de un selector.
  *
- * Con `crear` se le agrega un alta al vuelo: si lo que la persona busca no
- * está en la lista, lo da de alta sin salir de la pantalla. Lo nuevo se suma
- * al estado y queda marcado, **sin recargar**: recargar volvería a pedir la
- * página al servidor y se perdería todo lo que se venía escribiendo en el
- * formulario. El id recién creado ya viaja con el resto al guardar.
+ * Crea sin recargar: recargar volvería a pedir la página al servidor y se
+ * perdería todo lo que se venía escribiendo en la ficha.
  */
-export function CampoMultiple({
-  nombre,
-  etiqueta,
-  ayuda,
-  opciones,
-  elegidas,
-  crear,
-  queEs,
-}: {
-  nombre: string;
-  etiqueta: string;
-  ayuda?: string;
-  opciones: Opcion[];
-  elegidas: string[];
-  /** Da de alta uno nuevo y lo devuelve ya con su id. */
-  crear?: (
-    nombre: string,
-  ) => Promise<{ ok: true; opcion: Opcion } | { ok: false; error: string }>;
-  /** Cómo se llama de a uno, para los textos del alta. */
-  queEs?: string;
-}) {
-  const [sumadas, setSumadas] = useState<Opcion[]>([]);
-  const todas = [...opciones, ...sumadas];
-
-  return (
-    <fieldset>
-      <legend className="text-p3 mb-2 text-blanco/70">{etiqueta}</legend>
-      {ayuda ? <p className="text-p3 mb-3 text-blanco/35">{ayuda}</p> : null}
-      <div className="flex flex-wrap gap-2">
-        {todas.map((opcion) => (
-          <label
-            key={opcion.id}
-            className="text-p3 flex cursor-pointer items-center gap-2 rounded-lg border border-borde px-3 py-2 transition-colors hover:bg-superficie has-checked:border-lila has-checked:bg-lila/10"
-          >
-            <input
-              type="checkbox"
-              name={nombre}
-              value={opcion.id}
-              // Lo recién creado se marca solo: para eso se dio de alta.
-              defaultChecked={
-                elegidas.includes(opcion.id) ||
-                sumadas.some((s) => s.id === opcion.id)
-              }
-              className={cn("size-3.5 cursor-pointer accent-lila", FOCO)}
-            />
-            {opcion.nombre}
-          </label>
-        ))}
-      </div>
-      {crear ? (
-        <AltaAlVuelo
-          queEs={queEs ?? "uno"}
-          yaEstan={todas}
-          crear={crear}
-          alCrear={(opcion) => setSumadas((previas) => [...previas, opcion])}
-        />
-      ) : null}
-    </fieldset>
-  );
-}
-
-/** El campito que aparece al pie de un `CampoMultiple` para agregar una opción. */
 function AltaAlVuelo({
   queEs,
   yaEstan,
@@ -700,7 +573,6 @@ export function FormularioAdmin({
   children: React.ReactNode;
   volverA: string;
   textoGuardar?: string;
-  /** Para los formularios que se reparten en columnas y necesitan más ancho. */
   className?: string;
 }) {
   const [estado, enviar, enviando] = useActionState(accion, undefined);
@@ -708,10 +580,9 @@ export function FormularioAdmin({
   return (
     <form
       action={enviar}
-      className={cn(
-        "flex flex-col gap-6 rounded-xl border border-borde p-6",
-        className,
-      )}
+      /* Sin recuadro propio: el marco lo ponen los bloques de adentro, y uno
+         alrededor de todo dejaba una caja vacía del ancho de la pantalla. */
+      className={cn("flex flex-col gap-5", className)}
     >
       {children}
 
@@ -778,9 +649,13 @@ export function BotonBorrar({
           </BotonAdmin>
         </span>
       ) : (
+        /* Apagado hasta que se lo toca: en una tabla de veinte filas, veinte
+           botones rojos gritan más que el contenido. El rojo aparece recién
+           al confirmar, que es cuando importa. */
         <BotonAdmin
           type="button"
-          variante="peligro"
+          variante="secundario"
+          className="border-transparent text-blanco/45 hover:border-rojo/40 hover:bg-rojo/10 hover:text-rojo"
           onClick={() => setConfirmando(true)}
           aria-label={`Borrar ${que}`}
         >
