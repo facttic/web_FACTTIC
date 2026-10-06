@@ -140,8 +140,23 @@ totalCount}` y proyectos `{items, total, page, limit, pages}`, con
 
 - [ ] **40. Rotar la clave del correo.** Las credenciales de Gmail estaban
       escritas en `resources/auth/helpers/send-email.js`, versionadas en claro.
-      El MR !3 las pasa a `SMTP_USER` y `SMTP_PASS`, y esas variables **ya están
-      cargadas en el servidor**.
+      El MR !3 las sacó del código y hoy salen de `config.email`, que lee
+      `EMAIL_USER` y `EMAIL_PASS_APP` —no `SMTP_USER`/`SMTP_PASS`, que fue el
+      primer nombre y quedó atrás en dos commits posteriores de `dev`—. Están
+      **cargadas en el servidor y andan**: la invitación de prueba llegó.
+
+      Cuidado con una cosa: `config.email` tiene valores por omisión
+      (`your-email@gmail.com`), así que si las variables faltan el envío ya no
+      falla con `emailNotConfigured`, lo intenta con una cuenta inventada y se
+      pierde en silencio.
+
+- [ ] **42. `DOMAIN_HOST` en el servidor de la API.** Sin esa variable,
+      `config.domain` cae a `http://localhost` y **el botón del correo de
+      invitación apunta ahí**: la invitación que recibió Emi el 6/10/2026 era
+      inservible. Hay que cargar `DOMAIN_HOST=https://facttic-web.vercel.app`,
+      sin barra final —el enlace se arma como `${DOMAIN_HOST}/admin/...` y la
+      variable alimenta además el CORS, que compara contra un `Origin`, que
+      nunca la lleva—. De ahí sale también la dirección del logo del correo.
 
       Quedan dos cosas: **la clave vieja sigue en el historial del
       repositorio**, así que hay que rotarla desde la cuenta de Gmail si no se
