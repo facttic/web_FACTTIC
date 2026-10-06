@@ -234,12 +234,24 @@ export function MapaFederal({
     >
       <svg
         viewBox={`0 0 ${ANCHO} ${ALTO}`}
-        className="w-full origin-top-left transition-transform duration-700 ease-out motion-reduce:transition-none"
+        /*
+         * El acercamiento va por variables y se aplica solo de `md` para
+         * arriba: en el teléfono el panel se apoya encima del mapa y no al
+         * lado, así que acercarse deja la provincia justo debajo del panel y
+         * manda el resto del dibujo fuera de la pantalla.
+         */
+        className={cn(
+          "w-full origin-top-left transition-transform duration-700 ease-out motion-reduce:transition-none",
+          vista &&
+            "md:[transform:translate(var(--mapa-x),var(--mapa-y))_scale(var(--mapa-k))]",
+        )}
         style={
           vista
-            ? {
-                transform: `translate(${vista.x.toFixed(2)}%, ${vista.y.toFixed(2)}%) scale(${vista.escala.toFixed(3)})`,
-              }
+            ? ({
+                "--mapa-x": `${vista.x.toFixed(2)}%`,
+                "--mapa-y": `${vista.y.toFixed(2)}%`,
+                "--mapa-k": vista.escala.toFixed(3),
+              } as React.CSSProperties)
             : undefined
         }
         role="group"
@@ -253,7 +265,7 @@ export function MapaFederal({
         */}
         {acercar ? (
           <g
-            className="pointer-events-none"
+            className="pointer-events-none hidden md:block"
             style={{ "--prov": color } as React.CSSProperties}
           >
             {/* Opacas y todas del mismo color: con una rampa de opacidad el

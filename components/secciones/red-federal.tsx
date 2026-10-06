@@ -115,7 +115,9 @@ export function RedFederal({
           /* Solo mientras el panel está abierto: al cerrarlo vuelve el país
              entero, que es el estado en el que se elige. */
           acercar={panelAbierto}
-          className="mx-auto h-[607px] w-auto md:size-full"
+          /* Más bajo en el teléfono: con 607 el panel quedaba abajo de todo y
+             las solapas de provincia caían fuera de la pantalla. */
+          className="mx-auto h-[420px] w-auto md:h-auto md:size-full"
         />
 
         {/*
@@ -126,7 +128,7 @@ export function RedFederal({
         */}
         <div
           aria-hidden
-          className="from-fondo via-fondo/85 pointer-events-none absolute inset-x-0 -top-[460px] z-[1] h-[480px] bg-gradient-to-b to-transparent"
+          className="from-fondo via-fondo/85 pointer-events-none absolute inset-x-0 -top-[460px] z-[1] hidden h-[480px] bg-gradient-to-b to-transparent md:block"
         />
 
         {provincia && panelAbierto ? (
@@ -140,12 +142,14 @@ export function RedFederal({
               pantalla, estirando la página a lo ancho.
             */
             /*
-              Afuera del mapa y no encima: la caja del dibujo es angosta —unos
-              310px— y cualquier panel apoyado adentro la tapaba entera. Va
-              pegado a su derecha, que en desktop es espacio libre, y el mapa
-              acerca la provincia al centro de su propia caja.
+              Afuera del mapa y no encima. En desktop va pegado a su derecha
+              —la caja del dibujo es angosta, unos 310px, y cualquier panel
+              apoyado adentro la tapaba entera— y el mapa acerca la provincia
+              al centro de su propia caja. En el teléfono no hay lugar al
+              costado, así que baja al flujo, debajo del mapa: antes se apoyaba
+              encima y tapaba justo la provincia que se acababa de tocar.
             */
-            className="absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 md:inset-x-auto md:left-full md:ml-8 md:w-[420px] md:-translate-y-1/2"
+            className="relative z-10 mt-6 md:absolute md:top-1/2 md:left-full md:mt-0 md:ml-8 md:w-[420px] md:-translate-y-1/2"
           />
         ) : (
           // Centrado sobre el mapa: si va en el flujo se sale de la caja de
@@ -255,7 +259,7 @@ function PanelProvincia({
     <div
       style={style}
       className={cn(
-        "borde-degradado textura-ruido relative rounded-2xl bg-negro/40 p-6 backdrop-blur-2xl md:p-8",
+        "borde-degradado textura-ruido relative rounded-2xl bg-negro/40 p-5 backdrop-blur-2xl md:p-8",
         className,
       )}
     >
@@ -284,18 +288,22 @@ function PanelProvincia({
         </svg>
       </button>
 
-      <p className="text-eyebrow text-blanco/40">{T.panel.rotulo}</p>
-      <h3 className="text-h2 mt-2 pr-8">{provincia.nombre}</h3>
+      {/* El rótulo solo en desktop: en el teléfono la solapa activa ya dice
+          qué provincia es y el panel entero tiene que entrar en pantalla. */}
+      <p className="text-eyebrow hidden text-blanco/40 md:block">
+        {T.panel.rotulo}
+      </p>
+      <h3 className="text-h4 pr-8 md:text-h2 md:mt-2">{provincia.nombre}</h3>
 
-      <div className="text-p1 mt-6 flex justify-between gap-4 border-y border-dotted border-punteado py-4">
+      <div className="text-p2 md:text-p1 mt-4 flex justify-between gap-4 border-y border-dotted border-punteado py-3 md:mt-6 md:py-4">
         <span>{T.panel.cooperativas(provincia.cooperativas.length)}</span>
         <span>{T.panel.asociados(provincia.asociados)}</span>
       </div>
 
       {provincia.industrias.length ? (
-        <div className="mt-6">
+        <div className="mt-4 md:mt-6">
           <p className="text-eyebrow text-blanco/40">{T.panel.industrias}</p>
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-2 flex flex-wrap gap-2 md:mt-3">
             {provincia.industrias.map((nombre) => (
               <ChipSector key={nombre} nombre={nombre} />
             ))}
@@ -304,7 +312,7 @@ function PanelProvincia({
       ) : null}
 
       {provincia.servicios.length ? (
-        <div className="mt-6 border-t border-dotted border-punteado pt-6">
+        <div className="mt-4 border-t border-dotted border-punteado pt-4 md:mt-6 md:pt-6">
           <p className="text-eyebrow text-blanco/40">{T.panel.servicios}</p>
           <p className="text-p2 mt-3 text-blanco/80">
             {provincia.servicios.join("  ·  ")}
