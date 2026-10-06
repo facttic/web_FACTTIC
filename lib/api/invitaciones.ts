@@ -88,3 +88,29 @@ export async function aceptarInvitacion(
   const { cooperativa } = (await res.json()) as { cooperativa: string };
   return { ok: true, cooperativa };
 }
+
+/**
+ * El nombre de usuario, armado del correo.
+ *
+ * La API lo exige para crear la cuenta, pero nadie lo necesita después: para
+ * entrar alcanza el correo. Pedírselo a la persona era hacerle inventar —y
+ * recordar— un dato que el sistema puede deducir, en la única pantalla donde no
+ * hay margen para trabarse.
+ *
+ * Las reglas son las del backend: entre 4 y 32 caracteres, solo letras, números
+ * y guiones bajos. De `hernan.gigena@lawal.com.ar` sale `hernangigena`.
+ *
+ * El `intento` es para cuando el nombre ya está tomado: suma un número al final
+ * en vez de fallar y dejar a la persona sin poder entrar.
+ */
+export function usuarioDesdeElCorreo(correo: string, intento = 0): string {
+  const base = (correo.split("@")[0] ?? "")
+    .toLowerCase()
+    .replace(/[^a-z0-9_]/g, "");
+  /* Un correo que no deja nada utilizable —todo acentos o signos— igual tiene
+     que dar una cuenta. El mínimo se completa antes de sumar el número, para
+     que dos intentos del mismo correo no terminen pareciéndose de casualidad. */
+  const cuerpo = (base || "coop").padEnd(4, "0");
+  const sufijo = intento > 0 ? String(intento + 1) : "";
+  return cuerpo.slice(0, 32 - sufijo.length) + sufijo;
+}

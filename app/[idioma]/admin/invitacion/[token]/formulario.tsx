@@ -15,7 +15,7 @@ import type { Invitacion } from "@/lib/api/invitaciones";
  * el de la invitación y la API no acepta otro.
  */
 
-type Estado = { error?: string; usuario?: string } | undefined;
+type Estado = { error?: string } | undefined;
 
 export function FormularioInvitacion({
   accion,
@@ -70,16 +70,23 @@ export function FormularioInvitacion({
         cooperativa.
       </p>
 
+      {/*
+        No se pide nombre de usuario. La API lo exige para crear la cuenta, pero
+        después no se usa para nada: para entrar alcanza el correo. Hacer que
+        alguien invente —y recuerde— un dato que el sistema puede deducir del
+        correo, justo en la única pantalla donde no hay margen para trabarse, es
+        un trámite que no le sirve a nadie. Lo arma la acción.
+      */}
       <form action={enviar} className="mt-8 flex flex-col gap-5">
+        {/* El correo, a la vista y sin poder escribirlo: es con el que después
+            se entra, así que conviene que quede claro cuál es. */}
         <Campo
-          id="usuario"
-          name="usuario"
-          etiqueta="Usuario"
-          ayuda="Letras, números y guiones bajos."
-          autoComplete="username"
-          defaultValue={estado?.usuario}
-          autoFocus
-          required
+          id="correo"
+          etiqueta="Tu correo"
+          ayuda="Con este entrás al panel."
+          value={invitacion.email}
+          readOnly
+          className="text-blanco/60"
         />
         <Campo
           id="contrasena"
@@ -88,6 +95,7 @@ export function FormularioInvitacion({
           etiqueta="Contraseña"
           ayuda="Al menos 6 caracteres, con letras y números."
           autoComplete="new-password"
+          autoFocus
           required
         />
 
@@ -123,6 +131,7 @@ function Campo({
   id,
   etiqueta,
   ayuda,
+  className,
   ...props
 }: {
   id: string;
@@ -139,6 +148,7 @@ function Campo({
         className={cn(
           "text-p2 w-full rounded-lg border border-borde bg-negro-oscuro/60 px-4 py-3 text-blanco",
           FOCO,
+          className,
         )}
         {...props}
       />

@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { aceptarInvitacion, verInvitacion } from "@/lib/api/invitaciones";
+import {
+  aceptarInvitacion,
+  usuarioDesdeElCorreo,
+  verInvitacion,
+} from "@/lib/api/invitaciones";
 import { iniciarSesion } from "@/lib/api/session";
 import { FormularioInvitacion } from "./formulario";
 
@@ -32,18 +36,38 @@ export default async function InvitacionPage({
   async function aceptar(_estado: unknown, datos: FormData) {
     "use server";
 
-    const usuario = String(datos.get("usuario") ?? "").trim();
     const contrasena = String(datos.get("contrasena") ?? "");
-    if (!usuario || !contrasena) {
-      return { error: "Completá usuario y contraseña", usuario };
+    if (!contrasena) return { error: "Escribí una contraseña" };
+    if (!invitacion) return { error: "Esta invitación ya no sirve" };
+
+    /*
+     * El nombre de usuario lo arma el sistema a partir del correo: la API lo
+     * exige para crear la cuenta pero después no se usa, porque para entrar
+     * alcanza el correo.
+     *
+     * Si ya está tomado se reintenta con un número al final en vez de devolver
+     * el error. Para la persona es un dato que no eligió ni va a ver, así que
+     * trabarla con "ese nombre ya existe" sería pedirle que resuelva un
+     * problema nuestro.
+     */
+    let resultado = await aceptarInvitacion(
+      token,
+      usuarioDesdeElCorreo(invitacion.email),
+      contrasena,
+    );
+    for (let intento = 1; !resultado.ok && intento < 5; intento++) {
+      if (!resultado.error.includes("usuario")) break;
+      resultado = await aceptarInvitacion(
+        token,
+        usuarioDesdeElCorreo(invitacion.email, intento),
+        contrasena,
+      );
     }
+    if (!resultado.ok) return { error: resultado.error };
 
-    const resultado = await aceptarInvitacion(token, usuario, contrasena);
-    if (!resultado.ok) return { error: resultado.error, usuario };
-
-    /* Se entra con lo recién creado y se cae en la ficha de la cooperativa,
-       que es a lo que vino. */
-    const sesion = await iniciarSesion(usuario, contrasena);
+    /* Se entra con el correo —que es lo que la persona sabe— y se cae en la
+       ficha de la cooperativa, que es a lo que vino. */
+    const sesion = await iniciarSesion(invitacion.email, contrasena);
     if (!sesion.ok) redirect("/admin/ingresar");
     redirect(`/admin/cooperativas/${resultado.cooperativa}`);
   }

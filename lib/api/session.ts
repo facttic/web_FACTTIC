@@ -37,16 +37,31 @@ export interface Sesion {
   cooperativas: Array<{ id: string; nombre: string }>;
 }
 
+/**
+ * Entra con el usuario o con el correo, lo que haya escrito la persona.
+ *
+ * La API acepta cualquiera de los dos, pero en campos distintos y valida cada
+ * uno por su cuenta: `username` solo admite letras, números y guiones bajos, así
+ * que mandar un correo ahí da 400 y no 401. Por eso se decide acá según tenga
+ * arroba o no.
+ *
+ * Importa porque el nombre de usuario ya no se le pide a nadie —se genera solo
+ * al aceptar la invitación— y el correo es lo único que la persona sabe.
+ */
 export async function iniciarSesion(
   usuario: string,
   contrasena: string,
 ): Promise<{ ok: true } | { ok: false; error: string }> {
+  const credencial = usuario.includes("@")
+    ? { email: usuario }
+    : { username: usuario };
+
   let res: Response;
   try {
     res = await fetch(`${API_URL}/api/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: usuario, password: contrasena }),
+      body: JSON.stringify({ ...credencial, password: contrasena }),
       cache: "no-store",
     });
   } catch {
@@ -58,7 +73,7 @@ export async function iniciarSesion(
       ok: false,
       error:
         res.status === 401
-          ? "Usuario o contraseña incorrectos"
+          ? "Correo o contraseña incorrectos"
           : "No pudimos iniciar sesión",
     };
   }

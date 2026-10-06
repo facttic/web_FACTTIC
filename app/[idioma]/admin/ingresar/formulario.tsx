@@ -35,10 +35,13 @@ export function FormularioIngreso({
         <form action={enviar} className="mt-10 flex flex-col gap-5">
           <input type="hidden" name="volver" value={volver} />
 
+          {/* Correo o usuario: la API acepta los dos y quien entra por
+              invitación no tiene nombre de usuario propio —se lo genera el
+              sistema—, así que el correo es lo único que sabe. */}
           <Campo
             id="usuario"
             name="usuario"
-            etiqueta="Usuario"
+            etiqueta="Correo o usuario"
             autoComplete="username"
             defaultValue={estado?.usuario}
             autoFocus
