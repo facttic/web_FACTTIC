@@ -354,7 +354,15 @@
        aclara muy rápido y, pasado este punto, la tapa en vez de texturarla. */
     opacity: 0.12;
     mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23r)'/%3E%3C/svg%3E");
+    /*
+       El SVG lleva medidas propias y se repite como baldosa. Sin `width` y
+       `height` no tiene tamaño intrínseco, y ahí cada navegador elige el suyo:
+       Chrome lo estira al elemento y Firefox lo dibujaba una sola vez en una
+       esquina, dejando un rectángulo más claro sobre la tarjeta.
+    */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23r)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    background-repeat: repeat;
   }
 }
 
