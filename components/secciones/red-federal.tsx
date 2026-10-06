@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import { Enlace as Link } from "@/components/ui/enlace";
 import { cn } from "@/lib/cn";
 import { BotonFlecha, FOCO } from "@/components/ui/boton";
@@ -78,8 +84,14 @@ export function RedFederal({
     }, SALIDA);
   };
 
-  const cantidades = Object.fromEntries(
-    provincias.map((p) => [p.nombre, p.cooperativas.length]),
+  /* Con un objeto nuevo en cada render, el mapa recalculaba sus trazos y el
+     reparto de puntitos cada vez que se tocaba algo de esta pantalla. */
+  const cantidades = useMemo(
+    () =>
+      Object.fromEntries(
+        provincias.map((p) => [p.nombre, p.cooperativas.length]),
+      ),
+    [provincias],
   );
 
   /*

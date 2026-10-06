@@ -39,8 +39,13 @@ const COLORES = [
 
 const CAJA = { oeste: -73.6, este: -53.6, norte: -21.8, sur: -55.1 };
 
-/** Cuánto baja cada copia del contorno para dibujar el canto, en unidades. */
-const ESPESOR = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+/**
+ * Cuánto baja cada copia del contorno para dibujar el canto, en unidades.
+ *
+ * Seis pasos de 1,6 y no diez de 1: el mismo espesor con cuatro copias menos
+ * del país entero, que es lo que el navegador rasteriza en cada cuadro.
+ */
+const ESPESOR = [1.6, 3.2, 4.8, 6.4, 8, 9.6];
 
 /**
  * Medidas del grupo del mapa en el archivo: 419,02 × 900,21, o sea una
@@ -204,6 +209,21 @@ function encuadreChico(caja: {
 const PIN =
   "M0 0 C0 0 -10 -13 -10 -18.5 A10 10 0 1 1 10 -18.5 C10 -13 0 0 0 0 Z";
 
+/**
+ * El mismo contorno con menos puntos, para el canto.
+ *
+ * El canto va detrás de las caras y corrido unos píxeles: nadie le mira el
+ * detalle. Con un punto de cada tres el dibujo es indistinguible y el trazo
+ * pesa un tercio, que es lo que el navegador tiene que rasterizar diez veces
+ * por cuadro mientras el mapa se acerca.
+ */
+function trazoSimple(anillos: number[][][]): string {
+  const ralos = anillos.map((anillo) =>
+    anillo.length > 12 ? anillo.filter((_, i) => i % 3 === 0) : anillo,
+  );
+  return trazo(ralos);
+}
+
 function trazo(anillos: number[][][]): string {
   return anillos
     .map(
@@ -285,8 +305,14 @@ export function MapaFederal({
    */
   /* Un solo contorno con todas las provincias: el canto es del país, no de
      cada una, así que las fronteras internas no tienen que verse. */
-  const silueta = formas.map((f) => f.d).join("");
-  const formaElegida = formas.find((f) => f.nombre === seleccionada)?.d ?? null;
+  const silueta = useMemo(
+    () => PROVINCIAS.map((p) => trazoSimple(p.anillos)).join(""),
+    [],
+  );
+  const formaElegida = useMemo(() => {
+    const prov = PROVINCIAS.find((p) => p.nombre === seleccionada);
+    return prov ? trazoSimple(prov.anillos) : null;
+  }, [seleccionada]);
 
   return (
     /* Las variables del marcador van acá y no en el `svg`: el marcador es su
@@ -354,26 +380,43 @@ export function MapaFederal({
               className="pointer-events-none"
               style={{ "--prov": color } as React.CSSProperties}
             >
-              {/* Opacas y todas del mismo color: con una rampa de opacidad el
+              {/*
+                El trazo se declara una vez y se repite con `use`: escrito diez
+                veces, el contorno del país entero multiplicaba por diez el
+                dibujo que el navegador tiene que leer —de 57 mil caracteres a
+                660 mil— y el acercamiento se trababa.
+
+                Opacas y todas del mismo color: con una rampa de opacidad el
                 canto se leía como una sombra desenfocada y no como el costado
-                de algo sólido. */}
+                de algo sólido.
+              */}
+              <defs>
+                <path id="canto-pais" d={silueta} />
+                {formaElegida ? (
+                  <path id="canto-provincia" d={formaElegida} />
+                ) : null}
+              </defs>
               {ESPESOR.map((dy) => (
-                <path
+                <use
                   key={`pais-${dy}`}
-                  d={silueta}
+                  href="#canto-pais"
                   transform={`translate(0 ${dy})`}
                   fill="var(--color-gris-oscuro)"
+                  /* El canto va tapado por las caras: no necesita el suavizado
+                     de bordes, y sin él se rasteriza bastante más rápido. */
+                  shapeRendering="optimizeSpeed"
                 />
               ))}
               {/* La provincia elegida sobresale: su costado va de su propio color
                 apagado, así se ve como una pieza levantada del resto. */}
               {formaElegida
                 ? ESPESOR.map((dy) => (
-                    <path
+                    <use
                       key={`prov-${dy}`}
-                      d={formaElegida}
+                      href="#canto-provincia"
                       transform={`translate(0 ${dy})`}
                       fill="color-mix(in srgb, var(--prov) 42%, black)"
+                      shapeRendering="optimizeSpeed"
                     />
                   ))
                 : null}
