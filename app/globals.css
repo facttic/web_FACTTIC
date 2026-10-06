@@ -298,6 +298,9 @@
 
 @utility reflejo-de-vidrio {
   animation: reflejo 7s ease-in-out infinite;
+  /* En su propia capa: va desenfocado y en movimiento, y sin esto el navegador
+     vuelve a calcular el desenfoque en cada cuadro. */
+  will-change: transform;
 
   @media (prefers-reduced-motion: reduce) {
     animation: none;
@@ -978,4 +981,9 @@ body {
   @media (prefers-reduced-motion: reduce) {
     animation: none;
   }
+}
+
+/** Aparece sin demora, apenas se monta. */
+@utility aparece-de-una {
+  animation: aparecer-al-llegar 0.25s ease-out both;
 }

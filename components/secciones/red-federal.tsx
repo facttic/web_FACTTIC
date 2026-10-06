@@ -60,7 +60,13 @@ export function RedFederal({
   const [saliendo, setSaliendo] = useState(false);
   const relevo = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => clearTimeout(relevo.current ?? undefined), []);
-  const indice = provincias.findIndex((p) => p.nombre === elegida);
+  /*
+   * Si la elegida ya no está en la lista —cambió el contenido de la API entre
+   * dos renders— `findIndex` da -1 y las flechas quedaban habilitadas hacia
+   * atrás sobre un índice que no existe. Se vuelve a la primera.
+   */
+  const encontrada = provincias.findIndex((p) => p.nombre === elegida);
+  const indice = encontrada >= 0 ? encontrada : 0;
   const provincia = provincias[indice] ?? null;
 
   const elegir = (nombre: string) => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/cn";
 import { FOCO } from "@/components/ui/boton";
 import { PROVINCIAS } from "@/lib/mapa/provincias";
@@ -38,6 +38,9 @@ const COLORES = [
 ];
 
 const CAJA = { oeste: -73.6, este: -53.6, norte: -21.8, sur: -55.1 };
+
+/** Lo que tarda el dibujo en acomodarse; igual que la transición del CSS. */
+const VIAJE = 700;
 
 /**
  * Cuánto baja cada copia del contorno para dibujar el canto, en unidades.
@@ -209,21 +212,6 @@ function encuadreChico(caja: {
 const PIN =
   "M0 0 C0 0 -10 -13 -10 -18.5 A10 10 0 1 1 10 -18.5 C10 -13 0 0 0 0 Z";
 
-/**
- * El mismo contorno con menos puntos, para el canto.
- *
- * El canto va detrás de las caras y corrido unos píxeles: nadie le mira el
- * detalle. Con un punto de cada tres el dibujo es indistinguible y el trazo
- * pesa un tercio, que es lo que el navegador tiene que rasterizar diez veces
- * por cuadro mientras el mapa se acerca.
- */
-function trazoSimple(anillos: number[][][]): string {
-  const ralos = anillos.map((anillo) =>
-    anillo.length > 12 ? anillo.filter((_, i) => i % 3 === 0) : anillo,
-  );
-  return trazo(ralos);
-}
-
 function trazo(anillos: number[][][]): string {
   return anillos
     .map(
@@ -255,6 +243,24 @@ export function MapaFederal({
   cambiando?: boolean;
   className?: string;
 }) {
+  /*
+   * El canto se dibuja recién cuando el mapa frenó.
+   *
+   * Es lo más caro del dibujo —seis copias del contorno del país— y mientras
+   * dura el viaje se rasteriza en cada cuadro, que es donde se sentía el tirón.
+   * Esperando a que llegue, la animación corre liviana y el espesor aparece con
+   * el marcador, cuando ya hay algo que mirar.
+   */
+  const [asentado, setAsentado] = useState(false);
+  useEffect(() => {
+    if (!acercar) {
+      setAsentado(false);
+      return;
+    }
+    const id = setTimeout(() => setAsentado(true), VIAJE);
+    return () => clearTimeout(id);
+  }, [acercar, seleccionada]);
+
   const caja = acercar && seleccionada ? cajaDe(seleccionada) : null;
   /*
    * Dos encuadres: en escritorio la provincia queda centrada en su caja, con el
@@ -306,12 +312,12 @@ export function MapaFederal({
   /* Un solo contorno con todas las provincias: el canto es del país, no de
      cada una, así que las fronteras internas no tienen que verse. */
   const silueta = useMemo(
-    () => PROVINCIAS.map((p) => trazoSimple(p.anillos)).join(""),
+    () => PROVINCIAS.map((p) => trazo(p.anillos)).join(""),
     [],
   );
   const formaElegida = useMemo(() => {
     const prov = PROVINCIAS.find((p) => p.nombre === seleccionada);
-    return prov ? trazoSimple(prov.anillos) : null;
+    return prov ? trazo(prov.anillos) : null;
   }, [seleccionada]);
 
   return (
@@ -526,11 +532,12 @@ export function MapaFederal({
           )}
           style={{ "--prov": color } as React.CSSProperties}
         >
+          {/* Degradado en vez de un desenfoque: un filtro SVG se recalcula en
+              cada cuadro de la animación y acá se notaba. */}
           <ellipse
-            rx="6"
-            ry="2.2"
-            fill="var(--color-negro-oscuro)"
-            filter="url(#desenfoque-marcador)"
+            rx="7"
+            ry="2.6"
+            fill="url(#sombra-marcador)"
             className="sombra-que-salta"
           />
           <g className="marcador-que-salta">
@@ -544,15 +551,14 @@ export function MapaFederal({
             />
             <circle cy="-16.5" r="4.2" fill="var(--prov)" />
           </g>
-          <filter
-            id="desenfoque-marcador"
-            x="-50%"
-            y="-50%"
-            width="200%"
-            height="200%"
-          >
-            <feGaussianBlur stdDeviation="2" />
-          </filter>
+          <radialGradient id="sombra-marcador">
+            <stop offset="35%" stopColor="var(--color-negro-oscuro)" />
+            <stop
+              offset="100%"
+              stopColor="var(--color-negro-oscuro)"
+              stopOpacity="0"
+            />
+          </radialGradient>
         </svg>
       ) : null}
     </div>
