@@ -63,6 +63,23 @@ const RASTREADORES =
   /bot|crawler|spider|crawling|facebookexternalhit|telegram|whatsapp|slackbot|discordbot|embedly|quora|pinterest|vkshare|preview|skype|linkedin|twitter|google|bing|duckduck|yandex|baidu|applebot|lighthouse|headlesschrome/i;
 
 /**
+ * Las rutas que no son pantallas y nunca se redirigen por idioma.
+ *
+ * `/opengraph-image` es la imagen que se ve al compartir un enlace, y cayó en
+ * la trampa: no termina en extensión, así que el proxy la tomaba, y a quien no
+ * reconocíamos como rastreador le contestaba un 307 a `/en/opengraph-image`. El
+ * que pide la imagen en Telegram no es el mismo que pide la página ni se
+ * presenta igual, así que se llevaba la redirección y el enlace salía sin
+ * imagen. De yapa, la imagen a la que llevaba era la inglesa, aunque la página
+ * compartida fuera la española.
+ *
+ * Siguen reescribiéndose —tienen que encontrar su archivo bajo `app/[idioma]`—;
+ * lo único que se saltean es la detección de idioma.
+ */
+const NO_SON_PANTALLAS =
+  /^\/(?:en\/)?(?:opengraph-image|twitter-image|icon|apple-icon|manifest)(?:\/|$)/;
+
+/**
  * Qué idioma pide el navegador, del `Accept-Language`.
  *
  * Devuelve `null` si no hay con qué decidir. Español es español; cualquier otra
@@ -178,7 +195,10 @@ export function proxy(request: NextRequest) {
    * Primera visita a una pantalla pública: se decide el idioma y se recuerda.
    * De acá en más manda la cookie y la cabecera no se vuelve a mirar.
    */
-  const sinDecidir = !esPanel && !request.cookies.has(COOKIE_IDIOMA);
+  const sinDecidir =
+    !esPanel &&
+    !NO_SON_PANTALLAS.test(pathname) &&
+    !request.cookies.has(COOKIE_IDIOMA);
 
   if (sinDecidir && !conPrefijo) {
     const quienPide = request.headers.get("user-agent") ?? "";
