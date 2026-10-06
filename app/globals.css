@@ -987,3 +987,29 @@ body {
 @utility aparece-de-una {
   animation: aparecer-al-llegar 0.25s ease-out both;
 }
+
+/**
+ * El panel de un juego de solapas, al cambiar de solapa.
+ *
+ * Sin esto el contenido aparecía con otro texto de golpe y costaba ver que
+ * había cambiado. Entra desde abajo, corto: es un cambio de contenido, no una
+ * transición de pantalla.
+ */
+@keyframes entrar-el-panel {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility entra-el-panel {
+  animation: entrar-el-panel 0.32s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
