@@ -89,8 +89,8 @@ export function CampoBuscador({
 
   return (
     <fieldset>
-      <legend className="text-p3 mb-2 text-blanco/70">{etiqueta}</legend>
-      {ayuda ? <p className="text-p3 mb-3 text-blanco/35">{ayuda}</p> : null}
+      <legend className="text-p3 mb-2 text-blanco/90">{etiqueta}</legend>
+      {ayuda ? <p className="text-p3 mb-3 text-blanco/55">{ayuda}</p> : null}
 
       {puestas.length ? (
         <ul className="mb-3 flex flex-wrap gap-2">
@@ -105,7 +105,7 @@ export function CampoBuscador({
                 onClick={() => sacar(id)}
                 aria-label={`Quitar ${porId.get(id)?.nombre ?? "selección"}`}
                 className={cn(
-                  "cursor-pointer rounded px-1.5 text-blanco/50 hover:text-blanco",
+                  "cursor-pointer rounded px-1.5 text-blanco/60 hover:text-blanco",
                   FOCO,
                 )}
               >
@@ -122,7 +122,7 @@ export function CampoBuscador({
       ))}
 
       {todas.length === 0 && !crear ? (
-        <p className="text-p3 rounded-md border border-dashed border-borde px-3 py-2 text-blanco/40">
+        <p className="text-p3 rounded-md border border-dashed border-borde px-3 py-2 text-blanco/55">
           {vacio}
         </p>
       ) : (
@@ -152,7 +152,7 @@ export function CampoBuscador({
                     type="button"
                     onClick={() => poner(opcion.id)}
                     className={cn(
-                      "text-p3 cursor-pointer rounded-md border border-borde px-3 py-1.5 text-blanco/80 transition-colors hover:border-blanco/40 hover:text-blanco",
+                      "text-p3 cursor-pointer rounded-md border border-borde px-3 py-1.5 text-blanco/90 transition-colors hover:border-blanco/40 hover:text-blanco",
                       FOCO,
                     )}
                   >
@@ -169,13 +169,15 @@ export function CampoBuscador({
                     disabled={creando}
                     onClick={crearYPoner}
                   >
-                    {creando ? "Creando…" : `Crear ${queEs} «${busqueda.trim()}»`}
+                    {creando
+                      ? "Creando…"
+                      : `Crear ${queEs} «${busqueda.trim()}»`}
                   </BotonAdmin>
                 </li>
               ) : null}
 
               {!candidatas.length && !crear ? (
-                <li className="text-p3 py-1.5 text-blanco/40">
+                <li className="text-p3 py-1.5 text-blanco/55">
                   Nada coincide con «{busqueda.trim()}».
                 </li>
               ) : null}

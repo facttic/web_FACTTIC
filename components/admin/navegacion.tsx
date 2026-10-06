@@ -44,7 +44,7 @@ export function NavegacionAdmin({
                 FOCO,
                 activo(item.href)
                   ? "bg-lila text-negro-oscuro"
-                  : "bg-superficie text-blanco/60 hover:text-blanco",
+                  : "bg-superficie text-blanco/75 hover:text-blanco",
               )}
             >
               {item.etiqueta}
@@ -58,7 +58,7 @@ export function NavegacionAdmin({
     <nav className={className}>
       {SECCIONES.map((seccion) => (
         <div key={seccion.titulo} className="mb-6">
-          <p className="text-eyebrow mb-2 px-3 text-blanco/30">
+          <p className="text-eyebrow mb-2 px-3 text-blanco/45">
             {seccion.titulo}
           </p>
           <ul className="flex flex-col gap-0.5">
@@ -73,7 +73,7 @@ export function NavegacionAdmin({
                       FOCO,
                       activo(item.href)
                         ? "bg-superficie-alta text-blanco"
-                        : "text-blanco/60 hover:bg-superficie hover:text-blanco",
+                        : "text-blanco/75 hover:bg-superficie hover:text-blanco",
                     )}
                   >
                     {item.etiqueta}
@@ -82,7 +82,7 @@ export function NavegacionAdmin({
               ) : (
                 <li
                   key={item.href}
-                  className="text-p2 flex items-center justify-between rounded-md px-3 py-2 text-blanco/25"
+                  className="text-p2 flex items-center justify-between rounded-md px-3 py-2 text-blanco/40"
                 >
                   {item.etiqueta}
                   <span className="text-eyebrow">pronto</span>

@@ -38,7 +38,7 @@ export function SolapasIdioma({
         FOCO,
         activa === cual
           ? "border-lila text-blanco"
-          : "border-transparent text-blanco/40 hover:text-blanco/70",
+          : "border-transparent text-blanco/55 hover:text-blanco/80",
       )}
     >
       {texto}
@@ -51,7 +51,7 @@ export function SolapasIdioma({
         {solapa("es", "Español")}
         {solapa("en", "English")}
         {traducidos ? (
-          <span className="text-p3 ml-auto pb-2 text-blanco/35">
+          <span className="text-p3 ml-auto pb-2 text-blanco/55">
             {traducidos.cargados === 0
               ? "sin traducir"
               : `${traducidos.cargados} de ${traducidos.total} traducidos`}
@@ -59,10 +59,14 @@ export function SolapasIdioma({
         ) : null}
       </div>
 
-      <div className={cn("flex flex-col gap-5", activa === "es" ? "" : "hidden")}>
+      <div
+        className={cn("flex flex-col gap-5", activa === "es" ? "" : "hidden")}
+      >
         {espanol}
       </div>
-      <div className={cn("flex flex-col gap-5", activa === "en" ? "" : "hidden")}>
+      <div
+        className={cn("flex flex-col gap-5", activa === "en" ? "" : "hidden")}
+      >
         {ingles}
       </div>
     </div>

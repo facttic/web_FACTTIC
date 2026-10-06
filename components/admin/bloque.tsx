@@ -31,14 +31,14 @@ export function Bloque({
   return (
     <section
       className={cn(
-        "grid gap-x-10 gap-y-5 rounded-xl border border-borde bg-superficie/30 p-6",
-        "lg:grid-cols-[minmax(0,15rem)_minmax(0,1fr)]",
+        "grid gap-x-12 gap-y-5 rounded-xl border border-borde bg-superficie/30 p-7",
+        "lg:grid-cols-[minmax(0,17rem)_minmax(0,1fr)]",
         className,
       )}
     >
       <div className="lg:sticky lg:top-6 lg:self-start">
         <h2 className="text-p1-bold">{titulo}</h2>
-        {ayuda ? <p className="text-p3 mt-2 text-blanco/40">{ayuda}</p> : null}
+        {ayuda ? <p className="text-p3 mt-2 text-blanco/55">{ayuda}</p> : null}
         {accion ? <div className="mt-4">{accion}</div> : null}
       </div>
       <div className="flex min-w-0 flex-col gap-5">{children}</div>
@@ -46,15 +46,9 @@ export function Bloque({
   );
 }
 
-/**
- * La pila de bloques de un formulario.
- *
- * Con tope de ancho: un campo de texto de mil pixeles no se lee mejor, se lee
- * peor. El tope es ancho igual —entran dos campos cómodos por fila— y en una
- * pantalla grande el bloque usa todo ese espacio.
- */
+/** La pila de bloques de un formulario, a todo el ancho que haya. */
 export function Bloques({ children }: { children: React.ReactNode }) {
-  return <div className="flex max-w-7xl flex-col gap-5">{children}</div>;
+  return <div className="flex flex-col gap-5">{children}</div>;
 }
 
 /** Dos campos cortos en la misma fila, cuando se leen juntos. */

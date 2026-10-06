@@ -27,7 +27,7 @@ export function Encabezado({
       <div>
         <h1 className="text-h3">{titulo}</h1>
         {cantidad !== undefined ? (
-          <p className="text-p3 mt-1 text-blanco/50">
+          <p className="text-p3 mt-1 text-blanco/65">
             {cantidad} {cantidad === 1 ? "registro" : "registros"}
           </p>
         ) : null}
@@ -103,7 +103,7 @@ export function Tabla({
   if (!hayFilas) {
     return (
       <div className="rounded-xl border border-dashed border-borde p-12 text-center">
-        <p className="text-p2 text-blanco/50">
+        <p className="text-p2 text-blanco/65">
           {vacio ?? "Todavía no hay nada cargado."}
         </p>
       </div>
@@ -114,7 +114,7 @@ export function Tabla({
     <div className="overflow-x-auto rounded-xl border border-borde">
       <table className="w-full min-w-[640px] text-left">
         <thead className="border-b border-borde bg-superficie">
-          <tr className="text-eyebrow text-blanco/40">
+          <tr className="text-eyebrow text-blanco/60">
             {/* La clave lleva la posición porque más de una columna puede ir
                 sin encabezado —la de acciones, por ejemplo—. */}
             {columnas.map((columna, i) => (
@@ -148,7 +148,7 @@ export function Celda({
     <td
       className={cn(
         "text-p3 px-4 py-3",
-        apagado ? "text-blanco/25" : "text-blanco/80",
+        apagado ? "text-blanco/40" : "text-blanco/90",
         className,
       )}
     >
@@ -170,10 +170,10 @@ export function Etiqueta({
 }) {
   return (
     <div className="mb-2">
-      <label htmlFor={htmlFor} className="text-p3 block text-blanco/70">
+      <label htmlFor={htmlFor} className="text-p3 block text-blanco/90">
         {children}
       </label>
-      {ayuda ? <p className="text-p3 mt-1 text-blanco/35">{ayuda}</p> : null}
+      {ayuda ? <p className="text-p3 mt-1 text-blanco/55">{ayuda}</p> : null}
     </div>
   );
 }
@@ -187,7 +187,7 @@ export function Etiqueta({
  */
 export const CONTROL =
   "text-p2 w-full rounded-md border border-borde bg-negro-oscuro/60 px-3 py-2 " +
-  "text-blanco placeholder:text-blanco/25 transition-colors " +
+  "text-blanco placeholder:text-blanco/40 transition-colors " +
   "hover:border-blanco/25 focus:border-lila focus:bg-negro-oscuro";
 
 export function CampoTexto({
@@ -377,7 +377,7 @@ function AltaAlVuelo({
         type="button"
         onClick={() => setAbierto(true)}
         className={cn(
-          "text-p3 mt-3 cursor-pointer rounded-lg px-2 py-1 text-blanco/50 underline-offset-4 transition-colors hover:text-blanco hover:underline",
+          "text-p3 mt-3 cursor-pointer rounded-lg px-2 py-1 text-blanco/65 underline-offset-4 transition-colors hover:text-blanco hover:underline",
           FOCO,
         )}
       >
@@ -457,7 +457,7 @@ export function CampoCasilla({
         />
         {etiqueta}
       </label>
-      {ayuda ? <p className="text-p3 mt-1 text-blanco/35">{ayuda}</p> : null}
+      {ayuda ? <p className="text-p3 mt-1 text-blanco/55">{ayuda}</p> : null}
     </div>
   );
 }

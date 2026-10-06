@@ -48,7 +48,7 @@ export function Editores({
               key={email}
               className="flex items-center justify-between gap-4 border-b border-borde pb-2"
             >
-              <span className="text-p2 text-blanco/80">{email}</span>
+              <span className="text-p2 text-blanco/90">{email}</span>
               <form action={enviarBaja}>
                 <input type="hidden" name="email" value={email} />
                 <input type="hidden" name="id" value={cooperativaId} />
@@ -60,7 +60,7 @@ export function Editores({
           ))}
         </ul>
       ) : (
-        <p className="text-p3 text-blanco/40">Todavía no designaron a nadie.</p>
+        <p className="text-p3 text-blanco/55">Todavía no designaron a nadie.</p>
       )}
 
       <form action={enviarAlta} className="flex items-end gap-3">

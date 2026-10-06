@@ -34,7 +34,7 @@ export async function MarcoAdmin({
       <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-borde bg-negro-oscuro md:flex">
         <div className="border-b border-borde px-6 py-5">
           <Logo href="/admin" />
-          <p className="text-eyebrow mt-2 text-blanco/40">Panel de contenido</p>
+          <p className="text-eyebrow mt-2 text-blanco/55">Panel de contenido</p>
         </div>
 
         <NavegacionAdmin
@@ -43,19 +43,19 @@ export async function MarcoAdmin({
         />
 
         <div className="border-t border-borde p-4">
-          <p className="text-p3 truncate text-blanco/50">{usuario}</p>
+          <p className="text-p3 truncate text-blanco/70">{usuario}</p>
           <div className="mt-3 flex items-center justify-between gap-3">
             <Link
               href="/"
               target="_blank"
-              className="text-p3 text-blanco/50 underline-offset-4 hover:text-blanco hover:underline"
+              className="text-p3 text-blanco/70 underline-offset-4 hover:text-blanco hover:underline"
             >
               Ver el sitio
             </Link>
             <form action={salir}>
               <button
                 type="submit"
-                className="text-p3 cursor-pointer text-blanco/50 underline-offset-4 hover:text-blanco hover:underline"
+                className="text-p3 cursor-pointer text-blanco/70 underline-offset-4 hover:text-blanco hover:underline"
               >
                 Salir
               </button>
@@ -74,7 +74,7 @@ export async function MarcoAdmin({
             <form action={salir}>
               <button
                 type="submit"
-                className="text-p3 cursor-pointer text-blanco/50"
+                className="text-p3 cursor-pointer text-blanco/70"
               >
                 Salir
               </button>
