@@ -56,24 +56,20 @@ export default async function ProyectosPage({
   };
   const pagina = Math.max(1, Number(uno(params.pagina)) || 1);
 
-  const [proyectos, ultimos, sectores, servicios, tecnologias, cooperativas] =
-    await Promise.all([
-      // "Ver más" acumula: se piden todas las páginas hasta la actual.
-      getProyectos({ ...filtros, porPagina: POR_PAGINA * pagina }, idioma),
-      getProyectos({ porPagina: 5 }, idioma),
-      getSectores(idioma),
-      getServicios(idioma),
-      getTecnologias(),
-      getCooperativas(idioma),
-    ]);
-
-  const hayMas = proyectos.items.length < proyectos.total;
-
-  const queryVerMas = new URLSearchParams();
-  for (const [clave, valor] of Object.entries(filtros)) {
-    if (valor) queryVerMas.set(clave, valor);
-  }
-  queryVerMas.set("pagina", String(pagina + 1));
+  /*
+   * Solo los catálogos de los filtros se esperan acá: son listas chicas y
+   * cacheadas, y sin ellas no se puede dibujar la barra de arriba. Los
+   * proyectos —que es la consulta grande y la que cambia con cada filtro— van
+   * en sus propios componentes, detrás de un `Suspense`: la pantalla aparece
+   * con su título y sus filtros mientras la grilla todavía viaja, en vez de
+   * quedarse en blanco esperando a todo junto.
+   */
+  const [sectores, servicios, tecnologias, cooperativas] = await Promise.all([
+    getSectores(idioma),
+    getServicios(idioma),
+    getTecnologias(),
+    getCooperativas(idioma),
+  ]);
 
   return (
     <>
@@ -98,66 +94,128 @@ export default async function ProyectosPage({
       </Seccion>
 
       <Seccion className="pt-0 md:pt-8">
-        {proyectos.items.length ? (
-          <>
-            {/*
-              La grilla alterna una tarjeta ancha y una angosta por fila, y la
-              fila siguiente lo invierte. En mobile van apiladas a lo ancho.
-            */}
-            <div className="flex flex-col gap-5 md:grid md:grid-cols-3">
-              {proyectos.items.map((proyecto, i) => (
-                <CardProyecto
-                  indice={i}
-                  key={proyecto.id}
-                  proyecto={proyecto}
-                  caraMobile="listado"
-                  className={cn(esAncha(i) ? "md:col-span-2" : "")}
-                />
-              ))}
-            </div>
-
-            {hayMas ? (
-              <div className="mt-10 flex justify-center">
-                <BotonLink
-                  href={`/proyectos?${queryVerMas}`}
-                  scroll={false}
-                  className="w-full md:w-auto md:min-w-72"
-                >
-                  {T.verMas}
-                </BotonLink>
-              </div>
-            ) : null}
-          </>
-        ) : (
-          <SinResultados
-            titulo={T.vacio.titulo}
-            accion={
-              <BotonLink href="/proyectos">{T.filtros.limpiar}</BotonLink>
-            }
-          >
-            {T.vacio.sugerencia}
-          </SinResultados>
-        )}
+        <Suspense fallback={<GrillaEnCamino />}>
+          <Grilla filtros={filtros} pagina={pagina} idioma={idioma} />
+        </Suspense>
       </Seccion>
 
-      {ultimos.items.length ? (
-        <Seccion>
-          <EncabezadoSeccion titulo={T.ultimos.titulo} tamanoTitulo="h2" />
-          <div className="border-t border-dotted border-punteado">
-            {ultimos.items.map((proyecto) => (
-              <FilaProyecto
-                key={proyecto.id}
-                proyecto={proyecto}
-                variante="ultimos"
-              />
-            ))}
-          </div>
-        </Seccion>
-      ) : null}
+      <Suspense fallback={null}>
+        <Ultimos idioma={idioma} />
+      </Suspense>
 
       {/* Sin banda de cierre: las dos maquetas de esta pantalla terminan en
           "Últimos proyectos" y van directo al pie. */}
     </>
+  );
+}
+
+/** La grilla de proyectos, que es la consulta que hace esperar la pantalla. */
+async function Grilla({
+  filtros,
+  pagina,
+  idioma,
+}: {
+  filtros: NonNullable<Parameters<typeof getProyectos>[0]>;
+  pagina: number;
+  idioma: Idioma;
+}) {
+  const T = contenido(idioma).PROYECTOS_PAGINA;
+  // "Ver más" acumula: se piden todas las páginas hasta la actual.
+  const proyectos = await getProyectos(
+    { ...filtros, porPagina: POR_PAGINA * pagina },
+    idioma,
+  );
+  const hayMas = proyectos.items.length < proyectos.total;
+
+  const queryVerMas = new URLSearchParams();
+  for (const [clave, valor] of Object.entries(filtros)) {
+    if (valor) queryVerMas.set(clave, String(valor));
+  }
+  queryVerMas.set("pagina", String(pagina + 1));
+
+  return (
+    <>
+      {proyectos.items.length ? (
+        <>
+          {/*
+              La grilla alterna una tarjeta ancha y una angosta por fila, y la
+              fila siguiente lo invierte. En mobile van apiladas a lo ancho.
+            */}
+          <div className="flex flex-col gap-5 md:grid md:grid-cols-3">
+            {proyectos.items.map((proyecto, i) => (
+              <CardProyecto
+                indice={i}
+                key={proyecto.id}
+                proyecto={proyecto}
+                caraMobile="listado"
+                className={cn(esAncha(i) ? "md:col-span-2" : "")}
+              />
+            ))}
+          </div>
+
+          {hayMas ? (
+            <div className="mt-10 flex justify-center">
+              <BotonLink
+                href={`/proyectos?${queryVerMas}`}
+                scroll={false}
+                className="w-full md:w-auto md:min-w-72"
+              >
+                {T.verMas}
+              </BotonLink>
+            </div>
+          ) : null}
+        </>
+      ) : (
+        <SinResultados
+          titulo={T.vacio.titulo}
+          accion={<BotonLink href="/proyectos">{T.filtros.limpiar}</BotonLink>}
+        >
+          {T.vacio.sugerencia}
+        </SinResultados>
+      )}
+    </>
+  );
+}
+
+/** El lugar que va a ocupar la grilla, para que la página no salte al llegar. */
+function GrillaEnCamino() {
+  return (
+    <div
+      aria-hidden
+      className="flex animate-pulse flex-col gap-5 md:grid md:grid-cols-3"
+    >
+      {[0, 1, 2, 3].map((i) => (
+        <div
+          key={i}
+          className={cn(
+            "h-[420px] rounded-2xl bg-superficie",
+            esAncha(i) ? "md:col-span-2" : "",
+          )}
+        />
+      ))}
+    </div>
+  );
+}
+
+/** Los últimos cargados, al pie. Es otra consulta: no frena a la grilla. */
+async function Ultimos({ idioma }: { idioma: Idioma }) {
+  const T = contenido(idioma).PROYECTOS_PAGINA;
+  const ultimos = await getProyectos({ porPagina: 5 }, idioma);
+  if (!ultimos.items.length) return null;
+
+  return (
+    <Seccion>
+      <EncabezadoSeccion titulo={T.ultimos.titulo} tamanoTitulo="h2" />
+      <div className="border-t border-dotted border-punteado">
+        {ultimos.items.map((proyecto) => (
+          <FilaProyecto
+            key={proyecto.id}
+            proyecto={proyecto}
+            variante="ultimos"
+          />
+        ))}
+      </div>
+    </Seccion>
   );
 }
 

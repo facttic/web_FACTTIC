@@ -184,7 +184,11 @@ export function CardProyecto({
           cambia a blanco pleno, y una línea de 1px con ese contraste, rotada en
           3D, se rasteriza a tramos claros y oscuros. Con seis grados el
           bandeado desaparece; con diez se veía. */}
-      <Inclinar grados={6}>
+      {/* `contain-content`: al pasar el mouse cambian el alto de la portada y
+          las filas de la grilla interna, que son cálculos de layout. Sin esto
+          el navegador los rehacía para la página entera; contenido en la
+          tarjeta, se queda adentro. */}
+      <Inclinar grados={6} className="contain-content">
         <Tarjeta
           className={cn(
             "flex flex-col overflow-hidden",
@@ -197,7 +201,9 @@ export function CardProyecto({
             proyecto={proyecto}
             indice={indice}
             className={cn(
-              "w-full shrink-0 transition-all duration-300",
+              /* Solo el alto: `transition-all` hacía que el navegador vigilara
+                 todas las propiedades de la portada en cada cuadro. */
+              "w-full shrink-0 transition-[height] duration-300",
               ALTO_IMAGEN,
               listado && "h-[276px] md:h-[310px]",
             )}
