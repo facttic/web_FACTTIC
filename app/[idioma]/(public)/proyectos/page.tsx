@@ -10,7 +10,7 @@ import type { Idioma } from "@/lib/idioma";
 import {
   getCooperativas,
   getSectores,
-  getServicios,
+  getServiciosDestacados,
   getTecnologias,
 } from "@/lib/datos/catalogos";
 import { SECTOR_OTROS, getProyectos } from "@/lib/datos/proyectos";
@@ -64,9 +64,19 @@ export default async function ProyectosPage({
    * con su título y sus filtros mientras la grilla todavía viaja, en vez de
    * quedarse en blanco esperando a todo junto.
    */
+  /*
+   * Los servicios del filtro son solo los destacados: el catálogo de la
+   * Federación. Cada cooperativa puede dar de alta servicios propios desde su
+   * ficha, y si entraran acá la barra se llenaría de variantes del mismo
+   * nombre a medida que se sumen cooperativas.
+   *
+   * Los sectores, en cambio, van todos. Acá "Otros" son los proyectos **sin**
+   * sector, así que un proyecto cargado con un sector de cooperativa no caería
+   * en ninguna opción y quedaría imposible de filtrar.
+   */
   const [sectores, servicios, tecnologias, cooperativas] = await Promise.all([
     getSectores(idioma),
-    getServicios(idioma),
+    getServiciosDestacados(idioma),
     getTecnologias(),
     getCooperativas(idioma),
   ]);

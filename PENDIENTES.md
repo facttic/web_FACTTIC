@@ -77,7 +77,7 @@ llegue.
 - [x] ~~**11. Usuario de solo lectura**~~ → ya no hace falta: con los GET
       públicos el sitio lee sin credencial.
 - [ ] **12. Higiene de datos.** ~~Espacio inicial en `" Capacitación y
-    consultoría"`~~ → corregido. ~~Tres formas de guardar la imagen en
+  consultoría"`~~ → corregido. ~~Tres formas de guardar la imagen en
       `tecnologias`~~ → unificadas en `fileName`. ~~`javaja` y las tecnologías
       con logo de marcador~~ → borradas al cargar el stack real. **Queda**
       limpiar los datos de prueba (`Cooperativa A/B/C`, `Proyecto1`), que
@@ -93,14 +93,14 @@ llegue.
 - [ ] **14. Unificar la paginación.** ~~El tamaño de página no se podía
       elegir~~ → `perPage` ya se respeta en los catálogos. **Queda** que la
       forma sea la misma: los catálogos y novedades devuelven `{items,
-    totalCount}` y proyectos `{items, total, page, limit, pages}`, con
+  totalCount}` y proyectos `{items, total, page, limit, pages}`, con
       `limit` en vez de `perPage`.
 - [ ] **15. Token de 15 minutos**: extenderlo o permitir `refresh-token` sin cookie.
 - [ ] **16. `cache-control`** en las respuestas, para cachear en CDN.
 - [ ] **17. CORS**: hoy refleja cualquier `Origin` con `allow-credentials: true`.
 - [ ] **18. Consulta**: campo `verticales` no documentado en cooperativa, que
       convive con `sectores`. ¿Cuál se usa?
-- [ ] **19 bis. `destacado` en servicios.** Desde el backoffice, una cooperativa
+- [x] **19 bis. `destacado` en servicios.** Desde el backoffice, una cooperativa
       puede dar de alta un servicio propio mientras completa su ficha. Hoy
       `GET /api/servicios` es una lista sola, así que todo lo que se cree cae
       igual en la vitrina de FACTTIC: las solapas de la Home, el bloque
@@ -115,13 +115,17 @@ llegue.
       Red. Conviene que solo la federación pueda marcarlo: si lo marca quien
       crea el servicio, el filtro no sirve de nada.
 
-      **El campo ya existe y está en producción** (`esDestacado`, verificado el
-      6/10/2026): `GET /api/servicios` lo devuelve y los cinco del catálogo
-      vienen en `true`. **Falta todo lo del front**: filtrar en `getServicios()`
-      —o agregar un `getServiciosDestacados()`— y mostrar el estado en el ABM de
-      servicios. Mientras tanto, cualquier servicio que dé de alta una
-      cooperativa entra igual a las solapas de la Home, al bloque "Soluciones"
-      de Nuestros servicios y al filtro de Proyectos.
+      **Hecho.** El campo existe y está en producción (`esDestacado`, verificado
+      el 6/10/2026): los cinco del catálogo vienen en `true`. En el sitio,
+      `getServiciosDestacados()` es lo que usan la Home, Nuestros servicios y el
+      filtro de Proyectos; el ABM muestra la columna y la casilla, que solo
+      escribe quien es admin. Lo que crea una cooperativa sigue viéndose donde
+      corresponde: en su ficha y en el panel de provincia de Nuestra Red, que
+      leen los servicios de la propia cooperativa y no el catálogo.
+
+      Los **sectores** del filtro de Proyectos van todos a propósito: ahí
+      "Otros" son los proyectos *sin* sector, así que uno cargado con un sector
+      de cooperativa no caería en ninguna opción.
 
 ### Nuevos (sin enviar)
 
