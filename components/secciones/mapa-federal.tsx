@@ -131,14 +131,57 @@ export function cajaDe(
  * El acercamiento se limita a 3,4: más que eso y las provincias vecinas salen
  * de cuadro, que es lo que da la referencia de dónde está parado uno.
  */
-function encuadre(caja: { x: number; y: number; ancho: number; alto: number }) {
+function encuadre(
+  caja: { x: number; y: number; ancho: number; alto: number },
+  /** Dónde queda el centro de la provincia, en porcentaje del ancho. */
+  objetivoX = 50,
+  tope = 3.4,
+  /** Y en porcentaje del alto: en el teléfono baja, debajo del cajón. */
+  objetivoY = 50,
+) {
   const escala = Math.min(
-    3.4,
+    tope,
     Math.max(1.5, 34 / Math.max(caja.ancho, caja.alto * 0.55)),
   );
   const cx = caja.x + caja.ancho / 2;
   const cy = caja.y + caja.alto / 2;
-  return { escala, x: 50 - cx * escala, y: 50 - cy * escala };
+  return { escala, x: objetivoX - cx * escala, y: objetivoY - cy * escala };
+}
+
+/**
+ * Lo que el teléfono usa.
+ *
+ * La provincia queda centrada a lo ancho y corrida hacia abajo, justo debajo de
+ * donde termina la ficha: así la ficha puede ocupar todo el ancho —que es lo
+ * que necesita para contar algo— sin taparla nunca. El corrimiento se calcula
+ * por provincia, porque no mide lo mismo Tucumán que Buenos Aires.
+ */
+const ENCUADRE_CHICO = {
+  objetivoX: 50,
+  tope: 1.9,
+  /** Dónde arranca la provincia, debajo de la ficha. */
+  arranque: 48,
+} as const;
+
+/** El encuadre del teléfono para una caja ya medida. */
+function encuadreChico(caja: {
+  x: number;
+  y: number;
+  ancho: number;
+  alto: number;
+}) {
+  const { escala } = encuadre(
+    caja,
+    ENCUADRE_CHICO.objetivoX,
+    ENCUADRE_CHICO.tope,
+  );
+  const mitad = (caja.alto * escala) / 2;
+  return encuadre(
+    caja,
+    ENCUADRE_CHICO.objetivoX,
+    ENCUADRE_CHICO.tope,
+    Math.min(78, ENCUADRE_CHICO.arranque + mitad),
+  );
 }
 
 /**
@@ -178,7 +221,15 @@ export function MapaFederal({
   className?: string;
 }) {
   const caja = acercar && seleccionada ? cajaDe(seleccionada) : null;
+  /*
+   * Dos encuadres: en escritorio la provincia queda centrada en su caja, con el
+   * panel afuera; en el teléfono el cajón entra desde la izquierda y ocupa unos
+   * 240px, así que la provincia se corre al 78% del ancho para quedar a su
+   * derecha. Ahí también se acerca menos: el dibujo es angosto y pasado de 2,2
+   * se pierde de vista dónde está uno.
+   */
   const vista = caja ? encuadre(caja) : null;
+  const vistaChica = caja ? encuadreChico(caja) : null;
   const marcador = acercar && seleccionada ? centroDe(seleccionada) : null;
   const color = seleccionada
     ? COLORES[
@@ -228,7 +279,7 @@ export function MapaFederal({
         /* Sin recortar: al acercarse el dibujo se sale de su caja y sigue por
            detrás de lo que viene abajo, en vez de cortarse contra un borde. */
         "transition-transform duration-700 ease-out",
-        acercar && "md:vista-drone",
+        acercar && "vista-drone",
         className,
       )}
     >
@@ -241,16 +292,22 @@ export function MapaFederal({
          * manda el resto del dibujo fuera de la pantalla.
          */
         className={cn(
-          "w-full origin-top-left transition-transform duration-700 ease-out motion-reduce:transition-none",
+          /* El alto del teléfono es cosa del mapa y va en el `svg`: puesto en
+             el contenedor, el dibujo se estiraba al ancho disponible y salía
+             mucho más alto que su caja. */
+          "mx-auto h-[560px] w-auto origin-top-left transition-transform duration-700 ease-out md:h-auto md:w-full motion-reduce:transition-none",
           vista &&
-            "md:[transform:translate(var(--mapa-x),var(--mapa-y))_scale(var(--mapa-k))]",
+            "[transform:translate(var(--mapa-x-chico),var(--mapa-y-chico))_scale(var(--mapa-k-chico))] md:[transform:translate(var(--mapa-x),var(--mapa-y))_scale(var(--mapa-k))]",
         )}
         style={
-          vista
+          vista && vistaChica
             ? ({
                 "--mapa-x": `${vista.x.toFixed(2)}%`,
                 "--mapa-y": `${vista.y.toFixed(2)}%`,
                 "--mapa-k": vista.escala.toFixed(3),
+                "--mapa-x-chico": `${vistaChica.x.toFixed(2)}%`,
+                "--mapa-y-chico": `${vistaChica.y.toFixed(2)}%`,
+                "--mapa-k-chico": vistaChica.escala.toFixed(3),
               } as React.CSSProperties)
             : undefined
         }
@@ -265,7 +322,7 @@ export function MapaFederal({
         */}
         {acercar ? (
           <g
-            className="pointer-events-none hidden md:block"
+            className="pointer-events-none"
             style={{ "--prov": color } as React.CSSProperties}
           >
             {/* Opacas y todas del mismo color: con una rampa de opacidad el

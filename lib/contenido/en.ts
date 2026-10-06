@@ -613,6 +613,8 @@ export const NUESTRA_RED = {
     asociados: (n: number) => `${n} ${n === 1 ? "member" : "members"}`,
     industrias: "Specialized industries",
     servicios: "Specialized services",
+    verTodo: "See all",
+    verMenos: "See less",
     sinDatos: "We haven't added the detail for this province yet.",
   },
   tarjeta: { sitio: "Visit site", proyectos: "See their projects" },

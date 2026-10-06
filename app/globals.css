@@ -889,3 +889,29 @@ body {
   }
 }
 
+/**
+ * La ficha de la provincia, entrando de costado.
+ *
+ * Se despliega desde el borde contra el que se apoya —de ahí el origen por
+ * variable— en vez de aparecer de golpe: así se lee como que sale del mapa y
+ * no como un cartel que se encendió encima.
+ */
+@keyframes desplegarse-al-costado {
+  from {
+    opacity: 0;
+    transform: translateX(var(--desde, -16px)) scaleX(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility se-despliega-al-costado {
+  transform-origin: var(--origen, left) center;
+  animation: desplegarse-al-costado 0.45s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}

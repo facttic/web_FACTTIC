@@ -35,12 +35,21 @@ export function RedFederal({
   const [elegida, setElegida] = useState(provincias[0]?.nombre ?? null);
   // Arranca cerrado: primero se ve el mapa entero y la ficha aparece al tocar.
   const [panelAbierto, setPanelAbierto] = useState(false);
+  /*
+   * La ficha arranca angosta —cortada donde empieza la provincia— y se puede
+   * abrir a todo el ancho cuando lo que hay para leer no entra: una provincia
+   * con quince servicios no se cuenta en doscientos píxeles. Abierta sí tapa el
+   * mapa, pero ahí ya se está leyendo, no mirando.
+   */
+  const [fichaAmpliada, setFichaAmpliada] = useState(false);
   const indice = provincias.findIndex((p) => p.nombre === elegida);
   const provincia = provincias[indice] ?? null;
 
   const elegir = (nombre: string) => {
     setElegida(nombre);
     setPanelAbierto(true);
+    // Cada provincia abre en chico: lo ampliado valía para la anterior.
+    setFichaAmpliada(false);
   };
 
   const cantidades = Object.fromEntries(
@@ -92,7 +101,11 @@ export function RedFederal({
   }, []);
 
   return (
-    <div className={className}>
+    /* `overflow-x-clip`: la ficha se sale de la pantalla a propósito y sin
+       esto la página se estiraría a lo ancho. `clip` y no `hidden`, que
+       convertiría esto en un contenedor de scroll y rompería el mapa que se
+       derrama por abajo. */
+    <div className={cn("relative overflow-x-clip", className)}>
       {/*
         Al elegir una provincia el mapa se acerca a ella y la deja en el tercio
         izquierdo; el panel se abre a la derecha, fijo, sin pisarla. Al cerrarlo
@@ -115,9 +128,7 @@ export function RedFederal({
           /* Solo mientras el panel está abierto: al cerrarlo vuelve el país
              entero, que es el estado en el que se elige. */
           acercar={panelAbierto}
-          /* Más bajo en el teléfono: con 607 el panel quedaba abajo de todo y
-             las solapas de provincia caían fuera de la pantalla. */
-          className="mx-auto h-[420px] w-auto md:h-auto md:size-full"
+          className="mx-auto md:size-full"
         />
 
         {/*
@@ -135,21 +146,30 @@ export function RedFederal({
           <PanelProvincia
             provincia={provincia}
             alCerrar={() => setPanelAbierto(false)}
+            ampliada={fichaAmpliada}
+            alAmpliar={() => setFichaAmpliada((previa) => !previa)}
             /*
-              El corrimiento va por variable y no como `left`/`top` directos:
-              el panel es `relative` también en mobile —donde va debajo del
-              mapa, en el flujo— y ahí un `left: 68%` lo empujaba fuera de la
-              pantalla, estirando la página a lo ancho.
+              Un cajón que entra desde la izquierda y se sale de la pantalla por
+              ese lado: arranca fuera del borde y pierde ahí su esquina
+              redondeada, así se lee como algo que viene de afuera y no como una
+              tarjeta apoyada encima del mapa.
+
+              No tapa la provincia porque no se acomoda a ella: es el mapa el
+              que, al acercarse, la deja justo debajo de donde la ficha termina.
+              Así la ficha puede ocupar todo el ancho, que es lo que necesita
+              para contar algo.
+
+              En escritorio nada de esto hace falta: el panel va afuera de la
+              caja del mapa, a su derecha, donde sobra lugar.
             */
-            /*
-              Afuera del mapa y no encima. En desktop va pegado a su derecha
-              —la caja del dibujo es angosta, unos 310px, y cualquier panel
-              apoyado adentro la tapaba entera— y el mapa acerca la provincia
-              al centro de su propia caja. En el teléfono no hay lugar al
-              costado, así que baja al flujo, debajo del mapa: antes se apoyaba
-              encima y tapaba justo la provincia que se acababa de tocar.
-            */
-            className="relative z-10 mt-6 md:absolute md:top-1/2 md:left-full md:mt-0 md:ml-8 md:w-[420px] md:-translate-y-1/2"
+            className={cn(
+              "se-despliega-al-costado absolute top-4 right-3 left-[-2rem] z-20 rounded-l-none",
+              /* El relleno de la izquierda compensa lo que queda fuera de la
+                 pantalla: sin esto el texto arrancaba cortado. */
+              "pl-12",
+              "md:inset-x-auto md:top-1/2 md:right-auto md:left-full md:ml-8 md:w-[420px] md:rounded-2xl md:pl-8 md:-translate-y-1/2",
+            )}
+            style={{ "--desde": "-32px", "--origen": "left" } as CSSProperties}
           />
         ) : (
           // Centrado sobre el mapa: si va en el flujo se sale de la caja de
@@ -177,8 +197,11 @@ export function RedFederal({
       {/* El relleno es del vidrio, no de las solapas: así el aire de arriba
           separa los nombres de provincia del mapa que pasa por detrás, y el
           vidrio asoma un poco a los costados del contenido. */}
-      <div className="bg-fondo/30 relative z-10 mt-16 -mx-4 rounded-2xl px-4 pt-7 pb-6 backdrop-blur-[3px]">
-        <div ref={solapas} className="relative">
+      <div
+        ref={solapas}
+        className="bg-fondo/30 relative z-10 mt-16 -mx-5 rounded-2xl px-7 pt-7 pb-6 backdrop-blur-[3px] md:-mx-4 md:px-4"
+      >
+        <div className="relative">
           <div
             ref={pista}
             role="tablist"
@@ -246,20 +269,28 @@ export function RedFederal({
 function PanelProvincia({
   provincia,
   alCerrar,
+  ampliada = false,
+  alAmpliar,
   className,
   style,
 }: {
   provincia: ProvinciaConRed;
   alCerrar: () => void;
+  /** En el teléfono la ficha arranca angosta y se puede abrir a todo el ancho. */
+  ampliada?: boolean;
+  alAmpliar?: () => void;
   className?: string;
   style?: React.CSSProperties;
 }) {
   const T = contenido(useIdioma()).NUESTRA_RED;
+  // Con esto no entra en el ancho corto: vale la pena ofrecer abrirla.
+  const hayDeSobra =
+    provincia.servicios.length > 2 || provincia.industrias.length > 3;
   return (
     <div
       style={style}
       className={cn(
-        "borde-degradado textura-ruido relative rounded-2xl bg-negro/40 p-5 backdrop-blur-2xl md:p-8",
+        "borde-degradado textura-ruido relative rounded-2xl bg-negro/40 p-4 backdrop-blur-2xl md:p-8",
         className,
       )}
     >
@@ -270,7 +301,7 @@ function PanelProvincia({
         onClick={alCerrar}
         aria-label="Cerrar"
         className={cn(
-          "absolute top-5 right-5 cursor-pointer rounded p-1 text-blanco/40",
+          "absolute top-3 right-3 cursor-pointer rounded p-1 text-blanco/40 md:top-5 md:right-5",
           "transition-colors hover:text-blanco",
           FOCO,
         )}
@@ -293,17 +324,27 @@ function PanelProvincia({
       <p className="text-eyebrow hidden text-blanco/40 md:block">
         {T.panel.rotulo}
       </p>
-      <h3 className="text-h4 pr-8 md:text-h2 md:mt-2">{provincia.nombre}</h3>
+      <h3 className="text-p1-bold md:text-h2 pr-7 md:mt-2">
+        {provincia.nombre}
+      </h3>
 
-      <div className="text-p2 md:text-p1 mt-4 flex justify-between gap-4 border-y border-dotted border-punteado py-3 md:mt-6 md:py-4">
+      {/* Apiladas en el teléfono: la ficha mide unos 230 y las dos cifras en
+          una línea se cortaban. */}
+      <div className="text-p3 md:text-p1 mt-2 flex flex-wrap gap-x-5 gap-y-1 border-y border-dotted border-punteado py-2.5 md:mt-6 md:justify-between md:gap-4 md:py-4">
         <span>{T.panel.cooperativas(provincia.cooperativas.length)}</span>
         <span>{T.panel.asociados(provincia.asociados)}</span>
       </div>
 
+      {/* Los rótulos de las dos listas, solo en escritorio: en un cajón de
+          doscientos y pico "INDUSTRIAS ESPECIALIZADAS" se parte en dos
+          renglones y ocupa más que lo que nombra. Los chips y los servicios se
+          entienden solos. */}
       {provincia.industrias.length ? (
-        <div className="mt-4 md:mt-6">
-          <p className="text-eyebrow text-blanco/40">{T.panel.industrias}</p>
-          <div className="mt-2 flex flex-wrap gap-2 md:mt-3">
+        <div className="mt-3 md:mt-6">
+          <p className="text-eyebrow hidden text-blanco/40 md:block">
+            {T.panel.industrias}
+          </p>
+          <div className="mt-2 flex flex-wrap gap-1.5 md:mt-3 md:gap-2">
             {provincia.industrias.map((nombre) => (
               <ChipSector key={nombre} nombre={nombre} />
             ))}
@@ -312,9 +353,16 @@ function PanelProvincia({
       ) : null}
 
       {provincia.servicios.length ? (
-        <div className="mt-4 border-t border-dotted border-punteado pt-4 md:mt-6 md:pt-6">
-          <p className="text-eyebrow text-blanco/40">{T.panel.servicios}</p>
-          <p className="text-p2 mt-3 text-blanco/80">
+        <div className="mt-3 border-t border-dotted border-punteado pt-3 md:mt-6 md:pt-6">
+          <p className="text-eyebrow hidden text-blanco/40 md:block">
+            {T.panel.servicios}
+          </p>
+          <p
+            className={cn(
+              "text-p3 md:text-p2 text-blanco/80 md:mt-3",
+              !ampliada && "line-clamp-2 md:line-clamp-none",
+            )}
+          >
             {provincia.servicios.join("  ·  ")}
           </p>
         </div>
@@ -322,6 +370,20 @@ function PanelProvincia({
 
       {!provincia.industrias.length && !provincia.servicios.length ? (
         <p className="text-p2 mt-6 text-blanco/50">{T.panel.sinDatos}</p>
+      ) : null}
+
+      {/* Solo en el teléfono: en escritorio la ficha ya entra entera. */}
+      {hayDeSobra && alAmpliar ? (
+        <button
+          type="button"
+          onClick={alAmpliar}
+          className={cn(
+            "text-p3 mt-3 cursor-pointer rounded text-blanco/60 underline-offset-4 transition-colors hover:text-blanco hover:underline md:hidden",
+            FOCO,
+          )}
+        >
+          {ampliada ? T.panel.verMenos : T.panel.verTodo}
+        </button>
       ) : null}
     </div>
   );
