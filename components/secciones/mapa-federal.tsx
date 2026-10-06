@@ -39,6 +39,9 @@ const COLORES = [
 
 const CAJA = { oeste: -73.6, este: -53.6, norte: -21.8, sur: -55.1 };
 
+/** Cuánto baja cada copia del contorno para dibujar el canto, en unidades. */
+const ESPESOR = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
 /**
  * Medidas del grupo del mapa en el archivo: 419,02 × 900,21, o sea una
  * proporción de 2,148. La proyección corregida por latitud da 2,126 sola, así
@@ -95,6 +98,57 @@ export function centroDe(nombre: string): { x: number; y: number } | null {
   };
 }
 
+/**
+ * Caja de una provincia en porcentaje del dibujo, para encuadrarla.
+ *
+ * El centro no alcanza: para acercarse hay que saber cuánto mide, porque no es
+ * lo mismo encuadrar Tucumán que Buenos Aires.
+ */
+export function cajaDe(
+  nombre: string,
+): { x: number; y: number; ancho: number; alto: number } | null {
+  const provincia = PROVINCIAS.find((p) => p.nombre === nombre);
+  if (!provincia) return null;
+  const puntos = provincia.anillos.flat().map((p) => proyectar(p[0], p[1]));
+  const xs = puntos.map((p) => p[0]);
+  const ys = puntos.map((p) => p[1]);
+  const x0 = Math.min(...xs);
+  const y0 = Math.min(...ys);
+  return {
+    x: (x0 / ANCHO) * 100,
+    y: (y0 / ALTO) * 100,
+    ancho: ((Math.max(...xs) - x0) / ANCHO) * 100,
+    alto: ((Math.max(...ys) - y0) / ALTO) * 100,
+  };
+}
+
+/**
+ * Cómo se acerca el dibujo a una provincia.
+ *
+ * La provincia queda en el medio de su caja: el panel se abre **afuera** del
+ * mapa, a su derecha, así que no hay que correrla para que no la pise.
+ *
+ * El acercamiento se limita a 3,4: más que eso y las provincias vecinas salen
+ * de cuadro, que es lo que da la referencia de dónde está parado uno.
+ */
+function encuadre(caja: { x: number; y: number; ancho: number; alto: number }) {
+  const escala = Math.min(
+    3.4,
+    Math.max(1.5, 34 / Math.max(caja.ancho, caja.alto * 0.55)),
+  );
+  const cx = caja.x + caja.ancho / 2;
+  const cy = caja.y + caja.alto / 2;
+  return { escala, x: 50 - cx * escala, y: 50 - cy * escala };
+}
+
+/**
+ * El pin de mapa de toda la vida: una gota con la punta hacia abajo, apoyada en
+ * el origen del grupo. Veintidós unidades de alto, que a este dibujo le quedan
+ * como un marcador chico y no como un globo.
+ */
+const PIN =
+  "M0 0 C0 0 -10 -13 -10 -18.5 A10 10 0 1 1 10 -18.5 C10 -13 0 0 0 0 Z";
+
 function trazo(anillos: number[][][]): string {
   return anillos
     .map(
@@ -113,13 +167,24 @@ export function MapaFederal({
   cantidadPorProvincia,
   seleccionada,
   alElegir,
+  acercar = false,
   className,
 }: {
   cantidadPorProvincia: Record<string, number>;
   seleccionada: string | null;
   alElegir: (provincia: string) => void;
+  /** Acerca el dibujo a la provincia elegida y lo inclina. */
+  acercar?: boolean;
   className?: string;
 }) {
+  const caja = acercar && seleccionada ? cajaDe(seleccionada) : null;
+  const vista = caja ? encuadre(caja) : null;
+  const marcador = acercar && seleccionada ? centroDe(seleccionada) : null;
+  const color = seleccionada
+    ? COLORES[
+        PROVINCIAS.findIndex((p) => p.nombre === seleccionada) % COLORES.length
+      ]
+    : COLORES[0];
   const formas = useMemo(
     () =>
       PROVINCIAS.map((provincia, i) => ({
@@ -143,85 +208,197 @@ export function MapaFederal({
     [cantidadPorProvincia],
   );
 
+  /*
+   * El dibujo se acerca con un transform y no cambiando el `viewBox`: así la
+   * transición la hace el compositor y no obliga a redibujar los contornos en
+   * cada cuadro, que a este nivel de detalle se nota.
+   *
+   * `vista-drone` lo inclina hacia atrás mientras está acercado, como mirarlo
+   * desde arriba y de costado. Va en el contenedor y no en el `svg`, para que
+   * la perspectiva envuelva también al acercamiento.
+   */
+  /* Un solo contorno con todas las provincias: el canto es del país, no de
+     cada una, así que las fronteras internas no tienen que verse. */
+  const silueta = formas.map((f) => f.d).join("");
+  const formaElegida = formas.find((f) => f.nombre === seleccionada)?.d ?? null;
+
   return (
-    <svg
-      viewBox={`0 0 ${ANCHO} ${ALTO}`}
-      className={cn("w-full", className)}
-      role="group"
-      aria-label="Mapa de las provincias argentinas con cooperativas de la red"
+    <div
+      className={cn(
+        /* Sin recortar: al acercarse el dibujo se sale de su caja y sigue por
+           detrás de lo que viene abajo, en vez de cortarse contra un borde. */
+        "transition-transform duration-700 ease-out",
+        acercar && "md:vista-drone",
+        className,
+      )}
     >
-      {formas.map((provincia) => {
-        const hay = provincia.cantidad > 0;
-        const elegida = provincia.nombre === seleccionada;
-        return (
-          <g key={provincia.nombre}>
-            <path
-              d={provincia.d}
-              role={hay ? "button" : undefined}
-              tabIndex={hay ? 0 : undefined}
-              aria-label={
-                hay
-                  ? `${provincia.nombre}: ${provincia.cantidad} cooperativas`
-                  : undefined
+      <svg
+        viewBox={`0 0 ${ANCHO} ${ALTO}`}
+        className="w-full origin-top-left transition-transform duration-700 ease-out motion-reduce:transition-none"
+        style={
+          vista
+            ? {
+                transform: `translate(${vista.x.toFixed(2)}%, ${vista.y.toFixed(2)}%) scale(${vista.escala.toFixed(3)})`,
               }
-              aria-pressed={hay ? elegida : undefined}
-              onClick={hay ? () => alElegir(provincia.nombre) : undefined}
-              onKeyDown={
-                hay
-                  ? (e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        alElegir(provincia.nombre);
+            : undefined
+        }
+        role="group"
+        aria-label="Mapa de las provincias argentinas con cooperativas de la red"
+      >
+        {/*
+          El canto del mapa: el mismo contorno repetido hacia abajo, cada copia
+          un poco más oscura. De frente no se ve —las caras lo tapan—, pero al
+          inclinarse aparece como el costado de una pieza, que es lo que lo saca
+          de parecer una calcomanía.
+        */}
+        {acercar ? (
+          <g
+            className="pointer-events-none"
+            style={{ "--prov": color } as React.CSSProperties}
+          >
+            {/* Opacas y todas del mismo color: con una rampa de opacidad el
+                canto se leía como una sombra desenfocada y no como el costado
+                de algo sólido. */}
+            {ESPESOR.map((dy) => (
+              <path
+                key={`pais-${dy}`}
+                d={silueta}
+                transform={`translate(0 ${dy})`}
+                fill="var(--color-gris-oscuro)"
+              />
+            ))}
+            {/* La provincia elegida sobresale: su costado va de su propio color
+                apagado, así se ve como una pieza levantada del resto. */}
+            {formaElegida
+              ? ESPESOR.map((dy) => (
+                  <path
+                    key={`prov-${dy}`}
+                    d={formaElegida}
+                    transform={`translate(0 ${dy})`}
+                    fill="color-mix(in srgb, var(--prov) 42%, black)"
+                  />
+                ))
+              : null}
+          </g>
+        ) : null}
+
+        {formas.map((provincia) => {
+          const hay = provincia.cantidad > 0;
+          const elegida = provincia.nombre === seleccionada;
+          return (
+            <g key={provincia.nombre}>
+              <path
+                d={provincia.d}
+                role={hay ? "button" : undefined}
+                tabIndex={hay ? 0 : undefined}
+                aria-label={
+                  hay
+                    ? `${provincia.nombre}: ${provincia.cantidad} cooperativas`
+                    : undefined
+                }
+                aria-pressed={hay ? elegida : undefined}
+                onClick={hay ? () => alElegir(provincia.nombre) : undefined}
+                onKeyDown={
+                  hay
+                    ? (e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          alElegir(provincia.nombre);
+                        }
                       }
-                    }
-                  : undefined
-              }
-              style={{ "--prov": provincia.color } as React.CSSProperties}
-              stroke="var(--color-blanco)"
-              strokeOpacity={hay ? 0.35 : 0.12}
-              strokeWidth="0.7"
-              className={cn(
-                "transition-[fill,fill-opacity] duration-300",
-                hay
-                  ? `cursor-pointer fill-blanco/25 hover:fill-[var(--prov)] ${FOCO}`
-                  : "fill-gris-oscuro/55",
-                elegida && "fill-[var(--prov)]",
-              )}
-            />
-            {provincia.disco ? (
-              <circle
-                cx={provincia.disco[0]}
-                cy={provincia.disco[1]}
-                r={elegida ? 7 : 5.5}
+                    : undefined
+                }
                 style={{ "--prov": provincia.color } as React.CSSProperties}
                 stroke="var(--color-blanco)"
-                strokeOpacity="0.6"
-                strokeWidth="0.8"
-                onClick={hay ? () => alElegir(provincia.nombre) : undefined}
+                strokeOpacity={hay ? 0.35 : 0.12}
+                strokeWidth="0.7"
                 className={cn(
-                  "transition-all duration-300",
+                  "transition-[fill,fill-opacity] duration-300",
                   hay
-                    ? "cursor-pointer fill-blanco/50 hover:fill-[var(--prov)]"
+                    ? `cursor-pointer fill-blanco/25 hover:fill-[var(--prov)] ${FOCO}`
                     : "fill-gris-oscuro/55",
                   elegida && "fill-[var(--prov)]",
                 )}
               />
-            ) : null}
-            {provincia.puntos.map(([x, y], i) => (
-              <circle
-                key={i}
-                cx={x}
-                cy={y}
-                r="1.6"
-                fill="var(--color-blanco)"
-                fillOpacity={elegida ? 0.85 : 0.4}
-                className="pointer-events-none transition-[fill-opacity] duration-300"
+              {provincia.disco ? (
+                <circle
+                  cx={provincia.disco[0]}
+                  cy={provincia.disco[1]}
+                  r={elegida ? 7 : 5.5}
+                  style={{ "--prov": provincia.color } as React.CSSProperties}
+                  stroke="var(--color-blanco)"
+                  strokeOpacity="0.6"
+                  strokeWidth="0.8"
+                  onClick={hay ? () => alElegir(provincia.nombre) : undefined}
+                  className={cn(
+                    "transition-all duration-300",
+                    hay
+                      ? "cursor-pointer fill-blanco/50 hover:fill-[var(--prov)]"
+                      : "fill-gris-oscuro/55",
+                    elegida && "fill-[var(--prov)]",
+                  )}
+                />
+              ) : null}
+              {provincia.puntos.map(([x, y], i) => (
+                <circle
+                  key={i}
+                  cx={x}
+                  cy={y}
+                  r="1.6"
+                  fill="var(--color-blanco)"
+                  fillOpacity={elegida ? 0.85 : 0.4}
+                  className="pointer-events-none transition-[fill-opacity] duration-300"
+                />
+              ))}
+            </g>
+          );
+        })}
+
+        {marcador ? (
+          <g
+            transform={`translate(${((marcador.x / 100) * ANCHO).toFixed(1)} ${((marcador.y / 100) * ALTO).toFixed(1)})`}
+            className="pointer-events-none"
+            style={{ "--prov": color } as React.CSSProperties}
+          >
+            {/* La sombra se achica cuando el marcador sube: es lo que hace
+              leer la altura. El desenfoque la despega del dibujo. */}
+            <ellipse
+              rx="6"
+              ry="2.2"
+              fill="var(--color-negro-oscuro)"
+              filter="url(#desenfoque-marcador)"
+              className="sombra-que-salta"
+            />
+            {/* La punta del pin apoya en el 0,0 del grupo, que es el centro de
+              la provincia: así el salto se lee como que despega de ahí. */}
+            <g className="marcador-que-salta">
+              {/* Oscuro con el punto del color: la provincia elegida siempre
+                está pintada de un color claro, así que tanto un pin blanco
+                como uno del mismo color se perdían en el relleno. */}
+              <path
+                d={PIN}
+                fill="var(--color-negro-oscuro)"
+                stroke="var(--color-blanco)"
+                strokeOpacity="0.85"
+                strokeWidth="1.2"
+                strokeLinejoin="round"
               />
-            ))}
+              <circle cy="-16.5" r="4.2" fill="var(--prov)" />
+            </g>
           </g>
-        );
-      })}
-    </svg>
+        ) : null}
+
+        <filter
+          id="desenfoque-marcador"
+          x="-50%"
+          y="-50%"
+          width="200%"
+          height="200%"
+        >
+          <feGaussianBlur stdDeviation="2" />
+        </filter>
+      </svg>
+    </div>
   );
 }
 

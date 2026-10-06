@@ -5,7 +5,7 @@ import { Enlace as Link } from "@/components/ui/enlace";
 import { cn } from "@/lib/cn";
 import { BotonFlecha, FOCO } from "@/components/ui/boton";
 import { ChipSector } from "@/components/ui/chip";
-import { MapaFederal, PROPORCION_MAPA, centroDe } from "./mapa-federal";
+import { MapaFederal, PROPORCION_MAPA } from "./mapa-federal";
 import { contenido } from "@/lib/contenido";
 import { useIdioma } from "@/lib/idioma-cliente";
 import type { CooperativaEnRed, ProvinciaConRed } from "@/lib/datos/red";
@@ -46,7 +46,6 @@ export function RedFederal({
   const cantidades = Object.fromEntries(
     provincias.map((p) => [p.nombre, p.cooperativas.length]),
   );
-  const centro = elegida ? centroDe(elegida) : null;
 
   /*
    * Al tocar fuera del mapa y del panel, la tarjeta se cierra. Las solapas
@@ -95,29 +94,39 @@ export function RedFederal({
   return (
     <div className={className}>
       {/*
-        El panel se abre al lado de la provincia que se toca, no en un lugar
-        fijo: se cuelga del centro de su forma, corrido hacia la derecha. Por
-        eso el mapa va dentro de una caja de su medida exacta, que es contra la
-        que se posiciona. En mobile queda debajo, porque superponerlo ahí se
-        comería el dibujo.
-      */}
-      {/*
+        Al elegir una provincia el mapa se acerca a ella y la deja en el tercio
+        izquierdo; el panel se abre a la derecha, fijo, sin pisarla. Al cerrarlo
+        vuelve el país entero.
+
         En desktop la caja toma la medida exacta del mapa —de ahí la
-        proporción— porque el panel se cuelga del centro de la provincia que se
-        tocó. En mobile no: el mapa mide 607 de alto, va centrado, y el panel se
-        apoya encima, centrado sobre él. Por eso ahí la caja ocupa el ancho del
-        contenedor y toma su alto del mapa.
+        proporción—, que es contra la que se posiciona el panel. En mobile no:
+        el mapa mide 607 de alto, va centrado, y el panel se apoya encima; por
+        eso ahí la caja ocupa el ancho del contenedor y toma su alto del mapa.
       */}
       <div
         ref={zona}
-        className="relative mx-auto md:aspect-[var(--proporcion-mapa)] md:h-[600px]"
+        className="relative z-0 mx-auto md:aspect-[var(--proporcion-mapa)] md:h-[600px]"
         style={{ "--proporcion-mapa": PROPORCION_MAPA } as CSSProperties}
       >
         <MapaFederal
           cantidadPorProvincia={cantidades}
           seleccionada={elegida}
           alElegir={elegir}
+          /* Solo mientras el panel está abierto: al cerrarlo vuelve el país
+             entero, que es el estado en el que se elige. */
+          acercar={panelAbierto}
           className="mx-auto h-[607px] w-auto md:size-full"
+        />
+
+        {/*
+          Arriba se disuelve. Acercado, el dibujo también se sale por el tope y
+          llegaría hasta el menú, que es fijo y transparente mientras la página
+          está sin desplazar: ahí el mapa competiría con la navegación. Pasa por
+          detrás, como abajo, pero apagándose antes de llegar.
+        */}
+        <div
+          aria-hidden
+          className="from-fondo via-fondo/85 pointer-events-none absolute inset-x-0 -top-[460px] z-[1] h-[480px] bg-gradient-to-b to-transparent"
         />
 
         {provincia && panelAbierto ? (
@@ -130,15 +139,13 @@ export function RedFederal({
               mapa, en el flujo— y ahí un `left: 68%` lo empujaba fuera de la
               pantalla, estirando la página a lo ancho.
             */
-            className="absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 md:top-[var(--py)] md:right-auto md:left-[var(--px)] md:z-auto md:w-[420px] md:-translate-y-1/3"
-            style={
-              centro
-                ? ({
-                    "--px": `${centro.x}%`,
-                    "--py": `${centro.y}%`,
-                  } as CSSProperties)
-                : undefined
-            }
+            /*
+              Afuera del mapa y no encima: la caja del dibujo es angosta —unos
+              310px— y cualquier panel apoyado adentro la tapaba entera. Va
+              pegado a su derecha, que en desktop es espacio libre, y el mapa
+              acerca la provincia al centro de su propia caja.
+            */
+            className="absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 md:inset-x-auto md:left-full md:ml-8 md:w-[420px] md:-translate-y-1/2"
           />
         ) : (
           // Centrado sobre el mapa: si va en el flujo se sale de la caja de
@@ -154,65 +161,79 @@ export function RedFederal({
       {/* El ref envuelve también a las flechas: si no, tocarlas cuenta como
           "afuera" y el listener de abajo cierra el panel en el mismo clic que
           lo acaba de abrir. */}
-      <div ref={solapas} className="relative mt-12">
-        <div
-          ref={pista}
-          role="tablist"
-          aria-label="Provincias con cooperativas"
-          // Aire a la derecha para que la última solapa no quede debajo de las
-          // flechas, que van encima de la línea.
-          className="scroll-limpio flex gap-8 overflow-x-auto border-b border-borde pr-28 md:pr-0"
-        >
-          {provincias.map((p) => {
-            const activa = p.nombre === elegida;
-            return (
-              <button
-                key={p.nombre}
-                role="tab"
-                type="button"
-                data-provincia={p.nombre}
-                aria-selected={activa}
-                onClick={() => elegir(p.nombre)}
-                className={cn(
-                  "text-h4 -mb-px shrink-0 cursor-pointer border-b-2 pb-3 transition-colors",
-                  FOCO,
-                  activa
-                    ? "border-lila text-lila"
-                    : "border-transparent text-blanco/40 hover:text-blanco/70",
-                )}
-              >
-                {p.nombre}
-              </button>
-            );
-          })}
-        </div>
+      {/*
+        Todo lo que va debajo del mapa, sobre un mismo vidrio.
 
-        {/* Con relleno propio: la lista se desplaza por debajo y sin esto las
+        Cuando el dibujo se acerca se sale de su caja y sigue por acá abajo: en
+        vez de recortarlo, esta capa lo deja pasar desenfocado, igual que el
+        panel de la provincia. Va un solo vidrio para las solapas y las
+        tarjetas juntas y no uno por tarjeta: varias capas de desenfoque
+        apiladas cuestan caro y se ensucian donde se tocan.
+      */}
+      {/* El relleno es del vidrio, no de las solapas: así el aire de arriba
+          separa los nombres de provincia del mapa que pasa por detrás, y el
+          vidrio asoma un poco a los costados del contenido. */}
+      <div className="bg-fondo/30 relative z-10 mt-16 -mx-4 rounded-2xl px-4 pt-7 pb-6 backdrop-blur-[3px]">
+        <div ref={solapas} className="relative">
+          <div
+            ref={pista}
+            role="tablist"
+            aria-label="Provincias con cooperativas"
+            // Aire a la derecha para que la última solapa no quede debajo de las
+            // flechas, que van encima de la línea.
+            className="scroll-limpio flex gap-8 overflow-x-auto border-b border-borde pr-28 md:pr-0"
+          >
+            {provincias.map((p) => {
+              const activa = p.nombre === elegida;
+              return (
+                <button
+                  key={p.nombre}
+                  role="tab"
+                  type="button"
+                  data-provincia={p.nombre}
+                  aria-selected={activa}
+                  onClick={() => elegir(p.nombre)}
+                  className={cn(
+                    "text-h4 -mb-px shrink-0 cursor-pointer border-b-2 pb-3 transition-colors",
+                    FOCO,
+                    activa
+                      ? "border-lila text-lila"
+                      : "border-transparent text-blanco/40 hover:text-blanco/70",
+                  )}
+                >
+                  {p.nombre}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Con relleno propio: la lista se desplaza por debajo y sin esto las
             provincias del final se leerían a través de las flechas. */}
-        <div className="bg-fondo absolute right-0 bottom-2.5 flex items-center gap-2 pl-3 md:hidden">
-          <BotonFlecha
-            direccion="anterior"
-            disabled={indice <= 0}
-            onClick={() => elegir(provincias[indice - 1].nombre)}
-          />
-          <BotonFlecha
-            direccion="siguiente"
-            variante={indice < provincias.length - 1 ? "solida" : "punteada"}
-            disabled={indice >= provincias.length - 1}
-            onClick={() => elegir(provincias[indice + 1].nombre)}
-          />
+          <div className="bg-fondo absolute right-0 bottom-2.5 flex items-center gap-2 pl-3 md:hidden">
+            <BotonFlecha
+              direccion="anterior"
+              disabled={indice <= 0}
+              onClick={() => elegir(provincias[indice - 1].nombre)}
+            />
+            <BotonFlecha
+              direccion="siguiente"
+              variante={indice < provincias.length - 1 ? "solida" : "punteada"}
+              disabled={indice >= provincias.length - 1}
+              onClick={() => elegir(provincias[indice + 1].nombre)}
+            />
+          </div>
         </div>
-      </div>
 
-      {provincia ? (
-        /* Apiladas a lo ancho en mobile —así las dibuja el board— y en cuatro
+        {provincia ? (
+          /* Apiladas a lo ancho en mobile —así las dibuja el board— y en cuatro
            columnas en desktop. */
-        <div className="mt-8 flex flex-col gap-5 md:grid md:grid-cols-4">
-          {provincia.cooperativas.map((coop) => (
-            <CardCooperativaRed key={coop.id} cooperativa={coop} />
-          ))}
-        </div>
-      ) : null}
+          <div className="mt-8 flex flex-col gap-5 md:grid md:grid-cols-4">
+            {provincia.cooperativas.map((coop) => (
+              <CardCooperativaRed key={coop.id} cooperativa={coop} />
+            ))}
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }

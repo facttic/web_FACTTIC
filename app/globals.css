@@ -794,3 +794,98 @@ body {
   background: var(--color-lila);
   color: var(--color-negro-oscuro);
 }
+
+/**
+ * El mapa federal visto desde arriba y de costado.
+ *
+ * Mientras una provincia está elegida el dibujo se recuesta, como mirarlo desde
+ * un drone en vez de desde el techo. Veinticuatro grados es lo que hace falta
+ * para que se note sobre un dibujo plano y oscuro; con más, las provincias del
+ * sur se achatan tanto que el mapa deja de leerse.
+ */
+@utility vista-drone {
+  transform: perspective(1100px) rotateX(24deg) scale(1.02);
+
+  @media (prefers-reduced-motion: reduce) {
+    transform: none;
+  }
+}
+
+/**
+ * El marcador que señala la provincia elegida: pega un saltito y vuelve a
+ * apoyarse, con una pausa larga entre tanda y tanda.
+ *
+ * La sombra se achica y se aclara cuando el marcador sube, que es lo que hace
+ * leer la altura; si solo se moviera el marcador, parecería que resbala.
+ */
+@keyframes saltito {
+  0%,
+  55%,
+  100% {
+    transform: translateY(0);
+  }
+  18% {
+    transform: translateY(-11px);
+  }
+  34% {
+    transform: translateY(0);
+  }
+  43% {
+    transform: translateY(-4px);
+  }
+  50% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes sombra-del-saltito {
+  0%,
+  55%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  18% {
+    opacity: 0.18;
+    transform: scale(0.65);
+  }
+  34% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  43% {
+    opacity: 0.32;
+    transform: scale(0.86);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+}
+
+/*
+ * `transform-box: fill-box` en los tres: sin eso, en SVG el origen de un
+ * `transform` es el del lienzo y no el de la figura, así que un `scale` manda
+ * al anillo a crecer desde la esquina del mapa en vez de desde el marcador.
+ */
+@utility marcador-que-salta {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: saltito 2.8s ease-in-out infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@utility sombra-que-salta {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: sombra-del-saltito 2.8s ease-in-out infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 0.3;
+  }
+}
+
