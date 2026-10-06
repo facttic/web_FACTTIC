@@ -9,7 +9,7 @@ import { contenido } from "@/lib/contenido";
 import type { Idioma } from "@/lib/idioma";
 import {
   getCooperativas,
-  getSectores,
+  getSectoresDestacados,
   getServiciosDestacados,
   getTecnologias,
 } from "@/lib/datos/catalogos";
@@ -65,17 +65,19 @@ export default async function ProyectosPage({
    * quedarse en blanco esperando a todo junto.
    */
   /*
-   * Los servicios del filtro son solo los destacados: el catálogo de la
-   * Federación. Cada cooperativa puede dar de alta servicios propios desde su
-   * ficha, y si entraran acá la barra se llenaría de variantes del mismo
-   * nombre a medida que se sumen cooperativas.
+   * Sectores y servicios: solo los destacados, que son el catálogo de la
+   * Federación. Cada cooperativa puede dar de alta los suyos desde su ficha, y
+   * si entraran acá la barra se llenaría de variantes del mismo nombre a
+   * medida que se sumen cooperativas.
    *
-   * Los sectores, en cambio, van todos. Acá "Otros" son los proyectos **sin**
-   * sector, así que un proyecto cargado con un sector de cooperativa no caería
-   * en ninguna opción y quedaría imposible de filtrar.
+   * Queda un hueco conocido: "Otros" son los proyectos **sin** sector, así que
+   * uno cargado con un sector de cooperativa no cae en ninguna opción de este
+   * filtro —se lo encuentra por cooperativa, por búsqueda o en la lista
+   * completa—. Para cerrarlo hace falta que la API sepa filtrar por "sector no
+   * destacado"; está anotado en PENDIENTES.
    */
   const [sectores, servicios, tecnologias, cooperativas] = await Promise.all([
-    getSectores(idioma),
+    getSectoresDestacados(idioma),
     getServiciosDestacados(idioma),
     getTecnologias(),
     getCooperativas(idioma),

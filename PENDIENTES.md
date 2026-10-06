@@ -77,7 +77,7 @@ llegue.
 - [x] ~~**11. Usuario de solo lectura**~~ → ya no hace falta: con los GET
       públicos el sitio lee sin credencial.
 - [ ] **12. Higiene de datos.** ~~Espacio inicial en `" Capacitación y
-  consultoría"`~~ → corregido. ~~Tres formas de guardar la imagen en
+consultoría"`~~ → corregido. ~~Tres formas de guardar la imagen en
       `tecnologias`~~ → unificadas en `fileName`. ~~`javaja` y las tecnologías
       con logo de marcador~~ → borradas al cargar el stack real. **Queda**
       limpiar los datos de prueba (`Cooperativa A/B/C`, `Proyecto1`), que
@@ -93,7 +93,7 @@ llegue.
 - [ ] **14. Unificar la paginación.** ~~El tamaño de página no se podía
       elegir~~ → `perPage` ya se respeta en los catálogos. **Queda** que la
       forma sea la misma: los catálogos y novedades devuelven `{items,
-  totalCount}` y proyectos `{items, total, page, limit, pages}`, con
+totalCount}` y proyectos `{items, total, page, limit, pages}`, con
       `limit` en vez de `perPage`.
 - [ ] **15. Token de 15 minutos**: extenderlo o permitir `refresh-token` sin cookie.
 - [ ] **16. `cache-control`** en las respuestas, para cachear en CDN.
@@ -123,11 +123,20 @@ llegue.
       corresponde: en su ficha y en el panel de provincia de Nuestra Red, que
       leen los servicios de la propia cooperativa y no el catálogo.
 
-      Los **sectores** del filtro de Proyectos van todos a propósito: ahí
-      "Otros" son los proyectos *sin* sector, así que uno cargado con un sector
-      de cooperativa no caería en ninguna opción.
+      Los **sectores** siguen la misma regla: `getSectoresDestacados()` en la
+      Home, en Nuestros servicios y en el filtro de Proyectos.
 
 ### Nuevos (sin enviar)
+
+- [ ] **41. Filtrar proyectos por "sector que no es del catálogo".** El filtro
+      de sectores de Proyectos muestra las tres verticales de la Federación más
+      "Otros", y "Otros" es `sinSector=true`: los proyectos que **no tienen**
+      sector. Cuando una cooperativa cargue un proyecto con un sector propio,
+      ese proyecto no va a caer en ninguna opción del filtro —se lo encuentra
+      por cooperativa, por búsqueda o en la lista completa, pero no por sector—.
+      Alcanzaría con que `GET /api/proyectos` acepte algo como
+      `sectorNoDestacado=true`, o que `sector` admita varios ids. Hoy no
+      molesta: los tres sectores cargados son todos destacados.
 
 - [ ] **40. Rotar la clave del correo.** Las credenciales de Gmail estaban
       escritas en `resources/auth/helpers/send-email.js`, versionadas en claro.
@@ -146,11 +155,15 @@ llegue.
       **Resuelto por el MR !3** (`editores-por-cooperativa`), mergeado a `dev` y
       en producción: el permiso sale de la lista de mails de cada cooperativa y
       se consulta en cada pedido. El panel ya filtra lo que ve cada quien y la
-      Federación invita por correo desde la ficha. Queda pendiente solo que las
-      cooperativas puedan dar de alta sus propios **sectores**: `POST /sectores`
-      sigue pidiendo `admin:all`, así que hoy pueden crear servicios —que no
-      entran al catálogo de la Federación— pero los sectores siguen siendo de la
-      Federación.
+      Federación invita por correo desde la ficha.
+
+      Lo que faltaba —que cada cooperativa pueda dar de alta sus propios
+      **sectores**— está en el **MR !5** (`sectores-por-cooperativa`, contra
+      `dev`), **sin mergear**: abre `POST /sectores` a quien edita alguna
+      cooperativa, fuerza `esDestacado` en falso, deja el sector a nombre de su
+      cooperativa y reserva imagen y animación para la Federación. Hasta que
+      entre, el alta al vuelo de sectores del panel responde 403 para quien no
+      sea admin.
 
 - [x] ~~**38. `sinSector` en `GET /api/proyectos`.**~~ → mergeado y en
       producción. Verificado el 6/10/2026 contra la API: sin el parámetro
