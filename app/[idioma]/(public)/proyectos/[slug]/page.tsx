@@ -9,6 +9,7 @@ import { PortadaGenerica } from "@/components/ui/portada-generica";
 import { LogoRemoto } from "@/components/ui/logo-remoto";
 import { CarruselConFlechas } from "@/components/ui/carrusel-con-flechas";
 import { CardProyecto, FilaProyecto } from "@/components/tarjetas/proyecto";
+import { getTecnologias } from "@/lib/datos/catalogos";
 import { contenido } from "@/lib/contenido";
 import type { Idioma } from "@/lib/idioma";
 import {
@@ -49,10 +50,19 @@ export default async function ProyectoPage({
   const proyecto = await getProyecto(slug, idioma);
   if (!proyecto) notFound();
 
-  const [relacionados, ultimos] = await Promise.all([
+  const [relacionados, ultimos, catalogoTecnologias] = await Promise.all([
     getProyectosRelacionados(proyecto),
     getProyectos({ porPagina: 5 }),
+    getTecnologias(),
   ]);
+
+  /* El proyecto trae de cada tecnología solo el id y el nombre; el ícono está
+     en el catálogo, así que se cruzan para poder mostrarlo. */
+  const logoPorId = new Map(catalogoTecnologias.map((t) => [t.id, t.logo]));
+  const stack = proyecto.tecnologias.map((t) => ({
+    ...t,
+    logo: logoPorId.get(t.id) ?? null,
+  }));
 
   const [portada, ...galeria] = proyecto.imagenes;
   const servicios = proyecto.servicios.map((s) => s.nombre).join("  ·  ");
@@ -178,12 +188,9 @@ export default async function ProyectoPage({
       {/* Las dos maquetas los ordenan al revés: desktop pone el stack antes de
           la galería y el board mobile, después. */}
       <div className="flex flex-col">
-        {proyecto.tecnologias.length ? (
+        {stack.length ? (
           <Seccion className="py-0 md:py-0">
-            <FichaEnLinea
-              titulo={T.detalle.stack}
-              items={proyecto.tecnologias}
-            />
+            <FichaEnLinea titulo={T.detalle.stack} items={stack} />
           </Seccion>
         ) : null}
 
@@ -307,9 +314,14 @@ function FichaEnLinea({
         ))}
       </div>
 
+      {/* En escritorio van como etiquetas, con el ícono adentro cuando lo hay:
+          el mismo dato que en mobile, en la forma que pide la maqueta. */}
       <div className="hidden flex-wrap items-center gap-3 md:flex">
         {items.map((item) => (
-          <Chip key={item.id} className="px-4 py-2">
+          <Chip key={item.id} className="flex items-center gap-2 px-4 py-2">
+            {item.logo ? (
+              <LogoRemoto src={item.logo} nombre="" className="max-h-4" />
+            ) : null}
             {item.nombre}
           </Chip>
         ))}
