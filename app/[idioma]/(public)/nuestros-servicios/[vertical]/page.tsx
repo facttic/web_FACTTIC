@@ -98,14 +98,28 @@ export default async function VerticalPage({
     ]);
 
   /*
-   * Los clientes de esta vertical y no todos: en la pantalla de Servicios la
-   * banda es el conjunto, pero acá el sector es el tema de la página y un
-   * cliente de otro rubro no dice nada.
+   * Los clientes y el stack de esta vertical, no los de todo el catálogo: acá
+   * el sector es el tema de la página, y un cliente de otro rubro —o una
+   * tecnología que nadie usó en este— no dicen nada. El stack mostraba las
+   * cincuenta y cuatro tecnologías cargadas, idénticas en las tres verticales.
+   *
+   * Las dos listas salen de los proyectos del sector, cruzadas contra el
+   * catálogo porque los proyectos traen solo el id y el nombre, y acá hace
+   * falta el logo.
    */
-  const deEsteSector = new Set(
+  const clientesDelSector = new Set(
     deLaVertical.items.map((proyecto) => proyecto.cliente?.id).filter(Boolean),
   );
-  const aliados = clientes.filter((cliente) => deEsteSector.has(cliente.id));
+  const aliados = clientes.filter((cliente) =>
+    clientesDelSector.has(cliente.id),
+  );
+
+  const tecnologiasDelSector = new Set(
+    deLaVertical.items.flatMap((proyecto) =>
+      proyecto.tecnologias.map((t) => t.id),
+    ),
+  );
+  const stack = tecnologias.filter((t) => tecnologiasDelSector.has(t.id));
 
   /*
    * Las otras verticales, para el bloque que cierra la pantalla. El número que
@@ -203,9 +217,9 @@ export default async function VerticalPage({
       {/* Los aires de esta pantalla están medidos sobre la maqueta: 98px de
           las tarjetas a la línea del stack, 57 de la línea al título de
           metodologías y 118 del desplegable a proyectos. */}
-      {tecnologias.length ? (
+      {stack.length ? (
         <Seccion className="md:py-8">
-          <Stack titulo={T.stack.titulo} tecnologias={tecnologias} />
+          <Stack titulo={T.stack.titulo} tecnologias={stack} />
         </Seccion>
       ) : null}
 
