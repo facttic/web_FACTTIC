@@ -267,7 +267,7 @@ function Buscador({ alElegir }: { alElegir: (lugar: Lugar) => void }) {
               void buscar();
             }
           }}
-          placeholder="Rosario, Santa Fe"
+          placeholder="Tandil, Buenos Aires"
           className={cn(CONTROL, FOCO, "w-auto min-w-56 flex-1")}
         />
         <BotonAdmin
