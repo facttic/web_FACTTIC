@@ -140,9 +140,14 @@ totalCount}` y proyectos `{items, total, page, limit, pages}`, con
 
 - [ ] **40. Rotar la clave del correo.** Las credenciales de Gmail estaban
       escritas en `resources/auth/helpers/send-email.js`, versionadas en claro.
-      El MR !3 las pasa a `SMTP_USER` y `SMTP_PASS`, pero **la clave vieja sigue
-      en el historial del repositorio**: hay que rotarla desde la cuenta y
-      cargar las variables en el servidor, o las invitaciones no se envían.
+      El MR !3 las pasa a `SMTP_USER` y `SMTP_PASS`, y esas variables **ya están
+      cargadas en el servidor**.
+
+      Quedan dos cosas: **la clave vieja sigue en el historial del
+      repositorio**, así que hay que rotarla desde la cuenta de Gmail si no se
+      hizo —tener la variable cargada no la invalida—; y **probar que la
+      invitación llega**, mandando una desde la ficha de una cooperativa a una
+      casilla propia. Hasta que eso se verifique, nadie sabe si el correo sale.
 
 - [ ] **36. Usuarios por cooperativa.** El plan es que cada coop pueda darse de
       alta sus propios sectores y servicios —los que no son del catálogo de la
@@ -158,12 +163,17 @@ totalCount}` y proyectos `{items, total, page, limit, pages}`, con
       Federación invita por correo desde la ficha.
 
       Lo que faltaba —que cada cooperativa pueda dar de alta sus propios
-      **sectores**— está en el **MR !5** (`sectores-por-cooperativa`, contra
-      `dev`), **sin mergear**: abre `POST /sectores` a quien edita alguna
-      cooperativa, fuerza `esDestacado` en falso, deja el sector a nombre de su
-      cooperativa y reserva imagen y animación para la Federación. Hasta que
-      entre, el alta al vuelo de sectores del panel responde 403 para quien no
-      sea admin.
+      **sectores**— entró con el **MR !5** (`sectores-por-cooperativa`),
+      mergeado a `dev`: abre `POST /sectores` a quien edita alguna cooperativa,
+      fuerza `esDestacado` en falso, deja el sector a nombre de su cooperativa y
+      reserva imagen y animación para la Federación. El panel ya lo usaba, así
+      que no hubo nada que tocar del lado del sitio.
+
+      **Falta probarlo con una cuenta de cooperativa**: desde afuera no se puede
+      distinguir si el servidor ya tomó el merge —la ruta responde 401 sin token
+      en las dos versiones—. La prueba es entrar al panel con un editor de
+      cooperativa y crear un sector al vuelo desde el formulario de proyectos:
+      si responde 403, falta desplegar.
 
 - [x] ~~**38. `sinSector` en `GET /api/proyectos`.**~~ → mergeado y en
       producción. Verificado el 6/10/2026 contra la API: sin el parámetro
