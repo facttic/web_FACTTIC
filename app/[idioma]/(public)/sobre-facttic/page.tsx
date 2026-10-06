@@ -3,7 +3,6 @@ import { Seccion, BandaCta } from "@/components/ui/seccion";
 import { BotonLink } from "@/components/ui/boton";
 import { Animacion } from "@/components/ui/animacion";
 import { Escaneo } from "@/components/ui/escaneo";
-import { Carrusel } from "@/components/ui/carrusel";
 import { CarruselConFlechas } from "@/components/ui/carrusel-con-flechas";
 import { CardLogo } from "@/components/tarjetas/red";
 import { CardOportunidad } from "@/components/tarjetas/bloques";
@@ -117,7 +116,12 @@ export default async function SobreFactticPage({
         */}
         {/* En mobile el board muestra una tarjeta por vez, pintada y con todo
             desplegado, igual que en Sumá tu coop. */}
-        <CarruselConFlechas grilla="" gap="gap-5" className="mt-12 md:hidden">
+        <CarruselConFlechas
+          grilla=""
+          gap="gap-5"
+          className="mt-12 md:hidden"
+          automatico
+        >
           {T.quienes.tarjetas.map((tarjeta, i) => (
             <CardOportunidad
               key={tarjeta.pregunta}
@@ -188,10 +192,13 @@ export default async function SobreFactticPage({
         <Seccion className="pt-0">
           <div className="border-t border-dotted border-punteado pt-10 md:grid md:grid-cols-[352px_1fr] md:gap-16">
             <h2 className="text-h2 whitespace-pre-line">{T.espacios.titulo}</h2>
-            <Carrusel
+            {/* Pasa solo y con flechas, como el resto: son más logos de los
+                que entran a la vez y en mobile no se notaba que hubiera más. */}
+            <CarruselConFlechas
               grilla="md:grid-cols-4"
               gap="gap-5"
               className="mt-8 md:mt-0"
+              automatico
             >
               {organizaciones.map((organizacion) => (
                 <CardLogo
@@ -201,7 +208,7 @@ export default async function SobreFactticPage({
                   className="h-[90px] w-[180px] shrink-0 snap-start md:w-auto"
                 />
               ))}
-            </Carrusel>
+            </CarruselConFlechas>
           </div>
         </Seccion>
       ) : null}

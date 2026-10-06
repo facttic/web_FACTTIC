@@ -234,7 +234,7 @@ export default async function ProyectoPage({
             tamanoTitulo="h2"
           />
           {/* En mobile se pasan con las flechas, de a uno. */}
-          <CarruselConFlechas grilla="md:grid-cols-3" gap="gap-5">
+          <CarruselConFlechas grilla="md:grid-cols-3" gap="gap-5" automatico>
             {relacionados.map((otro) => (
               <CardProyecto
                 key={otro.id}

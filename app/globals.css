@@ -1048,3 +1048,23 @@ body {
     rgb(0 0 0 / 0.3) 90%
   );
 }
+
+/**
+ * El sol del hero de Nuestros servicios, que tampoco se corta.
+ *
+ * Mismo problema que el del lema pero al revés: acá lo que sobra va solo para
+ * abajo, contra el bloque de "Nuestras soluciones". El dibujo mide 1024px y la
+ * sección le recortaba los últimos 32, justo donde cierra el arco punteado, así
+ * que el corte se leía como un error.
+ *
+ * La máscara deja el cuerpo entero y apaga el último tramo, que es el que pasa
+ * por detrás de la sección siguiente.
+ */
+@utility sol-del-hero {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 82%,
+    rgb(0 0 0 / 0.25) 100%
+  );
+  mask-image: linear-gradient(to bottom, #000 82%, rgb(0 0 0 / 0.25) 100%);
+}

@@ -15,17 +15,19 @@ import { BotonFlecha } from "@/components/ui/boton";
  * El desplazamiento se mide del propio scroll y no de un índice: la pista es
  * scrollable a mano —con el dedo— y un contador propio se desincronizaría.
  *
- * Con `automatico` se pasa solo, con las mismas reglas que la cinta del
- * Consejo: empieza recién cuando el bloque está a la vista, espera un momento
- * antes de la primera pasada, y se queda quieto mientras el puntero está
- * encima, mientras algo de adentro tiene el foco y un rato después de que
- * alguien lo haya movido a mano.
+ * Con `automatico` se pasa solo: empieza dos segundos después de que el bloque
+ * queda a la vista, pasa una tarjeta cada cuatro, y se queda quieto mientras el
+ * puntero está encima, mientras algo de adentro tiene el foco y un rato después
+ * de que alguien lo haya movido a mano. Es la forma en que pasan todos los
+ * carruseles del sitio.
  */
 
 /** Lo que espera antes de la primera pasada, ya en pantalla. */
 const ESPERA_AL_LLEGAR = 2000;
+/** Cuánto dura un desplazamiento suave nuestro, para no confundirlo con el dedo. */
+const DURA_LA_PASADA = 900;
 /** Lo que se queda quieto después de que alguien lo mueve a mano. */
-const ESPERA_TRAS_MANO = 8000;
+const ESPERA_TRAS_MANO = 4000;
 /** Cada cuánto pasa una tarjeta. */
 const CADA = 4000;
 
@@ -38,6 +40,8 @@ export function CarruselConFlechas({
   const siempre = resto.desdeAncho === "nunca";
   const pista = useRef<HTMLDivElement>(null);
   const esperaHasta = useRef(0);
+  /* Hasta cuándo los `scroll` que lleguen son nuestros y no de la persona. */
+  const pasadaNuestra = useRef(0);
   const [puede, setPuede] = useState({ atras: false, adelante: true });
 
   const medir = () => {
@@ -48,6 +52,24 @@ export function CarruselConFlechas({
       atras: nodo.scrollLeft > 4,
       adelante: nodo.scrollLeft < sobra - 4,
     });
+  };
+
+  /**
+   * Movimiento a mano: lo deja quieto un rato para no pelearle a quien está
+   * mirando.
+   *
+   * Se detecta del `scroll` de la pista y no del puntero ni de la rueda, que
+   * era el error: bajar la página con el dedo o con la rueda **sobre** el
+   * carrusel disparaba los dos, así que llegar a la sección ya contaba como
+   * haberlo tocado y lo dejaba esperando antes de la primera pasada. El scroll
+   * horizontal, en cambio, solo ocurre si de verdad lo movieron —o si lo
+   * movimos nosotros, y eso lo marca `pasadaNuestra`—.
+   */
+  const alDesplazar = () => {
+    medir();
+    if (automatico && performance.now() > pasadaNuestra.current) {
+      esperaHasta.current = performance.now() + ESPERA_TRAS_MANO;
+    }
   };
 
   useEffect(() => {
@@ -63,6 +85,7 @@ export function CarruselConFlechas({
     const paso =
       (nodo.firstElementChild as HTMLElement | null)?.offsetWidth ??
       nodo.clientWidth;
+    pasadaNuestra.current = performance.now() + DURA_LA_PASADA;
     nodo.scrollBy({ left: sentido * (paso + 20), behavior: "smooth" });
   };
 
@@ -77,6 +100,7 @@ export function CarruselConFlechas({
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let aLaVista = false;
+    let arranque: ReturnType<typeof setTimeout> | undefined;
     let reloj: ReturnType<typeof setInterval> | undefined;
 
     const paso = () => {
@@ -87,26 +111,36 @@ export function CarruselConFlechas({
       // Al llegar al final vuelve al principio en vez de quedarse trabado.
       const sobra = nodo.scrollWidth - nodo.clientWidth;
       if (nodo.scrollLeft >= sobra - 4) {
+        pasadaNuestra.current = performance.now() + DURA_LA_PASADA;
         nodo.scrollTo({ left: 0, behavior: "smooth" });
         return;
       }
       correr(1);
     };
 
+    const detener = () => {
+      if (arranque) clearTimeout(arranque);
+      if (reloj) clearInterval(reloj);
+      arranque = undefined;
+      reloj = undefined;
+    };
+
     const enPantalla = new IntersectionObserver(
       ([entrada]) => {
         aLaVista = entrada.isIntersecting;
-        if (aLaVista && !reloj) {
-          // Se lo ve quieto un momento antes de que empiece a pasar solo.
-          esperaHasta.current = Math.max(
-            esperaHasta.current,
-            performance.now() + ESPERA_AL_LLEGAR,
-          );
+        if (!aLaVista) return detener();
+        if (arranque || reloj) return;
+        /*
+         * La primera pasada va con su propio reloj y no esperando al primer
+         * tic del intervalo: con el intervalo solo, se lo veía quieto los
+         * cuatro segundos del paso antes de moverse por primera vez. Así se
+         * mueve a los dos, que es lo que se pidió, y después sigue cada CADA.
+         */
+        arranque = setTimeout(() => {
+          arranque = undefined;
+          paso();
           reloj = setInterval(paso, CADA);
-        } else if (!aLaVista && reloj) {
-          clearInterval(reloj);
-          reloj = undefined;
-        }
+        }, ESPERA_AL_LLEGAR);
       },
       // Con la mitad a la vista: asomando apenas por el borde todavía no se lee.
       { threshold: 0.5 },
@@ -115,24 +149,13 @@ export function CarruselConFlechas({
 
     return () => {
       enPantalla.disconnect();
-      if (reloj) clearInterval(reloj);
+      detener();
     };
   }, [automatico]);
 
-  /** Moverlo a mano —con el dedo o la rueda— también lo deja quieto un rato. */
-  const aMano = () => {
-    if (automatico) esperaHasta.current = performance.now() + ESPERA_TRAS_MANO;
-  };
-
   return (
     <>
-      <div
-        ref={pista}
-        onScroll={medir}
-        onPointerDown={aMano}
-        onWheel={aMano}
-        className={clasesCarrusel(resto)}
-      >
+      <div ref={pista} onScroll={alDesplazar} className={clasesCarrusel(resto)}>
         {children}
       </div>
       <div

@@ -171,7 +171,12 @@ export default async function SumaTuCoopPage({
 
         {/* En mobile el board muestra una tarjeta por vez, pintada y con todo
             desplegado, y se pasan con las flechas. */}
-        <CarruselConFlechas grilla="" gap="gap-5" className="md:hidden">
+        <CarruselConFlechas
+          grilla=""
+          gap="gap-5"
+          className="md:hidden"
+          automatico
+        >
           {T.camino.items.map((item, i) => (
             <CardOportunidad
               key={item.pregunta}

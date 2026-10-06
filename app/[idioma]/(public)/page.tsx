@@ -167,7 +167,11 @@ export default async function HomePage({
               </BotonLink>
             }
           />
-          <CarruselConFlechas grilla="md:grid-cols-[2.06fr_1fr]" gap="gap-5">
+          <CarruselConFlechas
+            grilla="md:grid-cols-[2.06fr_1fr]"
+            gap="gap-5"
+            automatico
+          >
             {destacados.items.map((proyecto, i) => (
               <AlEntrar
                 key={proyecto.id}

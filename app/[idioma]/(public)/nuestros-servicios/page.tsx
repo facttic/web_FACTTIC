@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { EncabezadoSeccion, Seccion, BandaCta } from "@/components/ui/seccion";
 import { BotonLink } from "@/components/ui/boton";
-import { Carrusel } from "@/components/ui/carrusel";
+import { CarruselConFlechas } from "@/components/ui/carrusel-con-flechas";
 import { Animacion } from "@/components/ui/animacion";
 import { CardSector } from "@/components/tarjetas/sector";
 import {
@@ -60,12 +60,24 @@ export default async function NuestrosServiciosPage({
     <>
       {/* El hero de esta pantalla no lleva video. El fondo animado que entregó
           diseño aparece solo en mobile: el prototipo desktop lo deja liso. */}
-      <section className="relative isolate overflow-hidden">
+      {/*
+        El sol no se corta contra el bloque de abajo: lo que sobra del dibujo
+        sigue de largo por detrás de "Nuestras soluciones", apagándose. Antes
+        el `overflow-hidden` lo partía con una recta justo donde termina el
+        hero, y se veía el arco punteado cortado al medio.
+
+        Por eso la sección va con `-z-10` y sin `isolate`, igual que el lema de
+        la Home: aislarla la volvía un contexto propio y el sol quedaba pintado
+        por encima de la sección siguiente en vez de pasarle por debajo. El
+        recorte horizontal queda —`overflow-x-clip`, que no arrastra el eje
+        vertical—: el dibujo mide 1024 y la pantalla 393.
+      */}
+      <section className="relative -z-10 overflow-x-clip">
         {/* Cruza todo el ancho y se apoya contra el borde de arriba: en el
             board los rayos se ven por detrás de la barra. */}
         <Animacion
           nombre={FONDOS.servicios}
-          className="pointer-events-none absolute -top-[39rem] left-1/2 -z-10 size-[64rem] -translate-x-1/2 blur-[2px] md:hidden"
+          className="sol-del-hero pointer-events-none absolute -top-[39rem] left-1/2 -z-10 size-[64rem] -translate-x-1/2 blur-[2px] md:hidden"
         />
         {/* El hero respira más abajo que el resto de las secciones: en el
             board hay 121px entre la última línea de la bajada y el rótulo de
@@ -190,7 +202,10 @@ export default async function NuestrosServiciosPage({
           descripcion={T.porQue.descripcion}
           descripcionAlLado
         />
-        <Carrusel grilla="md:grid-cols-4" gap="gap-5">
+        {/* Con flechas y pasando solo, como el resto de los carruseles del
+            sitio: en mobile entra una tarjeta por vez y sin nada que indique
+            que hay más, las otras tres no existían. */}
+        <CarruselConFlechas grilla="md:grid-cols-4" gap="gap-5" automatico>
           {T.porQue.items.map((item) => (
             <CardPropuesta
               key={item.titulo}
@@ -200,7 +215,7 @@ export default async function NuestrosServiciosPage({
               className="h-[265px] w-[287px] shrink-0 snap-start md:w-auto"
             />
           ))}
-        </Carrusel>
+        </CarruselConFlechas>
       </Seccion>
 
       {aliados.length ? (

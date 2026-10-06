@@ -140,7 +140,11 @@ export default async function NovedadesPage({
           <>
             <div className="grid gap-5 md:grid-cols-2">
               {visibles.map((novedad) => (
-                <CardNovedad key={novedad.id} novedad={novedad} idioma={idioma} />
+                <CardNovedad
+                  key={novedad.id}
+                  novedad={novedad}
+                  idioma={idioma}
+                />
               ))}
             </div>
 
