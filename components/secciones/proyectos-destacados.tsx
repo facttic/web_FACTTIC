@@ -86,7 +86,13 @@ export function ProyectosDestacados({
       <div
         ref={pista}
         onScroll={medir}
-        className="scroll-limpio hidden gap-5 overflow-x-auto md:flex"
+        /*
+          El relleno es para que la tarjeta pueda inclinarse sin que la corten:
+          un contenedor con scroll recorta en los dos ejes, no solo en el que
+          se desplaza, así que al pasar el mouse la tarjeta perdía los bordes.
+          Los márgenes negativos lo devuelven a su lugar.
+        */
+        className="scroll-limpio -mx-6 -my-6 hidden gap-5 overflow-x-auto px-6 py-6 md:flex"
       >
         {proyectos.map((proyecto, i) => (
           <CardProyecto
