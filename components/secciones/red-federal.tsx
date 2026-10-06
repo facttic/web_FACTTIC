@@ -463,6 +463,13 @@ function CardCooperativaRed({
     <div
       className={cn(
         "flex flex-col overflow-hidden rounded-xl bg-superficie",
+        /*
+          Al pasar el mouse se le enciende el borde violeta y se levanta un
+          poco. Es el mismo hover de las tarjetas del consejo: no se rellenan,
+          porque la tarjeta entera no es un enlace —los enlaces son los del
+          pie— y rellenarla prometería un clic que no existe.
+        */
+        "borde-degradado-hover transition-transform duration-300 hover:-translate-y-1",
         className,
       )}
     >

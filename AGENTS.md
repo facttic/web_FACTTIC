@@ -1,4 +1,5 @@
 <!-- BEGIN:nextjs-agent-rules -->
+
 # This is NOT the Next.js you know
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
@@ -52,6 +53,16 @@ esto: dice que redimensiona pero no cambia el viewport.
   tailwind-merge la toma por una clase de color y la descarta.
 - **`group-hover:` no alcanza al elemento que lleva `group`.** Para pintar la
   propia tarjeta va `hover:`.
+- **Chrome headless se declara táctil.** Tailwind envuelve todas las variantes
+  `hover:` en `@media (hover: hover)`, que ahí da falso: la clase está en el
+  DOM, la regla está en el CSS y aun así no aplica, lo que parece un error del
+  proyecto. `medir.py` ya arranca con los `--blink-settings` que lo corrigen
+  —`Emulation.setEmulatedMedia` no sirve, no acepta `hover` ni `pointer`—. Para
+  que el `:hover` se active hay que mover el mouse con
+  `Input.dispatchMouseEvent`; desde JavaScript no se puede.
+- **En Tailwind v4 `translate-y-*` no escribe `transform` sino `translate`.**
+  Al medir, `getComputedStyle(n).transform` sigue en `none` aunque el
+  desplazamiento esté aplicado.
 - **Los datos vienen cacheados una hora** (`revalidate: 3600` en `lib/datos/`).
   Después de tocar contenido por API hay que reiniciar para verlo.
 - **El token de la API dura 15 minutos.** Un `curl` sin `-i` devuelve 401 sin que

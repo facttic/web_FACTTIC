@@ -1017,3 +1017,34 @@ body {
     transition: none;
   }
 }
+
+/**
+ * El sol del lema, que ya no se corta.
+ *
+ * La animación mide 576px y la banda de la marquesina 185, así que sobran casi
+ * 200px arriba y otros tantos abajo. Antes se recortaban y el sol quedaba
+ * partido por dos rectas; ahora sigue de largo por detrás de los bloques
+ * vecinos.
+ *
+ * Lo que sobresale va más tenue. El tramo central —de 34% a 66%, que es
+ * exactamente el alto de la banda sobre el alto del sol— queda entero, y hacia
+ * los bordes la máscara lo baja a un 30%. Sobre el `opacity-40` que ya tenía,
+ * el derrame termina en un 12%: se adivina detrás del texto en vez de
+ * competirle.
+ */
+@utility sol-del-lema {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0.3) 10%,
+    #000 34%,
+    #000 66%,
+    rgb(0 0 0 / 0.3) 90%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0.3) 10%,
+    #000 34%,
+    #000 66%,
+    rgb(0 0 0 / 0.3) 90%
+  );
+}

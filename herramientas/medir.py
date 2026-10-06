@@ -24,12 +24,29 @@ PUERTO = 9333
 PERFIL = "/tmp/claude-1000/chrome-perfil-facttic"
 
 
+#
+# Chrome headless se declara táctil: `(hover: hover)` y `(pointer: fine)` dan
+# falso. Tailwind envuelve **todas** las variantes `hover:` en
+# `@media (hover: hover)`, así que sin esto ningún hover del sitio se puede
+# verificar: la clase aparece en el DOM, la regla está en el CSS y aun así no
+# aplica, que parece un error del proyecto y no lo es.
+#
+# `Emulation.setEmulatedMedia` no sirve —no acepta `hover` ni `pointer`—; hay
+# que decírselo a Blink al arrancar. Los valores son los del enum: hover=2,
+# pointer fino=4.
+#
+HOVER_DE_MOUSE = (
+    "--blink-settings=primaryHoverType=2,availableHoverTypes=2,"
+    "primaryPointerType=4,availablePointerTypes=4"
+)
+
+
 def arrancar():
     proc = subprocess.Popen(
         [
             "google-chrome", "--headless=new", "--disable-gpu", "--no-sandbox",
             "--hide-scrollbars", f"--remote-debugging-port={PUERTO}",
-            "--remote-allow-origins=*",
+            "--remote-allow-origins=*", HOVER_DE_MOUSE,
             f"--user-data-dir={PERFIL}", f"--window-size={ANCHO},{ALTO}",
             "about:blank",
         ],

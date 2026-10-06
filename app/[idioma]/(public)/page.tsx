@@ -206,14 +206,23 @@ export default async function HomePage({
         la marquesina sola, así que en mobile ya no hay enlace a Sobre FACTTIC
         desde acá.
 
-        `overflow-hidden` no es decorativo: la animación mide 576px y va
-        centrada, así que en pantallas angostas se salía del viewport y le daba
-        scroll horizontal a toda la página.
+        El sol no se corta: mide 576px, la banda 185, y lo que sobra —casi 200
+        arriba y otros tantos abajo— sigue de largo por detrás de la banda de
+        "¿Tenés un proyecto?" y del encabezado de Beneficios, cada vez más
+        tenue. De eso se encarga `sol-del-lema`.
+
+        Por eso el bloque va con `-z-10` y sin `isolate`: aislarlo lo volvía un
+        contexto propio y el sol quedaba pintado por encima de sus vecinos en
+        vez de pasarles por debajo.
+
+        El recorte horizontal sí queda —`overflow-x-clip`, que a diferencia de
+        `hidden` no arrastra el eje vertical—: la animación va centrada y, sin
+        eso, en pantallas angostas le daría scroll horizontal a toda la página.
       */}
-      <div className="relative isolate order-8 overflow-hidden md:order-7">
+      <div className="relative -z-10 order-8 overflow-x-clip md:order-7">
         <Animacion
           nombre={FONDOS.homeLema}
-          className="pointer-events-none absolute top-1/2 left-1/2 -z-10 hidden size-[36rem] -translate-x-1/2 -translate-y-1/2 opacity-40 md:block"
+          className="sol-del-lema pointer-events-none absolute top-1/2 left-1/2 -z-10 hidden size-[36rem] -translate-x-1/2 -translate-y-1/2 opacity-40 md:block"
         />
         <Marquesina texto={HOME.lema.texto} />
       </div>
