@@ -49,6 +49,20 @@ const COOKIE_IDIOMA = "facttic_idioma";
 const DURACION_COOKIE = 60 * 60 * 24 * 365;
 
 /**
+ * Quiénes no entran en la detección de idioma.
+ *
+ * Un enlace al sitio en español pegado en Telegram salía previsualizado en
+ * inglés: su rastreador manda `Accept-Language: en` y se comía la redirección,
+ * así que leía `/en` en vez de la dirección compartida. Lo mismo vale para
+ * Google: si lo mandamos a `/en`, la versión en español deja de indexarse.
+ *
+ * A un rastreador se le sirve **la dirección que pidió**, sin adivinarle nada.
+ * La lista es por nombre porque no hay otra forma: se mira el `User-Agent`.
+ */
+const RASTREADORES =
+  /bot|crawler|spider|crawling|facebookexternalhit|telegram|whatsapp|slackbot|discordbot|embedly|quora|pinterest|vkshare|preview|skype|linkedin|twitter|google|bing|duckduck|yandex|baidu|applebot|lighthouse|headlesschrome/i;
+
+/**
  * Qué idioma pide el navegador, del `Accept-Language`.
  *
  * Devuelve `null` si no hay con qué decidir. Español es español; cualquier otra
@@ -167,9 +181,10 @@ export function proxy(request: NextRequest) {
   const sinDecidir = !esPanel && !request.cookies.has(COOKIE_IDIOMA);
 
   if (sinDecidir && !conPrefijo) {
-    const delNavegador = idiomaDelNavegador(
-      request.headers.get("accept-language"),
-    );
+    const quienPide = request.headers.get("user-agent") ?? "";
+    const delNavegador = RASTREADORES.test(quienPide)
+      ? null
+      : idiomaDelNavegador(request.headers.get("accept-language"));
     if (delNavegador === "en") {
       const aIngles = request.nextUrl.clone();
       aIngles.pathname = rutaEn("en", pathname);

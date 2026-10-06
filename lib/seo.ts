@@ -99,6 +99,13 @@ export function metadatosDe({
    * pestaña de Proyectos decía "Nuestro⏎trabajo intercoop".
    */
   const limpio = titulo.replace(/\s+/g, " ").trim();
+  /*
+   * La imagen de la casa, la que dibuja `opengraph-image.tsx`, para las
+   * pantallas que no traen una propia. Se nombra acá en vez de confiar en que
+   * Next la agregue sola por convención: declarando nosotros el `openGraph`,
+   * no la sumaba, y los enlaces se compartían sin imagen.
+   */
+  const portada = imagen ?? (idioma === "en" ? "/en" : "") + "/opengraph-image";
 
   return {
     title: limpio,
@@ -121,13 +128,13 @@ export function metadatosDe({
       alternateLocale: idioma === "en" ? "es_AR" : "en_US",
       title: `${limpio} · ${SITIO}`,
       description: bajada,
-      ...(imagen ? { images: [{ url: imagen }] } : {}),
+      images: [{ url: portada, width: 1200, height: 630, alt: SITIO }],
     },
     twitter: {
       card: "summary_large_image",
       title: `${limpio} · ${SITIO}`,
       description: bajada,
-      ...(imagen ? { images: [imagen] } : {}),
+      images: [portada],
     },
     ...(sinIndexar ? { robots: { index: false, follow: false } } : {}),
   };

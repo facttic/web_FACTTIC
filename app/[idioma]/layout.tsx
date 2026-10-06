@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { Inter, DM_Mono } from "next/font/google";
 import "../globals.css";
 import { contenido } from "@/lib/contenido";
@@ -93,7 +94,17 @@ export default async function RootLayout({
   params: Promise<{ idioma: string }>;
 }) {
   const { idioma } = await params;
-  const lang: Idioma = esIdioma(idioma) ? idioma : IDIOMA_POR_DEFECTO;
+  /*
+   * Un idioma que no existe es un 404 y no la versión en español.
+   *
+   * El proxy deja pasar sin reescribir todo lo que termina en extensión —para
+   * no meterse con los archivos—, así que una dirección inventada como
+   * `/algo.png` caía acá con el idioma valiendo "algo.png". Antes se la tomaba
+   * como español y la pantalla reventaba más abajo, al pedirle un texto al
+   * diccionario: la respuesta era un 500 donde correspondía un 404.
+   */
+  if (!esIdioma(idioma)) notFound();
+  const lang: Idioma = idioma;
 
   return (
     <html lang={lang} className={`${inter.variable} ${dmMono.variable} h-full`}>

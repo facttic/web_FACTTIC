@@ -126,6 +126,23 @@ totalCount}` y proyectos `{items, total, page, limit, pages}`, con
       Los **sectores** siguen la misma regla: `getSectoresDestacados()` en la
       Home, en Nuestros servicios y en el filtro de Proyectos.
 
+- [ ] **43. Optimizar las imágenes del contenido.** Las portadas se sirven
+      crudas, como las sube el backoffice. Medido el 6/10/2026 sobre lo que
+      publica Proyectos: tres miniaturas que se dibujan a ~391px de ancho pesan
+      **1,8 MB** entre las tres. La peor es una foto de celular sin tocar
+      —3024x4032, 867 KB— mostrada en una caja de 391x310: sesenta veces los
+      píxeles que se ven. Reescaladas a 400px y en WebP dan **33 KB en total**,
+      un 98% menos.
+
+      Dos caminos, no excluyentes:
+      1. **`next/image`**: pide `images.remotePatterns` con el host de la API y
+         convertir unos diez `<img>`. Da `srcset` por ancho, AVIF/WebP y
+         reserva de espacio —menos CLS—. El trabajo real es que varias usan
+         `object-cover` en posición absoluta y hay que pasarlas a `fill`
+         revisando el recorte en los dos anchos.
+      2. **Achicar al subir**, desde el backoffice. Ataca el grueso sin tocar
+         las vistas, pero no da `srcset` ni formato moderno.
+
 ### Nuevos (sin enviar)
 
 - [ ] **41. Filtrar proyectos por "sector que no es del catálogo".** El filtro
