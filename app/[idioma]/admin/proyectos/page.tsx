@@ -8,6 +8,7 @@ import {
   Fila,
   Tabla,
 } from "@/components/admin/piezas";
+import { BuscadorDeTabla } from "@/components/admin/buscador-de-tabla";
 import { borrarProyecto } from "./acciones";
 
 export const metadata = { title: "Proyectos" };
@@ -28,7 +29,6 @@ export default async function ProyectosPage() {
     <div>
       <Encabezado
         titulo="Proyectos"
-        cantidad={proyectos.length}
         accion={
           <EnlaceAdmin href="/admin/proyectos/nueva">
             Agregar proyecto
@@ -36,11 +36,25 @@ export default async function ProyectosPage() {
         }
       />
 
+      {/* La cuenta la lleva el buscador, que sabe cuántos quedan a la vista. */}
+      <BuscadorDeTabla queBusca="proyectos" total={proyectos.length} />
+
       <Tabla
         columnas={["Nombre", "Sector", "Cliente", "Imágenes", "Destacado", ""]}
       >
         {proyectos.map((proyecto) => (
-          <Fila key={proyecto.id}>
+          <Fila
+            key={proyecto.id}
+            /* Se busca por lo que se ve en la fila: con solo el nombre no se
+               puede pedir "los de Agro" ni "los de tal cliente". */
+            busca={[
+              proyecto.nombre,
+              proyecto.sector?.nombre,
+              proyecto.cliente?.nombre,
+            ]
+              .filter(Boolean)
+              .join(" ")}
+          >
             <Celda className="text-p2">
               <span className="line-clamp-1 max-w-xs">{proyecto.nombre}</span>
             </Celda>
