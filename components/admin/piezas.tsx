@@ -401,9 +401,17 @@ function AltaAlVuelo({
     );
   }
 
+  /*
+   * El alta abre su propio recuadro y no deja los controles sueltos debajo del
+   * selector: con el nombre, el logo y los dos botones repartidos a lo largo
+   * de la columna no se entendía dónde empezaba y dónde terminaba lo que se
+   * estaba creando.
+   */
   return (
-    <div className="mt-3">
-      <div className="flex flex-wrap items-start gap-2">
+    <div className="mt-2 rounded-md border border-borde bg-superficie/40 p-3">
+      <p className="text-p3 mb-2 text-blanco/90">Nuevo {queEs}</p>
+
+      <div className="flex flex-col gap-2">
         <input
           autoFocus
           value={valor}
@@ -416,10 +424,33 @@ function AltaAlVuelo({
             }
             if (e.key === "Escape") setAbierto(false);
           }}
-          placeholder={`Nombre ${queEs === "uno" ? "" : `del ${queEs}`}`.trim()}
+          placeholder="Nombre"
           aria-label={`Nombre ${queEs}`}
-          className={cn(CONTROL, FOCO, "w-auto min-w-64 flex-1")}
+          className={cn(CONTROL, FOCO)}
         />
+
+        {conLogo ? (
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setLogo(e.target.files?.[0])}
+            aria-label={`Logo del ${queEs}`}
+            className={cn(
+              "text-p3 w-full cursor-pointer rounded-md border border-borde bg-negro-oscuro/60 px-3 py-2 text-blanco/70",
+              "file:mr-3 file:cursor-pointer file:rounded file:border-0 file:bg-superficie-alta file:px-3 file:py-1 file:text-blanco",
+              FOCO,
+            )}
+          />
+        ) : null}
+      </div>
+
+      {conLogo ? (
+        <Ayuda>
+          El logo es opcional; después solo lo cambia la Federación.
+        </Ayuda>
+      ) : null}
+
+      <div className="mt-3 flex gap-2">
         <BotonAdmin
           type="button"
           onClick={() => void confirmar()}
@@ -438,25 +469,7 @@ function AltaAlVuelo({
           Cancelar
         </BotonAdmin>
       </div>
-      {conLogo ? (
-        <div className="mt-2">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setLogo(e.target.files?.[0])}
-            aria-label={`Logo del ${queEs}`}
-            className={cn(
-              "text-p3 w-full cursor-pointer rounded-md border border-borde bg-negro-oscuro/60 px-3 py-2 text-blanco/70",
-              "file:mr-3 file:cursor-pointer file:rounded file:border-0 file:bg-superficie-alta file:px-3 file:py-1 file:text-blanco",
-              FOCO,
-            )}
-          />
-          <Ayuda>
-            El logo, si lo tenés a mano. Después solo lo puede cambiar la
-            Federación, desde Clientes.
-          </Ayuda>
-        </div>
-      ) : null}
+
       {error ? (
         <p role="alert" className="text-p3 mt-2 text-rojo">
           {error}
