@@ -53,17 +53,35 @@ export function FiltrosProyectos({
     });
   };
 
+  /*
+   * `etiqueta` es el nombre del filtro, que solo leen los lectores de
+   * pantalla; `todos` es lo que se ve cuando no hay nada elegido. Eran la
+   * misma cadena, y por eso el desplegable decía "Por cooperativa" estando
+   * todas: parecía una instrucción sin cumplir en vez de un estado.
+   */
   const grupos = [
-    { nombre: "sector", etiqueta: T.filtros.sector, opciones: sectores },
-    { nombre: "servicio", etiqueta: T.filtros.servicio, opciones: servicios },
+    {
+      nombre: "sector",
+      etiqueta: T.filtros.sector,
+      todos: T.filtros.todos.sector,
+      opciones: sectores,
+    },
+    {
+      nombre: "servicio",
+      etiqueta: T.filtros.servicio,
+      todos: T.filtros.todos.servicio,
+      opciones: servicios,
+    },
     {
       nombre: "tecnologia",
       etiqueta: T.filtros.tecnologia,
+      todos: T.filtros.todos.tecnologia,
       opciones: tecnologias,
     },
     {
       nombre: "cooperativa",
       etiqueta: T.filtros.cooperativa,
+      todos: T.filtros.todos.cooperativa,
       opciones: cooperativas,
     },
   ];
@@ -121,7 +139,7 @@ export function FiltrosProyectos({
                 FOCO,
               )}
             >
-              <option value="">{grupo.etiqueta}</option>
+              <option value="">{grupo.todos}</option>
               {grupo.opciones.map((opcion) => (
                 <option key={opcion.id} value={opcion.id}>
                   {opcion.nombre}

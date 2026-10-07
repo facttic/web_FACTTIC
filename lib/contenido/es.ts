@@ -434,7 +434,19 @@ export const PROYECTOS_PAGINA = {
     sectorOtros: "Otros",
     servicio: "Servicios",
     tecnologia: "Tecnologías",
-    cooperativa: "Por cooperativa",
+    cooperativa: "Cooperativas",
+    /*
+     * Lo que se lee en el desplegable cuando no hay nada elegido. Tiene que
+     * decir "todos" y no nombrar el filtro: con el nombre solo —"Por
+     * cooperativa"— parecía una instrucción pendiente y no se entendía que
+     * ya estaban todas.
+     */
+    todos: {
+      sector: "Todos los sectores",
+      servicio: "Todos los servicios",
+      tecnologia: "Todas las tecnologías",
+      cooperativa: "Todas las cooperativas",
+    },
     abrir: "Filtrar",
     limpiar: "Limpiar filtros",
   },
