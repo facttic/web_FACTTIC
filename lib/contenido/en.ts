@@ -124,6 +124,9 @@ export const HOME = {
 } as const;
 
 export const PIE = {
+  /* El nombre completo: el wordmark dice FACT[TIC] y nada más. */
+  nombre:
+    "Argentine Federation of Technology, Innovation and Knowledge Worker Co-operatives",
   licencia: {
     antes: "This site is",
     enlace: "open source",
@@ -618,8 +621,8 @@ export const NUESTRA_RED = {
   },
   hero: {
     titulo:
-      "We are\na federal network\nof technology,\ninnovation and\nknowledge\nco-ops",
-    tituloMobile: "We are\na federal network",
+      "We are\na federal network\nof Argentine technology,\ninnovation and\nknowledge\nco-ops",
+    tituloMobile: "We are\na federal network\nof Argentine co-ops",
   },
   panel: {
     rotulo: "Selected province",

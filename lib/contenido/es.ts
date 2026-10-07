@@ -152,6 +152,9 @@ export const HOME = {
  * la versión en inglés.
  */
 export const PIE = {
+  /* El nombre completo: el wordmark dice FACT[TIC] y nada más. */
+  nombre:
+    "Federación Argentina de Cooperativas de Trabajo de Tecnología, Innovación y Conocimiento",
   licencia: {
     antes: "Sitio",
     enlace: "de código abierto",
@@ -791,9 +794,9 @@ export const NUESTRA_RED = {
   },
   hero: {
     titulo:
-      "Somos\nuna red federal\nde cooperativas\nde tecnología,\ninnovación y\nconocimiento",
+      "Somos\nuna red federal\nde cooperativas\nargentinas\nde tecnología,\ninnovación y\nconocimiento",
     // El board mobile lo corta en dos renglones: el mapa entra justo abajo.
-    tituloMobile: "Somos\nuna red federal",
+    tituloMobile: "Somos\nuna red federal\nde cooperativas\nargentinas",
   },
   panel: {
     rotulo: "Provincia seleccionada",

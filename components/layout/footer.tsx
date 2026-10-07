@@ -39,10 +39,14 @@ export function Footer() {
     <footer className="mt-auto">
       <div className="contenedor py-8 md:py-14">
         <div className="hidden gap-10 md:grid md:grid-cols-[210px_1fr]">
-          {/* Cinco toques y pasa algo. */}
-          <ConArcoiris className="inline-block cursor-default select-none">
-            <Logo href={null} />
-          </ConArcoiris>
+          <div>
+            {/* Cinco toques y pasa algo. */}
+            <ConArcoiris className="inline-block cursor-default select-none">
+              <Logo href={null} />
+            </ConArcoiris>
+            {/* El wordmark dice FACT[TIC] y nada más: acá va qué significa. */}
+            <p className="text-p3 mt-4 font-sans text-blanco/40">{T.nombre}</p>
+          </div>
 
           <nav aria-label="Pie de página">
             <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:flex lg:justify-between lg:gap-8">
@@ -71,6 +75,12 @@ export function Footer() {
             </div>
           </nav>
         </div>
+
+        {/* En mobile el pie no muestra el logo ni su columna, así que el
+            nombre completo va acá arriba del todo. */}
+        <p className="text-p3 mb-6 font-sans text-blanco/40 md:hidden">
+          {T.nombre}
+        </p>
 
         <div className="flex flex-col gap-6 md:mt-24 md:flex-row md:items-center md:justify-between">
           {/* El board mobile los apila: el © arriba y las redes debajo. En

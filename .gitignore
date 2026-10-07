@@ -49,3 +49,7 @@ next-env.d.ts
 
 # Caché de los scripts de herramientas/
 __pycache__/
+
+# Notas de trabajo, no van al repositorio público
+AGENTS.md
+PENDIENTES.md
