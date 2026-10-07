@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { BotonFlecha } from "@/components/ui/boton";
 import { EncabezadoSeccion } from "@/components/ui/seccion";
 import { CardProyecto, FilaProyecto } from "@/components/tarjetas/proyecto";
+import { usePista, unaPantalla } from "@/components/ui/pista";
 import type { Proyecto } from "@/lib/dominio/tipos";
 
 /**
@@ -14,6 +14,10 @@ import type { Proyecto } from "@/lib/dominio/tipos";
  * una tarjeta ancha y una angosta, como el bloque de destacados de la Home,
  * que avanza de a una pantalla. En mobile la maqueta lo cambia por la lista
  * de filas, sin flechas.
+ *
+ * Pasa solo, con el mismo ritmo que el resto de los carruseles: lo trae
+ * `usePista`. Avanza de a una pantalla y no de a una tarjeta porque el par
+ * ancha + angosta tiene que seguir cayendo igual en cada pasada.
  *
  * Es un componente de cliente porque las flechas necesitan saber cuánto queda
  * por desplazar para deshabilitarse: la que no puede avanzar va punteada y
@@ -28,29 +32,10 @@ export function ProyectosDestacados({
   proyectos: Proyecto[];
   className?: string;
 }) {
-  const pista = useRef<HTMLDivElement>(null);
-  const [puede, setPuede] = useState({ atras: false, adelante: false });
-
-  const medir = () => {
-    const el = pista.current;
-    if (!el) return;
-    setPuede({
-      atras: el.scrollLeft > 4,
-      adelante: el.scrollLeft + el.clientWidth < el.scrollWidth - 4,
-    });
-  };
-
-  useEffect(() => {
-    medir();
-    window.addEventListener("resize", medir);
-    return () => window.removeEventListener("resize", medir);
-  }, []);
-
-  const avanzar = (sentido: 1 | -1) => {
-    const el = pista.current;
-    if (!el) return;
-    el.scrollBy({ left: sentido * el.clientWidth, behavior: "smooth" });
-  };
+  const { pista, puede, alDesplazar, avanzar } = usePista({
+    automatico: true,
+    paso: unaPantalla,
+  });
 
   if (!proyectos.length) return null;
 
@@ -85,7 +70,7 @@ export function ProyectosDestacados({
 
       <div
         ref={pista}
-        onScroll={medir}
+        onScroll={alDesplazar}
         /*
           El relleno es para que la tarjeta pueda inclinarse sin que la corten:
           un contenedor con scroll recorta en los dos ejes, no solo en el que
