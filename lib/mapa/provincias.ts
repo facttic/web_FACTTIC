@@ -4,9 +4,15 @@ import mapa from "./provincias.json";
  * Límites de las provincias argentinas y en qué provincia cae un punto.
  *
  * El GeoJSON está versionado en el repo, ya simplificado a tres decimales
- * —unos cien metros, de sobra para pintar un mapa— y pesa 86 KB. Sale de
+ * —unos cien metros, de sobra para pintar un mapa—. Sale de
  * `alvarezgarcia/provincias-argentinas-geojson`, que no incluye CABA: su
  * contorno se dibuja aparte, siguiendo la General Paz, el Riachuelo y el río.
+ *
+ * Las **Islas Malvinas** van bajo Tierra del Fuego, que es la provincia a la
+ * que pertenecen —Tierra del Fuego, Antártida e Islas del Atlántico Sur—, y
+ * por eso se dibujan con el mismo trazo que el resto del país. Esa fuente no
+ * las traía: su contorno sale de Natural Earth (dominio público), en las seis
+ * piezas que tiene el archipiélago.
  *
  * La provincia de cada cooperativa se resuelve acá y no se le pide al backend,
  * porque el modelo solo guarda `ubicacion {lat,lng}`. Al ser una función pura

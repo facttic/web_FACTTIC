@@ -222,9 +222,16 @@ export function RedFederal({
             style={{ "--desde": "-32px", "--origen": "left" } as CSSProperties}
           />
         ) : (
-          // Centrado sobre el mapa: si va en el flujo se sale de la caja de
-          // alto fijo y se pisa con las solapas.
-          <p className="text-p2 pointer-events-none absolute inset-x-0 bottom-8 text-center text-blanco/50">
+          /*
+            Centrada y por debajo del dibujo: en el flujo se sale de la caja de
+            alto fijo y se pisa con las solapas, así que va absoluta y apoyada
+            en el aire que queda entre el mapa y ellas.
+
+            Antes iba dentro del mapa, a 32px del pie, y ahí le pasaba por
+            encima a las Malvinas: están al este de Santa Cruz, justo a esa
+            altura. Ese era el único lugar del dibujo que parecía vacío.
+          */
+          <p className="text-p2 pointer-events-none absolute inset-x-0 -bottom-12 text-center text-blanco/50 md:-bottom-14">
             {T.vacio.sugerencia}
           </p>
         )}
