@@ -23,10 +23,13 @@ soluciones digitales.
 
 ## Qué es FACTTIC
 
-Una federación de **33 cooperativas de trabajo** repartidas en **9 provincias**
-de Argentina, que producen tecnología de otra manera: sin dueños, con decisiones
-tomadas en asamblea y con los ingresos distribuidos entre quienes hacen el
-trabajo.
+Una federación de **cooperativas de trabajo** de todo el país que producen
+tecnología de otra manera: sin dueños, con decisiones tomadas en asamblea y con
+los ingresos distribuidos entre quienes hacen el trabajo.
+
+Cuántas son y dónde están se ve en
+[Nuestra Red](https://facttic-web.vercel.app/nuestra-red), que lo dibuja en un
+mapa federal.
 
 Lo que la vuelve una federación y no una lista es el sexto principio
 cooperativo, el de cooperación entre cooperativas: para un proyecto grande se
