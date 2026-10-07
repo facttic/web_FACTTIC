@@ -23,7 +23,7 @@ soluciones digitales.
 
 ## Qué es FACTTIC
 
-Una federación de **cooperativas de trabajo** de todo el país que producen
+Una federación de **cooperativas de trabajo argentinas** que producen
 tecnología de otra manera: sin dueños, con decisiones tomadas en asamblea y con
 los ingresos distribuidos entre quienes hacen el trabajo.
 
