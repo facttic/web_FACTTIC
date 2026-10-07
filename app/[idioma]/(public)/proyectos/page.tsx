@@ -5,6 +5,7 @@ import { BotonLink } from "@/components/ui/boton";
 import { SinResultados } from "@/components/ui/sin-resultados";
 import { CardProyecto, FilaProyecto } from "@/components/tarjetas/proyecto";
 import { FiltrosProyectos } from "@/components/secciones/filtros-proyectos";
+import { FichaCooperativa } from "@/components/tarjetas/red";
 import { contenido } from "@/lib/contenido";
 import type { Idioma } from "@/lib/idioma";
 import {
@@ -14,6 +15,7 @@ import {
   getTecnologias,
 } from "@/lib/datos/catalogos";
 import { SECTOR_OTROS, getProyectos } from "@/lib/datos/proyectos";
+import { enRed } from "@/lib/datos/red";
 import { cn } from "@/lib/cn";
 import { metadatosDe } from "@/lib/seo";
 
@@ -107,6 +109,17 @@ export default async function ProyectosPage({
     getCooperativas(idioma),
   ]);
 
+  /* Si el filtro trae una cooperativa que no está en el catálogo —un id viejo
+     o escrito a mano—, no hay ficha y la grilla igual contesta lo que la API
+     diga. */
+  const encontrada = filtros.cooperativa
+    ? cooperativas.find((coop) => coop.id === filtros.cooperativa)
+    : undefined;
+  /* `enRed` le pone la provincia y el sitio, que no vienen de la API: la
+     primera se deriva de las coordenadas y el segundo sale de la tabla de
+     reserva mientras las cooperativas no lo carguen. */
+  const seleccionada = encontrada ? enRed(encontrada) : undefined;
+
   return (
     <>
       <Seccion className="pt-24 md:pt-40">
@@ -130,6 +143,23 @@ export default async function ProyectosPage({
       </Seccion>
 
       <Seccion className="pt-0 md:pt-8">
+        {/*
+          Al filtrar por cooperativa, la ficha de quién es encabeza la grilla:
+          a esta pantalla se llega desde "Ver sus proyectos" del mapa, y sin
+          esto los resultados no decían de quién eran.
+
+          Sale de los catálogos que la barra de filtros ya trajo, así que no
+          agrega una consulta ni espera detrás del `Suspense` de la grilla.
+        */}
+        {seleccionada ? (
+          <FichaCooperativa
+            cooperativa={seleccionada}
+            rotulo={T.ficha.rotulo}
+            textoSitio={T.ficha.sitio}
+            className="mb-10 md:mb-14"
+          />
+        ) : null}
+
         <Suspense fallback={<GrillaEnCamino />}>
           <Grilla filtros={filtros} pagina={pagina} idioma={idioma} />
         </Suspense>

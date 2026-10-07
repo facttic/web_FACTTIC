@@ -11,6 +11,7 @@ import { Enlace as Link } from "@/components/ui/enlace";
 import { cn } from "@/lib/cn";
 import { BotonFlecha, FOCO } from "@/components/ui/boton";
 import { ChipSector } from "@/components/ui/chip";
+import { RedesCooperativa } from "@/components/tarjetas/red";
 import { MapaFederal, PROPORCION_MAPA } from "./mapa-federal";
 import { contenido } from "@/lib/contenido";
 import { useIdioma } from "@/lib/idioma-cliente";
@@ -522,7 +523,7 @@ function CardCooperativaRed({
           </p>
         ) : null}
 
-        <Redes cooperativa={cooperativa} />
+        <RedesCooperativa cooperativa={cooperativa} className="mt-4" />
 
         {/* El pie va abajo de todo: con tarjetas de distinto largo en la misma
             fila, la línea punteada queda a la misma altura en todas. */}
@@ -562,43 +563,3 @@ function CardCooperativaRed({
   );
 }
 
-/**
- * Las redes y el contacto de la cooperativa, si cargó alguno.
- *
- * Van como texto y no como íconos: son tres o cuatro enlaces que aparecen de a
- * ratos, y un juego de íconos para eso pesa más de lo que aclara.
- */
-function Redes({ cooperativa }: { cooperativa: CooperativaEnRed }) {
-  const enlaces = [
-    { texto: "LinkedIn", href: cooperativa.redes.linkedin },
-    { texto: "Instagram", href: cooperativa.redes.instagram },
-    { texto: "GitHub", href: cooperativa.redes.github },
-    {
-      texto: cooperativa.email,
-      href: cooperativa.email ? `mailto:${cooperativa.email}` : null,
-    },
-  ].filter((enlace): enlace is { texto: string; href: string } =>
-    Boolean(enlace.href && enlace.texto),
-  );
-
-  if (!enlaces.length) return null;
-
-  return (
-    <p className="text-p3 mt-4 flex flex-wrap gap-x-4 gap-y-1 text-blanco/50">
-      {enlaces.map((enlace) => (
-        <a
-          key={enlace.href}
-          href={enlace.href}
-          target="_blank"
-          rel="noreferrer noopener"
-          className={cn(
-            "underline-offset-4 hover:text-blanco hover:underline",
-            FOCO,
-          )}
-        >
-          {enlace.texto}
-        </a>
-      ))}
-    </p>
-  );
-}

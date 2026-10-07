@@ -20,6 +20,28 @@ export interface CooperativaEnRed extends Dominio.Cooperativa {
   sitio: string | null;
 }
 
+/**
+ * Una cooperativa con lo que la API todavía no da: su provincia y su sitio.
+ *
+ * Está suelto porque no lo usa solo el mapa: la ficha que encabeza Proyectos
+ * al filtrar por cooperativa necesita lo mismo, y sin esto le salía sin
+ * provincia y sin enlace al sitio —los dos campos que no vienen del backend—.
+ */
+export function enRed(coop: Dominio.Cooperativa): CooperativaEnRed {
+  return {
+    ...coop,
+    provincia: coop.ubicacion
+      ? provinciaDe(coop.ubicacion.lat, coop.ubicacion.lng)
+      : null,
+    /*
+     * El sitio ya es un campo de la cooperativa. La tabla a mano queda como
+     * reserva mientras las cooperativas no lo completen: se armó con lo que
+     * publicaba el sitio anterior y se borra cuando ya no haga falta.
+     */
+    sitio: coop.sitio ?? sitioDe(coop.nombre),
+  };
+}
+
 export interface ProvinciaConRed {
   nombre: string;
   cooperativas: CooperativaEnRed[];
@@ -50,18 +72,7 @@ export async function getRedFederal(
   const cooperativas: CooperativaEnRed[] = (await getCooperativas(idioma))
     // Las de prueba que quedaron en la base no son parte de la red.
     .filter((coop) => !/^Cooperativa [A-C]$/.test(coop.nombre))
-    .map((coop) => ({
-      ...coop,
-      provincia: coop.ubicacion
-        ? provinciaDe(coop.ubicacion.lat, coop.ubicacion.lng)
-        : null,
-      /*
-       * El sitio ya es un campo de la cooperativa. La tabla a mano queda como
-       * reserva mientras las cooperativas no lo completen: se armó con lo que
-       * publicaba el sitio anterior y se borra cuando ya no haga falta.
-       */
-      sitio: coop.sitio ?? sitioDe(coop.nombre),
-    }));
+    .map(enRed);
 
   const porProvincia = new Map<string, CooperativaEnRed[]>();
   for (const coop of cooperativas) {

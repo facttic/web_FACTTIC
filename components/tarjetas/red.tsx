@@ -1,6 +1,7 @@
 import { cn } from "@/lib/cn";
 import { Tarjeta } from "@/components/ui/seccion";
 import { Chip } from "@/components/ui/chip";
+import { FOCO } from "@/components/ui/boton";
 import type { Autoridad, Cooperativa, Organizacion } from "@/lib/dominio/tipos";
 
 /**
@@ -114,6 +115,153 @@ export function CardCooperativa({
         </p>
       ) : null}
     </Tarjeta>
+  );
+}
+
+/**
+ * Las redes y el contacto de la cooperativa, si cargó alguno.
+ *
+ * Van como texto y no como íconos: son tres o cuatro enlaces que aparecen de a
+ * ratos, y un juego de íconos para eso pesa más de lo que aclara.
+ *
+ * Vivía dentro de Nuestra Red; está acá desde que la ficha de Proyectos la
+ * necesita también.
+ */
+export function RedesCooperativa({
+  cooperativa,
+  className,
+}: {
+  cooperativa: Cooperativa;
+  className?: string;
+}) {
+  const enlaces = [
+    { texto: "LinkedIn", href: cooperativa.redes.linkedin },
+    { texto: "Instagram", href: cooperativa.redes.instagram },
+    { texto: "GitHub", href: cooperativa.redes.github },
+    {
+      texto: cooperativa.email,
+      href: cooperativa.email ? `mailto:${cooperativa.email}` : null,
+    },
+  ].filter((enlace): enlace is { texto: string; href: string } =>
+    Boolean(enlace.href && enlace.texto),
+  );
+
+  if (!enlaces.length) return null;
+
+  return (
+    <p
+      className={cn(
+        "text-p3 flex flex-wrap gap-x-4 gap-y-1 text-blanco/50",
+        className,
+      )}
+    >
+      {enlaces.map((enlace) => (
+        <a
+          key={enlace.href}
+          href={enlace.href}
+          target="_blank"
+          rel="noreferrer noopener"
+          className={cn(
+            "underline-offset-4 hover:text-blanco hover:underline",
+            FOCO,
+          )}
+        >
+          {enlace.texto}
+        </a>
+      ))}
+    </p>
+  );
+}
+
+/**
+ * La cooperativa a la cabeza de sus propios proyectos.
+ *
+ * Al filtrar Proyectos por cooperativa —que es a donde lleva "Ver sus
+ * proyectos" desde el mapa— la grilla quedaba sin decir de quién eran: se
+ * llegaba desde Nuestra Red y la pantalla no mencionaba la cooperativa en
+ * ninguna parte.
+ *
+ * Es la misma ficha de la tarjeta del mapa pero acostada, porque acá hay ancho
+ * de sobra y no tiene que competir con otras doce al lado.
+ *
+ * No la dibuja ninguna maqueta: no hay pantalla de cooperativa en el diseño, y
+ * esto es lo más cerca que está el sitio de tener una.
+ */
+export function FichaCooperativa({
+  cooperativa,
+  rotulo,
+  textoSitio,
+  className,
+}: {
+  cooperativa: Cooperativa;
+  /** Lo que va chiquito arriba del nombre. */
+  rotulo: string;
+  textoSitio: string;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex flex-col overflow-hidden rounded-xl bg-superficie md:flex-row",
+        className,
+      )}
+    >
+      {/*
+        El logo va sobre blanco, como en la tarjeta del mapa: los logos vienen
+        pensados para fondo claro y varios desaparecen sobre el violeta. Sin
+        logo cargado no hay franja: el nombre ya está al lado, y repetirlo era
+        lo que pasaba antes en la tarjeta del mapa.
+      */}
+      {cooperativa.logo ? (
+        <div className="grid h-[85px] shrink-0 place-items-center bg-blanco px-6 md:h-auto md:w-56">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={cooperativa.logo}
+            alt={cooperativa.nombre}
+            className="max-h-14 w-auto max-w-full object-contain md:max-h-20"
+          />
+        </div>
+      ) : null}
+
+      <div className="flex-1 p-6 md:p-8">
+        <p className="text-p3 text-blanco/40">{rotulo}</p>
+        <h2 className="text-h4 md:text-h3 mt-1">{cooperativa.nombre}</h2>
+
+        {cooperativa.descripcion ? (
+          <p className="text-p2 mt-4 max-w-3xl text-blanco/80">
+            {cooperativa.descripcion}
+          </p>
+        ) : null}
+
+        {cooperativa.servicios.length ? (
+          <p className="text-p2 mt-4 text-blanco/60">
+            {cooperativa.servicios.map((s) => s.nombre).join("  ·  ")}
+          </p>
+        ) : null}
+
+        <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-dotted border-punteado pt-4">
+          {cooperativa.provincia ? (
+            <span className="text-p3 flex items-center gap-2 text-blanco/70">
+              <span aria-hidden className="size-1.5 rounded-full bg-blanco/70" />
+              {cooperativa.provincia}
+            </span>
+          ) : null}
+
+          {cooperativa.sitio ? (
+            <a
+              href={cooperativa.sitio}
+              target="_blank"
+              rel="noreferrer noopener"
+              className={cn("text-p3 underline-offset-4 hover:underline", FOCO)}
+            >
+              {textoSitio}
+            </a>
+          ) : null}
+
+          <RedesCooperativa cooperativa={cooperativa} />
+        </div>
+      </div>
+    </div>
   );
 }
 
