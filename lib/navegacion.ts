@@ -24,7 +24,7 @@ const MENU_ES: Enlace[] = [
   { etiqueta: "Sumá tu coop", href: "/suma-tu-coop" },
   { etiqueta: "Proyectos", href: "/proyectos" },
   { etiqueta: "Nuestra Red", href: "/nuestra-red" },
-  { etiqueta: "Sobre Facttic", href: "/sobre-facttic" },
+  { etiqueta: "Sobre FACTTIC", href: "/sobre-facttic" },
   { etiqueta: "Contacto", href: "/contacto" },
 ];
 
@@ -71,7 +71,7 @@ const COLUMNAS_PIE_ES: ColumnaPie[] = [
     enlaces: [{ etiqueta: "Mapa federal", href: "/nuestra-red#mapa" }],
   },
   {
-    titulo: "Sobre Facttic",
+    titulo: "Sobre FACTTIC",
     href: "/sobre-facttic",
     enlaces: [
       { etiqueta: "Qué es FACTTIC", href: "/sobre-facttic#que-es" },
