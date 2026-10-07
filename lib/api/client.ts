@@ -31,6 +31,14 @@ export interface ApiFetchOptions extends Omit<RequestInit, "body"> {
   body?: BodyInit | null;
   /** Token a usar en lugar del de servicio (el del usuario, en el backoffice). */
   token?: string;
+  /**
+   * Manda el token de servicio también en las lecturas.
+   *
+   * Es para los recursos que ya se sabe que piden credencial, como la ficha
+   * completa de una cooperativa: sin esto la lectura sale anónima, cobra un
+   * 401 y recién entonces reintenta, que es un viaje de más por cada visita.
+   */
+  autenticado?: boolean;
 }
 
 function buildUrl(path: string, params?: Record<string, QueryValue>): string {
@@ -60,7 +68,13 @@ export async function apiFetch<T>(
   path: string,
   options: ApiFetchOptions = {},
 ): Promise<T> {
-  const { params, token: explicitToken, headers, ...init } = options;
+  const {
+    params,
+    token: explicitToken,
+    autenticado = false,
+    headers,
+    ...init
+  } = options;
   const url = buildUrl(path, params);
 
   const metodo = (init.method ?? "GET").toUpperCase();
@@ -76,14 +90,28 @@ export async function apiFetch<T>(
     });
 
   // Lecturas sin credencial; escrituras con la que corresponda.
-  let res = await run(
-    esLectura && !explicitToken
-      ? undefined
-      : (explicitToken ?? (await getServiceToken())),
-  );
+  const conToken = !esLectura || Boolean(explicitToken) || autenticado;
+  const tokenUsado = conToken
+    ? (explicitToken ?? (await getServiceToken()))
+    : undefined;
+  let res = await run(tokenUsado);
 
+  /*
+   * Un 401 se reintenta una sola vez, y lo que se hace antes depende de si el
+   * pedido llevaba token.
+   *
+   * Si **no** llevaba —una lectura anónima contra un recurso que resultó estar
+   * cerrado—, el 401 no dice nada del token de servicio: alcanza con reintentar
+   * con el que haya en memoria. Antes acá se llamaba a `invalidateServiceToken`
+   * igual, y cuando la API cerró la ficha de cooperativa eso pasó a costar un
+   * login nuevo **por cada visita**: el panel se quedaba sin fichas con un 429
+   * del límite de intentos, que son diez cada quince minutos.
+   *
+   * Si **sí** llevaba, el token está vencido o revocado y ahí sí hay que pedir
+   * uno nuevo.
+   */
   if (res.status === 401 && !explicitToken) {
-    invalidateServiceToken();
+    if (tokenUsado) invalidateServiceToken();
     res = await run(await getServiceToken());
   }
 

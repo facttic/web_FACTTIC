@@ -1,6 +1,6 @@
 import "server-only";
 
-import { apiFetch, normalizePage, sanitize } from "@/lib/api/client";
+import { ApiError, apiFetch, normalizePage, sanitize } from "@/lib/api/client";
 import type * as Api from "@/lib/api/esquema";
 import { isPopulated, type Ref } from "@/lib/api/esquema";
 import { mediaUrl } from "@/lib/media";
@@ -53,9 +53,23 @@ async function traerTodos<T>(recurso: string): Promise<T[]> {
 
 async function traerUno<T>(recurso: string, id: string): Promise<T | null> {
   try {
-    return sanitize(await apiFetch<T>(`/api/${recurso}/${id}`));
-  } catch {
-    return null;
+    /*
+     * Con credencial desde el principio: la ficha de cooperativa pide sesión
+     * —trae los correos de los editores— y las demás no, pero mandarla
+     * siempre cuesta nada y evita el 401 y su reintento. El token se cachea
+     * por quince minutos, así que no es un login por lectura.
+     */
+    return sanitize(await apiFetch<T>(`/api/${recurso}/${id}`, { autenticado: true }));
+  } catch (error) {
+    /*
+     * Solo un 404 significa "no existe". Antes se tragaba cualquier error y
+     * devolvía null, así que una cooperativa que estaba ahí aparecía como
+     * inexistente cuando lo que fallaba era la credencial: la pantalla decía
+     * "Esta conexión no existe" y mandaba a buscar el problema donde no
+     * estaba. Lo demás se deja pasar para que se vea el error que es.
+     */
+    if (error instanceof ApiError && error.status === 404) return null;
+    throw error;
   }
 }
 
