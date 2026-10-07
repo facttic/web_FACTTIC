@@ -59,6 +59,27 @@ export const PROVINCIAS: Provincia[] = (() => {
     .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
 })();
 
+/**
+ * Los anillos de las Malvinas, aparte del resto.
+ *
+ * Para el mapa son parte de Tierra del Fuego y se dibujan con ella; esto es
+ * solo para saber dónde caen, que es lo que necesita quien les quiera colgar
+ * algo encima.
+ */
+export const MALVINAS: number[][][] = (
+  mapa.features as Array<{
+    properties: { nombre: string; parte?: string };
+    geometry: Geometria;
+  }>
+)
+  .filter((rasgo) => rasgo.properties.parte === "Islas Malvinas")
+  .flatMap((rasgo) =>
+    (rasgo.geometry.type === "Polygon"
+      ? [rasgo.geometry.coordinates]
+      : rasgo.geometry.coordinates
+    ).map((pieza) => pieza[0]),
+  );
+
 /** Algoritmo del rayo: cuenta cuántos lados cruza una semirrecta hacia el este. */
 function dentroDelAnillo(
   lng: number,

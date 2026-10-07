@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/cn";
 import { FOCO } from "@/components/ui/boton";
-import { PROVINCIAS } from "@/lib/mapa/provincias";
+import { MALVINAS, PROVINCIAS } from "@/lib/mapa/provincias";
 
 /**
  * Mapa federal: las provincias dibujadas, pintadas y elegibles.
@@ -85,6 +85,126 @@ function proyectar(lng: number, lat: number): [number, number] {
     (lng - CAJA.oeste) * ACHATE * ESCALA,
     (CAJA.norte - lat) * ESCALA * ESCALA_Y,
   ];
+}
+
+/**
+ * Dónde caen las Malvinas en el dibujo, para plantarles la bandera encima.
+ *
+ * Sale de la geometría y no de números a ojo: si mañana se simplifica más el
+ * contorno o cambia el encuadre, la bandera se acomoda sola.
+ */
+const CAJA_MALVINAS = (() => {
+  const puntos = MALVINAS.flat().map((p) => proyectar(p[0], p[1]));
+  const xs = puntos.map((p) => p[0]);
+  const ys = puntos.map((p) => p[1]);
+  const x0 = Math.min(...xs);
+  const x1 = Math.max(...xs);
+  const y0 = Math.min(...ys);
+  const y1 = Math.max(...ys);
+  return {
+    x0,
+    x1,
+    y0,
+    y1,
+    /* El mástil se clava entre las dos islas grandes, no en el centro exacto
+       de la caja: ahí hay mar y la bandera quedaría flotando. */
+    pieX: x0 + (x1 - x0) * 0.52,
+    pieY: y0 + (y1 - y0) * 0.62,
+  };
+})();
+
+/* Los tres paños de la bandera y el sol, en los tonos de la ley. */
+const CELESTE = "#75AADB";
+const SOL = "#F6B40E";
+
+/**
+ * La bandera que se planta en las Malvinas.
+ *
+ * Mide poco más que las islas a propósito: tiene que leerse como una banderita
+ * clavada ahí y no como un cartel encima del mapa.
+ *
+ * Entra creciendo desde el pie del mástil —`transform-box: fill-box` para que
+ * el origen sea el de la figura y no el del lienzo entero— y vuelve a
+ * guardarse al salir. El paño lleva una ondulación muy corta, lo justo para
+ * que no parezca una calcomanía.
+ */
+function BanderaPlantada({
+  x,
+  y,
+  puesta,
+}: {
+  /** El pie del mástil, en coordenadas del dibujo. */
+  x: number;
+  y: number;
+  puesta: boolean;
+}) {
+  const ALTO_MASTIL = 30;
+  const ANCHO_PANO = 21;
+  const ALTO_PANO = 13.5;
+  const arriba = y - ALTO_MASTIL;
+
+  return (
+    <g
+      className={cn(
+        "pointer-events-none origin-bottom [transform-box:fill-box]",
+        "transition-[opacity,scale] duration-300 ease-out motion-reduce:transition-opacity",
+        puesta ? "scale-100 opacity-100" : "scale-y-0 opacity-0",
+      )}
+    >
+      {/* El mástil, con su sombrita sobre la isla para que se vea clavado. */}
+      <ellipse
+        cx={x}
+        cy={y}
+        rx="3.2"
+        ry="1.1"
+        fill="var(--color-negro-oscuro)"
+        fillOpacity="0.45"
+      />
+      <rect
+        x={x - 0.6}
+        y={arriba}
+        width="1.2"
+        height={ALTO_MASTIL}
+        rx="0.6"
+        fill="var(--color-blanco)"
+      />
+
+      <g className={puesta ? "flamea" : undefined}>
+        <rect
+          x={x}
+          y={arriba}
+          width={ANCHO_PANO}
+          height={ALTO_PANO}
+          fill={CELESTE}
+        />
+        <rect
+          x={x}
+          y={arriba + ALTO_PANO / 3}
+          width={ANCHO_PANO}
+          height={ALTO_PANO / 3}
+          fill="var(--color-blanco)"
+        />
+        {/* El sol, resumido: a este tamaño los treinta y dos rayos serían una
+            mancha, así que van ocho y el disco. */}
+        <g fill={SOL}>
+          <circle cx={x + ANCHO_PANO / 2} cy={arriba + ALTO_PANO / 2} r="1.9" />
+          {Array.from({ length: 8 }, (_, i) => {
+            const a = (i * Math.PI) / 4;
+            return (
+              <rect
+                key={i}
+                x={x + ANCHO_PANO / 2 - 0.35}
+                y={arriba + ALTO_PANO / 2 - 3.4}
+                width="0.7"
+                height="2"
+                transform={`rotate(${(a * 180) / Math.PI} ${x + ANCHO_PANO / 2} ${arriba + ALTO_PANO / 2})`}
+              />
+            );
+          })}
+        </g>
+      </g>
+    </g>
+  );
 }
 
 /** Proporción del dibujo, para que quien lo enmarque reserve la caja justa. */
@@ -309,6 +429,8 @@ export function MapaFederal({
    * desde arriba y de costado. Va en el contenedor y no en el `svg`, para que
    * la perspectiva envuelva también al acercamiento.
    */
+  const [sobreLasMalvinas, setSobreLasMalvinas] = useState(false);
+
   /* Un solo contorno con todas las provincias: el canto es del país, no de
      cada una, así que las fronteras internas no tienen que verse. */
   const silueta = useMemo(
@@ -500,6 +622,41 @@ export function MapaFederal({
               </g>
             );
           })}
+
+          {/*
+            Las Malvinas son argentinas, y al pasar por encima se les planta la
+            bandera.
+
+            Necesitan objetivo propio porque en el dibujo son parte del trazo de
+            Tierra del Fuego: sin esto, el hover sería el de toda la provincia.
+            El rectángulo es invisible y un poco más grande que el archipiélago
+            —son islas chicas y finas, y perseguir el contorno exacto con el
+            mouse sería un juego de puntería—; abajo solo hay mar, así que no le
+            saca el hover a nada.
+
+            El estado va en React y no en `group-hover`: Tailwind envuelve esa
+            variante en `@media (hover: hover)` y acá, además, hace falta mover
+            dos elementos a la vez.
+          */}
+          <g
+            role="img"
+            aria-label="Islas Malvinas, Argentina"
+            onMouseEnter={() => setSobreLasMalvinas(true)}
+            onMouseLeave={() => setSobreLasMalvinas(false)}
+          >
+            <rect
+              x={CAJA_MALVINAS.x0 - 6}
+              y={CAJA_MALVINAS.y0 - 6}
+              width={CAJA_MALVINAS.x1 - CAJA_MALVINAS.x0 + 12}
+              height={CAJA_MALVINAS.y1 - CAJA_MALVINAS.y0 + 12}
+              fill="transparent"
+            />
+            <BanderaPlantada
+              x={CAJA_MALVINAS.pieX}
+              y={CAJA_MALVINAS.pieY}
+              puesta={sobreLasMalvinas}
+            />
+          </g>
         </svg>
       </div>
 
