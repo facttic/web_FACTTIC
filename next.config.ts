@@ -27,8 +27,14 @@ const CSP = [
   `script-src 'self' 'unsafe-inline'${enDesarrollo ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
   /* `data:` para la trama de puntos del fondo y `blob:` para lo que dibuja
-     Lottie; las fotos salen del proxy propio, que es `self`. */
-  "img-src 'self' data: blob:",
+     Lottie; las fotos salen del proxy propio, que es `self`.
+
+     OpenStreetMap es la excepción y es del backoffice: el mapa con el que cada
+     cooperativa marca dónde está trae sus tiles de ahí. Sin esto el mapa queda
+     negro, con el punto y la atribución flotando sobre nada, que es lo que
+     pasó al cerrar la política. Leaflet sí viene del paquete, así que no hace
+     falta abrir ni script ni estilo. */
+  "img-src 'self' data: blob: https://tile.openstreetmap.org",
   "font-src 'self' data:",
   "media-src 'self'",
   "connect-src 'self'",
