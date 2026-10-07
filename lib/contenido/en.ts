@@ -129,7 +129,7 @@ export const PIE = {
     "Argentine Federation of Technology, Innovation and Knowledge Worker Co-operatives",
   licencia: {
     antes: "This site is",
-    enlace: "open source",
+    enlace: "free software",
     entre: "under",
   },
   intercoop: "Inter-co-op work between",

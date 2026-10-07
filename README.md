@@ -92,15 +92,33 @@ backend se resuelva en un solo archivo. Está explicado en
 
 ## Licencia
 
-Este sitio es software libre, bajo la **GNU Affero General Public License v3.0
-o posterior** ([AGPL-3.0-or-later](https://www.gnu.org/licenses/agpl-3.0.html)).
-El texto completo está en [`LICENSE`](LICENSE).
+### El código
+
+Software libre, bajo la **GNU Affero General Public License v3.0 o posterior**
+([AGPL-3.0-or-later](https://www.gnu.org/licenses/agpl-3.0.html)). El texto
+completo está en [`LICENSE`](LICENSE).
 
 Se eligió la AGPL y no la GPL porque esto es una página web: la GPL obliga a
 publicar los cambios a quien **distribuye** el código, y servir un sitio no
 cuenta como distribuirlo. Con la AGPL, quien tome este código, lo modifique y lo
 ponga online tiene que publicar sus cambios igual. Es la misma razón por la que
 el sitio traduce con LibreTranslate y no con un servicio cerrado.
+
+### El contenido
+
+Una licencia de software no alcanza para lo que no es software, así que:
+
+- **Los textos** del sitio —los de [`lib/contenido/`](lib/contenido) y los
+  cargados por la Federación— se pueden reusar y adaptar bajo
+  [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es):
+  citando a FACTTIC y compartiendo igual.
+- **El logo, el wordmark FACT[TIC] y la identidad visual** quedan reservados.
+  Se pueden reproducir para hablar de la Federación, no para presentarse como
+  ella ni para firmar un sitio derivado: quien levante este código tiene que
+  poner su propia marca.
+- **Las fotos y los logos de cada cooperativa** son de cada una, no de
+  FACTTIC, y no están en este repositorio: los carga cada cooperativa por la
+  API. Reusarlos se arregla con su dueña.
 
 <div align="center">
 

@@ -155,9 +155,11 @@ export const PIE = {
   /* El nombre completo: el wordmark dice FACT[TIC] y nada más. */
   nombre:
     "Federación Argentina de Cooperativas de Trabajo de Tecnología, Innovación y Conocimiento",
+  /* "Software libre" y no "código abierto": no son sinónimos, y el primero es
+     el que nombra lo que la AGPL garantiza. El README dice lo mismo. */
   licencia: {
-    antes: "Sitio",
-    enlace: "de código abierto",
+    antes: "Sitio de",
+    enlace: "software libre",
     entre: "bajo",
   },
   intercoop: "Trabajo intercoop entre",

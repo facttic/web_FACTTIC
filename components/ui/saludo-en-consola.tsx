@@ -7,7 +7,10 @@ import { useEffect } from "react";
  *
  * Quien abre las herramientas del navegador en un sitio de cooperativas de
  * tecnología probablemente escriba código. Para esa persona: el wordmark, que
- * el sitio es software libre y dónde está el repositorio.
+ * el código es software libre y dónde está el repositorio.
+ *
+ * Dice "el código de este sitio" y no "este sitio": la AGPL cubre el código, y
+ * los textos y las fotos van por otro lado. El README lo detalla.
  *
  * No vende nada ni invita a nada. Es decir "esto se puede leer, copiar y
  * mejorar", que de un sitio de FACTTIC es lo que corresponde decir.
@@ -53,7 +56,7 @@ export function SaludoEnConsola() {
       "color:#8b7bb8;font-weight:bold;line-height:1.15",
     );
     console.log(
-      "%cEste sitio es software libre.%c\n" +
+      "%cEl código de este sitio es software libre.%c\n" +
         `Código: %c${LICENCIA.repo}%c\n` +
         `Licencia: %c${LICENCIA.nombre}%c — podés leerlo, copiarlo, estudiarlo y mejorarlo.\n\n` +
         "Hecho de forma intercooperativa.",
