@@ -15,9 +15,9 @@ export const HOME = {
     titulo: "Build\nyour project\nwith co-ops",
     tituloMobile: "Build\nyour technology\nproject\nwith co-ops",
     bajada:
-      "A federal network of technology, innovation and knowledge co-ops that designs, develops and implements digital solutions",
+      "A federal network of Argentine technology, innovation and knowledge co-ops that designs, develops and implements digital solutions.",
     bajadaMobile:
-      "A federal network\nof technology co-ops\nthat designs, develops\nand implements digital\nsolutions.",
+      "A federal network\nof Argentine co-ops\nthat designs, develops\nand implements digital\nsolutions.",
     cta: { texto: "Work with FACTTIC", href: "/contacto" },
   },
 
@@ -121,6 +121,15 @@ export const HOME = {
       ctaMobile: { texto: "Work with Facttic", href: "/contacto" },
     },
   },
+} as const;
+
+export const PIE = {
+  licencia: {
+    antes: "This site is",
+    enlace: "open source",
+    entre: "under",
+  },
+  intercoop: "Inter-co-op work between",
 } as const;
 
 export const SERVICIOS_PAGINA = {

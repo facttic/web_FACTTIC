@@ -23,8 +23,29 @@ export function Logo({
   href = "/",
 }: {
   className?: string;
-  href?: string;
+  /**
+   * A dónde lleva. Con `null` se dibuja sin enlace: es el caso del pie, donde
+   * ir a la Home ya lo cubre el logo de la barra de arriba y el enlace competía
+   * con los cinco toques del arcoíris —el primero se llevaba a quien lo
+   * intentaba antes del segundo—.
+   */
+  href?: string | null;
 }) {
+  const marca = (
+    <Image
+      src="/marca/logo-facttic.png"
+      alt="FACTTIC"
+      width={ANCHO}
+      height={ALTO}
+      priority
+      className="h-[22px] w-auto"
+    />
+  );
+
+  if (!href) {
+    return <span className={cn("inline-block", className)}>{marca}</span>;
+  }
+
   return (
     <Link
       href={href}
@@ -35,14 +56,7 @@ export function Logo({
         className,
       )}
     >
-      <Image
-        src="/marca/logo-facttic.png"
-        alt="FACTTIC"
-        width={ANCHO}
-        height={ALTO}
-        priority
-        className="h-[22px] w-auto"
-      />
+      {marca}
     </Link>
   );
 }

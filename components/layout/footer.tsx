@@ -2,8 +2,11 @@
 
 import { Enlace as Link } from "@/components/ui/enlace";
 import { columnasPie, REDES } from "@/lib/navegacion";
+import { contenido } from "@/lib/contenido";
 import { useIdioma } from "@/lib/idioma-cliente";
 import { Logo } from "./logo";
+import { ConArcoiris } from "@/components/ui/arcoiris";
+import { LICENCIA } from "@/components/ui/saludo-en-consola";
 
 /**
  * Pie de página. En desktop, cinco columnas de navegación con el logo, redes y
@@ -29,12 +32,17 @@ const ICONOS: Record<string, string> = {
 /* Va en el cliente para saber en qué idioma está la pantalla: el pie es el
    mismo en todas y no recibe params. Es markup, no trae estado. */
 export function Footer() {
-  const COLUMNAS_PIE = columnasPie(useIdioma());
+  const idioma = useIdioma();
+  const COLUMNAS_PIE = columnasPie(idioma);
+  const T = contenido(idioma).PIE;
   return (
     <footer className="mt-auto">
       <div className="contenedor py-8 md:py-14">
         <div className="hidden gap-10 md:grid md:grid-cols-[210px_1fr]">
-          <Logo />
+          {/* Cinco toques y pasa algo. */}
+          <ConArcoiris className="inline-block cursor-default select-none">
+            <Logo href={null} />
+          </ConArcoiris>
 
           <nav aria-label="Pie de página">
             <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:flex lg:justify-between lg:gap-8">
@@ -70,9 +78,13 @@ export function Footer() {
           <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:gap-6">
             {/* En mobile el board escribe el © y las redes en blanco pleno; en
                 desktop van atenuados, como en el SVG. */}
-            <p className="text-p3 font-sans text-blanco md:text-blanco/40">
-              © {new Date().getFullYear()} FACTTIC
-            </p>
+            {/* En mobile el pie no lleva el logo, así que el escondite es
+                este: también son cinco toques. */}
+            <ConArcoiris>
+              <p className="text-p3 cursor-default font-sans text-blanco select-none md:text-blanco/40">
+                © {new Date().getFullYear()} FACTTIC
+              </p>
+            </ConArcoiris>
             <ul className="flex items-center gap-5 md:gap-4">
               {REDES.map((red) => (
                 <li key={red.href}>
@@ -97,12 +109,35 @@ export function Footer() {
             </ul>
           </div>
 
-          <p className="text-p3 font-sans text-blanco/40">
-            Trabajo intercoop entre{" "}
-            <span className="text-blanco/70">El Maizal</span> +{" "}
-            <span className="text-blanco/70">IT10</span> +{" "}
-            <span className="text-blanco/70">Lawal</span>
-          </p>
+          <div className="text-p3 flex flex-col gap-2 font-sans text-blanco/40 md:items-end">
+            {/* El sitio es software libre y lo dice donde se mira: no alcanza
+                con que el repositorio esté abierto. */}
+            <p>
+              {T.licencia.antes}{" "}
+              <a
+                href={LICENCIA.repo}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="text-blanco/70 underline-offset-4 hover:underline"
+              >
+                {T.licencia.enlace}
+              </a>{" "}
+              {T.licencia.entre}{" "}
+              <a
+                href={LICENCIA.url}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="text-blanco/70 underline-offset-4 hover:underline"
+              >
+                {LICENCIA.nombre}
+              </a>
+            </p>
+            <p>
+              {T.intercoop} <span className="text-blanco/70">El Maizal</span> +{" "}
+              <span className="text-blanco/70">IT10</span> +{" "}
+              <span className="text-blanco/70">Lawal</span>
+            </p>
+          </div>
         </div>
       </div>
     </footer>

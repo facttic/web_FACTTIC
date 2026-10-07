@@ -17,7 +17,7 @@ export const HOME = {
     titulo: "Desarrollá\ntu proyecto\ncon cooperativas",
     tituloMobile: "Desarrollá\ntu proyecto\ntecnológico\ncon cooperativas",
     bajada:
-      "Una red federal de cooperativas de tecnología, innovación y conocimiento que diseña, desarrolla e implementa soluciones digitales",
+      "Una red federal de cooperativas argentinas de tecnología, innovación y conocimiento que diseña, desarrolla e implementa soluciones digitales.",
     // Mobile la acorta: en la maqueta entra en cuatro renglones de mono.
     /*
       Los cortes de línea son los del board: sin ellos el ancho de la columna
@@ -25,7 +25,7 @@ export const HOME = {
       bloque perdería la forma escalonada del diseño.
     */
     bajadaMobile:
-      "Una red federal\nde cooperativas tecnológicas\nque diseña, desarrolla\ne implementa soluciones\ndigitales.",
+      "Una red federal\nde cooperativas argentinas\nque diseña, desarrolla\ne implementa soluciones\ndigitales.",
     cta: { texto: "Trabajá con FACTTIC", href: "/contacto" },
   },
 
@@ -143,6 +143,21 @@ export const HOME = {
       ctaMobile: { texto: "Trabajá con Facttic", href: "/contacto" },
     },
   },
+} as const;
+
+/**
+ * El pie, lo que no son enlaces.
+ *
+ * Estaba escrito a mano en el componente y por eso salía en español también en
+ * la versión en inglés.
+ */
+export const PIE = {
+  licencia: {
+    antes: "Sitio",
+    enlace: "de código abierto",
+    entre: "bajo",
+  },
+  intercoop: "Trabajo intercoop entre",
 } as const;
 
 /**

@@ -1095,3 +1095,28 @@ body {
     animation: none;
   }
 }
+
+/**
+ * El arcoíris escondido del pie: sale del logo y cruza la pantalla.
+ *
+ * Lo que crece es el **radio** de cada anillo, no una escala del grupo. Con una
+ * escala, la distancia entre anillos crece junto con todo lo demás y al llegar
+ * al borde ya no son una banda sino seis arcos sueltos y separados; con el
+ * radio, la banda conserva su grosor de punta a punta.
+ */
+@utility anillo-del-arcoiris {
+  r: var(--r);
+  transition: r 1.8s cubic-bezier(0.16, 0.8, 0.3, 1);
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+@utility arcoiris-que-se-apaga {
+  transition: opacity 1.8s ease-in;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: opacity 0.5s ease-out;
+  }
+}
