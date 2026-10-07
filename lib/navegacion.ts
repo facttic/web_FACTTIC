@@ -84,7 +84,7 @@ const COLUMNAS_PIE_ES: ColumnaPie[] = [
 
 export const REDES: Enlace[] = [
   { etiqueta: "LinkedIn", href: "https://www.linkedin.com/company/facttic" },
-  { etiqueta: "Instagram", href: "https://www.instagram.com/facttic" },
+  { etiqueta: "Instagram", href: "https://www.instagram.com/facttic.ar" },
   { etiqueta: "YouTube", href: "https://www.youtube.com/@facttic" },
 ];
 
