@@ -25,6 +25,35 @@ function texto(valor: string | undefined | null): string | null {
 }
 
 /**
+ * Una dirección que se puede poner en un `href` sin riesgo.
+ *
+ * Los sitios y las redes de cada cooperativa los carga ella desde el panel, y
+ * terminan como enlaces en una pantalla pública. La API los valida con
+ * `z.string().url()`, que **no alcanza**: esa comprobación usa `new URL()`, y
+ * `javascript:alert(document.cookie)` es una URL perfectamente válida. Guardado
+ * ahí, cualquiera que tocara el enlace ejecutaría ese código en el sitio.
+ *
+ * Así que acá se filtra por esquema: solo `http` y `https`. Se hace en el
+ * adaptador y no en cada vista porque este es el borde —donde el dato de la API
+ * se vuelve dato del sitio— y así no hay que acordarse en cada lugar donde se
+ * dibuje un enlace.
+ */
+function enlace(valor: string | undefined | null): string | null {
+  const limpio = texto(valor);
+  if (!limpio) return null;
+  try {
+    const url = new URL(limpio);
+    return url.protocol === "http:" || url.protocol === "https:"
+      ? limpio
+      : null;
+  } catch {
+    /* Sin esquema no es una dirección absoluta y no se puede saber a dónde
+       lleva: se descarta en vez de adivinar un `https://` adelante. */
+    return null;
+  }
+}
+
+/**
  * El texto en el idioma pedido, con reserva al español.
  *
  * La reserva es campo por campo y no por entidad: un proyecto con el nombre
@@ -184,14 +213,16 @@ export function aCooperativa(
     servicios: aReferencias(api.servicios),
     sectores: aReferencias(api.sectores),
     descripcion: enIdioma(t.descripcion, api.descripcion) ?? "",
-    sitio: texto(api.sitio),
+    /* Todo lo que termina en un `href` pasa por `enlace()`: lo carga cada
+       cooperativa y se dibuja en una pantalla pública. */
+    sitio: enlace(api.sitio),
     email: texto(api.email),
     telefono: texto(api.telefono),
     fundacion: api.fundacion ?? null,
     redes: {
-      linkedin: texto(api.redes?.linkedin),
-      instagram: texto(api.redes?.instagram),
-      github: texto(api.redes?.github),
+      linkedin: enlace(api.redes?.linkedin),
+      instagram: enlace(api.redes?.instagram),
+      github: enlace(api.redes?.github),
     },
   };
 }
