@@ -781,16 +781,29 @@ export function CampoArchivo({
     const listos = await Promise.all(elegidos.map(comprimirImagen));
     const despues = pesa(listos);
 
-    /* Se reemplaza lo que lleva el campo: es lo que el formulario envía. Si el
-       navegador no dejara, se sube lo original y el aviso de peso vuelve a ser
-       el de antes; peor es perder los archivos. */
+    /*
+     * Se reemplaza lo que lleva el campo: es lo que el formulario envía.
+     *
+     * Y se comprueba que haya quedado, porque no alcanza con que no tire
+     * error. Hay navegadores donde `DataTransfer` no acepta archivos fuera de
+     * un arrastre: `items.add()` no falla, simplemente no agrega, y asignar esa
+     * lista vacía **borra la selección**. Eso convirtió elegir cinco imágenes
+     * en no elegir ninguna, en silencio.
+     *
+     * Si la cuenta no da, se deja lo que la persona eligió. Subir de más es un
+     * problema; perder lo elegido sin decirlo es peor.
+     */
     let reemplazado = false;
     if (listos.some((archivo, i) => archivo !== elegidos[i])) {
+      const original = campo.files;
       try {
         const bolsa = new DataTransfer();
         for (const archivo of listos) bolsa.items.add(archivo);
-        campo.files = bolsa.files;
-        reemplazado = true;
+        if (bolsa.files.length === listos.length) {
+          campo.files = bolsa.files;
+          reemplazado = campo.files.length === listos.length;
+        }
+        if (!reemplazado && original) campo.files = original;
       } catch {
         reemplazado = false;
       }
