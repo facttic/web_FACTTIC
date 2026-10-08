@@ -1,0 +1,27 @@
+<!--
+  Favicon: la F de FACT[TIC].
+
+  No es una F cualquiera en Inter: el wordmark usa una tipografía propia que no
+  es ninguna de las dos del sitio, así que la letra está reconstruida con las
+  medidas sacadas del archivo de la marca (`public/marca/logo-facttic.png`),
+  donde la F ocupa 38 × 62 px:
+
+    astil        10 de ancho, los 62 de alto
+    brazo alto   11 de alto, los 38 de ancho
+    brazo medio  11 de alto, 30 de ancho, arrancando a los 24
+
+  Esas proporciones son lo que la hace reconocible: el brazo de arriba llega al
+  borde y el del medio se queda corto.
+
+  Va con fondo y no como letra suelta: en una pestaña el favicon cae lo mismo
+  sobre barra clara que oscura, y una F blanca sin fondo desaparece en la mitad
+  de los casos.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="13" fill="#222222"/>
+  <g fill="#f2f2f2">
+    <rect x="21" y="14" width="5.8" height="36"/>
+    <rect x="21" y="14" width="22" height="6.4"/>
+    <rect x="21" y="27.9" width="17.4" height="6.4"/>
+  </g>
+</svg>
