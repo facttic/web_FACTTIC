@@ -778,7 +778,19 @@ export function CampoArchivo({
     setPesado(null);
     setAchicado(null);
 
-    const listos = await Promise.all(elegidos.map(comprimirImagen));
+    /*
+     * De a una y no con `Promise.all`.
+     *
+     * Decodificar una foto de teléfono de 10 MB son unos 48 millones de
+     * píxeles, y en memoria eso son casi 200 MB. Cinco a la vez es un gigabyte,
+     * y ahí el navegador empieza a fallar: la compresión no sale, quedan las
+     * originales, y los 50 MB juntos tampoco entran en el reemplazo. Resultado:
+     * de cinco elegidas quedaba una.
+     *
+     * Una por vez tarda apenas más y no se pasa nunca de una foto en memoria.
+     */
+    const listos: File[] = [];
+    for (const archivo of elegidos) listos.push(await comprimirImagen(archivo));
     const despues = pesa(listos);
 
     /*

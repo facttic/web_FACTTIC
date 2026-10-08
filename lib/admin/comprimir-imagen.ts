@@ -97,10 +97,15 @@ export async function comprimirImagen(archivo: File): Promise<File> {
        reescribe más pesados— se queda el original. */
     if (!blob || blob.size >= archivo.size) return archivo;
 
-    return new File([blob], renombrar(archivo.name, tipo), {
+    const achicada = new File([blob], renombrar(archivo.name, tipo), {
       type: tipo,
       lastModified: Date.now(),
     });
+    /* El lienzo se suelta a mano: con cinco fotos seguidas, esperar a que el
+       recolector pase por su cuenta es quedarse sin memoria a la tercera. */
+    lienzo.width = 0;
+    lienzo.height = 0;
+    return achicada;
   } catch {
     /* Un archivo que el navegador no puede decodificar sube como vino: que lo
        rechace la API con su mensaje, en vez de desaparecer acá en silencio. */
