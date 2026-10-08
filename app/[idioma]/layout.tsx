@@ -14,17 +14,27 @@ import {
 /**
  * Las dos tipografías del diseño. Ambas están en Google Fonts, así que no hay
  * licencias que gestionar ni archivos que hospedar.
+ *
+ * Solo los pesos que el sitio pide. Se declaraban seis y se usan cuatro:
+ * `next/font` precarga todos los que se le nombren, así que los de más viajan
+ * en cada visita sin que nada los dibuje —el navegador lo avisa en la consola,
+ * "preloaded but not used"—. Inter va en 400 y 700; el único `font-medium` del
+ * código está sobre un chip, que es mono. DM Mono va en 400 y 500, y el 300 no
+ * aparecía en ninguna regla.
+ *
+ * Si hace falta un peso nuevo, hay que agregarlo acá: usar la clase sola no
+ * alcanza, el navegador lo falsea engordando el trazo.
  */
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["400", "700"],
 });
 
 const dmMono = DM_Mono({
   variable: "--font-dm-mono",
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
+  weight: ["400", "500"],
 });
 
 /**
