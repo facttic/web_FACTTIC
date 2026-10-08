@@ -2,6 +2,7 @@ import { cn } from "@/lib/cn";
 import { Tarjeta } from "@/components/ui/seccion";
 import { Chip } from "@/components/ui/chip";
 import { FOCO } from "@/components/ui/boton";
+import { TextoRecortado } from "@/components/ui/texto-recortado";
 import type { Autoridad, Cooperativa, Organizacion } from "@/lib/dominio/tipos";
 
 /**
@@ -191,12 +192,16 @@ export function FichaCooperativa({
   cooperativa,
   rotulo,
   textoSitio,
+  textoMas,
+  textoMenos,
   className,
 }: {
   cooperativa: Cooperativa;
   /** Lo que va chiquito arriba del nombre. */
   rotulo: string;
   textoSitio: string;
+  textoMas: string;
+  textoMenos: string;
   className?: string;
 }) {
   return (
@@ -227,10 +232,19 @@ export function FichaCooperativa({
         <p className="text-p3 text-blanco/40">{rotulo}</p>
         <h2 className="text-h4 md:text-h3 mt-1">{cooperativa.nombre}</h2>
 
+        {/* Recortada: una cooperativa escribió 688 caracteres y la ficha se
+            comía la pantalla entera antes de que apareciera un solo proyecto,
+            que es a lo que se vino. El "Leer más" sale solo si el texto de
+            verdad se corta. */}
         {cooperativa.descripcion ? (
-          <p className="text-p2 mt-4 max-w-3xl text-blanco/80">
+          <TextoRecortado
+            lineas={4}
+            mas={textoMas}
+            menos={textoMenos}
+            className="text-p2 mt-4 max-w-3xl text-blanco/80"
+          >
             {cooperativa.descripcion}
-          </p>
+          </TextoRecortado>
         ) : null}
 
         {cooperativa.servicios.length ? (

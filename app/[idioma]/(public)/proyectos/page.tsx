@@ -156,6 +156,8 @@ export default async function ProyectosPage({
             cooperativa={seleccionada}
             rotulo={T.ficha.rotulo}
             textoSitio={T.ficha.sitio}
+            textoMas={T.ficha.mas}
+            textoMenos={T.ficha.menos}
             className="mb-10 md:mb-14"
           />
         ) : null}

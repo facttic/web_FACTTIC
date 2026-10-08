@@ -350,7 +350,12 @@ export const PROYECTOS_PAGINA = {
     abrir: "Filter",
     limpiar: "Clear filters",
   },
-  ficha: { rotulo: "Projects by", sitio: "Visit their site" },
+  ficha: {
+    rotulo: "Projects by",
+    sitio: "Visit their site",
+    mas: "Read more",
+    menos: "Read less",
+  },
   verMas: "See more",
   vacio: {
     titulo: "No projects match those filters",

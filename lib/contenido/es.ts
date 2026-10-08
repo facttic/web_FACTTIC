@@ -451,7 +451,12 @@ export const PROYECTOS_PAGINA = {
     limpiar: "Limpiar filtros",
   },
   /* La ficha que encabeza la grilla cuando se filtra por una cooperativa. */
-  ficha: { rotulo: "Proyectos de", sitio: "Ir al sitio" },
+  ficha: {
+    rotulo: "Proyectos de",
+    sitio: "Ir al sitio",
+    mas: "Leer más",
+    menos: "Leer menos",
+  },
   verMas: "Ver más",
   vacio: {
     titulo: "No encontramos proyectos con esos filtros",
