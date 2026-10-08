@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { Children, cloneElement, isValidElement, useActionState, useState } from "react";
 import { traducirAlIngles } from "@/lib/admin/traducir";
 import { cn } from "@/lib/cn";
 import { FOCO } from "@/components/ui/boton";
@@ -89,7 +89,21 @@ export function EnlaceAdmin({
   );
 }
 
-/** Tabla del panel: cabecera fija de estilo, filas que se marcan al pasar. */
+/**
+ * Tabla del panel.
+ *
+ * En desktop es una tabla: cabecera de estilo y filas que se marcan al pasar,
+ * que es lo que sirve para cargar datos durante horas.
+ *
+ * **En mobile cada fila es una tarjeta.** Como tabla no entraba: con cuatro
+ * columnas el ancho mínimo dejaba media pantalla afuera y había que arrastrar
+ * de costado para leer un nombre. Cada celda pasa a ser una línea con el
+ * nombre de su columna a la izquierda y el valor a la derecha.
+ *
+ * El rótulo de cada celda no se escribe en cada pantalla: la tabla ya conoce
+ * sus columnas y se lo pasa a las filas, que se lo reparten a sus celdas por
+ * posición. Así las nueve pantallas del panel no cambian ni una línea.
+ */
 export function Tabla({
   columnas,
   children,
@@ -111,10 +125,23 @@ export function Tabla({
     );
   }
 
+  /*
+   * No se compara contra `Fila`: las pantallas del panel son componentes de
+   * servidor, así que lo que llega acá tiene por tipo una referencia al módulo
+   * cliente y no la función, y la igualdad nunca daba. Alcanza con descartar
+   * las etiquetas sueltas —las que tienen tipo `string`—, que no esperan props
+   * nuestras.
+   */
+  const filas = Children.map(children, (hijo) =>
+    isValidElement(hijo) && typeof hijo.type !== "string"
+      ? cloneElement(hijo as React.ReactElement<PropsFila>, { columnas })
+      : hijo,
+  );
+
   return (
-    <div className="overflow-x-auto rounded-xl border border-borde">
-      <table className="w-full min-w-[640px] text-left">
-        <thead className="border-b border-borde bg-superficie">
+    <div className="overflow-x-auto rounded-xl border border-borde max-md:overflow-visible max-md:rounded-none max-md:border-0">
+      <table className="w-full text-left max-md:block md:min-w-[640px]">
+        <thead className="border-b border-borde bg-superficie max-md:hidden">
           <tr className="text-eyebrow text-blanco/60">
             {/* La clave lleva la posición porque más de una columna puede ir
                 sin encabezado —la de acciones, por ejemplo—. */}
@@ -125,54 +152,82 @@ export function Tabla({
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-borde">{children}</tbody>
+        <tbody className="divide-y divide-borde max-md:flex max-md:flex-col max-md:gap-3 max-md:divide-y-0">
+          {filas}
+        </tbody>
       </table>
     </div>
   );
 }
 
-export function Fila({
-  children,
-  busca,
-}: {
+interface PropsFila {
   children: React.ReactNode;
   /** Contra qué se compara al buscar; lo arma quien dibuja la fila. */
   busca?: string;
-}) {
+  /** Lo pone `Tabla`: los encabezados, para que cada celda sepa el suyo. */
+  columnas?: string[];
+}
+
+export function Fila({ children, busca, columnas }: PropsFila) {
+  const celdas = Children.map(children, (hijo, i) =>
+    isValidElement(hijo) && typeof hijo.type !== "string"
+      ? cloneElement(hijo as React.ReactElement<PropsCelda>, {
+          rotulo: columnas?.[i],
+        })
+      : hijo,
+  );
+
   return (
     <tr
       data-busca={busca?.toLowerCase()}
-      className="transition-colors hover:bg-superficie"
+      /*
+        `[&[hidden]]:hidden` no es un adorno: el buscador esconde filas con el
+        atributo `hidden`, y la regla del navegador que lo aplica pierde contra
+        cualquier `display` escrito en una clase. Sin esto, filtrar en mobile
+        no filtraba nada.
+      */
+      className="transition-colors hover:bg-superficie [&[hidden]]:hidden max-md:block max-md:rounded-xl max-md:border max-md:border-borde max-md:bg-superficie/30 max-md:p-4 max-md:hover:bg-superficie/30"
     >
-      {children}
+      {celdas}
     </tr>
   );
 }
 
-export function Celda({
-  children,
-  apagado = false,
-  className,
-}: {
+interface PropsCelda {
   children: React.ReactNode;
   /** Lo que falta cargar se ve apagado, para leer la tabla de un vistazo. */
   apagado?: boolean;
   className?: string;
-}) {
+  /** El encabezado de su columna. Lo reparte `Fila`; en desktop no se ve. */
+  rotulo?: string;
+}
+
+export function Celda({ children, apagado = false, className, rotulo }: PropsCelda) {
   return (
     <td
       className={cn(
+        /* Las clases de la tarjeta van con `max-md:` y no como base con
+           anulación en `md:`: así no se filtra ninguna a desktop, que es lo
+           que pasó con `first:pt-0` —subía la primera celda de cada fila—. */
         "text-p3 px-4 py-3",
+        "max-md:flex max-md:items-baseline max-md:justify-between max-md:gap-4",
+        "max-md:border-t max-md:border-borde/40 max-md:px-0 max-md:py-2",
+        "max-md:first:border-t-0 max-md:first:pt-0",
         apagado ? "text-blanco/40" : "text-blanco/90",
         className,
       )}
     >
-      {children}
+      {/* Se dibuja siempre, aun vacío —la columna de acciones no tiene
+          encabezado—: es lo que empuja el contenido al otro costado. */}
+      <span className="text-eyebrow shrink-0 text-blanco/45 md:hidden">
+        {rotulo}
+      </span>
+      {/* `md:contents` lo saca del medio en desktop, así la celda queda igual
+          que antes y las clases de alineación de cada pantalla siguen valiendo. */}
+      <span className="min-w-0 text-right md:contents">{children}</span>
     </td>
   );
 }
-
-/* ---------- Formularios ---------- */
 
 export function Etiqueta({
   htmlFor,
