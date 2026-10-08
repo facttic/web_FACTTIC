@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Children, cloneElement, isValidElement, useActionState, useState } from "react";
+import { comprimirImagen } from "@/lib/admin/comprimir-imagen";
 import { traducirAlIngles } from "@/lib/admin/traducir";
 import { cn } from "@/lib/cn";
 import { FOCO } from "@/components/ui/boton";
@@ -747,14 +748,64 @@ export function CampoArchivo({
     (url): url is string => !!url,
   );
   const [pesado, setPesado] = useState<string | null>(null);
+  const [achicado, setAchicado] = useState<string | null>(null);
+  const [trabajando, setTrabajando] = useState(false);
 
-  const alElegir = (evento: React.ChangeEvent<HTMLInputElement>) => {
-    const elegidos = [...(evento.target.files ?? [])];
-    const total = elegidos.reduce((suma, archivo) => suma + archivo.size, 0);
-    const mb = (n: number) => `${(n / 1024 / 1024).toFixed(1)} MB`;
+  const mb = (n: number) => `${(n / 1024 / 1024).toFixed(1)} MB`;
+  const pesa = (archivos: File[]) =>
+    archivos.reduce((suma, archivo) => suma + archivo.size, 0);
+
+  /**
+   * Las imágenes se achican acá, antes de salir.
+   *
+   * Antes esto solo avisaba "pesa 38 MB, achicalas vos", que es pedirle a
+   * quien carga el contenido que abra un editor de imágenes. Ahora se
+   * reescriben en el navegador y se reemplazan las del campo, así que lo que
+   * viaja ya es lo achicado y la original no sale nunca de la máquina.
+   */
+  const alElegir = async (evento: React.ChangeEvent<HTMLInputElement>) => {
+    const campo = evento.target;
+    const elegidos = [...(campo.files ?? [])];
+    if (!elegidos.length) {
+      setPesado(null);
+      setAchicado(null);
+      onChange?.(evento);
+      return;
+    }
+
+    const antes = pesa(elegidos);
+    setTrabajando(true);
+    setPesado(null);
+    setAchicado(null);
+
+    const listos = await Promise.all(elegidos.map(comprimirImagen));
+    const despues = pesa(listos);
+
+    /* Se reemplaza lo que lleva el campo: es lo que el formulario envía. Si el
+       navegador no dejara, se sube lo original y el aviso de peso vuelve a ser
+       el de antes; peor es perder los archivos. */
+    let reemplazado = false;
+    if (listos.some((archivo, i) => archivo !== elegidos[i])) {
+      try {
+        const bolsa = new DataTransfer();
+        for (const archivo of listos) bolsa.items.add(archivo);
+        campo.files = bolsa.files;
+        reemplazado = true;
+      } catch {
+        reemplazado = false;
+      }
+    }
+
+    const final = reemplazado ? despues : antes;
+    setTrabajando(false);
+    setAchicado(
+      reemplazado && final < antes * 0.95
+        ? `Se achicaron en el navegador: de ${mb(antes)} a ${mb(final)}. Lo que se sube es lo achicado.`
+        : null,
+    );
     setPesado(
-      total > TOPE_ENVIO
-        ? `Lo elegido pesa ${mb(total)} y el máximo es ${mb(TOPE_ENVIO)}. Subí menos archivos por vez, o achicalos antes: si se envía así, la carga falla.`
+      final > TOPE_ENVIO
+        ? `${reemplazado ? "Aun achicadas pesan" : "Lo elegido pesa"} ${mb(final)} y el máximo es ${mb(TOPE_ENVIO)}. Subí menos archivos por vez: si se envía así, la carga falla.`
         : null,
     );
     onChange?.(evento);
@@ -794,6 +845,12 @@ export function CampoArchivo({
         {...props}
       />
       <Ayuda>{ayuda}</Ayuda>
+      {trabajando ? (
+        <p className="text-p3 mt-2 text-blanco/60">Achicando las imágenes…</p>
+      ) : null}
+      {achicado ? (
+        <p className="text-p3 mt-2 text-blanco/60">{achicado}</p>
+      ) : null}
       {pesado ? (
         <p role="alert" className="text-p3 mt-2 text-rojo">
           {pesado}
