@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { FOCO } from "@/components/ui/boton";
 import { MALVINAS, PROVINCIAS } from "@/lib/mapa/provincias";
@@ -430,6 +430,19 @@ export function MapaFederal({
    * la perspectiva envuelva también al acercamiento.
    */
   const [sobreLasMalvinas, setSobreLasMalvinas] = useState(false);
+  /* En pantalla táctil la bandera se baja sola: no hay "salir de encima". */
+  const relojBandera = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const plantarUnRato = () => {
+    setSobreLasMalvinas(true);
+    if (relojBandera.current) clearTimeout(relojBandera.current);
+    relojBandera.current = setTimeout(() => setSobreLasMalvinas(false), 3500);
+  };
+  useEffect(
+    () => () => {
+      if (relojBandera.current) clearTimeout(relojBandera.current);
+    },
+    [],
+  );
 
   /* Un solo contorno con todas las provincias: el canto es del país, no de
      cada una, así que las fronteras internas no tienen que verse. */
@@ -639,16 +652,41 @@ export function MapaFederal({
             dos elementos a la vez.
           */}
           <g
-            role="img"
+            role="button"
+            tabIndex={0}
             aria-label="Islas Malvinas, Argentina"
+            aria-pressed={sobreLasMalvinas}
+            className="cursor-pointer focus-visible:outline-none"
             onMouseEnter={() => setSobreLasMalvinas(true)}
             onMouseLeave={() => setSobreLasMalvinas(false)}
+            /*
+              Con el dedo no hay hover: el toque la planta y se baja sola a los
+              tres segundos y medio. No se alterna con un segundo toque porque
+              el navegador manda un `mouseenter` fingido detrás del toque, que
+              la volvería a levantar en el acto.
+            */
+            onPointerDown={(e) => {
+              if (e.pointerType !== "mouse") plantarUnRato();
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                plantarUnRato();
+              }
+            }}
           >
+            {/*
+              El área sensible es bastante más grande que las islas: en un
+              teléfono eran 56 × 25 px, menos de lo que necesita un dedo. Crece
+              hacia el mar —arriba, abajo y a la derecha— y poco hacia la
+              izquierda, que es donde está Tierra del Fuego y no conviene
+              robarle el toque.
+            */}
             <rect
-              x={CAJA_MALVINAS.x0 - 6}
-              y={CAJA_MALVINAS.y0 - 6}
-              width={CAJA_MALVINAS.x1 - CAJA_MALVINAS.x0 + 12}
-              height={CAJA_MALVINAS.y1 - CAJA_MALVINAS.y0 + 12}
+              x={CAJA_MALVINAS.x0 - 8}
+              y={CAJA_MALVINAS.y0 - 18}
+              width={CAJA_MALVINAS.x1 - CAJA_MALVINAS.x0 + 26}
+              height={CAJA_MALVINAS.y1 - CAJA_MALVINAS.y0 + 36}
               fill="transparent"
             />
             <BanderaPlantada
