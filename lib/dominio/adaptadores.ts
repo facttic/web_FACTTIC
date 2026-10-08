@@ -210,8 +210,12 @@ export function aCooperativa(
     // La API lo guarda en `fileName`, igual que el resto de los recursos con
     // archivo; hoy ninguna cooperativa tiene uno cargado.
     logo: mediaUrl(api.fileName),
-    servicios: aReferencias(api.servicios),
-    sectores: aReferencias(api.sectores),
+    /* Con el idioma: `aReferencias` sabe traducir —lee `traducciones.en` de
+       cada servicio o sector— pero acá se la llamaba sin pasárselo, así que
+       caía al español por defecto. En la ficha en inglés la descripción salía
+       traducida y al lado decía "Ingeniería e infraestructura". */
+    servicios: aReferencias(api.servicios, idioma),
+    sectores: aReferencias(api.sectores, idioma),
     descripcion: enIdioma(t.descripcion, api.descripcion) ?? "",
     /* Todo lo que termina en un `href` pasa por `enlace()`: lo carga cada
        cooperativa y se dibuja en una pantalla pública. */
