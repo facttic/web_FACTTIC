@@ -158,9 +158,8 @@ export default async function ProyectoPage({
               enterarse recién al final —en la lista de cooperativas— lo deja
               como un dato administrativo.
 
-              Acá no va prendido a ningún borde: sin una tarjeta que tape la
-              chapa de atrás, esa chapa queda como un halo que no significa
-              nada. */}
+              Acá va en el flujo y no montado sobre un borde: no hay ninguna
+              tarjeta de la que colgarlo. */}
           <div className="flex items-start justify-between gap-6">
             <h1 className="text-h1 max-w-4xl text-balance">
               {proyecto.nombre}
@@ -168,7 +167,6 @@ export default async function ProyectoPage({
             {proyecto.cooperativas.length > 1 ? (
               <SelloIntercoop
                 cooperativas={proyecto.cooperativas.length}
-                prendido={false}
                 className="mt-2 shrink-0"
               />
             ) : null}

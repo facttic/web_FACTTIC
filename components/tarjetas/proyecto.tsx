@@ -254,7 +254,7 @@ export function CardProyecto({
           {proyecto.cooperativas.length > 1 ? (
             <SelloIntercoop
               cooperativas={proyecto.cooperativas.length}
-              className="-top-2.5 right-6"
+              className="absolute -top-2.5 right-6"
             />
           ) : null}
         </div>
@@ -299,7 +299,7 @@ export function CardProyectoDetalle({
         {proyecto.cooperativas.length > 1 ? (
           <SelloIntercoop
             cooperativas={proyecto.cooperativas.length}
-            className="-top-2.5 right-6"
+            className="absolute -top-2.5 right-6"
           />
         ) : null}
       </div>
