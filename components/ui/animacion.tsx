@@ -11,7 +11,15 @@ import { cn } from "@/lib/cn";
  * Son decorativas, así que se cargan con cuidado de no penalizar la página:
  *   - el motor de Lottie llega por import dinámico, fuera del bundle inicial;
  *   - el JSON se pide recién cuando la animación asoma en pantalla;
+ *   - **se pausan al salir de pantalla y siguen al volver**;
  *   - con `prefers-reduced-motion` no se anima: se muestra el primer fotograma.
+ *
+ * Lo de pausar no es un detalle. Lottie no es un video ni una animación de
+ * CSS: redibuja el SVG desde JavaScript en cada cuadro, sobre el hilo
+ * principal. Antes el observador se desconectaba después de cargar, así que
+ * una vez vistas seguían corriendo para siempre —en la Home son varias— y el
+ * hilo quedaba ocupado aunque estuvieras diez pantallas más abajo. Medido
+ * arriba de todo, con todas cargadas: 7 cuadros de 240 pasaban de 20ms.
  *
  * Los archivos viven en `public/animaciones/`. Los de sector deberían pasar a
  * servirse desde la API cuando el backend cargue el campo `lottieFileName`, que
@@ -38,19 +46,21 @@ export function Animacion({
   const ref = useRef<HTMLDivElement>(null);
   const lottie = useRef<LottieRefCurrentProps>(null);
   const [datos, setDatos] = useState<unknown>(null);
-  const [visible, setVisible] = useState(false);
+  /** Ya asomó alguna vez: dispara el pedido del JSON, que se hace una sola. */
+  const [cargar, setCargar] = useState(false);
+  /** Está a la vista ahora: decide si corre o espera. */
+  const [enPantalla, setEnPantalla] = useState(false);
 
-  // Solo se pide el JSON cuando la animación está por entrar en pantalla.
+  /* El observador queda escuchando y no se desconecta al primer cruce: hace
+     falta para enterarse también de cuándo se fue. */
   useEffect(() => {
     const nodo = ref.current;
     if (!nodo) return;
 
     const observador = new IntersectionObserver(
       ([entrada]) => {
-        if (entrada.isIntersecting) {
-          setVisible(true);
-          observador.disconnect();
-        }
+        setEnPantalla(entrada.isIntersecting);
+        if (entrada.isIntersecting) setCargar(true);
       },
       { rootMargin: "200px" },
     );
@@ -60,7 +70,7 @@ export function Animacion({
   }, []);
 
   useEffect(() => {
-    if (!visible) return;
+    if (!cargar) return;
     let cancelado = false;
 
     fetch(`/animaciones/${nombre}.json`)
@@ -75,7 +85,7 @@ export function Animacion({
     return () => {
       cancelado = true;
     };
-  }, [visible, nombre]);
+  }, [cargar, nombre]);
 
   const menosMovimiento =
     typeof window !== "undefined" &&
@@ -91,6 +101,14 @@ export function Animacion({
     if (menosMovimiento || bucle) return;
     lottie.current?.goToAndPlay(0);
   };
+
+  /* Corre solo mientras se ve. */
+  useEffect(() => {
+    const api = lottie.current;
+    if (!api || !datos) return;
+    if (enPantalla && !menosMovimiento) api.play();
+    else api.pause();
+  }, [enPantalla, datos, menosMovimiento]);
 
   return (
     <div
