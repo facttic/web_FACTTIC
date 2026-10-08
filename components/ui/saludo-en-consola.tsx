@@ -22,8 +22,10 @@ import { idiomaDelNavegador } from "@/lib/idioma-cliente";
  * No vende nada ni invita a nada. Es decir "esto se puede leer, copiar y
  * mejorar", que de un sitio de FACTTIC es lo que corresponde decir.
  *
- * Se imprime una sola vez por carga, y no en el panel: ahí la consola es
- * herramienta de trabajo y el adorno estorba.
+ * Se imprime una sola vez por carga, en el sitio y en el panel. Llegó a estar
+ * solo en el sitio, con la idea de que en el backoffice la consola es
+ * herramienta de trabajo y el adorno estorba; pero quien entra al panel es de
+ * la casa, y ver el wordmark al abrir la consola es parte de lo mismo.
  */
 
 const WORDMARK = [
@@ -44,7 +46,7 @@ export const LICENCIA = {
   repo: "https://github.com/facttic/web_FACTTIC",
 };
 
-export function SaludoEnConsola({ conWordmark = true }: { conWordmark?: boolean } = {}) {
+export function SaludoEnConsola() {
   useEffect(() => {
     /* En desarrollo el efecto corre dos veces —el modo estricto monta, desmonta
        y vuelve a montar—, y el saludo saldría repetido. */
@@ -58,19 +60,12 @@ export function SaludoEnConsola({ conWordmark = true }: { conWordmark?: boolean 
      * puede estar en claro o en oscuro y no hay forma de saberlo, así que se
      * eligen los que se leen en las dos.
      */
-    /* En el panel no va el dibujo ni la licencia: ahí la consola es
-       herramienta de trabajo y el adorno tapa lo que se vino a leer. Los
-       comandos sí, que ahí son más útiles que en ningún lado. */
-    if (conWordmark) {
-      console.log(
-        `%c${WORDMARK}`,
-        "color:#8b7bb8;font-weight:bold;line-height:1.15",
-      );
-    }
+    console.log(
+      `%c${WORDMARK}`,
+      "color:#8b7bb8;font-weight:bold;line-height:1.15",
+    );
     const idioma = idiomaDelNavegador();
-    const saludo = !conWordmark
-      ? null
-      :
+    const saludo =
       idioma === "en"
         ? "%cThis site's code is free software.%c\n" +
           `Code: %c${LICENCIA.repo}%c\n` +
@@ -81,17 +76,15 @@ export function SaludoEnConsola({ conWordmark = true }: { conWordmark?: boolean 
           `Licencia: %c${LICENCIA.nombre}%c — podés leerlo, copiarlo, estudiarlo y mejorarlo.\n\n` +
           "Hecho de forma intercooperativa.";
 
-    if (saludo) {
-      console.log(
-        saludo,
-        "font-weight:bold",
-        "",
-        "text-decoration:underline",
-        "",
-        "font-weight:bold",
-        "",
-      );
-    }
+    console.log(
+      saludo,
+      "font-weight:bold",
+      "",
+      "text-decoration:underline",
+      "",
+      "font-weight:bold",
+      "",
+    );
 
     /*
      * Y los datos de la red, consultables desde acá mismo. Se instala el
@@ -106,7 +99,7 @@ export function SaludoEnConsola({ conWordmark = true }: { conWordmark?: boolean 
       "color:#b99de8;font-weight:bold",
       "color:#8a8a8a",
     );
-  }, [conWordmark]);
+  }, []);
 
   return null;
 }
