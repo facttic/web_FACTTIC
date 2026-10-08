@@ -16,6 +16,7 @@ import { MapaFederal, PROPORCION_MAPA } from "./mapa-federal";
 import { contenido } from "@/lib/contenido";
 import { useIdioma } from "@/lib/idioma-cliente";
 import type { CooperativaEnRed, ProvinciaConRed } from "@/lib/datos/red";
+import type * as Dominio from "@/lib/dominio/tipos";
 
 /** Lo que tarda la ficha en replegarse; tiene que coincidir con el CSS. */
 const SALIDA = 200;
@@ -480,6 +481,35 @@ function PanelProvincia({
  * es HTML válido, y de paso el clic deja de ser ambiguo: toda la tarjeta hace
  * una sola cosa.
  */
+/**
+ * Cuántos servicios entran en los dos renglones que tiene la tarjeta.
+ *
+ * Se mide en caracteres porque es lo único que se puede saber antes de
+ * dibujar, y acá hace falta saberlo: el contador de los que quedan afuera no
+ * se puede escribir si el recorte lo hace el CSS.
+ *
+ * El presupuesto sale de medir la tarjeta: entran unos 26 caracteres por
+ * renglón y se le dan tres, reservando los del "+N más". Tres y no dos porque
+ * en español los nombres son largos —"Capacitación y consultoría" se come un
+ * renglón entero— y con dos entraba un solo servicio por tarjeta. Siempre
+ * entra al menos uno, aunque su nombre solo ya se pase.
+ */
+const PRESUPUESTO = 56;
+const SEPARADOR = "  ·  ";
+
+function losQueEntran(servicios: Dominio.Referencia[]) {
+  const visibles: Dominio.Referencia[] = [];
+  let usado = 0;
+  for (const servicio of servicios) {
+    const cuesta =
+      (visibles.length ? SEPARADOR.length : 0) + servicio.nombre.length;
+    if (visibles.length && usado + cuesta > PRESUPUESTO) break;
+    visibles.push(servicio);
+    usado += cuesta;
+  }
+  return { visibles, resto: servicios.length - visibles.length };
+}
+
 function CardCooperativaRed({
   cooperativa,
   alAbrir,
@@ -490,6 +520,7 @@ function CardCooperativaRed({
   className?: string;
 }) {
   const T = contenido(useIdioma()).NUESTRA_RED;
+  const { visibles, resto } = losQueEntran(cooperativa.servicios);
   return (
     <button
       type="button"
@@ -535,11 +566,32 @@ function CardCooperativaRed({
           <h4 className="text-p1-bold">{cooperativa.nombre}</h4>
         ) : null}
 
-        {/* Cortado a dos renglones: son hasta cinco servicios y con los nombres
-            largos —"Datos e inteligencia artificial"— volvía a desparejar. */}
-        {cooperativa.servicios.length ? (
-          <p className="text-p2 mt-4 line-clamp-2 text-blanco/60">
-            {cooperativa.servicios.map((s) => s.nombre).join("  ·  ")}
+        {/*
+          Entran los que entren y se dice cuántos quedaron afuera.
+
+          El corte se cuenta en caracteres y no se deja en manos de
+          `line-clamp`: recortando por CSS no hay forma de saber cuántos
+          nombres se perdieron, así que el "+2" no se podría escribir. Diez de
+          las treinta y tres cooperativas cargaron tres servicios o más, y una
+          tiene cinco: sin el contador, dos cooperativas que comparten los dos
+          primeros se ven idénticas.
+
+          El `line-clamp-3` queda de red: el presupuesto es a ojo y un nombre
+          largo todavía puede pasarse de tres renglones.
+
+          El `mb-4` es lo que separa del pie. No alcanza con el `mt-auto` de
+          abajo: cuando el texto ocupa las dos líneas no sobra espacio, el
+          margen automático se resuelve en cero y la segunda línea terminaba
+          pegada a la línea punteada.
+        */}
+        {visibles.length ? (
+          <p className="text-p2 mt-4 mb-4 line-clamp-3 text-blanco/60">
+            {visibles.map((s) => s.nombre).join("  ·  ")}
+            {resto > 0 ? (
+              <span className="whitespace-nowrap text-blanco/40">
+                {`  ${T.tarjeta.mas(resto)}`}
+              </span>
+            ) : null}
           </p>
         ) : null}
 

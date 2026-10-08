@@ -831,6 +831,9 @@ export const NUESTRA_RED = {
     proyectos: "Ver sus proyectos",
     abrir: "Ver ficha",
     cerrar: "Cerrar",
+    /* Los que no entraron en la tarjeta. Se dicen, no se callan: si no, dos
+       cooperativas con los mismos dos primeros servicios se ven idénticas. */
+    mas: (n: number) => `+${n} más`,
   },
   vacio: {
     titulo: "Elegí una provincia",

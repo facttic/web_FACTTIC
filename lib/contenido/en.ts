@@ -646,6 +646,7 @@ export const NUESTRA_RED = {
     proyectos: "See their projects",
     abrir: "View profile",
     cerrar: "Close",
+    mas: (n: number) => `+${n} more`,
   },
   vacio: {
     titulo: "Pick a province",
