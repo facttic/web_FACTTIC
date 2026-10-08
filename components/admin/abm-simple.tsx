@@ -36,9 +36,6 @@ export interface ConfigSimple {
   ayudaImagen?: string;
 }
 
-/** A partir de cuántas filas vale la pena ofrecer el buscador. */
-const DESDE_CUANDO_BUSCAR = 12;
-
 export interface RegistroSimple {
   id: string;
   nombre: string;
@@ -70,21 +67,14 @@ export function ListadoSimple({
 
   const columnas = config.conImagen ? ["Nombre", "Imagen", ""] : ["Nombre", ""];
 
-  /*
-   * El buscador aparece cuando la lista dejó de entrar de un vistazo. Hoy eso
-   * es tecnologías (54) y clientes (25); organizaciones son cuatro y un campo
-   * de búsqueda arriba de cuatro filas es ruido. El umbral es a ojo y está
-   * para que no haya que decidirlo en cada config.
-   */
-  const conBuscador = registros.length > DESDE_CUANDO_BUSCAR;
 
   return (
     <div>
       <Encabezado
         titulo={config.titulo}
-        /* Con buscador la cuenta la lleva él, que además sabe cuántos quedan
-           a la vista; repetirla acá daría dos números que no coinciden. */
-        cantidad={conBuscador ? undefined : registros.length}
+        /* La cuenta la lleva el buscador, que además sabe cuántos quedan a la
+           vista; repetirla acá daría dos números que dejan de coincidir apenas
+           se escribe algo. */
         accion={
           <EnlaceAdmin href={`${config.ruta}/nueva`}>
             Agregar {config.singular}
@@ -92,12 +82,12 @@ export function ListadoSimple({
         }
       />
 
-      {conBuscador ? (
-        <BuscadorDeTabla
-          queBusca={config.titulo.toLowerCase()}
-          total={registros.length}
-        />
-      ) : null}
+      {/* En los tres listados, sin umbral: tener el campo siempre en el mismo
+          lugar vale más que ahorrárselo en el que hoy tiene pocas filas. */}
+      <BuscadorDeTabla
+        queBusca={config.titulo.toLowerCase()}
+        total={registros.length}
+      />
 
       <Tabla columnas={columnas}>
         {registros.map((registro) => (
