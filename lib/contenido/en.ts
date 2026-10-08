@@ -350,6 +350,10 @@ export const PROYECTOS_PAGINA = {
     abrir: "Filter",
     limpiar: "Clear filters",
   },
+  sello: {
+    intercoop: "Inter-co-op",
+    explica: (n: number) => `${n} co-ops built it together`,
+  },
   ficha: {
     rotulo: "Projects by",
     sitio: "Visit their site",

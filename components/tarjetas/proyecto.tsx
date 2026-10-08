@@ -8,6 +8,7 @@ import { IconoFlecha } from "@/components/ui/iconos";
 import { FOCO } from "@/components/ui/boton";
 import { Inclinar } from "@/components/ui/inclinar";
 import { PortadaGenerica } from "@/components/ui/portada-generica";
+import { SelloIntercoop } from "@/components/ui/sello-intercoop";
 
 /**
  * Tarjetas y filas de proyecto.
@@ -197,55 +198,66 @@ export function CardProyecto({
           página entera. `content` además recorta lo que se sale de la caja, y
           la tarjeta inclinada se sale: le comía los bordes. */}
       <Inclinar grados={6} className="contain-layout">
-        <Tarjeta
-          className={cn(
-            "flex flex-col overflow-hidden",
-            PIEL_TARJETA,
-            alto ?? ALTO_TARJETA,
-            listado && "min-h-[374px] md:h-[406px]",
-          )}
-        >
-          <Portada
-            proyecto={proyecto}
-            indice={indice}
+        {/* El envoltorio existe para el sello: va **afuera** de la tarjeta,
+            porque dentro del `overflow-hidden` no podría sobresalir del borde,
+            y después de ella en el DOM, para pintarse por encima. */}
+        <div className="relative">
+          <Tarjeta
             className={cn(
-              /* Solo el alto: `transition-all` hacía que el navegador vigilara
-                 todas las propiedades de la portada en cada cuadro. */
-              "w-full shrink-0 transition-[height] duration-300",
-              ALTO_IMAGEN,
-              listado && "h-[276px] md:h-[310px]",
+              "relative flex flex-col overflow-hidden",
+              PIEL_TARJETA,
+              alto ?? ALTO_TARJETA,
+              listado && "min-h-[374px] md:h-[406px]",
             )}
-          />
-          <div className="flex flex-1 flex-col justify-start p-6">
-            <h3 className="text-h4 line-clamp-2 shrink-0 text-balance">
-              {proyecto.nombre}
-            </h3>
-            {/*
+          >
+            <Portada
+              proyecto={proyecto}
+              indice={indice}
+              className={cn(
+                /* Solo el alto: `transition-all` hacía que el navegador vigilara
+                 todas las propiedades de la portada en cada cuadro. */
+                "w-full shrink-0 transition-[height] duration-300",
+                ALTO_IMAGEN,
+                listado && "h-[276px] md:h-[310px]",
+              )}
+            />
+            <div className="flex flex-1 flex-col justify-start p-6">
+              <h3 className="text-h4 line-clamp-2 shrink-0 text-balance">
+                {proyecto.nombre}
+              </h3>
+              {/*
               El detalle se despliega ocupando todo lo que sobra de la tarjeta
               —de ahí el `flex-1`—, así el pie queda abajo en vez de dejar un
               hueco entre las etiquetas y el borde.
             */}
-            <div
-              className={cn(
-                "grid flex-1 transition-[grid-template-rows] duration-300",
-                // Desplegado de entrada en mobile; en desktop se abre al pasar
-                // el mouse.
-                "grid-rows-[1fr] md:grid-rows-[0fr]",
-                "md:group-hover:grid-rows-[1fr] md:group-focus-visible:grid-rows-[1fr]",
-              )}
-            >
-              <div className="min-h-0 overflow-hidden">
-                {/* El listado no muestra etiquetas en mobile: el board deja
+              <div
+                className={cn(
+                  "grid flex-1 transition-[grid-template-rows] duration-300",
+                  // Desplegado de entrada en mobile; en desktop se abre al pasar
+                  // el mouse.
+                  "grid-rows-[1fr] md:grid-rows-[0fr]",
+                  "md:group-hover:grid-rows-[1fr] md:group-focus-visible:grid-rows-[1fr]",
+                )}
+              >
+                <div className="min-h-0 overflow-hidden">
+                  {/* El listado no muestra etiquetas en mobile: el board deja
                     solo el título debajo de la foto. */}
-                <Detalle
-                  proyecto={proyecto}
-                  conDescripcion={destacada}
-                  className={listado ? "hidden md:flex" : undefined}
-                />
+                  <Detalle
+                    proyecto={proyecto}
+                    conDescripcion={destacada}
+                    className={listado ? "hidden md:flex" : undefined}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        </Tarjeta>
+          </Tarjeta>
+          {proyecto.cooperativas.length > 1 ? (
+            <SelloIntercoop
+              cooperativas={proyecto.cooperativas.length}
+              className="-top-2.5 right-6"
+            />
+          ) : null}
+        </div>
       </Inclinar>
     </Link>
   );
@@ -270,19 +282,27 @@ export function CardProyectoDetalle({
       href={`/proyectos/${proyecto.slug}`}
       className={cn("group block", FOCO, className)}
     >
-      <Tarjeta className="overflow-hidden transition-colors hover:border-blanco/30">
-        <Portada
-          proyecto={proyecto}
-          indice={indice}
-          className="h-56 w-full md:h-[310px]"
-        />
-        <div className="p-6">
-          <h3 className="text-h4 line-clamp-2 text-balance">
-            {proyecto.nombre}
-          </h3>
-          <Detalle proyecto={proyecto} conDescripcion />
-        </div>
-      </Tarjeta>
+      <div className="relative">
+        <Tarjeta className="relative overflow-hidden transition-colors hover:border-blanco/30">
+          <Portada
+            proyecto={proyecto}
+            indice={indice}
+            className="h-56 w-full md:h-[310px]"
+          />
+          <div className="p-6">
+            <h3 className="text-h4 line-clamp-2 text-balance">
+              {proyecto.nombre}
+            </h3>
+            <Detalle proyecto={proyecto} conDescripcion />
+          </div>
+        </Tarjeta>
+        {proyecto.cooperativas.length > 1 ? (
+          <SelloIntercoop
+            cooperativas={proyecto.cooperativas.length}
+            className="-top-2.5 right-6"
+          />
+        ) : null}
+      </div>
     </Link>
   );
 }

@@ -451,6 +451,11 @@ export const PROYECTOS_PAGINA = {
     limpiar: "Limpiar filtros",
   },
   /* La ficha que encabeza la grilla cuando se filtra por una cooperativa. */
+  /* El sello de los proyectos hechos entre varias cooperativas. */
+  sello: {
+    intercoop: "Intercoop",
+    explica: (n: number) => `${n} cooperativas lo hicieron juntas`,
+  },
   ficha: {
     rotulo: "Proyectos de",
     sitio: "Ir al sitio",

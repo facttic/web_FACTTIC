@@ -48,13 +48,18 @@ las imágenes ya resueltas a URL y las relaciones ya expandidas.
 | Card autoridades                                | `tarjetas/red.tsx` → `CardAutoridad`                      |
 | Card logo                                       | `tarjetas/red.tsx` → `CardLogo`, `GrillaLogos`            |
 | Ficha de cooperativa †                          | `tarjetas/red.tsx` → `FichaCooperativa`                   |
+| Sello intercoop †                               | `ui/sello-intercoop.tsx` → `SelloIntercoop`               |
+| Texto con "Leer más" †                          | `ui/texto-recortado.tsx` → `TextoRecortado`               |
 | Call to action                                  | `ui/seccion.tsx` → `BandaCta`                             |
 | Nav bar/Predeterminada                          | `layout/header.tsx`                                       |
 | Footer                                          | `layout/footer.tsx`                                       |
 | Card logo (wordmark)                            | `layout/logo.tsx` *                                       |
 
-† Sin maqueta: encabeza Proyectos al filtrar por una cooperativa, que es lo
-más parecido a una ficha de cooperativa que tiene el sitio.
+† Sin maqueta. La ficha encabeza Proyectos al filtrar por una cooperativa, que
+es lo más parecido a una ficha de cooperativa que tiene el sitio. El sello
+marca los proyectos hechos entre varias, que es lo que distingue a una
+federación de un directorio. El texto recortado aparece donde escribe una
+cooperativa y no hay forma de saber cuánto va a escribir.
 
 \* `BotonIdioma` está hecho pero sin usar: la v1 sale solo en español.
 El wordmark está compuesto tipográficamente hasta que se exporte el SVG.

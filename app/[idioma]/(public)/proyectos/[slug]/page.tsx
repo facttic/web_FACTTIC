@@ -5,6 +5,7 @@ import { EncabezadoSeccion, Seccion, BandaCta } from "@/components/ui/seccion";
 import { BotonLink } from "@/components/ui/boton";
 import { Acordeon, type ItemAcordeon } from "@/components/ui/acordeon";
 import { Chip, ChipCliente, ChipSector } from "@/components/ui/chip";
+import { SelloIntercoop } from "@/components/ui/sello-intercoop";
 import { PortadaGenerica } from "@/components/ui/portada-generica";
 import { LogoRemoto } from "@/components/ui/logo-remoto";
 import { CarruselConFlechas } from "@/components/ui/carrusel-con-flechas";
@@ -152,7 +153,26 @@ export default async function ProyectoPage({
             ) : null}
           </div>
 
-          <h1 className="text-h1 max-w-4xl text-balance">{proyecto.nombre}</h1>
+          {/* El sello a la derecha del título, no encima: que el proyecto se
+              haya hecho entre varias cooperativas es lo que lo distingue, y
+              enterarse recién al final —en la lista de cooperativas— lo deja
+              como un dato administrativo.
+
+              Acá no va prendido a ningún borde: sin una tarjeta que tape la
+              chapa de atrás, esa chapa queda como un halo que no significa
+              nada. */}
+          <div className="flex items-start justify-between gap-6">
+            <h1 className="text-h1 max-w-4xl text-balance">
+              {proyecto.nombre}
+            </h1>
+            {proyecto.cooperativas.length > 1 ? (
+              <SelloIntercoop
+                cooperativas={proyecto.cooperativas.length}
+                prendido={false}
+                className="mt-2 shrink-0"
+              />
+            ) : null}
+          </div>
 
           {servicios ? (
             <p className="text-p3 mt-4 text-blanco/60 md:hidden">{servicios}</p>
