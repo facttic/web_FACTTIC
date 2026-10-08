@@ -4,14 +4,15 @@ import { Bloque, Bloques, Par } from "@/components/admin/bloque";
 import { CampoBuscador } from "@/components/admin/campo-buscador";
 import { SolapasIdioma } from "@/components/admin/solapas-idioma";
 import {
-  CampoArchivo,
   CampoCasilla,
   CampoSelectorConAlta,
   GRUPO_OTROS,
   CampoTexto,
   FormularioAdmin,
+  TOPE_ENVIO,
   type EstadoForm,
 } from "@/components/admin/piezas";
+import { CampoGaleria } from "@/components/admin/campo-galeria";
 import type { Opcion, Proyecto } from "@/lib/datos/admin";
 import {
   crearCliente,
@@ -261,23 +262,17 @@ export function FormularioProyecto({
 /**
  * Las imágenes del proyecto.
  *
- * La API no sabe agregar de a una: cada envío reemplaza la lista entera, así
- * que las que ya están se muestran acá para poder decidir con eso a la vista.
+ * La API no sabe agregar de a una: cada envío reemplaza la lista entera. Por
+ * eso el campo baja las que ya están y las vuelve a mandar junto con las
+ * nuevas, que es lo que permite quitar una sola y elegir la portada.
  */
 function Imagenes({ cargadas }: { cargadas: string[] }) {
   return (
-    <CampoArchivo
-      id="imageFiles"
+    <CampoGaleria
       name="imageFiles"
       etiqueta="Imágenes"
-      ayuda={
-        cargadas.length > 0
-          ? `Hay ${cargadas.length} cargada${cargadas.length === 1 ? "" : "s"}. Si elegís otras, reemplazan a todas: subilas juntas. La primera es la portada.`
-          : "La primera es la portada. Se pueden elegir varias juntas."
-      }
-      accept="image/*"
-      multiple
       actual={cargadas}
+      tope={TOPE_ENVIO}
     />
   );
 }

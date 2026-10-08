@@ -726,7 +726,7 @@ export function CampoCasilla({
  * rechaza el cuerpo antes de llegar a la acción y la pantalla se corta con "A
  * server error occurred", sin decir por qué: de ahí este aviso.
  */
-const TOPE_ENVIO = 18 * 1024 * 1024;
+export const TOPE_ENVIO = 18 * 1024 * 1024;
 
 export function CampoArchivo({
   id,
