@@ -10,7 +10,7 @@ import { PortadaGenerica } from "@/components/ui/portada-generica";
 import { LogoRemoto } from "@/components/ui/logo-remoto";
 import { CarruselConFlechas } from "@/components/ui/carrusel-con-flechas";
 import { CardProyecto, FilaProyecto } from "@/components/tarjetas/proyecto";
-import { getTecnologias } from "@/lib/datos/catalogos";
+import { getCooperativas, getTecnologias } from "@/lib/datos/catalogos";
 import { contenido } from "@/lib/contenido";
 import type { Idioma } from "@/lib/idioma";
 import {
@@ -60,11 +60,13 @@ export default async function ProyectoPage({
   const proyecto = await getProyecto(slug, idioma);
   if (!proyecto) notFound();
 
-  const [relacionados, ultimos, catalogoTecnologias] = await Promise.all([
-    getProyectosRelacionados(proyecto),
-    getProyectos({ porPagina: 5 }),
-    getTecnologias(),
-  ]);
+  const [relacionados, ultimos, catalogoTecnologias, catalogoCoops] =
+    await Promise.all([
+      getProyectosRelacionados(proyecto),
+      getProyectos({ porPagina: 5 }),
+      getTecnologias(),
+      getCooperativas(idioma),
+    ]);
 
   /* El proyecto trae de cada tecnología solo el id y el nombre; el ícono está
      en el catálogo, así que se cruzan para poder mostrarlo. */
@@ -72,6 +74,16 @@ export default async function ProyectoPage({
   const stack = proyecto.tecnologias.map((t) => ({
     ...t,
     logo: logoPorId.get(t.id) ?? null,
+  }));
+
+  /* Lo mismo con las cooperativas: el proyecto trae el id y el nombre, y el
+     logo está en su ficha. Mostrarlo importa más acá que en cualquier otro
+     lado: la lista de quiénes lo hicieron es la prueba del trabajo intercoop,
+     y una fila de nombres sueltos no la cuenta. */
+  const logoCoopPorId = new Map(catalogoCoops.map((c) => [c.id, c.logo]));
+  const coops = proyecto.cooperativas.map((c) => ({
+    ...c,
+    logo: logoCoopPorId.get(c.id) ?? null,
   }));
 
   const [portada, ...galeria] = proyecto.imagenes;
@@ -255,7 +267,7 @@ export default async function ProyectoPage({
         <Seccion className="py-0 md:py-0">
           <FichaEnLinea
             titulo={T.detalle.cooperativas}
-            items={proyecto.cooperativas}
+            items={coops}
           />
         </Seccion>
       ) : null}
