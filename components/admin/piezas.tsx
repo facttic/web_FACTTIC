@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Children, cloneElement, isValidElement, useActionState, useState } from "react";
+import { useFormStatus } from "react-dom";
 import { comprimirImagen } from "@/lib/admin/comprimir-imagen";
 import { traducirAlIngles } from "@/lib/admin/traducir";
 import { cn } from "@/lib/cn";
@@ -749,7 +750,19 @@ export function CampoArchivo({
   );
   const [pesado, setPesado] = useState<string | null>(null);
   const [achicado, setAchicado] = useState<string | null>(null);
-  const [trabajando, setTrabajando] = useState(false);
+  /** Por dónde va la compresión, para poder decir "3 de 5". */
+  const [avance, setAvance] = useState<{ hechas: number; total: number } | null>(
+    null,
+  );
+  /** Lo que va a viajar, para poder decirlo mientras viaja. */
+  const [aSubir, setASubir] = useState<string | null>(null);
+  /*
+   * Si el formulario está enviando. Se lee de `useFormStatus` y no de una prop
+   * porque la espera larga es la de las imágenes y el aviso tiene que estar
+   * acá, al lado de ellas: el botón queda al pie de la ventana y en una ficha
+   * larga ni se ve.
+   */
+  const { pending: enviando } = useFormStatus();
 
   const mb = (n: number) => `${(n / 1024 / 1024).toFixed(1)} MB`;
   const pesa = (archivos: File[]) =>
@@ -774,9 +787,10 @@ export function CampoArchivo({
     }
 
     const antes = pesa(elegidos);
-    setTrabajando(true);
     setPesado(null);
     setAchicado(null);
+    setASubir(null);
+    setAvance({ hechas: 0, total: elegidos.length });
 
     /*
      * De a una y no con `Promise.all`.
@@ -790,7 +804,10 @@ export function CampoArchivo({
      * Una por vez tarda apenas más y no se pasa nunca de una foto en memoria.
      */
     const listos: File[] = [];
-    for (const archivo of elegidos) listos.push(await comprimirImagen(archivo));
+    for (const archivo of elegidos) {
+      listos.push(await comprimirImagen(archivo));
+      setAvance({ hechas: listos.length, total: elegidos.length });
+    }
     const despues = pesa(listos);
 
     /*
@@ -822,7 +839,10 @@ export function CampoArchivo({
     }
 
     const final = reemplazado ? despues : antes;
-    setTrabajando(false);
+    setAvance(null);
+    setASubir(
+      `${listos.length} ${listos.length === 1 ? "imagen" : "imágenes"} (${mb(final)})`,
+    );
     setAchicado(
       reemplazado && final < antes * 0.95
         ? `Se achicaron en el navegador: de ${mb(antes)} a ${mb(final)}. Lo que se sube es lo achicado.`
@@ -870,10 +890,27 @@ export function CampoArchivo({
         {...props}
       />
       <Ayuda>{ayuda}</Ayuda>
-      {trabajando ? (
-        <p className="text-p3 mt-2 text-blanco/60">Achicando las imágenes…</p>
+      {avance ? (
+        <div className="mt-2" aria-live="polite">
+          <p className="text-p3 text-blanco/60">
+            Achicando {Math.max(1, avance.hechas)} de {avance.total}…
+          </p>
+          {/* Una barra y no solo el número: con fotos de cámara cada una tarda
+              un par de segundos y sin nada que se mueva parece colgado. */}
+          <div className="mt-1.5 h-1 overflow-hidden rounded bg-superficie-alta">
+            <div
+              className="h-full rounded bg-lila transition-[width] duration-300"
+              style={{ width: `${(avance.hechas / avance.total) * 100}%` }}
+            />
+          </div>
+        </div>
       ) : null}
-      {achicado ? (
+      {!avance && enviando && aSubir ? (
+        <p className="text-p3 mt-2 text-blanco/60" aria-live="polite">
+          Subiendo {aSubir}…
+        </p>
+      ) : null}
+      {!avance && !enviando && achicado ? (
         <p className="text-p3 mt-2 text-blanco/60">{achicado}</p>
       ) : null}
       {pesado ? (
