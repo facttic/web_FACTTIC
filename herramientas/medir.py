@@ -7,6 +7,7 @@ un Chrome propio con el ancho fijado de verdad.
 
   ANCHO=393  python3 herramientas/medir.py shot home-mobile.png
   ANCHO=1440 URL=http://localhost:3000/proyectos python3 herramientas/medir.py js "document.title"
+  IDIOMA=en-US python3 herramientas/medir.py js "navigator.languages"
 
 Con un tercer argumento, `shot` y `vista` corren ese JavaScript antes de
 capturar: sirve para fotografiar lo que solo existe después de tocar algo —un
@@ -29,6 +30,13 @@ import urllib.request
 import websocket
 
 URL = os.environ.get("URL", "http://localhost:3000/")
+#
+# El idioma del navegador. Lo pide `IDIOMA=en-US`, y Chrome lo refleja en
+# `navigator.languages` y en la cabecera `Accept-Language`. Hace falta para
+# probar lo que depende de eso: la autodetección de idioma del sitio y el
+# saludo de la consola, que habla el del navegador y no el de la URL.
+#
+IDIOMA = os.environ.get("IDIOMA", "es-AR")
 ANCHO, ALTO = int(os.environ.get("ANCHO", 393)), 900
 PUERTO = 9333
 PERFIL = "/tmp/claude-1000/chrome-perfil-facttic"
@@ -57,6 +65,7 @@ def arrancar():
             "google-chrome", "--headless=new", "--disable-gpu", "--no-sandbox",
             "--hide-scrollbars", f"--remote-debugging-port={PUERTO}",
             "--remote-allow-origins=*", HOVER_DE_MOUSE,
+            f"--lang={IDIOMA}", f"--accept-lang={IDIOMA}",
             f"--user-data-dir={PERFIL}", f"--window-size={ANCHO},{ALTO}",
             "about:blank",
         ],

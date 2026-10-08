@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import { construirConsola } from "@/lib/consola";
+import { construirConsola, invitacion } from "@/lib/consola";
+import { idiomaDelNavegador } from "@/lib/idioma-cliente";
 
 /**
  * El saludo de la consola.
@@ -9,6 +10,11 @@ import { construirConsola } from "@/lib/consola";
  * Quien abre las herramientas del navegador en un sitio de cooperativas de
  * tecnología probablemente escriba código. Para esa persona: el wordmark, que
  * el código es software libre y dónde está el repositorio.
+ *
+ * Habla el idioma del **navegador** y no el de la pantalla. La consola no es
+ * parte de la página: no la abre quien está leyendo el sitio sino quien vino a
+ * mirar cómo está hecho, y esa persona la lee en su idioma, no en el que le
+ * tocó a la URL.
  *
  * Dice "el código de este sitio" y no "este sitio": la AGPL cubre el código, y
  * los textos y las fotos van por otro lado. El README lo detalla.
@@ -56,11 +62,20 @@ export function SaludoEnConsola() {
       `%c${WORDMARK}`,
       "color:#8b7bb8;font-weight:bold;line-height:1.15",
     );
+    const idioma = idiomaDelNavegador();
+    const saludo =
+      idioma === "en"
+        ? "%cThis site's code is free software.%c\n" +
+          `Code: %c${LICENCIA.repo}%c\n` +
+          `Licence: %c${LICENCIA.nombre}%c — read it, copy it, study it, improve it.\n\n` +
+          "Built inter-co-operatively."
+        : "%cEl código de este sitio es software libre.%c\n" +
+          `Código: %c${LICENCIA.repo}%c\n` +
+          `Licencia: %c${LICENCIA.nombre}%c — podés leerlo, copiarlo, estudiarlo y mejorarlo.\n\n` +
+          "Hecho de forma intercooperativa.";
+
     console.log(
-      "%cEl código de este sitio es software libre.%c\n" +
-        `Código: %c${LICENCIA.repo}%c\n` +
-        `Licencia: %c${LICENCIA.nombre}%c — podés leerlo, copiarlo, estudiarlo y mejorarlo.\n\n` +
-        "Hecho de forma intercooperativa.",
+      saludo,
       "font-weight:bold",
       "",
       "text-decoration:underline",
@@ -76,10 +91,9 @@ export function SaludoEnConsola() {
      * que no abrió la consola.
      */
     (window as typeof window & { facttic?: unknown }).facttic =
-      construirConsola();
+      construirConsola(idioma);
     console.log(
-      "%cEscribí %cfacttic.ayuda()%c para ver los datos de la red desde acá.",
-      "color:#8a8a8a",
+      invitacion(idioma).texto,
       "color:#b99de8;font-weight:bold",
       "color:#8a8a8a",
     );
