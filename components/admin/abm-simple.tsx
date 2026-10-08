@@ -12,6 +12,7 @@ import {
   type EstadoForm,
 } from "./piezas";
 import { FormularioSimple } from "./abm-simple-form";
+import { BuscadorDeTabla } from "./buscador-de-tabla";
 
 /**
  * ABM de los catálogos que son solo un nombre y, a veces, una imagen:
@@ -34,6 +35,9 @@ export interface ConfigSimple {
   conImagen?: boolean;
   ayudaImagen?: string;
 }
+
+/** A partir de cuántas filas vale la pena ofrecer el buscador. */
+const DESDE_CUANDO_BUSCAR = 12;
 
 export interface RegistroSimple {
   id: string;
@@ -66,11 +70,21 @@ export function ListadoSimple({
 
   const columnas = config.conImagen ? ["Nombre", "Imagen", ""] : ["Nombre", ""];
 
+  /*
+   * El buscador aparece cuando la lista dejó de entrar de un vistazo. Hoy eso
+   * es tecnologías (54) y clientes (25); organizaciones son cuatro y un campo
+   * de búsqueda arriba de cuatro filas es ruido. El umbral es a ojo y está
+   * para que no haya que decidirlo en cada config.
+   */
+  const conBuscador = registros.length > DESDE_CUANDO_BUSCAR;
+
   return (
     <div>
       <Encabezado
         titulo={config.titulo}
-        cantidad={registros.length}
+        /* Con buscador la cuenta la lleva él, que además sabe cuántos quedan
+           a la vista; repetirla acá daría dos números que no coinciden. */
+        cantidad={conBuscador ? undefined : registros.length}
         accion={
           <EnlaceAdmin href={`${config.ruta}/nueva`}>
             Agregar {config.singular}
@@ -78,9 +92,16 @@ export function ListadoSimple({
         }
       />
 
+      {conBuscador ? (
+        <BuscadorDeTabla
+          queBusca={config.titulo.toLowerCase()}
+          total={registros.length}
+        />
+      ) : null}
+
       <Tabla columnas={columnas}>
         {registros.map((registro) => (
-          <Fila key={registro.id}>
+          <Fila key={registro.id} busca={registro.nombre}>
             <Celda className="text-p2">{registro.nombre}</Celda>
             {config.conImagen ? (
               <Celda apagado={!registro.logo}>
