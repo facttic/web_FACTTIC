@@ -134,7 +134,9 @@ export default async function ProyectoPage({
                 alt={`Portada del proyecto ${proyecto.nombre}`}
                 loading="eager"
                 fetchPriority="high"
-                className="-mt-[72px] h-[488px] w-full rounded-b-3xl object-cover md:mt-0 md:h-[438px] md:rounded-[21px]"
+                /* `object-top` por lo mismo que en la tarjeta: son capturas y
+                   el recorte tiene que comerse el pie, no el encabezado. */
+                className="-mt-[72px] h-[488px] w-full rounded-b-3xl object-cover object-top md:mt-0 md:h-[438px] md:rounded-[21px]"
               />
             </div>
           </ViewTransition>
@@ -254,7 +256,7 @@ export default async function ProyectoPage({
                     src={imagen}
                     alt=""
                     loading="lazy"
-                    className="aspect-[587/341] w-full object-cover transition-transform duration-500 hover:scale-105"
+                    className="aspect-[587/341] w-full object-cover object-top transition-transform duration-500 hover:scale-105"
                   />
                 </div>
               ))}

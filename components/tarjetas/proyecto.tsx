@@ -86,7 +86,11 @@ function Portada({
       <img
         src={proyecto.portada}
         alt=""
-        className={cn("object-cover", className)}
+        /* Anclada arriba y no al centro: la mayoría de las portadas son
+           capturas de un sistema, y lo que identifica a una captura está en el
+           encabezado. Centrada, el recorte se come la barra de arriba y deja a
+           la vista un pedazo de formulario que no dice nada. */
+        className={cn("object-cover object-top", className)}
         loading="lazy"
       />
     </ViewTransition>
