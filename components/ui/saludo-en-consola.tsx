@@ -44,7 +44,7 @@ export const LICENCIA = {
   repo: "https://github.com/facttic/web_FACTTIC",
 };
 
-export function SaludoEnConsola() {
+export function SaludoEnConsola({ conWordmark = true }: { conWordmark?: boolean } = {}) {
   useEffect(() => {
     /* En desarrollo el efecto corre dos veces —el modo estricto monta, desmonta
        y vuelve a montar—, y el saludo saldría repetido. */
@@ -58,12 +58,19 @@ export function SaludoEnConsola() {
      * puede estar en claro o en oscuro y no hay forma de saberlo, así que se
      * eligen los que se leen en las dos.
      */
-    console.log(
-      `%c${WORDMARK}`,
-      "color:#8b7bb8;font-weight:bold;line-height:1.15",
-    );
+    /* En el panel no va el dibujo ni la licencia: ahí la consola es
+       herramienta de trabajo y el adorno tapa lo que se vino a leer. Los
+       comandos sí, que ahí son más útiles que en ningún lado. */
+    if (conWordmark) {
+      console.log(
+        `%c${WORDMARK}`,
+        "color:#8b7bb8;font-weight:bold;line-height:1.15",
+      );
+    }
     const idioma = idiomaDelNavegador();
-    const saludo =
+    const saludo = !conWordmark
+      ? null
+      :
       idioma === "en"
         ? "%cThis site's code is free software.%c\n" +
           `Code: %c${LICENCIA.repo}%c\n` +
@@ -74,15 +81,17 @@ export function SaludoEnConsola() {
           `Licencia: %c${LICENCIA.nombre}%c — podés leerlo, copiarlo, estudiarlo y mejorarlo.\n\n` +
           "Hecho de forma intercooperativa.";
 
-    console.log(
-      saludo,
-      "font-weight:bold",
-      "",
-      "text-decoration:underline",
-      "",
-      "font-weight:bold",
-      "",
-    );
+    if (saludo) {
+      console.log(
+        saludo,
+        "font-weight:bold",
+        "",
+        "text-decoration:underline",
+        "",
+        "font-weight:bold",
+        "",
+      );
+    }
 
     /*
      * Y los datos de la red, consultables desde acá mismo. Se instala el
@@ -97,7 +106,7 @@ export function SaludoEnConsola() {
       "color:#b99de8;font-weight:bold",
       "color:#8a8a8a",
     );
-  }, []);
+  }, [conWordmark]);
 
   return null;
 }
