@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { construirConsola } from "@/lib/consola";
 
 /**
  * El saludo de la consola.
@@ -66,6 +67,21 @@ export function SaludoEnConsola() {
       "",
       "font-weight:bold",
       "",
+    );
+
+    /*
+     * Y los datos de la red, consultables desde acá mismo. Se instala el
+     * objeto y nada más: los comandos piden `/api/red` recién cuando se
+     * escribe el primero, así nadie paga esos kilobytes por una visita en la
+     * que no abrió la consola.
+     */
+    (window as typeof window & { facttic?: unknown }).facttic =
+      construirConsola();
+    console.log(
+      "%cEscribí %cfacttic.ayuda()%c para ver los datos de la red desde acá.",
+      "color:#8a8a8a",
+      "color:#b99de8;font-weight:bold",
+      "color:#8a8a8a",
     );
   }, []);
 
