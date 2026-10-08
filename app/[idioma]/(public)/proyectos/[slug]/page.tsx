@@ -268,6 +268,7 @@ export default async function ProyectoPage({
           <FichaEnLinea
             titulo={T.detalle.cooperativas}
             items={coops}
+            apilado
           />
         </Seccion>
       ) : null}
@@ -335,42 +336,77 @@ export default async function ProyectoPage({
 function FichaEnLinea({
   titulo,
   items,
+  apilado = false,
 }: {
   titulo: string;
   items: readonly { id: string; nombre: string; logo?: string | null }[];
+  /**
+   * El logo grande y el nombre chico debajo, en vez de la etiqueta con el
+   * ícono al lado.
+   *
+   * Es para las cooperativas: ahí el logo **es** el dato —se reconoce antes
+   * que el nombre escrito— y la lista de quiénes hicieron el proyecto es la
+   * prueba del trabajo intercoop. El stack de tecnologías se queda como
+   * etiquetas, que es lo que pide la maqueta y lo que corresponde a una lista
+   * de quince ítems.
+   */
+  apilado?: boolean;
 }) {
   return (
     <div className="flex flex-col gap-4 py-6 md:grid md:grid-cols-[352px_1fr] md:items-center md:gap-16 md:border-y md:border-dashed md:border-borde-pleno">
       <h2 className="text-h2">{titulo}</h2>
 
-      <div className="scroll-limpio -mx-6 flex gap-2 overflow-x-auto px-6 md:mx-0 md:hidden md:px-0">
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className="flex h-[92px] w-[184px] shrink-0 flex-col items-center justify-center gap-1.5 rounded-lg bg-superficie-alta px-4"
-          >
-            {item.logo ? (
-              <LogoRemoto src={item.logo} nombre="" className="max-h-6" />
-            ) : null}
-            <span className="text-h4 text-center leading-tight">
-              {item.nombre}
-            </span>
+      {apilado ? (
+        /* Una sola forma en los dos anchos: en mobile se desliza de costado y
+           en escritorio se acomoda en varias filas. */
+        <div className="scroll-limpio -mx-6 flex gap-3 overflow-x-auto px-6 md:mx-0 md:flex-wrap md:overflow-visible md:px-0">
+          {items.map((item) => (
+            <div
+              key={item.id}
+              className="flex w-[148px] shrink-0 flex-col items-center justify-center gap-2.5 rounded-lg bg-superficie-alta px-4 py-5"
+            >
+              {item.logo ? (
+                <LogoRemoto src={item.logo} nombre="" className="max-h-10" />
+              ) : null}
+              <span className="text-p3 text-center leading-tight text-blanco/60">
+                {item.nombre}
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <>
+          <div className="scroll-limpio -mx-6 flex gap-2 overflow-x-auto px-6 md:mx-0 md:hidden md:px-0">
+            {items.map((item) => (
+              <div
+                key={item.id}
+                className="flex h-[92px] w-[184px] shrink-0 flex-col items-center justify-center gap-1.5 rounded-lg bg-superficie-alta px-4"
+              >
+                {item.logo ? (
+                  <LogoRemoto src={item.logo} nombre="" className="max-h-6" />
+                ) : null}
+                <span className="text-h4 text-center leading-tight">
+                  {item.nombre}
+                </span>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      {/* En escritorio van como etiquetas, con el ícono adentro cuando lo hay:
-          el mismo dato que en mobile, en la forma que pide la maqueta. */}
-      <div className="hidden flex-wrap items-center gap-3 md:flex">
-        {items.map((item) => (
-          <Chip key={item.id} className="flex items-center gap-2 px-4 py-2">
-            {item.logo ? (
-              <LogoRemoto src={item.logo} nombre="" className="max-h-4" />
-            ) : null}
-            {item.nombre}
-          </Chip>
-        ))}
-      </div>
+          {/* En escritorio van como etiquetas, con el ícono adentro cuando lo
+              hay: el mismo dato que en mobile, en la forma que pide la
+              maqueta. */}
+          <div className="hidden flex-wrap items-center gap-3 md:flex">
+            {items.map((item) => (
+              <Chip key={item.id} className="flex items-center gap-2 px-4 py-2">
+                {item.logo ? (
+                  <LogoRemoto src={item.logo} nombre="" className="max-h-4" />
+                ) : null}
+                {item.nombre}
+              </Chip>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
