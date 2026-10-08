@@ -843,10 +843,14 @@ export function CampoArchivo({
     setASubir(
       `${listos.length} ${listos.length === 1 ? "imagen" : "imágenes"} (${mb(final)})`,
     );
+    /* La cuenta va en el texto a propósito: cuando alguien elige cinco y el
+       navegador entrega una, es acá donde se nota. Sin el número, un "se
+       achicaron de 9,9 MB a 0,5 MB" se lee como que salió todo bien. */
+    const cuantas = `${listos.length} ${listos.length === 1 ? "imagen" : "imágenes"}`;
     setAchicado(
       reemplazado && final < antes * 0.95
-        ? `Se achicaron en el navegador: de ${mb(antes)} a ${mb(final)}. Lo que se sube es lo achicado.`
-        : null,
+        ? `${cuantas}, achicadas en el navegador: de ${mb(antes)} a ${mb(final)}. Lo que se sube es lo achicado.`
+        : `${cuantas} elegida${listos.length === 1 ? "" : "s"}, ${mb(final)}.`,
     );
     setPesado(
       final > TOPE_ENVIO
