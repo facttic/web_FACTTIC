@@ -641,7 +641,12 @@ export const NUESTRA_RED = {
     verMenos: "See less",
     sinDatos: "We haven't added the detail for this province yet.",
   },
-  tarjeta: { sitio: "Visit site", proyectos: "See their projects" },
+  tarjeta: {
+    sitio: "Visit site",
+    proyectos: "See their projects",
+    abrir: "View profile",
+    cerrar: "Close",
+  },
   vacio: {
     titulo: "Pick a province",
     sugerencia: "Tap the map to see the co-ops in each province.",

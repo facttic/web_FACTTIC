@@ -825,7 +825,13 @@ export const NUESTRA_RED = {
     verMenos: "Ver menos",
     sinDatos: "Todavía no cargamos el detalle de esta provincia.",
   },
-  tarjeta: { sitio: "Ir al sitio", proyectos: "Ver sus proyectos" },
+  /* La tarjeta de la grilla y el panel que se abre al tocarla. */
+  tarjeta: {
+    sitio: "Ir al sitio",
+    proyectos: "Ver sus proyectos",
+    abrir: "Ver ficha",
+    cerrar: "Cerrar",
+  },
   vacio: {
     titulo: "Elegí una provincia",
     sugerencia: "Tocá el mapa para ver las cooperativas de cada provincia.",

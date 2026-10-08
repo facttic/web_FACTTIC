@@ -7,6 +7,16 @@ un Chrome propio con el ancho fijado de verdad.
 
   ANCHO=393  python3 herramientas/medir.py shot home-mobile.png
   ANCHO=1440 URL=http://localhost:3000/proyectos python3 herramientas/medir.py js "document.title"
+
+Con un tercer argumento, `shot` y `vista` corren ese JavaScript antes de
+capturar: sirve para fotografiar lo que solo existe después de tocar algo —un
+panel, una solapa, un desplegable—.
+
+  python3 herramientas/medir.py vista panel.png "document.querySelector('button').click()"
+
+`vista` saca solo lo que entra en pantalla; `shot`, la página entera. Para algo
+que flota sobre el resto —un diálogo— va `vista`: la página entera lo deja
+diminuto arriba de todo.
 """
 import base64
 import json
@@ -94,6 +104,18 @@ class Sesion:
                      awaitPromise=True)
         return r.get("result", {}).get("value")
 
+    def vista(self, salida):
+        """Solo lo que entra en pantalla, sin recorrer la página.
+
+        Es lo que corresponde para un diálogo o cualquier cosa que flote: la
+        captura de página completa la dibuja del tamaño del viewport arriba de
+        todo y deja debajo metros de fondo.
+        """
+        r = self.cmd("Page.captureScreenshot", format="png")
+        with open(salida, "wb") as f:
+            f.write(base64.b64decode(r["data"]))
+        return ANCHO, ALTO
+
     def captura(self, salida):
         """Captura la página entera SIN agrandar el viewport.
 
@@ -151,6 +173,12 @@ if __name__ == "__main__":
         if sys.argv[1] == "js":
             print(json.dumps(s.js(sys.argv[2]), indent=1, ensure_ascii=False))
         else:
-            print("capturado:", s.captura(sys.argv[2]))
+            if len(sys.argv) > 3:
+                s.js(sys.argv[3])
+                time.sleep(1.2)
+            if sys.argv[1] == "vista":
+                print("capturado:", s.vista(sys.argv[2]))
+            else:
+                print("capturado:", s.captura(sys.argv[2]))
     finally:
         proc.terminate()

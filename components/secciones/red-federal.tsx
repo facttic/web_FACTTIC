@@ -43,6 +43,9 @@ export function RedFederal({
    * que era lo que pasaba cuando eran la misma cosa.
    */
   const [elegida, setElegida] = useState(provincias[0]?.nombre ?? null);
+  /* Cuál tiene la ficha abierta. `null` es "ninguna", que es lo que el panel
+     usa para cerrarse. */
+  const [abierta, setAbierta] = useState<CooperativaEnRed | null>(null);
   // Arranca cerrado: primero se ve el mapa entero y la ficha aparece al tocar.
   const [panelAbierto, setPanelAbierto] = useState(false);
   /*
@@ -316,10 +319,19 @@ export function RedFederal({
            columnas en desktop. */
           <div className="mt-8 flex flex-col gap-5 md:grid md:grid-cols-4">
             {provincia.cooperativas.map((coop) => (
-              <CardCooperativaRed key={coop.id} cooperativa={coop} />
+              <CardCooperativaRed
+                key={coop.id}
+                cooperativa={coop}
+                alAbrir={() => setAbierta(coop)}
+              />
             ))}
           </div>
         ) : null}
+
+        <PanelCooperativa
+          cooperativa={abierta}
+          alCerrar={() => setAbierta(null)}
+        />
       </div>
     </div>
   );
@@ -453,31 +465,43 @@ function PanelProvincia({
 }
 
 /**
- * Tarjeta de cooperativa: quién es, qué hace y por dónde seguir.
+ * Tarjeta de cooperativa en la grilla.
  *
- * Es lo más parecido a una ficha que tiene el sitio —no hay pantalla propia por
- * cooperativa—, así que es acá donde tiene que verse lo que cada una carga: su
- * descripción, sus servicios, sus redes y el camino a sus proyectos.
+ * Muestra poco a propósito: logo, nombre, qué hace y dónde está. Antes traía
+ * también la descripción, y alcanzó con que una cooperativa escribiera siete
+ * renglones para que su tarjeta estirara toda la fila y las otras tres
+ * quedaran con medio metro de vacío adentro. Como el sitio no tiene pantalla
+ * por cooperativa, esa tarjeta se había vuelto la ficha, y una ficha no entra
+ * en una grilla de cuatro columnas.
+ *
+ * Así que ahora es un botón: abre el panel, que es donde está todo.
+ *
+ * Por eso tampoco lleva enlaces adentro. Un `<a>` dentro de un `<button>` no
+ * es HTML válido, y de paso el clic deja de ser ambiguo: toda la tarjeta hace
+ * una sola cosa.
  */
 function CardCooperativaRed({
   cooperativa,
+  alAbrir,
   className,
 }: {
   cooperativa: CooperativaEnRed;
+  alAbrir: () => void;
   className?: string;
 }) {
   const T = contenido(useIdioma()).NUESTRA_RED;
   return (
-    <div
+    <button
+      type="button"
+      onClick={alAbrir}
+      aria-label={`${T.tarjeta.abrir}: ${cooperativa.nombre}`}
       className={cn(
-        "flex flex-col overflow-hidden rounded-xl bg-superficie",
-        /*
-          Al pasar el mouse se le enciende el borde violeta y se levanta un
-          poco. Es el mismo hover de las tarjetas del consejo: no se rellenan,
-          porque la tarjeta entera no es un enlace —los enlaces son los del
-          pie— y rellenarla prometería un clic que no existe.
-        */
+        "flex cursor-pointer flex-col overflow-hidden rounded-xl bg-superficie text-left",
+        /* Ahora sí se levanta al pasar el mouse prometiendo un clic, porque el
+           clic existe. Antes era al revés: la tarjeta no era enlace y el hover
+           no podía prometer nada. */
         "borde-degradado-hover transition-transform duration-300 hover:-translate-y-1",
+        FOCO,
         className,
       )}
     >
@@ -490,7 +514,7 @@ function CardCooperativaRed({
         Mientras no haya logo cargado el nombre ocupa ese lugar y no se repite
         abajo, que es lo que pasaba: la misma palabra dos veces en la tarjeta.
       */}
-      <div className="grid h-[85px] shrink-0 place-items-center bg-blanco px-6">
+      <div className="grid h-[85px] w-full shrink-0 place-items-center bg-blanco px-6">
         {cooperativa.logo ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -511,55 +535,191 @@ function CardCooperativaRed({
           <h4 className="text-p1-bold">{cooperativa.nombre}</h4>
         ) : null}
 
-        {cooperativa.descripcion ? (
-          <p className="text-p2 mt-4 text-blanco/80">
-            {cooperativa.descripcion}
-          </p>
-        ) : null}
-
+        {/* Cortado a dos renglones: son hasta cinco servicios y con los nombres
+            largos —"Datos e inteligencia artificial"— volvía a desparejar. */}
         {cooperativa.servicios.length ? (
-          <p className="text-p2 mt-4 text-blanco/60">
+          <p className="text-p2 mt-4 line-clamp-2 text-blanco/60">
             {cooperativa.servicios.map((s) => s.nombre).join("  ·  ")}
           </p>
         ) : null}
 
-        <RedesCooperativa cooperativa={cooperativa} className="mt-4" />
-
-        {/* El pie va abajo de todo: con tarjetas de distinto largo en la misma
-            fila, la línea punteada queda a la misma altura en todas. */}
-        {/* En columna y no en una sola línea: la tarjeta mide unos 290px y
-            con la provincia más los dos enlaces al lado el último se cortaba. */}
-        <div className="mt-auto flex flex-col gap-2 border-t border-dotted border-punteado pt-4">
+        {/* El pie va abajo de todo: así la línea punteada cae a la misma altura
+            en todas las tarjetas de la fila. */}
+        <div className="mt-auto flex items-center justify-between gap-3 border-t border-dotted border-punteado pt-4">
           <span className="text-p3 flex items-center gap-2 text-blanco/70">
             <span aria-hidden className="size-1.5 rounded-full bg-blanco/70" />
             {cooperativa.provincia ?? "—"}
           </span>
-          <span className="flex flex-wrap items-center gap-x-4 gap-y-1">
-            {/* Los proyectos de la cooperativa son el filtro que ya existe en
-                Proyectos: no hace falta una pantalla nueva para llegar. */}
-            <Link
-              href={`/proyectos?cooperativa=${cooperativa.id}`}
-              className={cn("text-p3 underline-offset-4 hover:underline", FOCO)}
+          {/* No es un enlace ni se comporta como tal: es la pista de que la
+              tarjeta se abre, que si no el clic no se adivina. */}
+          <span aria-hidden className="text-p3 text-blanco/45">
+            {T.tarjeta.abrir}
+          </span>
+        </div>
+      </div>
+    </button>
+  );
+}
+
+/**
+ * El panel con la ficha completa de una cooperativa.
+ *
+ * Va en un `<dialog>` nativo y no en un `div` con posición fija: `showModal()`
+ * trae el cierre con Escape, el foco encerrado adentro, el resto de la página
+ * inerte para el lector de pantalla y el fondo oscurecido. Todo eso escrito a
+ * mano son cien líneas que además siempre quedan a medias.
+ *
+ * En mobile ocupa la pantalla entera. Un panel centrado en un teléfono deja
+ * dos dedos de alto para el texto, que es justo lo que venimos a mostrar.
+ */
+function PanelCooperativa({
+  cooperativa,
+  alCerrar,
+}: {
+  cooperativa: CooperativaEnRed | null;
+  alCerrar: () => void;
+}) {
+  const T = contenido(useIdioma()).NUESTRA_RED;
+  const dialogo = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    const nodo = dialogo.current;
+    if (!nodo) return;
+    if (cooperativa && !nodo.open) nodo.showModal();
+    if (!cooperativa && nodo.open) nodo.close();
+  }, [cooperativa]);
+
+  /* El `close` del propio diálogo: lo dispara Escape, que no pasa por el botón
+     de cerrar y dejaría el estado creyendo que sigue abierto. */
+  useEffect(() => {
+    const nodo = dialogo.current;
+    if (!nodo) return;
+    nodo.addEventListener("close", alCerrar);
+    return () => nodo.removeEventListener("close", alCerrar);
+  }, [alCerrar]);
+
+  return (
+    <dialog
+      ref={dialogo}
+      /* Clic en el fondo para cerrar: el `<dialog>` recibe el evento cuando se
+         toca fuera de su contenido, porque el contenido vive en el hijo. */
+      onClick={(e) => {
+        if (e.target === dialogo.current) alCerrar();
+      }}
+      className={cn(
+        "m-0 h-full max-h-none w-full max-w-none bg-transparent p-0 text-blanco",
+        "md:m-auto md:h-auto md:max-h-[85vh] md:w-[min(36rem,calc(100vw-3rem))]",
+        "backdrop:bg-negro-oscuro/80 backdrop:backdrop-blur-sm",
+      )}
+    >
+      {cooperativa ? (
+        /* `h-full` solo en mobile, donde el panel ocupa la pantalla: en desktop
+           mide lo que mida su contenido y recién ahí topea en 85vh. Con
+           `h-full` también en desktop, una cooperativa sin descripción abría un
+           panel enorme con el pie flotando abajo de todo. */
+        <div className="flex h-full flex-col overflow-hidden bg-fondo md:h-auto md:max-h-[85vh] md:rounded-2xl md:border md:border-borde">
+          {/* La franja blanca del logo, igual que en la tarjeta: es lo que hace
+              que el panel se lea como la misma pieza, agrandada. */}
+          <div className="relative grid h-[120px] shrink-0 place-items-center bg-blanco px-16">
+            {cooperativa.logo ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={cooperativa.logo}
+                alt={cooperativa.nombre}
+                className="max-h-20 w-auto max-w-full object-contain"
+              />
+            ) : (
+              <span className="text-h3 text-center text-balance text-negro-oscuro">
+                {cooperativa.nombre}
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={alCerrar}
+              aria-label={T.tarjeta.cerrar}
+              className={cn(
+                "absolute top-4 right-4 grid size-9 cursor-pointer place-items-center rounded-full",
+                "bg-negro-oscuro/10 text-negro-oscuro transition-colors hover:bg-negro-oscuro/20",
+                FOCO,
+              )}
             >
-              {T.tarjeta.proyectos}
-            </Link>
-            {cooperativa.sitio ? (
-              <a
-                href={cooperativa.sitio}
-                target="_blank"
-                rel="noreferrer noopener"
+              <svg
+                viewBox="0 0 20 20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                aria-hidden
+                className="size-4"
+              >
+                <path d="m5 5 10 10M15 5 5 15" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Lo que scrollea es esto y no la página: con una descripción de
+              setecientos caracteres en un teléfono, es la diferencia entre
+              poder leerla y no. */}
+          <div className="flex-1 overflow-y-auto p-6 md:p-8">
+            <h3 className="text-h4">{cooperativa.nombre}</h3>
+
+            {cooperativa.descripcion ? (
+              <p className="text-p2 mt-4 text-blanco/80">
+                {cooperativa.descripcion}
+              </p>
+            ) : null}
+
+            {cooperativa.servicios.length ? (
+              <p className="text-p2 mt-5 text-blanco/60">
+                {cooperativa.servicios.map((s) => s.nombre).join("  ·  ")}
+              </p>
+            ) : null}
+
+            {cooperativa.sectores.length ? (
+              <div className="mt-5 flex flex-wrap gap-2">
+                {cooperativa.sectores.map((sector) => (
+                  <ChipSector key={sector.id} nombre={sector.nombre} />
+                ))}
+              </div>
+            ) : null}
+
+            <RedesCooperativa cooperativa={cooperativa} className="mt-5" />
+          </div>
+
+          <div className="shrink-0 border-t border-dotted border-punteado p-6 md:px-8">
+            <span className="text-p3 flex items-center gap-2 text-blanco/70">
+              <span aria-hidden className="size-1.5 rounded-full bg-blanco/70" />
+              {cooperativa.provincia ?? "—"}
+            </span>
+            <span className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2">
+              {/* Los proyectos de la cooperativa son el filtro que ya existe en
+                  Proyectos: no hace falta una pantalla nueva para llegar. */}
+              <Link
+                href={`/proyectos?cooperativa=${cooperativa.id}`}
                 className={cn(
                   "text-p3 underline-offset-4 hover:underline",
                   FOCO,
                 )}
               >
-                {T.tarjeta.sitio}
-              </a>
-            ) : null}
-          </span>
+                {T.tarjeta.proyectos}
+              </Link>
+              {cooperativa.sitio ? (
+                <a
+                  href={cooperativa.sitio}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className={cn(
+                    "text-p3 underline-offset-4 hover:underline",
+                    FOCO,
+                  )}
+                >
+                  {T.tarjeta.sitio}
+                </a>
+              ) : null}
+            </span>
+          </div>
         </div>
-      </div>
-    </div>
+      ) : null}
+    </dialog>
   );
 }
-
