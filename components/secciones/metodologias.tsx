@@ -1,8 +1,5 @@
-"use client";
-
-import { useId, useState } from "react";
 import { cn } from "@/lib/cn";
-import { BotonFlecha } from "@/components/ui/boton";
+import { CarruselConFlechas } from "@/components/ui/carrusel-con-flechas";
 import { FONDO_ACENTO, type Acento } from "@/components/ui/acento";
 
 /**
@@ -24,6 +21,16 @@ import { FONDO_ACENTO, type Acento } from "@/components/ui/acento";
  * La vertical usaba antes una solapa subrayada en el color, con las flechas en
  * la misma línea del título. Se cambió porque la anotación de la maqueta pedía
  * justamente ajustar esa pantalla en mobile.
+ *
+ * Pasa con el mismo carrusel que el resto del sitio —se desliza, con las
+ * flechas debajo a la derecha— en vez de cambiar el contenido de golpe. Eso
+ * además empareja el alto: todas las tarjetas están en la misma fila, así que
+ * todas miden lo que la más alta y el bloque deja de saltar al cambiar de
+ * modalidad.
+ *
+ * Es el único carrusel del sitio que **no** pasa solo. Los demás llevan
+ * tarjetas de un renglón; acá hay un párrafo, y que se corra a los cuatro
+ * segundos es quitárselo a quien lo está leyendo.
  */
 export function Metodologias({
   items,
@@ -38,58 +45,33 @@ export function Metodologias({
   variante?: "tarjeta" | "recuadro";
   className?: string;
 }) {
-  const [activo, setActivo] = useState(0);
-  const baseId = useId();
-
   if (!items.length) return null;
 
-  const actual = items[activo];
-
-  const flechas = (
-    <>
-      <BotonFlecha
-        direccion="anterior"
-        disabled={activo === 0}
-        onClick={() => setActivo((i) => Math.max(0, i - 1))}
-      />
-      <BotonFlecha
-        direccion="siguiente"
-        variante={activo < items.length - 1 ? "solida" : "punteada"}
-        disabled={activo === items.length - 1}
-        onClick={() => setActivo((i) => Math.min(items.length - 1, i + 1))}
-      />
-    </>
-  );
-
-  /* `P1/Bold` en el archivo: DM Mono 16, no los 18 de `P1/Regular`. */
-  const descripcion = (
-    <p aria-labelledby={`${baseId}-titulo`} className="text-p1-bold">
-      {actual.descripcion}
-    </p>
-  );
-
-  const cuerpo = (
-    <>
-      <p id={`${baseId}-titulo`} className="text-h3">
-        {actual.titulo.replace("\n", " ")}
-      </p>
-      <div className="mt-8">{descripcion}</div>
-    </>
-  );
-
   return (
-    <div className={className}>
-      <div
-        className={cn(
-          "rounded-xl px-6 py-10",
-          variante === "tarjeta"
-            ? FONDO_ACENTO[actual.acento]
-            : "border border-borde",
-        )}
-      >
-        {cuerpo}
-      </div>
-      <div className="mt-5 flex justify-end gap-2">{flechas}</div>
-    </div>
+    <CarruselConFlechas
+      grilla=""
+      desdeAncho="nunca"
+      gap="gap-4"
+      className={cn("items-stretch", className)}
+    >
+      {items.map((item) => (
+        <div
+          key={item.titulo}
+          className={cn(
+            /* `w-full` con `shrink-0`: una por pantalla, y el `gap` deja
+               asomar un pedacito de la siguiente, que es lo que avisa que hay
+               más sin necesidad de puntitos. */
+            "flex w-full shrink-0 snap-start flex-col rounded-xl px-6 py-10",
+            variante === "tarjeta"
+              ? FONDO_ACENTO[item.acento]
+              : "border border-borde",
+          )}
+        >
+          <p className="text-h3">{item.titulo.replace("\n", " ")}</p>
+          {/* `P1/Bold` en el archivo: DM Mono 16, no los 18 de `P1/Regular`. */}
+          <p className="text-p1-bold mt-8">{item.descripcion}</p>
+        </div>
+      ))}
+    </CarruselConFlechas>
   );
 }
