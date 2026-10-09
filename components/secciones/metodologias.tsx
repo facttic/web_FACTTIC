@@ -3,11 +3,7 @@
 import { useId, useState } from "react";
 import { cn } from "@/lib/cn";
 import { BotonFlecha } from "@/components/ui/boton";
-import {
-  COLOR_ACENTO,
-  FONDO_ACENTO,
-  type Acento,
-} from "@/components/ui/acento";
+import { FONDO_ACENTO, type Acento } from "@/components/ui/acento";
 
 /**
  * "¿Cómo trabajamos?" en mobile: se ve una modalidad por vez y las flechas la
@@ -20,8 +16,14 @@ import {
  *
  *  - `tarjeta` (Nuestros servicios): un panel pintado con el color de la
  *    modalidad, con el nombre y la descripción adentro y las flechas debajo.
- *  - `solapa` (las verticales): el nombre suelto en su color, subrayado del
- *    mismo tono, las flechas en la misma línea y la descripción debajo.
+ *  - `recuadro` (las verticales): la misma idea pero sin pintar, con un marco
+ *    fino y el nombre en blanco. Ahí la pantalla ya tiene el color del sector
+ *    repartido en otras piezas, y un panel pintado más se lee como otra
+ *    sección y no como la misma modalidad.
+ *
+ * La vertical usaba antes una solapa subrayada en el color, con las flechas en
+ * la misma línea del título. Se cambió porque la anotación de la maqueta pedía
+ * justamente ajustar esa pantalla en mobile.
  */
 export function Metodologias({
   items,
@@ -33,7 +35,7 @@ export function Metodologias({
     acento: Acento;
     descripcion: string | null;
   }[];
-  variante?: "tarjeta" | "solapa";
+  variante?: "tarjeta" | "recuadro";
   className?: string;
 }) {
   const [activo, setActivo] = useState(0);
@@ -66,59 +68,28 @@ export function Metodologias({
     </p>
   );
 
-  if (variante === "tarjeta") {
-    return (
-      <div className={className}>
-        <div
-          className={cn("rounded-xl px-6 py-10", FONDO_ACENTO[actual.acento])}
-        >
-          <p id={`${baseId}-titulo`} className="text-h3">
-            {actual.titulo.replace("\n", " ")}
-          </p>
-          <div className="mt-8">{descripcion}</div>
-        </div>
-        <div className="mt-5 flex justify-end gap-2">{flechas}</div>
-      </div>
-    );
-  }
+  const cuerpo = (
+    <>
+      <p id={`${baseId}-titulo`} className="text-h3">
+        {actual.titulo.replace("\n", " ")}
+      </p>
+      <div className="mt-8">{descripcion}</div>
+    </>
+  );
 
   return (
     <div className={className}>
-      {/* El trazo del color mide lo que el nombre y la línea punteada sigue
-          hasta el borde: por eso el subrayado sale del propio texto y no de
-          una barra aparte. Las flechas van encima de la línea —posicionadas,
-          no en la misma fila— porque en el board la punteada les pasa por
-          debajo y llega hasta el margen. */}
-      <div className="relative flex items-end">
-        <p
-          id={`${baseId}-titulo`}
-          className={cn(
-            "text-h3 shrink-0 border-b-[3px] pb-6",
-            COLOR_ACENTO[actual.acento],
-            BORDE_ACENTO[actual.acento],
-          )}
-        >
-          {actual.titulo.replace("\n", " ")}
-        </p>
-        <span className="flex-1 border-b border-dashed border-gris-oscuro" />
-
-        <div className="absolute right-0 bottom-[13px] flex items-center gap-2">
-          {flechas}
-        </div>
+      <div
+        className={cn(
+          "rounded-xl px-6 py-10",
+          variante === "tarjeta"
+            ? FONDO_ACENTO[actual.acento]
+            : "border border-borde",
+        )}
+      >
+        {cuerpo}
       </div>
-
-      <div className="mt-10">{descripcion}</div>
+      <div className="mt-5 flex justify-end gap-2">{flechas}</div>
     </div>
   );
 }
-
-/** El acento aplicado al borde, que es de donde sale el subrayado. */
-const BORDE_ACENTO: Record<Acento, string> = {
-  lila: "border-lila",
-  celeste: "border-celeste",
-  naranja: "border-naranja",
-  amarillo: "border-amarillo",
-  verde: "border-verde",
-  rojo: "border-rojo",
-  azul: "border-azul",
-};

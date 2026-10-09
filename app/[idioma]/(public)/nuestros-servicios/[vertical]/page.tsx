@@ -244,7 +244,7 @@ export default async function VerticalPage({
         />
         <Metodologias
           items={SERVICIOS_PAGINA.metodologia.items}
-          variante="solapa"
+          variante="recuadro"
           className="md:hidden"
         />
 
