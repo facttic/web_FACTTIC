@@ -343,14 +343,18 @@ function FichaEnLinea({
   titulo: string;
   items: readonly { id: string; nombre: string; logo?: string | null }[];
   /**
-   * El logo grande y el nombre chico debajo, en vez de la etiqueta con el
-   * ícono al lado.
+   * Fichas parejas con el logo solo, sin el nombre debajo.
    *
-   * Es para las cooperativas: ahí el logo **es** el dato —se reconoce antes
-   * que el nombre escrito— y la lista de quiénes hicieron el proyecto es la
-   * prueba del trabajo intercoop. El stack de tecnologías se queda como
-   * etiquetas, que es lo que pide la maqueta y lo que corresponde a una lista
-   * de quince ítems.
+   * Es lo que pide la maqueta para las cooperativas, y tiene sentido: estos
+   * logos son wordmarks —dicen el nombre—, así que escribirlo al lado es
+   * decirlo dos veces. El stack de tecnologías se queda como etiquetas, que
+   * ahí los íconos son símbolos y sí necesitan el nombre.
+   *
+   * La maqueta las dibuja oscuras con el logo en blanco. Van claras porque los
+   * archivos cargados traen el fondo blanco horneado —ninguno es
+   * transparente—: sobre oscuro se verían como rectángulos blancos. Para que
+   * queden como el diseño hacen falta versiones en claro, que son contenido y
+   * no código.
    */
   apilado?: boolean;
 }) {
@@ -361,18 +365,25 @@ function FichaEnLinea({
       {apilado ? (
         /* Una sola forma en los dos anchos: en mobile se desliza de costado y
            en escritorio se acomoda en varias filas. */
-        <div className="scroll-limpio -mx-6 flex gap-3 overflow-x-auto px-6 md:mx-0 md:flex-wrap md:overflow-visible md:px-0">
+        <div className="scroll-limpio -mx-6 flex gap-4 overflow-x-auto px-6 md:mx-0 md:flex-wrap md:overflow-visible md:px-0">
           {items.map((item) => (
             <div
               key={item.id}
-              className="flex w-[148px] shrink-0 flex-col items-center justify-center gap-2.5 rounded-lg bg-superficie-alta px-4 py-5"
+              className="grid h-[76px] w-[148px] shrink-0 place-items-center overflow-hidden rounded-lg bg-blanco px-5"
             >
               {item.logo ? (
-                <LogoRemoto src={item.logo} nombre="" className="max-h-10" />
-              ) : null}
-              <span className="text-p3 text-center leading-tight text-blanco/60">
-                {item.nombre}
-              </span>
+                <LogoRemoto
+                  src={item.logo}
+                  nombre=""
+                  className="max-h-11 max-w-full"
+                />
+              ) : (
+                /* Sin logo cargado queda el nombre, que es mejor que un hueco
+                   blanco. En negro porque la ficha es clara. */
+                <span className="text-p2 text-center text-balance text-negro-oscuro">
+                  {item.nombre}
+                </span>
+              )}
             </div>
           ))}
         </div>
