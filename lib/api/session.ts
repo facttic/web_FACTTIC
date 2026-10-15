@@ -2,6 +2,7 @@ import "server-only";
 
 import { cookies } from "next/headers";
 import { API_URL } from "./tokens";
+import { sesionDeLaApi, traerPerfil, type Perfil } from "./refresco";
 
 /**
  * Sesión del backoffice.
@@ -11,15 +12,35 @@ import { API_URL } from "./tokens";
  * escrituras del panel usan ese token y no el de servicio, así `createdBy` y
  * `updatedBy` quedan con quien realmente hizo el cambio.
  *
- * El token de la API dura quince minutos y no hay forma de renovarlo sin la
- * cookie que ella misma pone (`PENDIENTES`, ítem 15), así que la sesión dura
- * eso: cuando vence, el panel manda a entrar de nuevo. Es incómodo y está
- * pedido, pero es preferible a guardar la contraseña.
+ * El token de la API dura quince minutos, así que esa cookie dura catorce. Lo
+ * que ya no se pierde es la sesión: al entrar se guarda aparte, por treinta
+ * días, la cookie que la propia API devuelve, y con ella `proxy.ts` pide un
+ * token nuevo cuando el anterior venció. Se entra una vez y se sigue adentro.
+ *
+ * El token sigue siendo corto a propósito —si se filtra, sirve poco— y lo que
+ * sostiene la sesión es algo que la API puede revocar borrando la sesión del
+ * usuario. Nunca se guarda la contraseña.
  */
 
 const COOKIE = "facttic_sesion";
 /** Un minuto menos que los quince de la API, para no usarlo justo al vencer. */
 const DURACION = 14 * 60;
+
+/** Lo que permite renovar sin volver a pedir la contraseña. */
+const COOKIE_REFRESCO = "facttic_refresco";
+/** Los mismos treinta días que la API le da a su propia cookie. */
+const DURACION_REFRESCO = 30 * 24 * 60 * 60;
+
+/** Las dos cookies llevan los mismos cuidados; solo cambia cuánto duran. */
+export function opcionesDeCookie(duracion: number) {
+  return {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax" as const,
+    path: "/",
+    maxAge: duracion,
+  };
+}
 
 export interface Sesion {
   token: string;
@@ -84,63 +105,34 @@ export async function iniciarSesion(
   if (!token) return { ok: false, error: "La API no devolvió un token" };
 
   const quien = await traerPerfil(token);
-
   const almacen = await cookies();
   almacen.set(
     COOKIE,
     JSON.stringify({ token, usuario, ...quien } satisfies Sesion),
-    {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-      maxAge: DURACION,
-    },
+    opcionesDeCookie(DURACION),
   );
+
+  /* La cookie que la API devolvió al entrar: es lo que después permite pedir
+     un token nuevo. Si no vino —una API vieja, o sin `Set-Cookie`— la sesión
+     sigue funcionando como antes y vence a los catorce minutos. */
+  const refresco = sesionDeLaApi(res);
+  if (refresco) {
+    almacen.set(
+      COOKIE_REFRESCO,
+      JSON.stringify({ sesion: refresco, usuario }),
+      opcionesDeCookie(DURACION_REFRESCO),
+    );
+  }
 
   return { ok: true };
 }
 
-/**
- * Lo que la API dice de quien entró.
- *
- * Contra una API vieja —sin `/me`— la sesión queda como administradora, que es
- * lo que esa versión hace de todos modos: ahí **todos** los endpoints de
- * escritura exigen `admin:all`, así que nadie más podía entrar al panel. Dar
- * por administrador a quien ya lo era no abre ninguna puerta, y evita que
- * publicar el sitio antes que la API deje a la Federación sin su panel.
- *
- * Si la respuesta falla por otro motivo, la sesión queda sin permisos: ahí sí
- * conviene ver de menos.
- */
-async function traerPerfil(
-  token: string,
-): Promise<Pick<Sesion, "esAdmin" | "cooperativas">> {
-  try {
-    const res = await fetch(`${API_URL}/api/me`, {
-      headers: { Authorization: `Bearer ${token}` },
-      cache: "no-store",
-    });
-    if (res.status === 404) return { esAdmin: true, cooperativas: [] };
-    if (!res.ok) return { esAdmin: false, cooperativas: [] };
-    const datos = (await res.json()) as {
-      esAdmin?: boolean;
-      cooperativas?: Array<{ _id: string; nombre: string }>;
-    };
-    return {
-      esAdmin: datos.esAdmin === true,
-      cooperativas: (datos.cooperativas ?? []).map((c) => ({
-        id: c._id,
-        nombre: c.nombre,
-      })),
-    };
-  } catch {
-    return { esAdmin: false, cooperativas: [] };
-  }
-}
-
 export async function cerrarSesion(): Promise<void> {
-  (await cookies()).delete(COOKIE);
+  const almacen = await cookies();
+  almacen.delete(COOKIE);
+  /* También la de renovar: si quedara, el próximo pedido al panel volvería a
+     entrar solo y el "Salir" no habría salido de nada. */
+  almacen.delete(COOKIE_REFRESCO);
 }
 
 /** La sesión actual, o `null` si no hay o está rota. */
@@ -161,3 +153,21 @@ export async function getTokenDeSesion(): Promise<string | null> {
 }
 
 export const NOMBRE_COOKIE = COOKIE;
+export const NOMBRE_COOKIE_REFRESCO = COOKIE_REFRESCO;
+export const DURACION_SESION = DURACION;
+
+/** Lo que guarda la cookie de renovar. */
+export interface Refresco {
+  /** El valor de la cookie `user-session` que puso la API. */
+  sesion: string;
+  usuario: string;
+}
+
+/** El contenido de la cookie de sesión, para que lo arme también `proxy.ts`. */
+export function armarSesion(
+  token: string,
+  usuario: string,
+  quien: Perfil,
+): string {
+  return JSON.stringify({ token, usuario, ...quien } satisfies Sesion);
+}

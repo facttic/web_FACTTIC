@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { cn } from "@/lib/cn";
 import { requerirSesion } from "@/lib/api/guardia";
 import {
   traerCooperativa,
@@ -163,10 +164,6 @@ async function EstadoEditoras({ id }: { id: string }) {
   ]);
 
   const editoras = cooperativa?.editores ?? [];
-  if (!editoras.length) {
-    return <span className="text-blanco/40">sin invitar</span>;
-  }
-
   const conCuenta = editoras
     .map((correo) => cuentas.get(correo.toLowerCase()))
     .filter((cuenta) => cuenta !== undefined);
@@ -178,20 +175,66 @@ async function EstadoEditoras({ id }: { id: string }) {
     .at(-1);
 
   return (
-    <span className="flex flex-col gap-0.5">
-      <span>
-        {conCuenta.length} de {editoras.length}{" "}
-        {editoras.length === 1 ? "invitada" : "invitadas"}
-        {conCuenta.length ? " con cuenta" : " sin cuenta"}
-      </span>
+    <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
+      <Marca
+        ok={editoras.length > 0}
+        que="invitada"
+        detalle={`${editoras.length} ${editoras.length === 1 ? "editora invitada" : "editoras invitadas"}`}
+      />
+      <Marca
+        ok={conCuenta.length > 0}
+        que="cuenta"
+        detalle={`${conCuenta.length} de ${editoras.length} con cuenta creada`}
+      />
       {ultima ? (
-        <span className="text-blanco/40">
-          última vez {new Date(ultima).toLocaleDateString("es-AR", {
+        <time dateTime={ultima} className="text-blanco/40">
+          {new Date(ultima).toLocaleDateString("es-AR", {
             day: "numeric",
             month: "short",
           })}
-        </span>
+        </time>
       ) : null}
+    </span>
+  );
+}
+
+/**
+ * Un sí o un no, con la cuenta fina al apoyar el puntero.
+ *
+ * Dos marcas y una fecha se leen de un vistazo recorriendo la columna; la
+ * frase que había antes —"0 de 1 invitada sin cuenta"— obligaba a leerla
+ * entera en cada fila para saber si faltaba algo.
+ */
+function Marca({
+  ok,
+  que,
+  detalle,
+}: {
+  ok: boolean;
+  que: string;
+  detalle: string;
+}) {
+  return (
+    <span
+      title={detalle}
+      className={cn(
+        "inline-flex items-center gap-1",
+        ok ? "text-blanco/90" : "text-blanco/30",
+      )}
+    >
+      <svg
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden
+        className="size-3.5 shrink-0"
+      >
+        {ok ? <path d="m3 8.5 3.5 3.5L13 4.5" /> : <path d="M4 8h8" />}
+      </svg>
+      {que}
     </span>
   );
 }

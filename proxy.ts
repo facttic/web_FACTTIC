@@ -1,4 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { tokenConRefresco, traerPerfil } from "@/lib/api/refresco";
+import {
+  NOMBRE_COOKIE,
+  NOMBRE_COOKIE_REFRESCO,
+  DURACION_SESION,
+  armarSesion,
+  opcionesDeCookie,
+  type Refresco,
+} from "@/lib/api/session";
 import {
   IDIOMA_POR_DEFECTO,
   IDIOMAS,
@@ -125,8 +134,72 @@ function recordar(respuesta: NextResponse, idioma: Idioma): NextResponse {
 }
 
 /** El panel no es público: sin sesión, al ingreso. */
-function guardiaDelPanel(request: NextRequest, ruta: string) {
-  const tieneSesion = request.cookies.has("facttic_sesion");
+/**
+ * Renueva la sesión del panel si venció pero todavía hay con qué.
+ *
+ * La cookie de sesión dura catorce minutos porque eso dura el token de la
+ * API. Cuando desaparece, acá se cambia la cookie larga —la que puso la propia
+ * API al entrar, que vale treinta días— por un token nuevo, y la sesión sigue
+ * sin que nadie tenga que volver a escribir la contraseña.
+ *
+ * Va en el middleware y no en la pantalla porque es el único lugar donde se
+ * puede escribir una cookie antes de dibujar: desde un componente de servidor
+ * no se puede, así que el token nuevo no se podría guardar y habría que
+ * pedirlo de nuevo en cada visita.
+ *
+ * El perfil se vuelve a pedir en cada renovación en vez de arrastrarse: si a
+ * alguien le quitaron el acceso a una cooperativa, en quince minutos el panel
+ * deja de ofrecérsela.
+ */
+/** Deja la sesión renovada en la respuesta, si hubo que renovarla. */
+function conSesion(respuesta: NextResponse, cookie?: string): NextResponse {
+  if (cookie) {
+    respuesta.cookies.set(
+      NOMBRE_COOKIE,
+      cookie,
+      opcionesDeCookie(DURACION_SESION),
+    );
+  }
+  return respuesta;
+}
+
+async function renovarSesion(
+  request: NextRequest,
+): Promise<{ cookie: string } | null> {
+  const guardado = request.cookies.get(NOMBRE_COOKIE_REFRESCO)?.value;
+  if (!guardado) return null;
+
+  let refresco: Refresco;
+  try {
+    refresco = JSON.parse(guardado) as Refresco;
+  } catch {
+    return null;
+  }
+  if (!refresco?.sesion) return null;
+
+  const token = await tokenConRefresco(refresco.sesion);
+  if (!token) return null;
+
+  const quien = await traerPerfil(token);
+  return { cookie: armarSesion(token, refresco.usuario ?? "", quien) };
+}
+
+async function guardiaDelPanel(
+  request: NextRequest,
+  ruta: string,
+): Promise<{ redirigir?: NextResponse; cookie?: string }> {
+  let tieneSesion = request.cookies.has(NOMBRE_COOKIE);
+  let renovada: string | null = null;
+
+  if (!tieneSesion) {
+    const nueva = await renovarSesion(request);
+    if (nueva) {
+      renovada = nueva.cookie;
+      tieneSesion = true;
+    }
+  }
+
+
   const esLogin = ruta === "/admin/ingresar";
   /*
    * La invitación se abre sin sesión: es la pantalla donde se crea la cuenta.
@@ -134,23 +207,29 @@ function guardiaDelPanel(request: NextRequest, ruta: string) {
    */
   const esInvitacion = ruta.startsWith("/admin/invitacion/");
 
-  if (esInvitacion) return null;
+  if (esInvitacion) return {};
 
   if (!tieneSesion && !esLogin) {
     const destino = new URL("/admin/ingresar", request.url);
     // Se recuerda a dónde quería ir, para volver ahí después de entrar.
     destino.searchParams.set("volver", ruta + request.nextUrl.search);
-    return NextResponse.redirect(destino);
+    return { redirigir: NextResponse.redirect(destino) };
   }
 
   if (tieneSesion && esLogin) {
-    return NextResponse.redirect(new URL("/admin", request.url));
+    return {
+      redirigir: NextResponse.redirect(new URL("/admin", request.url)),
+      cookie: renovada ?? undefined,
+    };
   }
 
-  return null;
+  /* La cookie se devuelve, no se escribe acá: el pedido todavía tiene que
+     pasar por la reescritura al idioma —las pantallas viven en `/es/admin/…`—
+     y escribirla sobre un `next()` se saltearía ese paso. */
+  return { cookie: renovada ?? undefined };
 }
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // El español no se escribe en la URL: si alguien la pide con prefijo, se la
@@ -186,9 +265,14 @@ export function proxy(request: NextRequest) {
 
   const esPanel = ruta === "/admin" || ruta.startsWith("/admin/");
 
+  let sesionRenovada: string | undefined;
+
   if (esPanel) {
-    const respuesta = guardiaDelPanel(request, ruta);
-    if (respuesta) return respuesta;
+    const guardia = await guardiaDelPanel(request, ruta);
+    if (guardia.redirigir) {
+      return conSesion(guardia.redirigir, guardia.cookie);
+    }
+    sesionRenovada = guardia.cookie;
   }
 
   /*
@@ -216,7 +300,7 @@ export function proxy(request: NextRequest) {
   destino.pathname = conPrefijo
     ? `/en${ruta === "/" ? "" : ruta}`
     : `/${IDIOMA_POR_DEFECTO}${pathname}`;
-  const respuesta = NextResponse.rewrite(destino);
+  const respuesta = conSesion(NextResponse.rewrite(destino), sesionRenovada);
 
   /*
    * Quien entra directo a `/en` también queda anotado: si no, al tocar ES
