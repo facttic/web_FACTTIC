@@ -1,5 +1,7 @@
 import "server-only";
 
+import { cache } from "react";
+
 import { ApiError, apiFetch, normalizePage, sanitize } from "@/lib/api/client";
 import type * as Api from "@/lib/api/esquema";
 import { isPopulated, type Ref } from "@/lib/api/esquema";
@@ -475,3 +477,69 @@ export async function traerOpciones(): Promise<{
     cooperativas: aOpciones(cooperativas),
   };
 }
+
+/* ---------- Cuentas del panel ---------- */
+
+export interface CuentaDeEditor {
+  /** En minúscula: es la clave con la que se cruza contra `editores`. */
+  email: string;
+  /**
+   * La última vez que se tocó la cuenta.
+   *
+   * No hay un campo de "último ingreso": el login escribe `updatedAt`, igual
+   * que cualquier otro cambio sobre la cuenta. En la práctica es el último
+   * ingreso casi siempre, pero conviene llamarlo por lo que es.
+   */
+  ultimaActividad: string | null;
+  confirmada: boolean;
+  deshabilitada: boolean;
+}
+
+/**
+ * Las cuentas del panel, indexadas por correo.
+ *
+ * Memorizada por pedido con `cache()` de React: la consultan todas las filas
+ * del listado de cooperativas a la vez y la respuesta es la misma para todas,
+ * así que sin esto serían treinta y tres llamadas iguales.
+ *
+ * Los campos extra se piden explícitamente: el listado de usuarios devuelve
+ * solo id, usuario y correo salvo que se le nombren otros, y la contraseña y
+ * el secreto no los entrega nunca.
+ */
+export const traerCuentas = cache(
+  async (): Promise<Map<string, CuentaDeEditor>> => {
+    const campos = [
+      "_id",
+      "email",
+      "username",
+      "confirmedEmail",
+      "disabled",
+      "updatedAt",
+    ]
+      .map((c) => `includes=${c}`)
+      .join("&");
+
+    try {
+      const raw = await apiFetch<Api.Paginated<Api.Usuario>>(
+        `/api/users?${campos}`,
+        { params: { perPage: TODOS, page: 1 }, autenticado: true },
+      );
+      const cuentas = new Map<string, CuentaDeEditor>();
+      for (const usuario of normalizePage<Api.Usuario>(raw, TODOS).items) {
+        const email = texto(usuario.email).toLowerCase();
+        if (!email) continue;
+        cuentas.set(email, {
+          email,
+          ultimaActividad: usuario.updatedAt ?? null,
+          confirmada: usuario.confirmedEmail ?? false,
+          deshabilitada: usuario.disabled ?? false,
+        });
+      }
+      return cuentas;
+    } catch {
+      /* Sin permiso o con la API caída, el listado se dibuja igual y la
+         columna queda vacía: es información de más, no la pantalla. */
+      return new Map();
+    }
+  },
+);

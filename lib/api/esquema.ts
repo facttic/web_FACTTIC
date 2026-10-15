@@ -237,3 +237,19 @@ export interface Novedad {
     cuerpo: string;
   }>;
 }
+
+/**
+ * Una cuenta del panel, como la devuelve `GET /api/users`.
+ *
+ * Casi todo es opcional porque el listado proyecta solo los campos que se le
+ * nombran: sin `includes` vienen el id, el usuario y el correo y nada más.
+ */
+export interface Usuario {
+  _id: string;
+  username?: string;
+  email?: string;
+  confirmedEmail?: boolean;
+  disabled?: boolean;
+  role?: string;
+  updatedAt?: string;
+}

@@ -1,5 +1,10 @@
+import { Suspense } from "react";
 import { requerirSesion } from "@/lib/api/guardia";
-import { traerCooperativas } from "@/lib/datos/admin";
+import {
+  traerCooperativa,
+  traerCooperativas,
+  traerCuentas,
+} from "@/lib/datos/admin";
 import { provinciaDe } from "@/lib/mapa/provincias";
 import {
   BotonBorrar,
@@ -48,7 +53,15 @@ export default async function CooperativasPage() {
       />
 
       <Tabla
-        columnas={["Nombre", "Provincia", "Asociadxs", "Servicios", "Logo", ""]}
+        columnas={[
+          "Nombre",
+          "Provincia",
+          "Asociadxs",
+          "Servicios",
+          "Logo",
+          "Editoras",
+          "",
+        ]}
       >
         {cooperativas.map((cooperativa) => {
           const provincia = cooperativa.ubicacion
@@ -78,6 +91,26 @@ export default async function CooperativasPage() {
                   "falta"
                 )}
               </Celda>
+              {/*
+                Cada estado llega por su cuenta.
+
+                El dato no está en el listado: los correos de las editoras
+                salieron de ahí cuando se cerró el agujero que los dejaba a la
+                vista de cualquiera, así que hay que pedir la ficha de cada
+                cooperativa. Son treinta y tres pedidos, y esperarlos todos
+                para dibujar la tabla sería cambiar una pantalla inmediata por
+                una que tarda.
+
+                Con un `Suspense` por fila, la tabla aparece entera y cada
+                celda se completa cuando llega la suya. Y van en paralelo: no
+                hay un `await` que las ponga en fila.
+              */}
+              <Celda>
+                <Suspense fallback={<Esperando />}>
+                  <EstadoEditoras id={cooperativa.id} />
+                </Suspense>
+              </Celda>
+
               <Celda className="text-right">
                 <span className="flex justify-end gap-2">
                   <EnlaceAdmin
@@ -100,5 +133,65 @@ export default async function CooperativasPage() {
         })}
       </Tabla>
     </div>
+  );
+}
+
+/** El lugar que va a ocupar el estado, para que la fila no cambie de alto. */
+function Esperando() {
+  return (
+    <span
+      aria-hidden
+      className="block h-3 w-24 animate-pulse rounded bg-superficie-alta"
+    />
+  );
+}
+
+/**
+ * Quiénes pueden editar una cooperativa y en qué anda cada una.
+ *
+ * Tres cosas en una línea: cuántas fueron invitadas, cuántas de esas ya
+ * crearon su cuenta, y cuándo se usó por última vez.
+ *
+ * Lo del último acceso es lo que la API permite hoy: el login escribe
+ * `updatedAt` sobre la cuenta, pero cualquier otro cambio también. Es el
+ * último ingreso casi siempre; un campo propio sería un cambio en la API.
+ */
+async function EstadoEditoras({ id }: { id: string }) {
+  const [cooperativa, cuentas] = await Promise.all([
+    traerCooperativa(id),
+    traerCuentas(),
+  ]);
+
+  const editoras = cooperativa?.editores ?? [];
+  if (!editoras.length) {
+    return <span className="text-blanco/40">sin invitar</span>;
+  }
+
+  const conCuenta = editoras
+    .map((correo) => cuentas.get(correo.toLowerCase()))
+    .filter((cuenta) => cuenta !== undefined);
+
+  const ultima = conCuenta
+    .map((cuenta) => cuenta.ultimaActividad)
+    .filter((fecha): fecha is string => !!fecha)
+    .sort()
+    .at(-1);
+
+  return (
+    <span className="flex flex-col gap-0.5">
+      <span>
+        {conCuenta.length} de {editoras.length}{" "}
+        {editoras.length === 1 ? "invitada" : "invitadas"}
+        {conCuenta.length ? " con cuenta" : " sin cuenta"}
+      </span>
+      {ultima ? (
+        <span className="text-blanco/40">
+          última vez {new Date(ultima).toLocaleDateString("es-AR", {
+            day: "numeric",
+            month: "short",
+          })}
+        </span>
+      ) : null}
+    </span>
   );
 }
