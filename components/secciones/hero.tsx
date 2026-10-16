@@ -18,6 +18,13 @@ import { RevelarAlScroll, RevelarPalabras, Typewriter } from "./texto-animado";
 
 /** Cuánto espera el título antes de escribirse, para dejar correr el video. */
 const RETRASO_TITULO_MS = 2000;
+/**
+ * Cuándo se enciende la bajada en mobile. El bloque entero aparece con el
+ * mismo retraso que el título y tarda 700 ms en entrar; si el barrido de
+ * palabras arranca ahí nomás, los dos efectos de opacidad se pisan y no se
+ * lee ninguno. Espera a que el bloque esté casi puesto.
+ */
+const RETRASO_BAJADA_MS = RETRASO_TITULO_MS + 400;
 
 export function Hero({
   titulo,
@@ -99,11 +106,17 @@ export function Hero({
       {/*
         Las dos maquetas alinean a la izquierda y llevan el título arriba, la
         bajada abajo y el botón al pie. Lo que cambia es el reparto: en mobile
-        el video ocupa la pantalla entera y el texto se apoya contra el borde
-        inferior; en desktop el bloque es más bajo y la bajada y el botón van
-        uno al lado del otro.
+        el texto se apoya contra el borde inferior; en desktop el bloque es más
+        bajo y la bajada y el botón van uno al lado del otro.
+
+        En mobile el hero **no** ocupa la pantalla entera: la maqueta lo corta
+        en 754 de 852 —un 88%— y deja asomar la sección siguiente, que es lo
+        que avisa que hay más abajo. Con `min-h-svh` esa franja desaparecía y,
+        como el reparto es `justify-between`, los 128 px de sobra se iban
+        enteros al único hueco que hay —el de abajo del título—: la bajada y el
+        botón quedaban 128 px más abajo que en el board.
       */}
-      <div className="contenedor flex min-h-svh flex-col justify-between pt-[121px] pb-11 md:min-h-[39rem] md:justify-end md:gap-8 md:pt-32 md:pb-14">
+      <div className="contenedor flex min-h-[88svh] flex-col justify-between pt-[121px] pb-11 md:min-h-[39rem] md:justify-end md:gap-8 md:pt-32 md:pb-14">
         <h1 className="text-display text-balance md:max-w-3xl">
           <Typewriter
             texto={titulo}
@@ -125,6 +138,7 @@ export function Hero({
                 */}
                 <RevelarPalabras
                   texto={bajadaMobile ?? bajada}
+                  retrasoMs={RETRASO_BAJADA_MS}
                   className="text-p1 max-w-xl text-blanco/80 md:hidden"
                 />
                 <p className="text-p1 hidden max-w-xl text-blanco/80 md:block">
