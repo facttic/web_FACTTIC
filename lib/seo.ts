@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { rutaEn, type Idioma } from "@/lib/idioma";
+import { DOMINIO } from "@/lib/sitio";
 
 /**
  * Lo que cada pantalla le dice a los buscadores.
@@ -31,15 +32,23 @@ const SITIO = "FACTTIC";
  * La dirección pública del sitio, absoluta.
  *
  * El `metadataBase` del layout resuelve las rutas relativas de la metadata,
- * pero `robots.txt` y `sitemap.xml` necesitan la URL entera escrita. Sale de la
- * misma variable, con la de Vercel como reserva.
+ * pero `robots.txt` y `sitemap.xml` necesitan la URL entera escrita.
+ *
+ * **Todo lo que se publica dice el dominio definitivo, también desde staging.**
+ * No es un descuido: si staging se declarara canónico a sí mismo, lo que los
+ * buscadores y las IA aprendan del sitio hasta la mudanza quedaría anotado bajo
+ * `dev.`, y el día que se encienda el dominio real habría dos copias
+ * compitiendo con la señal acumulada en la que se apaga. Apuntando las dos al
+ * mismo lugar, el `noindex` de staging —en `next.config.ts`— alcanza para que
+ * no se indexe, y el día de la mudanza no hay nada que tocar.
+ *
+ * En local sigue siendo localhost: ahí la canónica no le importa a nadie y una
+ * absoluta al dominio real rompería las imágenes de la metadata.
  */
 export function sitioUrl(): string {
   const url =
     process.env.NEXT_PUBLIC_SITIO_URL ??
-    (process.env.VERCEL_PROJECT_PRODUCTION_URL
-      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-      : "http://localhost:3000");
+    (process.env.VERCEL ? `https://${DOMINIO}` : "http://localhost:3000");
   return url.replace(/\/$/, "");
 }
 

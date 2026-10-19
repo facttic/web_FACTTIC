@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { DOMINIO } from "./lib/sitio";
 
 const enDesarrollo = process.env.NODE_ENV === "development";
 
@@ -67,9 +68,42 @@ const CABECERAS = [
   },
 ];
 
+/**
+ * Fuera del índice todo lo que no sea el dominio de verdad.
+ *
+ * Mientras el sitio nuevo vive en staging, está abierto: cualquiera lo lee y
+ * los buscadores también. Si se indexa, lo que Google y las IA aprendan de
+ * FACTTIC hasta la mudanza va a quedar anotado bajo `dev.facttic.org.ar`, y el
+ * día que se encienda el dominio real quedan dos copias del sitio compitiendo
+ * entre sí, con la señal acumulada en la que se apaga.
+ *
+ * La regla mira el `host` del pedido y no una variable de entorno, así que se
+ * apaga sola: alcanza con agregar el dominio en Vercel para que las mismas
+ * páginas, en el mismo deploy, pasen a ser indexables. Nada que acordarse de
+ * cambiar el día de la mudanza, que es cuando menos ganas hay de tocar
+ * configuración.
+ *
+ * Cubre de paso las direcciones de preview —`*.vercel.app`—, que son el otro
+ * lugar por donde se filtra una copia del sitio al índice.
+ *
+ * `X-Robots-Tag` y no una etiqueta en el HTML porque vale para todo lo que se
+ * sirve, incluidos el sitemap, las imágenes y los PDF.
+ */
+const SOLO_EL_DOMINIO_REAL = {
+  type: "host" as const,
+  value: `(www\\.)?${DOMINIO.replace(/\./g, "\\.")}`,
+};
+
 const nextConfig: NextConfig = {
   async headers() {
-    return [{ source: "/:ruta*", headers: CABECERAS }];
+    return [
+      { source: "/:ruta*", headers: CABECERAS },
+      {
+        source: "/:ruta*",
+        missing: [SOLO_EL_DOMINIO_REAL],
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      },
+    ];
   },
 
   experimental: {
