@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { Inter, DM_Mono } from "next/font/google";
 import "../globals.css";
 import { contenido } from "@/lib/contenido";
-import { recortar } from "@/lib/seo";
+import { recortar, sitioUrl } from "@/lib/seo";
 import {
   IDIOMAS,
   IDIOMA_POR_DEFECTO,
@@ -63,14 +63,18 @@ export async function generateMetadata({
   const T = contenido(lang);
 
   return {
-    /* Sin esto, `hreflang` y la canónica salen relativas y los buscadores no
-       las resuelven. En Vercel la URL del deploy llega por entorno. */
-    metadataBase: new URL(
-      process.env.NEXT_PUBLIC_SITIO_URL ??
-        (process.env.VERCEL_PROJECT_PRODUCTION_URL
-          ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-          : "http://localhost:3000"),
-    ),
+    /*
+     * Sin esto, `hreflang` y la canónica salen relativas y los buscadores no
+     * las resuelven.
+     *
+     * Sale de `sitioUrl()` y no de una copia de esa cuenta. La tenía repetida
+     * acá, y mientras las dos coincidieron no se notó: cuando `sitioUrl()`
+     * pasó a decir el dominio definitivo, esta se quedó con la del deploy y la
+     * canónica siguió apuntando a staging. El sitemap decía una cosa y la
+     * canónica otra, que es la peor forma de romperse —en silencio y solo en
+     * producción—.
+     */
+    metadataBase: new URL(sitioUrl()),
     title: {
       default:
         lang === "en"
