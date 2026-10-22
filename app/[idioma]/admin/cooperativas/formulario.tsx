@@ -3,6 +3,7 @@
 import {
   CampoArchivo,
   CampoTexto,
+  ENCUADRAR_LOGO,
   FormularioAdmin,
   type EstadoForm,
   type Opcion,
@@ -65,9 +66,10 @@ export function FormularioCooperativa({
             id="file"
             name="file"
             etiqueta="Logo"
-            ayuda="Va arriba de la tarjeta en Nuestra Red; sin él se muestra el nombre."
+            ayuda="Va arriba de la tarjeta en Nuestra Red; sin él se muestra el nombre. Se encuadra solo a la medida del resto, así que no hace falta prepararlo."
             accept="image/*"
             actual={cooperativa?.logo}
+            preparar={ENCUADRAR_LOGO}
           />
         </Bloque>
 

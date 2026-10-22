@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Children, cloneElement, isValidElement, useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { comprimirImagen } from "@/lib/admin/comprimir-imagen";
+import { normalizarLogo } from "@/lib/admin/normalizar-logo";
 import { traducirAlIngles } from "@/lib/admin/traducir";
 import { cn } from "@/lib/cn";
 import { FOCO } from "@/components/ui/boton";
@@ -728,11 +729,40 @@ export function CampoCasilla({
  */
 export const TOPE_ENVIO = 18 * 1024 * 1024;
 
+/**
+ * Qué se le hace a cada imagen antes de que salga, y cómo contarlo.
+ *
+ * Por defecto se achican, que es lo que hace falta con las fotos. El logo de
+ * una cooperativa además se encuadra: todos se dibujan en la misma caja de
+ * "Nuestra Red", así que el que llega con otra proporción o con el dibujo
+ * pegado al borde se ve de otro tamaño que el resto.
+ */
+interface Preparacion {
+  hacer: (archivo: File) => Promise<File>;
+  /** Gerundio, para el aviso mientras trabaja: "Achicando 3 de 5…". */
+  haciendo: string;
+  /** Qué quedó hecho: "5 imágenes, achicadas en el navegador: de … a …". */
+  hecho: string;
+}
+
+const ACHICAR: Preparacion = {
+  hacer: comprimirImagen,
+  haciendo: "Achicando",
+  hecho: "achicadas en el navegador",
+};
+
+export const ENCUADRAR_LOGO: Preparacion = {
+  hacer: normalizarLogo,
+  haciendo: "Encuadrando",
+  hecho: "encuadrado a la medida del resto",
+};
+
 export function CampoArchivo({
   id,
   etiqueta,
   ayuda,
   actual,
+  preparar = ACHICAR,
   onChange,
   ...props
 }: {
@@ -744,6 +774,8 @@ export function CampoArchivo({
    * porque un proyecto lleva una galería entera.
    */
   actual?: string | string[] | null;
+  /** Qué se le hace a cada imagen antes de subirla. Por defecto, achicarla. */
+  preparar?: Preparacion;
 } & React.ComponentProps<"input">) {
   const cargadas = (Array.isArray(actual) ? actual : [actual]).filter(
     (url): url is string => !!url,
@@ -805,7 +837,7 @@ export function CampoArchivo({
      */
     const listos: File[] = [];
     for (const archivo of elegidos) {
-      listos.push(await comprimirImagen(archivo));
+      listos.push(await preparar.hacer(archivo));
       setAvance({ hechas: listos.length, total: elegidos.length });
     }
     const despues = pesa(listos);
@@ -847,14 +879,19 @@ export function CampoArchivo({
        navegador entrega una, es acá donde se nota. Sin el número, un "se
        achicaron de 9,9 MB a 0,5 MB" se lee como que salió todo bien. */
     const cuantas = `${listos.length} ${listos.length === 1 ? "imagen" : "imágenes"}`;
+    /* El peso solo se nombra cuando bajó: encuadrar un logo chico lo deja
+       pesando un poco más, y anunciar "de 8 KB a 11 KB" se lee como un error
+       cuando es exactamente lo que se pidió. */
     setAchicado(
-      reemplazado && final < antes * 0.95
-        ? `${cuantas}, achicadas en el navegador: de ${mb(antes)} a ${mb(final)}. Lo que se sube es lo achicado.`
+      reemplazado
+        ? final < antes * 0.95
+          ? `${cuantas}, ${preparar.hecho}: de ${mb(antes)} a ${mb(final)}. Lo que se sube es eso.`
+          : `${cuantas}, ${preparar.hecho} (${mb(final)}). Lo que se sube es eso.`
         : `${cuantas} elegida${listos.length === 1 ? "" : "s"}, ${mb(final)}.`,
     );
     setPesado(
       final > TOPE_ENVIO
-        ? `${reemplazado ? "Aun achicadas pesan" : "Lo elegido pesa"} ${mb(final)} y el máximo es ${mb(TOPE_ENVIO)}. Subí menos archivos por vez: si se envía así, la carga falla.`
+        ? `${reemplazado ? "Aun preparadas pesan" : "Lo elegido pesa"} ${mb(final)} y el máximo es ${mb(TOPE_ENVIO)}. Subí menos archivos por vez: si se envía así, la carga falla.`
         : null,
     );
     onChange?.(evento);
@@ -897,7 +934,8 @@ export function CampoArchivo({
       {avance ? (
         <div className="mt-2" aria-live="polite">
           <p className="text-p3 text-blanco/60">
-            Achicando {Math.max(1, avance.hechas)} de {avance.total}…
+            {preparar.haciendo} {Math.max(1, avance.hechas)} de{" "}
+            {avance.total}…
           </p>
           {/* Una barra y no solo el número: con fotos de cámara cada una tarda
               un par de segundos y sin nada que se mueva parece colgado. */}
