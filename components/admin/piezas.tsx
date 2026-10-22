@@ -1,8 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { Children, cloneElement, isValidElement, useActionState, useState } from "react";
+import {
+  Children,
+  cloneElement,
+  isValidElement,
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useFormStatus } from "react-dom";
+import * as borrador from "@/lib/admin/borrador";
 import { comprimirImagen } from "@/lib/admin/comprimir-imagen";
 import { normalizarLogo } from "@/lib/admin/normalizar-logo";
 import { traducirAlIngles } from "@/lib/admin/traducir";
@@ -983,28 +992,112 @@ export function FormularioAdmin({
   children,
   volverA,
   textoGuardar = "Guardar",
+  recordar,
   className,
 }: {
   accion: (estado: EstadoForm, datos: FormData) => Promise<EstadoForm>;
   children: React.ReactNode;
   volverA: string;
   textoGuardar?: string;
+  /**
+   * Clave del borrador en el navegador. Con esto, lo que se escribe se va
+   * anotando y no se pierde si el guardado falla o si la pestaña se cierra.
+   * Va en los formularios largos; en un alta de dos campos no hace falta.
+   */
+  recordar?: string;
   className?: string;
 }) {
   const [estado, enviar, enviando] = useActionState(accion, undefined);
+  const form = useRef<HTMLFormElement>(null);
+  /** Un borrador viejo que todavía no se ofreció recuperar. */
+  const [guardado, setGuardado] = useState<borrador.Borrador | null>(null);
+  const [rescatado, setRescatado] = useState(false);
+
+  /*
+   * Al abrir: si hay un borrador que dice algo distinto de lo que se está
+   * mostrando, se ofrece. No se aplica solo, porque lo que está en pantalla
+   * puede ser más nuevo —alguien editó desde otra computadora— y pisarlo sin
+   * preguntar sería peor que el problema que esto resuelve.
+   *
+   * Si coincide con lo que ya se ve, es de una carga que salió bien: se borra
+   * sin molestar a nadie.
+   */
+  useEffect(() => {
+    if (!recordar || !form.current) return;
+    const previo = borrador.leer(recordar);
+    if (!previo) return;
+    if (borrador.difiere(form.current, previo.campos)) setGuardado(previo);
+    else borrador.olvidar(recordar);
+  }, [recordar]);
+
+  /*
+   * Cuando el guardado falla, reponer lo escrito.
+   *
+   * Hace falta de verdad: al volver la acción, el formulario se vuelve a
+   * dibujar con los datos del servidor y los campos de texto quedan como
+   * estaban antes de empezar. Medido —se escribía una descripción entera, el
+   * guardado fallaba por sesión vencida y volvía el texto viejo—. Los campos
+   * que dibuja React desde su estado, como el mapa, sobreviven solos.
+   */
+  useEffect(() => {
+    if (!recordar || !estado?.error || !form.current) return;
+    const previo = borrador.leer(recordar);
+    if (!previo) return;
+    if (borrador.aplicar(form.current, previo.campos) > 0) setRescatado(true);
+  }, [recordar, estado]);
+
+  const anotar = () => {
+    if (recordar && form.current) borrador.guardar(recordar, form.current);
+  };
 
   return (
     <form
+      ref={form}
       action={enviar}
+      onInput={anotar}
+      onChange={anotar}
       /* Sin recuadro propio: el marco lo ponen los bloques de adentro, y uno
          alrededor de todo dejaba una caja vacía del ancho de la pantalla. */
       className={cn("flex flex-col gap-5", className)}
     >
+      {guardado ? (
+        <div className="text-p3 flex flex-wrap items-center gap-3 rounded-lg border border-lila/40 bg-lila/10 p-3">
+          <span className="text-blanco/80">
+            Quedaron cambios sin guardar de {borrador.hace(guardado.cuando)}.
+          </span>
+          <button
+            type="button"
+            onClick={() => {
+              if (form.current) borrador.aplicar(form.current, guardado.campos);
+              setGuardado(null);
+            }}
+            className={cn("rounded px-3 py-1 text-negro-oscuro bg-blanco", FOCO)}
+          >
+            Recuperarlos
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              if (recordar) borrador.olvidar(recordar);
+              setGuardado(null);
+            }}
+            className={cn("rounded px-3 py-1 text-blanco/60 hover:text-blanco", FOCO)}
+          >
+            Descartar
+          </button>
+        </div>
+      ) : null}
+
       {children}
 
       {estado?.error ? (
         <p role="alert" className="text-p3 rounded-lg bg-rojo/10 p-3 text-rojo">
           {estado.error}
+          {rescatado ? (
+            <span className="mt-1 block text-blanco/70">
+              Lo que habías escrito sigue acá: no hace falta volver a cargarlo.
+            </span>
+          ) : null}
         </p>
       ) : null}
 

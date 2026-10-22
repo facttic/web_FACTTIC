@@ -2,7 +2,7 @@ import "server-only";
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { requerirSesion } from "@/lib/api/guardia";
+import { sesionDeAccion } from "@/lib/api/guardia";
 import { crear, editar, borrar, type Resultado } from "@/lib/api/escritura";
 import type { EstadoForm, Opcion } from "@/components/admin/piezas";
 
@@ -56,7 +56,8 @@ export async function guardarEn(
    */
   luego?: (id: string) => Promise<Resultado>,
 ): Promise<EstadoForm> {
-  await requerirSesion();
+  const guardia = await sesionDeAccion();
+  if (!guardia.ok) return { error: guardia.error };
 
   const resultado = id
     ? await editar(destino.recurso, id, cuerpo, destino.etiqueta)
@@ -105,7 +106,8 @@ export async function crearOpcion(
   /** El logo, cuando el catálogo lo admite y se eligió uno al crearlo. */
   logo?: File,
 ): Promise<{ ok: true; opcion: Opcion } | { ok: false; error: string }> {
-  await requerirSesion();
+  const guardia = await sesionDeAccion();
+  if (!guardia.ok) return { ok: false, error: guardia.error };
 
   const limpio = nombre.trim();
   if (limpio.length < 3) {
@@ -152,7 +154,8 @@ export async function editarOpcion(
   nombre: string,
   logo?: File,
 ): Promise<{ ok: true; opcion: Opcion } | { ok: false; error: string }> {
-  await requerirSesion();
+  const guardia = await sesionDeAccion();
+  if (!guardia.ok) return { ok: false, error: guardia.error };
 
   const limpio = nombre.trim();
   if (limpio.length < 3) {
@@ -180,7 +183,8 @@ export async function borrarDe(
   destino: Destino,
   datos: FormData,
 ): Promise<EstadoForm> {
-  await requerirSesion();
+  const guardia = await sesionDeAccion();
+  if (!guardia.ok) return { error: guardia.error };
 
   const id = String(datos.get("id") ?? "");
   if (!id) return { error: "No se pudo saber qué registro borrar." };

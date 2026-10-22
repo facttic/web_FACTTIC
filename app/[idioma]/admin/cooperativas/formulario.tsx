@@ -38,7 +38,13 @@ export function FormularioCooperativa({
   sectores: Opcion[];
 }) {
   return (
-    <FormularioAdmin accion={accion} volverA="/admin/cooperativas">
+    <FormularioAdmin
+      accion={accion}
+      volverA="/admin/cooperativas"
+      /* La ficha es larga y se carga de una sentada: si el guardado falla, lo
+         escrito tiene que seguir ahí. */
+      recordar={`cooperativa:${cooperativa?.id ?? "nueva"}`}
+    >
       <Bloques>
         <Bloque titulo="Datos de la cooperativa">
           <Par>

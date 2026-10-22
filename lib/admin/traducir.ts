@@ -1,6 +1,6 @@
 "use server";
 
-import { requerirSesion } from "@/lib/api/guardia";
+import { sesionDeAccion } from "@/lib/api/guardia";
 
 /**
  * Traducir al inglés desde el panel.
@@ -90,7 +90,8 @@ async function unaParte(texto: string): Promise<string> {
 export async function traducirAlIngles(
   texto: string,
 ): Promise<{ ok: true; texto: string } | { ok: false; error: string }> {
-  await requerirSesion();
+  const guardia = await sesionDeAccion();
+  if (!guardia.ok) return { ok: false, error: guardia.error };
 
   const limpio = texto.trim();
   if (!limpio) {

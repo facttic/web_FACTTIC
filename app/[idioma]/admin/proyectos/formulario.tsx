@@ -64,7 +64,13 @@ export function FormularioProyecto({
   const elegidas = proyecto?.cooperativas ?? (cooperativa ? [cooperativa] : []);
 
   return (
-    <FormularioAdmin accion={accion} volverA={volverA ?? "/admin/proyectos"}>
+    <FormularioAdmin
+      accion={accion}
+      volverA={volverA ?? "/admin/proyectos"}
+      /* Desafío, solución y resultado son tres textos largos: lo mismo que en
+         la ficha de la cooperativa. */
+      recordar={`proyecto:${proyecto?.id ?? "nuevo"}`}
+    >
       {volverA ? <input type="hidden" name="volver" value={volverA} /> : null}
 
       <Bloques>

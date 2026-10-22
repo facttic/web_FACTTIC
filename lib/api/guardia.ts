@@ -28,6 +28,7 @@ export async function requerirSesion(): Promise<Sesion> {
   return sesion;
 }
 
+
 /**
  * Las pantallas que son solo de la Federación.
  *
@@ -64,7 +65,12 @@ export async function sesionDeAccion(): Promise<
   if (!sesion) {
     return {
       ok: false,
-      error: "Tu sesión venció. Volvé a entrar y probá de nuevo.",
+      /* Que diga que no se perdió nada, y que se entre **en otra pestaña**:
+         un "volvé a entrar" a secas se lee como "navegá a la pantalla de
+         ingreso", que es justamente lo que se lleva puesto el formulario. */
+      error:
+        "Se venció la sesión antes de guardar. Entrá de nuevo en otra " +
+        "pestaña y volvé a apretar Guardar: lo que cargaste sigue acá.",
     };
   }
   return { ok: true, sesion };

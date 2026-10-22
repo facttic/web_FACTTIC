@@ -2,7 +2,7 @@
 
 import { borrarDe, guardarEn, type Destino } from "@/lib/admin/acciones";
 import { numero, texto, traducciones } from "@/lib/admin/campos";
-import { requerirSesion } from "@/lib/api/guardia";
+import { sesionDeAccion } from "@/lib/api/guardia";
 import type { EstadoForm } from "@/components/admin/piezas";
 
 const SERVICIOS: Destino = {
@@ -61,7 +61,9 @@ export async function guardarServicio(
   /* El catálogo de la Federación es suyo: una cooperativa carga servicios para
      su ficha, pero no decide cuáles muestran la Home y Nuestros servicios. Sin
      el campo, lo marcado queda como está. La API lo verifica igual. */
-  const { esAdmin } = await requerirSesion();
+  const guardia = await sesionDeAccion();
+  if (!guardia.ok) return { error: guardia.error };
+  const { esAdmin } = guardia.sesion;
   /* Los subservicios no se traducen todavía desde el panel: la API los acepta,
      pero el formulario los arma como dos listas paralelas y hay que resolver
      cómo emparejarlas con su traducción. */

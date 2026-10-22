@@ -9,7 +9,7 @@ import {
 } from "@/lib/admin/acciones";
 import { archivos, lista, texto, traducciones } from "@/lib/admin/campos";
 import { editar } from "@/lib/api/escritura";
-import { requerirSesion } from "@/lib/api/guardia";
+import { sesionDeAccion } from "@/lib/api/guardia";
 import type { EstadoForm } from "@/components/admin/piezas";
 
 const PROYECTOS: Destino = {
@@ -87,7 +87,9 @@ export async function guardarProyecto(
    * API solo pisa los campos que recibe. La comprobación de verdad es la
    * suya; esto es para que el panel no mande lo que no corresponde.
    */
-  const { esAdmin } = await requerirSesion();
+  const guardia = await sesionDeAccion();
+  if (!guardia.ok) return { error: guardia.error };
+  const { esAdmin } = guardia.sesion;
 
   const cuerpo = {
     nombre,

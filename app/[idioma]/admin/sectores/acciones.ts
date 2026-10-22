@@ -2,7 +2,7 @@
 
 import { borrarDe, guardarEn, type Destino } from "@/lib/admin/acciones";
 import { archivo, numero, texto, traducciones } from "@/lib/admin/campos";
-import { requerirSesion } from "@/lib/api/guardia";
+import { sesionDeAccion } from "@/lib/api/guardia";
 import type { EstadoForm } from "@/components/admin/piezas";
 
 const SECTORES: Destino = {
@@ -27,7 +27,9 @@ export async function guardarSector(
      sectores para su ficha, pero no decide cuáles tienen pantalla propia, ni
      les pone la imagen y la animación de esa pantalla. Sin los campos, lo que
      ya estuviera marcado o cargado queda como está. La API lo verifica igual. */
-  const { esAdmin } = await requerirSesion();
+  const guardia = await sesionDeAccion();
+  if (!guardia.ok) return { error: guardia.error };
+  const { esAdmin } = guardia.sesion;
   const esDestacado = esAdmin && datos.get("esDestacado") === "on";
   const imagen = esAdmin ? archivo(datos, "imageFile") : undefined;
   const animacion = esAdmin ? archivo(datos, "lottieFile") : undefined;
