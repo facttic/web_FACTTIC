@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { apiFetch, ApiError } from "@/lib/api/client";
+import { verificarDesafio } from "@/lib/api/altcha";
 
 /**
  * Recibe el formulario de Contacto y lo reenvía a la API.
@@ -73,6 +74,35 @@ export async function POST(request: Request) {
   }
 
   const texto = (campo: string) => String(datos.get(campo) ?? "").trim();
+
+  /*
+   * El campo trampa.
+   *
+   * Está en el formulario, escondido y fuera del alcance del teclado y de los
+   * lectores de pantalla, así que una persona no lo ve ni lo puede completar.
+   * Un bot que rellena todo lo que encuentra, sí. Se responde 200 igual: si se
+   * devolviera un error, el que lo escribió aprendería cuál es el campo y lo
+   * saltearía la próxima.
+   */
+  if (texto("apellido")) {
+    return NextResponse.json({ ok: true });
+  }
+
+  /*
+   * La prueba de trabajo. Va antes de hablar con la API, que es lo que se
+   * quiere proteger, y después de la trampa, que no cuesta nada.
+   */
+  const prueba = await verificarDesafio(
+    datos.get("altcha") ? String(datos.get("altcha")) : null,
+  );
+  if (!prueba.ok) {
+    /* El mensaje es el mismo para todos los motivos: no tiene sentido
+       explicarle a quien lo está intentando cuál de los controles lo frenó. */
+    return NextResponse.json(
+      { error: "No pudimos verificar el envío. Recargá la página y probá otra vez." },
+      { status: 400 },
+    );
+  }
 
   const cuerpo = {
     nombre: texto("nombre"),

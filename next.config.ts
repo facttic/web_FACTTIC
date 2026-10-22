@@ -37,6 +37,11 @@ const CSP = [
      falta abrir ni script ni estilo. */
   "img-src 'self' data: blob: https://tile.openstreetmap.org",
   "font-src 'self' data:",
+  /* El widget de ALTCHA calcula la prueba de trabajo en un worker que crea
+     como blob, para no trabar la pantalla mientras tanto. Sin esto el worker
+     queda bloqueado y el formulario no se puede enviar. Sigue siendo todo de
+     acá: `blob:` es contenido que genera la propia página, no un tercero. */
+  "worker-src 'self' blob:",
   "media-src 'self'",
   "connect-src 'self'",
   /* Nadie puede meter el sitio en un marco: es lo que corta el clickjacking. */

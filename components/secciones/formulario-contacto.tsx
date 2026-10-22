@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { Boton, FOCO } from "@/components/ui/boton";
 import { Aviso } from "@/components/ui/aviso";
@@ -49,6 +49,16 @@ export function FormularioContacto({ className }: { className?: string }) {
     return fallas;
   };
 
+  /*
+   * El widget pesa unos 20 KB y solo hace falta si alguien va a escribir. Se
+   * carga al primer foco dentro del formulario, no al abrir la pantalla.
+   */
+  const [cargarPrueba, setCargarPrueba] = useState(false);
+  useEffect(() => {
+    if (!cargarPrueba) return;
+    void import("altcha");
+  }, [cargarPrueba]);
+
   const enviar = async (evento: React.FormEvent<HTMLFormElement>) => {
     evento.preventDefault();
     const formulario = evento.currentTarget;
@@ -89,7 +99,12 @@ export function FormularioContacto({ className }: { className?: string }) {
   }
 
   return (
-    <form onSubmit={enviar} noValidate className={className}>
+    <form
+      onSubmit={enviar}
+      onFocusCapture={() => setCargarPrueba(true)}
+      noValidate
+      className={cn("relative", className)}
+    >
       <h2 className="text-h2">{T.formulario.titulo}</h2>
 
       <div className="mt-8 flex flex-col gap-8 md:gap-5">
@@ -151,6 +166,53 @@ export function FormularioContacto({ className }: { className?: string }) {
           ))}
         </div>
       </fieldset>
+
+      {/*
+        El campo trampa. Escondido de la vista, del teclado y de los lectores de
+        pantalla, así que nadie lo ve ni lo puede completar sin querer; un bot
+        que rellena todo lo que encuentra, sí. Quien decide es el servidor:
+        acá solo se dibuja.
+
+        `left-[-9999px]` y no `display:none` ni `hidden`: los bots que miran si
+        el campo es visible descartan los que están ocultos a la vista.
+      */}
+      <div aria-hidden className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
+        <label htmlFor={campo("apellido")}>No completar</label>
+        <input
+          id={campo("apellido")}
+          name="apellido"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+        />
+      </div>
+
+      {/*
+        La prueba de trabajo. El desafío lo firma nuestro servidor y nuestro
+        servidor lo verifica: no hay un tercero mirando quién entra acá, y la
+        política de contenido sigue sin permitir nada de afuera.
+
+        El widget se carga recién cuando alguien toca el formulario, para no
+        hacerle bajar nada a quien solo pasa por la pantalla.
+      */}
+      <div className="mt-8">
+        {cargarPrueba ? (
+          <altcha-widget
+            /* En la v3 del widget el atributo es `challenge`, no `challengeurl`
+               como en la v2: acepta la URL de donde traerlo. Con el nombre viejo
+               no falla, simplemente no pide nada y después dice "verification
+               failed", que no se parece en nada a la causa. */
+            challenge="/api/contacto/desafio"
+            name="altcha"
+            /* Sin casilla que tildar ni nada que mirar: la cuenta se hace sola
+               mientras se escribe el mensaje. Lo que estamos comprobando es que
+               el envío costó trabajo, no que haya un humano del otro lado, así
+               que pedirle a alguien que apriete algo no agrega nada. */
+            display="invisible"
+            auto="onload"
+          />
+        ) : null}
+      </div>
 
       {estado === "falló" ? (
         <Aviso tono="error" titulo={T.formulario.falla.titulo} className="mt-8">
