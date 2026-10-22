@@ -46,11 +46,27 @@ export async function verInvitacion(token: string): Promise<Invitacion | null> {
   }
 }
 
+/**
+ * Por qué falló, para que quien llama decida sin leer el texto del error.
+ *
+ * Antes la pantalla reintentaba con otro nombre de usuario preguntando si el
+ * mensaje contenía la palabra "usuario". Funcionaba, pero cualquiera que
+ * reescribiera ese texto apagaba el reintento sin enterarse.
+ */
+export type FalloInvitacion =
+  | "usuarioTomado"
+  | "invitacionInvalida"
+  | "contrasenaDebil"
+  | "sinApi";
+
 export async function aceptarInvitacion(
   token: string,
   usuario: string,
   contrasena: string,
-): Promise<{ ok: true; cooperativa: string } | { ok: false; error: string }> {
+): Promise<
+  | { ok: true; cooperativa: string }
+  | { ok: false; error: string; codigo: FalloInvitacion }
+> {
   let res: Response;
   try {
     res = await fetch(
@@ -63,25 +79,35 @@ export async function aceptarInvitacion(
       },
     );
   } catch {
-    return { ok: false, error: "No pudimos conectarnos con la API" };
+    return {
+      ok: false,
+      error: "No pudimos conectarnos con la API",
+      codigo: "sinApi",
+    };
   }
 
   if (!res.ok) {
     const { code } = (await res.json().catch(() => ({}))) as { code?: string };
     if (code === "usernameAlreadyExists") {
-      return { ok: false, error: "Ese nombre de usuario ya está tomado" };
+      return {
+        ok: false,
+        error: "Ese nombre de usuario ya está tomado",
+        codigo: "usuarioTomado",
+      };
     }
     if (code === "invitacionInvalida") {
       return {
         ok: false,
         error:
           "La invitación ya se usó o venció. Pedile a FACTTIC que te mande otra.",
+        codigo: "invitacionInvalida",
       };
     }
     return {
       ok: false,
       error:
         "La contraseña necesita al menos 6 caracteres, con letras y números",
+      codigo: "contrasenaDebil",
     };
   }
 

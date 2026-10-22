@@ -6,7 +6,7 @@ import {
   verInvitacion,
 } from "@/lib/api/invitaciones";
 import { iniciarSesion } from "@/lib/api/session";
-import { FormularioInvitacion } from "./formulario";
+import { FormularioInvitacion, type Estado } from "./formulario";
 
 export const metadata: Metadata = {
   title: "Invitación · Panel",
@@ -33,12 +33,12 @@ export default async function InvitacionPage({
   const { token } = await params;
   const invitacion = await verInvitacion(token);
 
-  async function aceptar(_estado: unknown, datos: FormData) {
+  async function aceptar(_estado: unknown, datos: FormData): Promise<Estado> {
     "use server";
 
     const contrasena = String(datos.get("contrasena") ?? "");
     if (!contrasena) return { error: "Escribí una contraseña" };
-    if (!invitacion) return { error: "Esta invitación ya no sirve" };
+    if (!invitacion) return { yaNoSirve: true };
 
     /*
      * El nombre de usuario lo arma el sistema a partir del correo: la API lo
@@ -56,19 +56,42 @@ export default async function InvitacionPage({
       contrasena,
     );
     for (let intento = 1; !resultado.ok && intento < 5; intento++) {
-      if (!resultado.error.includes("usuario")) break;
+      if (resultado.codigo !== "usuarioTomado") break;
       resultado = await aceptarInvitacion(
         token,
         usuarioDesdeElCorreo(invitacion.email, intento),
         contrasena,
       );
     }
-    if (!resultado.ok) return { error: resultado.error };
+
+    if (!resultado.ok) {
+      /*
+       * Una invitación que servía al abrir la pantalla y ya no sirve al
+       * enviarla: la usaron desde otra pestaña, o la Federación sacó a esa
+       * persona de la lista de editores mientras completaba.
+       *
+       * No alcanza con devolver el texto del error. Al volver, la pantalla se
+       * dibuja de nuevo, `verInvitacion` ya da 404 y el formulario entero
+       * quedaba reemplazado por un cartel que decía "pedí otra invitación" sin
+       * decir lo que de verdad importa: si la cuenta quedó creada o no. Si fue
+       * un segundo envío del mismo formulario, la cuenta existe y lo único que
+       * hay que hacer es entrar.
+       */
+      if (resultado.codigo === "invitacionInvalida") {
+        return { yaNoSirve: true, email: invitacion.email };
+      }
+      return { error: resultado.error };
+    }
 
     /* Se entra con el correo —que es lo que la persona sabe— y se cae en la
        ficha de la cooperativa, que es a lo que vino. */
     const sesion = await iniciarSesion(invitacion.email, contrasena);
-    if (!sesion.ok) redirect("/admin/ingresar");
+    /*
+     * La cuenta quedó creada y la invitación, usada. Mandarla a la pantalla de
+     * ingreso sin decirle nada la deja creyendo que no se guardó —y la
+     * invitación ya no la va a dejar volver a intentar—.
+     */
+    if (!sesion.ok) return { cuentaCreada: true, email: invitacion.email };
     redirect(`/admin/cooperativas/${resultado.cooperativa}`);
   }
 

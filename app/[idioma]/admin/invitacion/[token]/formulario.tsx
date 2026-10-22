@@ -15,7 +15,18 @@ import type { Invitacion } from "@/lib/api/invitaciones";
  * el de la invitación y la API no acepta otro.
  */
 
-type Estado = { error?: string } | undefined;
+/**
+ * En qué quedó el envío.
+ *
+ * `yaNoSirve` y `cuentaCreada` no son errores de formulario sino desenlaces: la
+ * pantalla cambia entera y lo único que importa es si hay que entrar o pedir
+ * otra invitación.
+ */
+export type Estado =
+  | { error: string }
+  | { yaNoSirve: true; email?: string }
+  | { cuentaCreada: true; email: string }
+  | undefined;
 
 export function FormularioInvitacion({
   accion,
@@ -26,14 +37,54 @@ export function FormularioInvitacion({
 }) {
   const [estado, enviar, enviando] = useActionState(accion, undefined);
 
+  /*
+   * La cuenta se creó pero no pudimos dejarla adentro —la API no aceptó el
+   * ingreso justo después—. La invitación ya está usada, así que volver a
+   * enviar el formulario no va a funcionar: lo único que queda es entrar.
+   */
+  if (estado && "cuentaCreada" in estado) {
+    return (
+      <Marco>
+        <h1 className="text-h3 text-center">Tu cuenta ya está creada</h1>
+        <p className="text-p3 mt-3 text-center text-blanco/60">
+          Quedó hecha para {estado.email}, con la contraseña que acabás de
+          elegir. No pudimos dejarte adentro de una, así que entrá con ella.
+        </p>
+        <BotonIngresar />
+      </Marco>
+    );
+  }
+
+  /*
+   * La invitación servía al abrir y ya no sirve al enviar: la usaron desde otra
+   * pestaña o le sacaron el acceso mientras completaba. El caso frecuente es el
+   * primero, y ahí la cuenta **existe**: decirle solamente "pedí otra" la
+   * manda a esperar un mail que no necesita.
+   */
+  if (estado && "yaNoSirve" in estado) {
+    return (
+      <Marco>
+        <h1 className="text-h3 text-center">Esta invitación ya se usó</h1>
+        <p className="text-p3 mt-3 text-center text-blanco/60">
+          Si la cuenta {estado.email ? `de ${estado.email} ` : ""}la creaste vos
+          —aunque haya sido recién, en otra pestaña—, ya existe y solo falta que
+          entres. Si no fuiste vos, escribile a FACTTIC.
+        </p>
+        <BotonIngresar />
+      </Marco>
+    );
+  }
+
   if (!invitacion) {
     return (
       <Marco>
         <h1 className="text-h3 text-center">Esta invitación ya no sirve</h1>
         <p className="text-p3 mt-3 text-center text-blanco/60">
           Puede que ya la hayas usado, que haya vencido o que te hayan quitado
-          el acceso. Escribile a FACTTIC para que te mande una nueva.
+          el acceso. Si ya creaste tu cuenta, entrá con tu correo; si no,
+          escribile a FACTTIC para que te mande una nueva.
         </p>
+        <BotonIngresar />
       </Marco>
     );
   }
@@ -47,15 +98,7 @@ export function FormularioInvitacion({
         <p className="text-p3 mt-3 text-center text-blanco/60">
           Tu cuenta de {invitacion.email} ya existe, así que entrá con ella.
         </p>
-        <Enlace
-          href="/admin/ingresar"
-          className={cn(
-            "text-p1-bold mt-8 block rounded-lg bg-blanco px-5 py-3 text-center text-negro-oscuro",
-            FOCO,
-          )}
-        >
-          Ingresar
-        </Enlace>
+        <BotonIngresar />
       </Marco>
     );
   }
@@ -99,7 +142,7 @@ export function FormularioInvitacion({
           required
         />
 
-        {estado?.error ? (
+        {estado && "error" in estado ? (
           <p role="alert" className="text-p3 text-rojo">
             {estado.error}
           </p>
@@ -110,6 +153,21 @@ export function FormularioInvitacion({
         </Boton>
       </form>
     </Marco>
+  );
+}
+
+/** La salida de las tres pantallas sin formulario: entrar con la cuenta. */
+function BotonIngresar() {
+  return (
+    <Enlace
+      href="/admin/ingresar"
+      className={cn(
+        "text-p1-bold mt-8 block rounded-lg bg-blanco px-5 py-3 text-center text-negro-oscuro",
+        FOCO,
+      )}
+    >
+      Ingresar
+    </Enlace>
   );
 }
 
