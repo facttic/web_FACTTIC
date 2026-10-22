@@ -32,11 +32,23 @@ export interface ApiFetchOptions extends Omit<RequestInit, "body"> {
   /** Token a usar en lugar del de servicio (el del usuario, en el backoffice). */
   token?: string;
   /**
-   * Manda el token de servicio también en las lecturas.
+   * Con quién se hace el pedido, cuando lo que corresponde no es lo de siempre.
    *
-   * Es para los recursos que ya se sabe que piden credencial, como la ficha
-   * completa de una cooperativa: sin esto la lectura sale anónima, cobra un
-   * 401 y recién entonces reintenta, que es un viaje de más por cada visita.
+   * Sin esto, las lecturas salen anónimas y las escrituras con el token de
+   * servicio. Las dos excepciones:
+   *
+   *  - `true` en una lectura: el recurso ya se sabe que pide credencial —la
+   *    ficha completa de una cooperativa—, así que sale firmada de entrada.
+   *    Sin esto cobra un 401 y recién reintenta: un viaje de más por visita.
+   *  - `false` en una escritura: el endpoint es abierto y no hace falta
+   *    credencial. Es el caso del formulario de contacto, y no es un detalle:
+   *    pedir el token de servicio significa **entrar como administrador**, y
+   *    cada login ocupa una de las cinco ranuras de sesión que guarda esa
+   *    cuenta y gasta de su cupo de intentos. Era lo único que hacía que el
+   *    sitio público se logueara; sin eso, no se loguea nunca.
+   *
+   * Si la API llegara a cerrar un endpoint abierto, el reintento ante un 401
+   * sigue en pie: se pierde un viaje, no la función.
    */
   autenticado?: boolean;
 }
@@ -71,7 +83,7 @@ export async function apiFetch<T>(
   const {
     params,
     token: explicitToken,
-    autenticado = false,
+    autenticado,
     headers,
     ...init
   } = options;
@@ -89,8 +101,9 @@ export async function apiFetch<T>(
         : { ...headers },
     });
 
-  // Lecturas sin credencial; escrituras con la que corresponda.
-  const conToken = !esLectura || Boolean(explicitToken) || autenticado;
+  /* Lecturas sin credencial y escrituras con la que corresponda, salvo que
+     quien llama diga otra cosa. */
+  const conToken = Boolean(explicitToken) || (autenticado ?? !esLectura);
   const tokenUsado = conToken
     ? (explicitToken ?? (await getServiceToken()))
     : undefined;

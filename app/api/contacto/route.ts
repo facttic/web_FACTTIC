@@ -103,6 +103,11 @@ export async function POST(request: Request) {
       method: "POST",
       body: JSON.stringify(cuerpo),
       headers: { "Content-Type": "application/json" },
+      /* Sin credencial: el endpoint de la API es abierto. Mandarla implicaba
+         que el sitio público entrara como administrador cada quince minutos,
+         ocupando ranuras de sesión de esa cuenta y gastando su cupo de
+         intentos. Era el único lugar donde el sitio se logueaba. */
+      autenticado: false,
     });
     return NextResponse.json({ ok: true });
   } catch (error) {
