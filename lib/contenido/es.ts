@@ -653,6 +653,12 @@ export const CONTACTO = {
     },
     enviar: "Enviar mensaje",
     enviando: "Enviando…",
+    /* Se dice que existe. Es una comprobación que corre en la máquina de
+       quien escribe, así que callarla sería raro; y sin esto no hay forma de
+       saber que el formulario está protegido, porque no se ve nada. */
+    proteccion:
+      "Tu navegador resuelve una comprobación automática para frenar el spam. No tenés que hacer nada.",
+    verificando: "Verificando…",
     errores: {
       nombre: "Escribí tu nombre",
       email: "Escribí un correo válido",

@@ -503,6 +503,9 @@ export const CONTACTO = {
     },
     enviar: "Send message",
     enviando: "Sending…",
+    proteccion:
+      "Your browser solves an automatic check to stop spam. You don't have to do anything.",
+    verificando: "Checking…",
     errores: {
       nombre: "Write your name",
       email: "Write a valid email address",

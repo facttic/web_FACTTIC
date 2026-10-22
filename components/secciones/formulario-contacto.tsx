@@ -76,10 +76,32 @@ export function FormularioContacto({ className }: { className?: string }) {
     }
 
     setEstado("enviando");
+
+    /*
+     * Esperar a que la prueba de trabajo esté lista.
+     *
+     * Hace falta: `enviar` se queda con los datos del formulario antes de que
+     * el widget haya terminado, y si manda sin la prueba el servidor devuelve
+     * 400 y la persona ve "no pudimos verificar el envío" sin haber hecho nada
+     * mal. Le pega justo a quien tiene peor equipo o peor conexión —el desafío
+     * se pide por red—, que es a quien menos queremos trabar.
+     *
+     * Si pasados unos segundos no llegó, se manda igual: que conteste el
+     * servidor en vez de dejar el botón girando para siempre.
+     */
+    let cuerpo = datos;
+    if (!cuerpo.get("altcha")) {
+      for (let intento = 0; intento < 40; intento++) {
+        await new Promise((listo) => setTimeout(listo, 250));
+        cuerpo = new FormData(formulario);
+        if (cuerpo.get("altcha")) break;
+      }
+    }
+
     try {
       const res = await fetch("/api/contacto", {
         method: "POST",
-        body: datos,
+        body: cuerpo,
       });
       setEstado(res.ok ? "enviado" : "falló");
       if (res.ok) formulario.reset();
@@ -227,6 +249,12 @@ export function FormularioContacto({ className }: { className?: string }) {
       >
         {estado === "enviando" ? T.formulario.enviando : T.formulario.enviar}
       </Boton>
+
+      {/* Que se sepa que existe: la comprobación corre en la máquina de quien
+          escribe y no se ve nada, así que callarlo sería raro. */}
+      <p className="text-p3 mt-4 text-center text-blanco/35">
+        {T.formulario.proteccion}
+      </p>
     </form>
   );
 }
