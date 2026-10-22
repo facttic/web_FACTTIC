@@ -64,27 +64,46 @@ export function FormularioInvitacion({
   if (estado && "yaNoSirve" in estado) {
     return (
       <Marco>
-        <h1 className="text-h3 text-center">Esta invitación ya se usó</h1>
+        <h1 className="text-h3 text-center">Tu cuenta ya está creada</h1>
         <p className="text-p3 mt-3 text-center text-blanco/60">
-          Si la cuenta {estado.email ? `de ${estado.email} ` : ""}la creaste vos
-          —aunque haya sido recién, en otra pestaña—, ya existe y solo falta que
-          entres. Si no fuiste vos, escribile a FACTTIC.
+          Este link ya se había usado, casi siempre porque lo enviaste dos veces
+          o lo tenías abierto en otra pestaña. No hace falta que pidas otro:
+          entrá con {estado.email ?? "tu correo"} y la contraseña que elegiste.
         </p>
         <BotonIngresar />
+        <p className="text-p3 mt-6 text-center text-blanco/35">
+          Si nunca llegaste a crear la cuenta, escribile a FACTTIC y te mandamos
+          una invitación nueva.
+        </p>
       </Marco>
     );
   }
 
+  /*
+   * El link no sirve y la API no dice por qué: devuelve el mismo 404 esté usada,
+   * vencida o revocada. Así que el texto tiene que ser cierto en los tres casos
+   * y, aun así, llevar a lo que hay que hacer.
+   *
+   * Por eso arranca por la cuenta y no por el diagnóstico. El motivo más
+   * frecuente de llegar acá es haber usado el link y volver a abrirlo desde el
+   * mail —pasó con la primera cooperativa que lo vio—, y ahí la cuenta existe:
+   * una pantalla que empieza enumerando tres hipótesis y recién al final
+   * menciona entrar manda a esperar un mail que no hace falta.
+   */
   if (!invitacion) {
     return (
       <Marco>
-        <h1 className="text-h3 text-center">Esta invitación ya no sirve</h1>
+        <h1 className="text-h3 text-center">Este link ya no sirve</h1>
         <p className="text-p3 mt-3 text-center text-blanco/60">
-          Puede que ya la hayas usado, que haya vencido o que te hayan quitado
-          el acceso. Si ya creaste tu cuenta, entrá con tu correo; si no,
-          escribile a FACTTIC para que te mande una nueva.
+          Casi siempre es porque ya lo usaste, y entonces tu cuenta quedó
+          creada. Si es así no necesitás nada más: entrá con tu correo y la
+          contraseña que elegiste.
         </p>
         <BotonIngresar />
+        <p className="text-p3 mt-6 text-center text-blanco/35">
+          Si nunca llegaste a crear la cuenta, o el link venció —duran siete
+          días—, escribile a FACTTIC y te mandamos otro.
+        </p>
       </Marco>
     );
   }
