@@ -1,6 +1,6 @@
 import "server-only";
 
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getSesion, type Sesion } from "./session";
 
 /**
@@ -28,7 +28,6 @@ export async function requerirSesion(): Promise<Sesion> {
   return sesion;
 }
 
-
 /**
  * Las pantallas que son solo de la Federación.
  *
@@ -43,6 +42,29 @@ export async function requerirSesion(): Promise<Sesion> {
 export async function requerirFederacion(): Promise<Sesion> {
   const sesion = await requerirSesion();
   if (!sesion.esAdmin) redirect(destinoDe(sesion));
+  return sesion;
+}
+
+/**
+ * La ficha de una cooperativa, que no es de cualquiera.
+ *
+ * `requerirSesion()` sola alcanza para saber que hay alguien del otro lado,
+ * pero no para saber si esa ficha es suya. Faltaba justamente eso, y como la
+ * lectura salía con credencial de administrador la API tampoco lo negaba:
+ * cualquiera con acceso al panel podía abrir la ficha de cualquier
+ * cooperativa, y con ella los correos de sus editores.
+ *
+ * La Federación entra a todas; el resto, solo a las que `/api/me` le reconoce.
+ *
+ * Contesta "no existe" y no "no podés", que es lo contrario de lo que haría
+ * `requerirFederacion`: ahí la URL es de una pantalla que existe para todas y
+ * el desvío es comodidad, acá la ficha es de otra cooperativa y confirmar que
+ * está no le aporta nada a quien la pidió.
+ */
+export async function requerirCooperativa(id: string): Promise<Sesion> {
+  const sesion = await requerirSesion();
+  if (sesion.esAdmin) return sesion;
+  if (!sesion.cooperativas.some((suya) => suya.id === id)) notFound();
   return sesion;
 }
 

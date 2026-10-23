@@ -1,7 +1,11 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { requerirSesion } from "@/lib/api/guardia";
-import { traerCooperativa, traerOpciones } from "@/lib/datos/admin";
+import { requerirCooperativa } from "@/lib/api/guardia";
+import {
+  traerCooperativa,
+  traerEditores,
+  traerOpciones,
+} from "@/lib/datos/admin";
 import { Bloques } from "@/components/admin/bloque";
 import { Encabezado } from "@/components/admin/piezas";
 import { FormularioCooperativa } from "../formulario";
@@ -16,8 +20,10 @@ export default async function Page({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const sesion = await requerirSesion();
   const { id } = await params;
+  /* No alcanza con que haya sesión: esta ficha es de una cooperativa en
+     particular y antes la abría cualquiera que estuviera dentro del panel. */
+  const sesion = await requerirCooperativa(id);
   const [cooperativa, { servicios, sectores }] = await Promise.all([
     traerCooperativa(id),
     traerOpciones(),
@@ -44,7 +50,7 @@ export default async function Page({
           {sesion.esAdmin ? (
             <Editores
               cooperativaId={cooperativa.id}
-              editores={cooperativa.editores}
+              editores={await traerEditores(cooperativa.id)}
               invitar={invitarEditor.bind(null, cooperativa.id)}
               quitar={quitarEditor.bind(null, cooperativa.id)}
             />

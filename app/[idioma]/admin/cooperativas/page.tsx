@@ -2,9 +2,9 @@ import { Suspense } from "react";
 import { cn } from "@/lib/cn";
 import { requerirSesion } from "@/lib/api/guardia";
 import {
-  traerCooperativa,
   traerCooperativas,
   traerCuentas,
+  traerEditores,
 } from "@/lib/datos/admin";
 import { provinciaDe } from "@/lib/mapa/provincias";
 import {
@@ -158,12 +158,11 @@ function Esperando() {
  * último ingreso casi siempre; un campo propio sería un cambio en la API.
  */
 async function EstadoEditoras({ id }: { id: string }) {
-  const [cooperativa, cuentas] = await Promise.all([
-    traerCooperativa(id),
+  const [editoras, cuentas] = await Promise.all([
+    traerEditores(id),
     traerCuentas(),
   ]);
 
-  const editoras = cooperativa?.editores ?? [];
   const conCuenta = editoras
     .map((correo) => cuentas.get(correo.toLowerCase()))
     .filter((cuenta) => cuenta !== undefined);

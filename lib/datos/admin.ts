@@ -3,6 +3,7 @@ import "server-only";
 import { cache } from "react";
 
 import { ApiError, apiFetch, normalizePage, sanitize } from "@/lib/api/client";
+import { getTokenDeSesion } from "@/lib/api/session";
 import type * as Api from "@/lib/api/esquema";
 import { isPopulated, type Ref } from "@/lib/api/esquema";
 import { mediaUrl } from "@/lib/media";
@@ -53,15 +54,44 @@ async function traerTodos<T>(recurso: string): Promise<T[]> {
   return normalizePage<T>(raw, TODOS).items;
 }
 
+/**
+ * Con qué credencial lee el panel: con la de quien lo está usando.
+ *
+ * Antes leía con la de servicio (`autenticado: true`), que es **entrar como
+ * administrador**. Parecía inofensivo y traía dos problemas.
+ *
+ * Uno de permisos, el grave: leyendo como administrador la API no puede negar
+ * nada. La ficha de cooperativa es `auth()` —cualquier sesión—, así que la
+ * única barrera entre una cooperativa y los correos de las editoras de otra
+ * era que el panel se acordara de mirar, y no miraba. Ahora quien decide
+ * vuelve a ser la API, pedido por pedido.
+ *
+ * Uno operativo: la API guarda las últimas cinco sesiones de cada cuenta
+ * (`$push` con `$slice: -5`). Cada instancia del sitio que leía una ficha
+ * entraba como la cuenta compartida y echaba a quien estuviera trabajando en
+ * el panel; en las sesiones de esa cuenta había cuatro instancias de Vercel y
+ * una sola persona. Así se deslogueaba sola a mitad de carga.
+ *
+ * Si no hay sesión, falla en vez de buscar otra credencial. Todas las
+ * pantallas del panel llaman antes a `requerirSesion()`, así que esto no pasa;
+ * si alguien suma una que no lo haga, conviene que se note en el acto y no que
+ * la lectura siga andando con permisos de administrador.
+ */
+async function conLaPersona(): Promise<{ token: string }> {
+  const token = await getTokenDeSesion();
+  if (!token) {
+    throw new Error(
+      "Lectura del panel sin sesión: falta `requerirSesion()` en la pantalla",
+    );
+  }
+  return { token };
+}
+
 async function traerUno<T>(recurso: string, id: string): Promise<T | null> {
   try {
-    /*
-     * Con credencial desde el principio: la ficha de cooperativa pide sesión
-     * —trae los correos de los editores— y las demás no, pero mandarla
-     * siempre cuesta nada y evita el 401 y su reintento. El token se cachea
-     * por quince minutos, así que no es un login por lectura.
-     */
-    return sanitize(await apiFetch<T>(`/api/${recurso}/${id}`, { autenticado: true }));
+    return sanitize(
+      await apiFetch<T>(`/api/${recurso}/${id}`, await conLaPersona()),
+    );
   } catch (error) {
     /*
      * Solo un 404 significa "no existe". Antes se tragaba cualquier error y
@@ -305,8 +335,6 @@ export async function traerNovedad(id: string): Promise<Novedad | null> {
 /* ---------- Cooperativas ---------- */
 
 export interface Cooperativa {
-  /** Los mails habilitados a editarla. Lo administra solo la Federación. */
-  editores: string[];
   id: string;
   nombre: string;
   asociados: number | null;
@@ -325,7 +353,6 @@ export interface Cooperativa {
 
 function aCooperativa(api: Api.Cooperativa): Cooperativa {
   return {
-    editores: api.editores ?? [],
     id: api._id,
     nombre: texto(api.nombre),
     asociados: api.asociados ?? null,
@@ -357,11 +384,38 @@ export async function traerCooperativas(): Promise<Cooperativa[]> {
     .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
 }
 
+/**
+ * La ficha cruda, memorizada por pedido con `cache()` de React.
+ *
+ * `traerCooperativa` y `traerEditores` salen de la misma respuesta: la
+ * pantalla de la ficha pide las dos cosas y sin esto serían dos llamadas
+ * idénticas al mismo endpoint.
+ */
+const pedirCooperativa = cache(async (id: string) =>
+  traerUno<Api.Cooperativa>("cooperativas", id),
+);
+
 export async function traerCooperativa(
   id: string,
 ): Promise<Cooperativa | null> {
-  const cooperativa = await traerUno<Api.Cooperativa>("cooperativas", id);
+  const cooperativa = await pedirCooperativa(id);
   return cooperativa && aCooperativa(cooperativa);
+}
+
+/**
+ * Los correos habilitados a editar una cooperativa. Los administra solo la
+ * Federación.
+ *
+ * Van aparte de la ficha a propósito, y no por orden. Son datos de personas, y
+ * el formulario de la ficha es un componente de cliente: mientras los correos
+ * viajaban dentro del mismo objeto, salían serializados en lo que recibe el
+ * navegador en toda pantalla que lo dibuja, incluso cuando el bloque que los
+ * muestra —que es solo para la Federación— no se dibujaba. Fuera de
+ * `Cooperativa` no hay manera de mandarlos sin querer.
+ */
+export async function traerEditores(id: string): Promise<string[]> {
+  const cooperativa = await pedirCooperativa(id);
+  return cooperativa?.editores ?? [];
 }
 
 /* ---------- Proyectos ---------- */
@@ -505,6 +559,11 @@ export interface CuentaDeEditor {
  * Los campos extra se piden explícitamente: el listado de usuarios devuelve
  * solo id, usuario y correo salvo que se le nombren otros, y la contraseña y
  * el secreto no los entrega nunca.
+ *
+ * `GET /users` exige `admin:all`, y ahora que se pide con la credencial de
+ * cada persona eso se cumple de verdad: a una cooperativa la API le responde
+ * 403 y la columna queda sin la marca de "con cuenta creada". Es lo correcto
+ * —el padrón de cuentas es de la Federación— y la pantalla ya lo contempla.
  */
 export const traerCuentas = cache(
   async (): Promise<Map<string, CuentaDeEditor>> => {
@@ -522,7 +581,7 @@ export const traerCuentas = cache(
     try {
       const raw = await apiFetch<Api.Paginated<Api.Usuario>>(
         `/api/users?${campos}`,
-        { params: { perPage: TODOS, page: 1 }, autenticado: true },
+        { params: { perPage: TODOS, page: 1 }, ...(await conLaPersona()) },
       );
       const cuentas = new Map<string, CuentaDeEditor>();
       for (const usuario of normalizePage<Api.Usuario>(raw, TODOS).items) {
