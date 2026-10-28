@@ -54,10 +54,7 @@ export async function verInvitacion(token: string): Promise<Invitacion | null> {
  * reescribiera ese texto apagaba el reintento sin enterarse.
  */
 export type FalloInvitacion =
-  | "usuarioTomado"
-  | "invitacionInvalida"
-  | "contrasenaDebil"
-  | "sinApi";
+  "usuarioTomado" | "invitacionInvalida" | "contrasenaDebil" | "sinApi";
 
 export async function aceptarInvitacion(
   token: string,
@@ -91,7 +88,12 @@ export async function aceptarInvitacion(
     if (code === "usernameAlreadyExists") {
       return {
         ok: false,
-        error: "Ese nombre de usuario ya está tomado",
+        /* Nadie eligió un nombre de usuario: lo arma el panel. Decirle a la
+           persona que "ya está tomado" la deja buscando un campo que no
+           existe, así que el texto habla de lo único que puede hacer. */
+        error:
+          "No pudimos crear tu cuenta. Escribile a FACTTIC y lo resolvemos: " +
+          "es un problema nuestro, no de lo que cargaste.",
         codigo: "usuarioTomado",
       };
     }
@@ -124,19 +126,47 @@ export async function aceptarInvitacion(
  * hay margen para trabarse.
  *
  * Las reglas son las del backend: entre 4 y 32 caracteres, solo letras, números
- * y guiones bajos. De `hernan.gigena@lawal.com.ar` sale `hernangigena`.
+ * y guiones bajos. De `hernan.gigena@lawal.com.ar` sale `hernangigena_lawal`.
  *
- * El `intento` es para cuando el nombre ya está tomado: suma un número al final
- * en vez de fallar y dejar a la persona sin poder entrar.
+ * **Va el dominio además de la parte de adelante**, y no es decorativo. Antes
+ * se usaba solo lo anterior al arroba, y las cooperativas escriben desde
+ * casillas genéricas: `contacto@coodesoft.com.ar` y `contacto@eryx.co` daban
+ * las dos `contacto`. La primera en aceptar se quedaba con el nombre y la
+ * segunda chocaba, probaba `contacto2`…`contacto5`, y si también estaban
+ * tomados la persona quedaba trabada con un error sobre un nombre de usuario
+ * que nunca eligió. Le pasó a Coodesoft. Con la casa incluida el choque solo
+ * puede darse entre dos direcciones iguales, que son la misma persona.
+ *
+ * Del dominio va la primera etiqueta y no el resto: `coodesoft` dice lo mismo
+ * que `coodesoftcomar` y deja lugar antes del tope de 32.
+ *
+ * El `intento` queda igual, de red: suma un número al final en vez de fallar.
+ * Ahora casi no debería usarse, pero los nombres largos se recortan y ahí dos
+ * direcciones distintas todavía podrían encontrarse.
  */
+const LARGO_MAXIMO = 32;
+/** Cuánto del dominio se guarda: suficiente para distinguir dos cooperativas. */
+const LARGO_DE_LA_CASA = 12;
+
 export function usuarioDesdeElCorreo(correo: string, intento = 0): string {
-  const base = (correo.split("@")[0] ?? "")
-    .toLowerCase()
-    .replace(/[^a-z0-9_]/g, "");
+  const [local = "", dominio = ""] = correo.toLowerCase().split("@");
+  const soloValido = (parte: string) => parte.replace(/[^a-z0-9]/g, "");
+
+  const sufijo = intento > 0 ? String(intento + 1) : "";
+  const casa = soloValido(dominio.split(".")[0] ?? "").slice(
+    0,
+    LARGO_DE_LA_CASA,
+  );
+
+  /* El recorte se le hace a la parte de adelante y no a la casa: si se cortara
+     por el final, una dirección larga perdería justo el dominio, que es lo que
+     vuelve único al nombre, y volvería el choque que esto viene a resolver. */
+  const lugar = LARGO_MAXIMO - sufijo.length - (casa ? casa.length + 1 : 0);
+  const adelante = soloValido(local).slice(0, Math.max(lugar, 0));
+
   /* Un correo que no deja nada utilizable —todo acentos o signos— igual tiene
      que dar una cuenta. El mínimo se completa antes de sumar el número, para
      que dos intentos del mismo correo no terminen pareciéndose de casualidad. */
-  const cuerpo = (base || "coop").padEnd(4, "0");
-  const sufijo = intento > 0 ? String(intento + 1) : "";
-  return cuerpo.slice(0, 32 - sufijo.length) + sufijo;
+  const base = [adelante, casa].filter(Boolean).join("_") || "coop";
+  return base.padEnd(4, "0") + sufijo;
 }
