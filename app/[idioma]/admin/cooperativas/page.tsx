@@ -5,6 +5,7 @@ import {
   traerCooperativas,
   traerCuentas,
   traerEditores,
+  traerProyectos,
 } from "@/lib/datos/admin";
 import { provinciaDe } from "@/lib/mapa/provincias";
 import {
@@ -29,7 +30,28 @@ export const metadata = { title: "Cooperativas" };
  */
 export default async function CooperativasPage() {
   const sesion = await requerirSesion();
-  const todas = await traerCooperativas();
+  /*
+   * Los proyectos se traen una sola vez para toda la tabla y se cuentan acá.
+   * El listado de cooperativas no dice cuántos tiene cada una, y preguntarlo
+   * por fila serían treinta y cinco pedidos para un número.
+   */
+  const [todas, proyectos] = await Promise.all([
+    traerCooperativas(),
+    traerProyectos(),
+  ]);
+
+  /* Un proyecto intercoop cuenta para cada una de las que participa, así que
+     la columna suma más que el total de proyectos. Es lo que se quiere ver:
+     cuánto cargó cada una, no cómo se reparte el total. */
+  const proyectosPorCooperativa = new Map<string, number>();
+  for (const proyecto of proyectos) {
+    for (const id of proyecto.cooperativas) {
+      proyectosPorCooperativa.set(
+        id,
+        (proyectosPorCooperativa.get(id) ?? 0) + 1,
+      );
+    }
+  }
   /* Una cooperativa ve la suya; la Federación, todas. */
   const cooperativas = sesion.esAdmin
     ? todas
@@ -59,6 +81,7 @@ export default async function CooperativasPage() {
           "Provincia",
           "Asociadxs",
           "Servicios",
+          "Proyectos",
           "Logo",
           "Editoras",
           "",
@@ -78,6 +101,9 @@ export default async function CooperativasPage() {
               </Celda>
               <Celda apagado={cooperativa.servicios.length === 0}>
                 {cooperativa.servicios.length || "—"}
+              </Celda>
+              <Celda apagado={!proyectosPorCooperativa.get(cooperativa.id)}>
+                {proyectosPorCooperativa.get(cooperativa.id) || "—"}
               </Celda>
               <Celda apagado={!cooperativa.logo}>
                 {cooperativa.logo ? (
