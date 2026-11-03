@@ -315,7 +315,12 @@ export async function proxy(request: NextRequest) {
 export const config = {
   /*
    * Todo menos lo que no es una pantalla: los recursos de Next, la API propia
-   * del sitio y los archivos estáticos.
+   * del sitio, los archivos estáticos y las páginas sueltas.
+   *
+   * `plenario2026` es una de esas: un cronograma de un solo archivo que vive en
+   * `public/` y no pasa por el router ni tiene versión en inglés. Si el proxy
+   * la tocara, la reescribiría a `/es/plenario2026`, que no existe como ruta, y
+   * daría 404.
    */
-  matcher: ["/((?!_next/|api/|.*\\.[a-z0-9]+$).*)"],
+  matcher: ["/((?!_next/|api/|plenario2026|.*\\.[a-z0-9]+$).*)"],
 };

@@ -100,6 +100,22 @@ const SOLO_EL_DOMINIO_REAL = {
 };
 
 const nextConfig: NextConfig = {
+  /**
+   * Las páginas sueltas que no son parte del sitio.
+   *
+   * El cronograma del Plenario es un solo archivo HTML, autocontenido y con sus
+   * datos adentro: no pasa por el router, no se traduce y no comparte nada con
+   * el resto. Vive en `public/` y esto le da la dirección linda —
+   * `/plenario2026` en vez de `/plenario2026/index.html`—. El proxy lo deja
+   * pasar de largo; la exclusión está en su `matcher`.
+   */
+  async rewrites() {
+    return [
+      { source: "/plenario2026", destination: "/plenario2026/index.html" },
+      { source: "/plenario2026/", destination: "/plenario2026/index.html" },
+    ];
+  },
+
   async headers() {
     return [
       { source: "/:ruta*", headers: CABECERAS },
