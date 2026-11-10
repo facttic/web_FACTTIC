@@ -53,20 +53,40 @@ export function Autoridades({
     /^presiden/i,
     /^vicepresiden/i,
     /^secretari/i,
+    /* Los cargos "pro" acompañan a un titular y van detrás de él. Necesitan
+       línea propia justamente por el ancla, que los deja afuera de
+       /^secretari/ y los mandaba al final de la cinta. Las actas los escriben
+       de las tres formas: "Prosecretario", "Pro Secretario", "Pro-secretaria". */
+    /^pro[\s-]?secretari/i,
     /^tesorer/i,
+    /^pro[\s-]?tesorer/i,
     /^vocal titular/i,
     /^vocal suplente/i,
     /^s[ií]ndic\w* titular/i,
     /^s[ií]ndic\w* suplente/i,
   ];
 
+  /*
+   * Dentro del mismo cargo manda el ordinal del acta: "Vocal titular primero"
+   * antes que "segundo". Por nombre quedaban al revés.
+   */
+  const ORDINALES = ["primer", "segund", "tercer", "cuart", "quint"];
+
   const rango = (autoridad: Autoridad) => {
     const i = JERARQUIA.findIndex((patron) => patron.test(autoridad.cargo));
     return i === -1 ? JERARQUIA.length : i;
   };
 
+  const ordinal = (autoridad: Autoridad) => {
+    const cargo = autoridad.cargo.toLowerCase();
+    const i = ORDINALES.findIndex((o) => cargo.includes(o));
+    return i === -1 ? ORDINALES.length : i;
+  };
+
   const porJerarquia = (a: Autoridad, b: Autoridad) =>
-    rango(a) - rango(b) || a.nombre.localeCompare(b.nombre, "es");
+    rango(a) - rango(b) ||
+    ordinal(a) - ordinal(b) ||
+    a.nombre.localeCompare(b.nombre, "es");
 
   const grupos = [
     {
