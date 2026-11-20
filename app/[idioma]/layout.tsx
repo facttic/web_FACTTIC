@@ -84,6 +84,24 @@ export async function generateMetadata({
     },
     description: recortar(T.HOME.hero.bajada),
     /*
+     * El código con el que Google Search Console comprueba que el sitio es
+     * nuestro. No es un secreto: viaja en el HTML de todas las páginas y no
+     * sirve para nada más que para eso.
+     *
+     * Va por variable de entorno y no escrito acá para que dar de alta la
+     * propiedad no necesite tocar código ni esperar a nadie: se carga
+     * `VERIFICACION_GOOGLE` en Vercel y sale en el deploy siguiente. Sin la
+     * variable, Next no dibuja la etiqueta —no queda un `content` vacío, que
+     * Google lee como verificación fallida—.
+     *
+     * Vive en el layout, así que sale en todas las pantallas. Google solo la
+     * busca en la portada, pero una propiedad de prefijo se puede verificar
+     * desde cualquiera, y así no depende de qué URL le toque mirar.
+     */
+    verification: process.env.VERIFICACION_GOOGLE
+      ? { google: process.env.VERIFICACION_GOOGLE }
+      : undefined,
+    /*
      * Acá **no** va `alternates`. La metadata del layout se mezcla con la de
      * cada página, así que una canónica fija —`/` o `/en`— se heredaba en todas
      * las que no declaraban la suya: ciento treinta páginas diciéndole a Google
