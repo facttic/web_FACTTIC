@@ -4,12 +4,42 @@ import { DOMINIO } from "./lib/sitio";
 const enDesarrollo = process.env.NODE_ENV === "development";
 
 /**
+ * El origen al que la medición de visitas le pide el pixel, para sumarlo a
+ * `img-src`.
+ *
+ * Sale de la misma variable que usa `MarcoPublico` para decidir si mide, así
+ * que las dos puntas no pueden desincronizarse: si no está cargada, no se mide
+ * y la política no se abre.
+ *
+ * Una URL mal escrita corta el build a propósito. La alternativa era seguir sin
+ * el origen en la política, y entonces el navegador bloquearía el pixel en
+ * silencio: el sitio andaría igual y las visitas no se contarían, que es la
+ * clase de falla que se descubre tres meses después.
+ */
+const MEDICION = process.env.MEDICION_URL;
+let origenMedicion = "";
+if (MEDICION) {
+  try {
+    origenMedicion = ` ${new URL(MEDICION).origin}`;
+  } catch {
+    throw new Error(
+      `MEDICION_URL no es una URL válida: ${MEDICION}. Tiene que ser el ` +
+        "endpoint completo, por ejemplo https://facttic.goatcounter.com/count",
+    );
+  }
+}
+
+/**
  * Las cabeceras de seguridad. No había ninguna: Vercel pone el HSTS y nada más.
  *
- * La política de contenido se puede apretar porque el sitio **no carga nada de
- * afuera**: ni scripts, ni hojas de estilo, ni tipografías —`next/font` las
- * sirve desde acá—, ni imágenes. Lo único externo son enlaces, que no son
- * recursos. Verificado sobre el HTML que publica producción.
+ * La política de contenido se puede apretar porque el sitio **no ejecuta nada
+ * de afuera**: ni scripts, ni hojas de estilo, ni tipografías —`next/font` las
+ * sirve desde acá—. Verificado sobre el HTML que publica producción.
+ *
+ * Sale un solo pedido a un tercero y no es un script: la medición de visitas
+ * avisa cada pantalla pidiéndole un GIF de 1×1 a GoatCounter. Por eso abre
+ * `img-src` y nada más —ver `MEDICION` acá arriba y `components/ui/medicion.tsx`
+ * para por qué el pixel y no su `count.js`—.
  *
  * Quedan dos `unsafe-inline` y no es por descuido:
  *
@@ -35,7 +65,7 @@ const CSP = [
      negro, con el punto y la atribución flotando sobre nada, que es lo que
      pasó al cerrar la política. Leaflet sí viene del paquete, así que no hace
      falta abrir ni script ni estilo. */
-  "img-src 'self' data: blob: https://tile.openstreetmap.org",
+  `img-src 'self' data: blob: https://tile.openstreetmap.org${origenMedicion}`,
   "font-src 'self' data:",
   /* El widget de ALTCHA calcula la prueba de trabajo en un worker que crea
      como blob, para no trabar la pantalla mientras tanto. Sin esto el worker

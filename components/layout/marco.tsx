@@ -2,8 +2,19 @@ import { ViewTransition } from "react";
 import { GrillaDeFondo } from "@/components/ui/grilla-viva";
 import { RevelarSinTimeline } from "@/components/ui/revelar-sin-timeline";
 import { SaludoEnConsola } from "@/components/ui/saludo-en-consola";
+import { Medicion } from "@/components/ui/medicion";
 import { Header } from "./header";
 import { Footer } from "./footer";
+
+/*
+ * A dónde se avisa cada visita. Sin la variable cargada no se mide nada: el
+ * componente no se monta y la política de contenido ni se abre.
+ *
+ * Se lee en el servidor y al compilar —estas pantallas se generan de
+ * antemano—, así que cambiarla en Vercel pide un deploy nuevo para que tenga
+ * efecto.
+ */
+const MEDICION = process.env.MEDICION_URL;
 
 /**
  * Marco del sitio público: barra de navegación arriba y pie abajo.
@@ -11,6 +22,10 @@ import { Footer } from "./footer";
  * Vive aparte del layout porque el 404 también lo necesita y no puede usarlo:
  * `not-found.tsx` tiene que estar en la raíz de `app/` para atender cualquier
  * URL que no exista, así que queda fuera del grupo `(public)` y de su layout.
+ *
+ * Es también el borde entre el sitio y el panel, así que acá va la medición de
+ * visitas: cuelga del marco público y no del layout raíz, que lo comparten los
+ * dos.
  */
 export function MarcoPublico({ children }: { children: React.ReactNode }) {
   return (
@@ -24,6 +39,7 @@ export function MarcoPublico({ children }: { children: React.ReactNode }) {
       <RevelarSinTimeline />
       {/* Para quien abra las herramientas del navegador. No pinta nada. */}
       <SaludoEnConsola />
+      {MEDICION ? <Medicion endpoint={MEDICION} /> : null}
       <Header />
       {/*
         El encabezado es fijo, así que el contenido arranca debajo. El hero se
